@@ -15,14 +15,14 @@ export default function Header() {
 
   const lhtml = links.map(({ key, href }, idx) => (
     <li key={idx} className="mx-3">
-      <Link href={href} className="px-2 py-1 inline-block">
+      <Link href={href} className="px-2 py-1 inline-block text-gray-800">
         {t(key)}
       </Link>
     </li>
   ));
 
   return (
-    <div className="flex px-20 py-3 items-center">
+    <div className="flex px-20 py-3 items-center border-solid border-b border-b-gray-200">
       <div className={clsx(styles.logoWrapper)}>
         <img src="/assets/logo.svg" alt="logo" />
       </div>
