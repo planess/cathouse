@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -8,10 +8,11 @@ export default function Footer() {
       <div>
         <Link href="location">Location</Link>
       </div>
-      <div className="flex justify-end">
-        Made with care for our little friends
+
+      <div className="bg-neutral-800 text-neutral-100 text-sm px-20 py-3 flex justify-end gap-2">
+        <span>Since 2021 with care for our little friends</span>
+        <span>by Planess Group</span>
       </div>
-      <div>2024-{year}</div>
     </footer>
   );
 }
