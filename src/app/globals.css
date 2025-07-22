@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f5f5f5;
   --foreground: #171717;
 }
 
@@ -31,3 +31,9 @@ body {
   padding: 0;
   height: 100%;
 }
+
+.title {
+  color: #75aff2;
+  /* background: linear-gradient(167deg,#fedc2a 4.31%, #75aff2 49.13%, #0e6ca7 79.88%); */
+}
+
