@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
@@ -7,7 +6,7 @@ export default createMiddleware({
   defaultLocale: 'uk',
 });
 
-export function middleware(request: NextRequest): NextResponse {
+export function middleware(): NextResponse {
   return NextResponse.next();
 }
 

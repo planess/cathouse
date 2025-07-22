@@ -5,14 +5,14 @@ import { useForm } from 'react-hook-form';
 export default function ContactForm() {
   const { register, handleSubmit } = useForm();
 
-  const formSubmit = (data) => {
+  const formSubmit = (data: unknown) => {
     console.log(data);
   };
 
   return (
     <form onSubmit={handleSubmit(formSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col">
-        <label htmlFor="name">Ім'я</label>
+        <label htmlFor="name">Ім&apos;я</label>
         <input id="name" type="text" {...register('name')} />
       </div>
       <div className="flex flex-col">

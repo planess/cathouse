@@ -78,7 +78,11 @@ export default function Help() {
   );
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<unknown>;
+}) {
   console.log('-param', await params);
   const t = await getTranslations('helppage');
 
