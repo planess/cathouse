@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import styles from './header.module.scss';
 import clsx from 'clsx';
 import Image from 'next/image';
-import logo from '@/../public/assets/logo.svg';
+import logo from '@public/assets/logo.svg';
 
 export default function Header() {
   const t = useTranslations('header');
