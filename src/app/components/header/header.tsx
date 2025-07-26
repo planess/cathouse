@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import styles from './header.module.scss';
 import clsx from 'clsx';
 import Image from 'next/image';
+import logo from '@/../public/assets/logo.svg';
 
 export default function Header() {
   const t = useTranslations('header');
@@ -25,7 +26,7 @@ export default function Header() {
   return (
     <div className="flex px-20 py-3 items-center border-solid border-b border-b-gray-200">
       <div className={clsx(styles.logoWrapper)}>
-        <Image src="/assets/logo.svg" alt="logo" />
+        <Image src={logo} alt="logo" width="120" />
       </div>
 
       <div className="px-2 flex-auto">
