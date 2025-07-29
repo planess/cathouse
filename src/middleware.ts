@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
@@ -11,5 +11,5 @@ export function middleware(): NextResponse {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|static|.*\\..*).*)"],
+  matcher: ['/((?!api|_next|static|.*\\..*).*)'],
 };

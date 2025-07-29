@@ -19,7 +19,7 @@
       }
     ],
     "paths": {
-      "@pp/*": ["./src/app/*"],
+      "@app/*": ["./src/app/*"],
       "@i18n/*": ["./src/i18n/*"],
       "@public/*": ["./public/*"]
     }

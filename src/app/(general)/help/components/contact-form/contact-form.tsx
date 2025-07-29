@@ -1,16 +1,36 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function ContactForm() {
-  const { register, handleSubmit } = useForm();
+import { ContactFormData } from '../../models/contact-form-data';
 
-  const formSubmit = (data: unknown) => {
-    console.log(data);
+export default function ContactForm({
+  handler,
+}: {
+  handler: (data: ContactFormData) => Promise<{ status: string }>;
+}) {
+  const { register, handleSubmit } = useForm<ContactFormData>();
+  const [sent, setSent] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+
+  const c = handleSubmit(handler);
+
+  const b = async (e: React.FormEvent) => {
+    setDisabled(true);
+
+    await c(e);
+
+    setSent(true);
+    setDisabled(false);
+  };
+
+  const a = (data: React.FormEvent) => {
+    void b(data);
   };
 
   return (
-    <form onSubmit={handleSubmit(formSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={a} className="flex flex-col gap-4">
       <div className="flex flex-col">
         <label htmlFor="name">Ім&apos;я</label>
         <input id="name" type="text" {...register('name')} />
@@ -25,7 +45,7 @@ export default function ContactForm() {
       </div>
       <div className="flex flex-col">
         <label htmlFor="job-position">Посада</label>
-        <input id="job-position" type="text" {...register('job position')} />
+        <input id="job-position" type="text" {...register('jobPosition')} />
       </div>
       <div className="flex flex-col">
         <label htmlFor="location">Місцезнаходження</label>
@@ -35,7 +55,7 @@ export default function ContactForm() {
         <label htmlFor="message">Повідомлення</label>
         <textarea id="message" {...register('message')} />
       </div>
-      <button type="submit">Надіслати</button>
+      {sent ? <p>Надіслано</p> : <button type="submit" disabled={disabled}>Надіслати</button>}
     </form>
   );
 }

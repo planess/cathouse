@@ -1,9 +1,11 @@
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import styles from './header.module.scss';
 import clsx from 'clsx';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+
 import logo from '@public/assets/logo.svg';
+
+import styles from './header.module.scss';
 
 export default function Header() {
   const t = useTranslations('header');
