@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useState } from 'react';
+import { createElement, JSX, useState } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 
 import { Button } from '@app/components/button';
@@ -120,21 +120,22 @@ function Thankyou({ contact, name }: { contact: string; name: string }) {
 
 type E = 'input' | 'textarea';
 
-function Field<T extends E>({
-  label,
-  config,
-  element,
-}: {
+interface R<T extends E> {
   label: string;
   config: UseFormRegisterReturn & JSX.IntrinsicElements[T];
   element: T;
-}) {
-  const Element = element;
+}
+
+function Field<T extends E>({ label, config, element }: R<T>) {
+  const Element = createElement(element, {
+    className: 'bg-stone-50 flex-auto p-2',
+    ...config,
+  });
 
   return (
     <label className="flex p-[2px] rounded-lg bg-linear-to-r from-sky-50 to-zinc-50">
       <span className="py-2 px-3 w-45">{label}</span>
-      <Element className="bg-stone-50 flex-auto p-2" {...config} />
+      {Element}
     </label>
   );
 }

@@ -17,7 +17,7 @@ export function Button({
         'px-6 py-2 font-semibold rounded-lg shadow-md transition',
         {
           'bg-blue-400 text-stone-100 hover:bg-blue-500 focus:outline-2 focus:outline-blue-300 focus:outline-offset-2 focus:outline-solid active:bg-blue-600 active:text-stone-200':
-            !disabled,
+            Boolean(disabled) === false,
           'bg-neutral-200 text-gray-400': disabled,
         },
       )}

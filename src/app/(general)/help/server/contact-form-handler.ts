@@ -7,6 +7,17 @@ import clientPromise from '@app/ins/mongo-client';
 
 import { ContactFormData } from '../models/contact-form-data';
 
+interface StatusOK {
+  status: 'ok';
+}
+
+interface StatusError {
+  status: 'error';
+  errors?: unknown;
+}
+
+type Response = StatusOK | StatusError;
+
 const HelpForm = object({
   name: string().trim(),
   contacts: union([
@@ -17,14 +28,16 @@ const HelpForm = object({
   message: string(),
 }).required();
 
-export default async function contactFormHandler(formData: ContactFormData) {
+export default async function contactFormHandler(
+  formData: ContactFormData,
+): Promise<Response> {
   let data;
 
   try {
     data = HelpForm.parse(formData);
   } catch (error) {
     if (error instanceof ZodError) {
-      return error.issues;
+      return { status: 'error', errors: error.issues };
     }
 
     throw error;
@@ -45,7 +58,7 @@ export default async function contactFormHandler(formData: ContactFormData) {
     await db.collection('connections').insertOne({ ...data, ...extendedData });
 
     return { status: 'ok' };
-  } catch (error) {
+  } catch {
     // log the error
     // console.log(error);
 

@@ -6,6 +6,7 @@ import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
+import jest from 'eslint-plugin-jest';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import unicorn from 'eslint-plugin-unicorn';
@@ -316,7 +317,6 @@ const eslintConfig = [
       '@next/next/no-head-element': 'error',
       '@next/next/no-title-in-document-head': 'error',
       '@next/next/no-typos': 'error',
-      '@next/next/no-unwanted-polyfillio': 'error',
     },
   },
 
@@ -325,8 +325,29 @@ const eslintConfig = [
     files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
       'no-console': 'off',
       'unicorn/no-useless-undefined': 'off',
+      ...jest.configs.recommended.rules,
+    },
+    plugins: {
+      jest,
+    },
+    languageOptions: {
+      globals: {
+        jest: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+      },
     },
   },
 
