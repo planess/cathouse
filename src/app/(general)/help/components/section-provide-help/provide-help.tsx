@@ -22,7 +22,7 @@ export default function ProvideHelp() {
         долю тварини, не витрачаючи всі ресурси самотужки.
       </p>
 
-      <p>З нашої сторони Ви можете отримати:</p>
+      <p className="py-5 text-xl">З нашої сторони Ви можете отримати:</p>
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
@@ -75,7 +75,7 @@ export default function ProvideHelp() {
           </div>
 
           <div>
-            <div className="font-bold">Поширення знань:</div>{' '}
+            <div className="font-bold">Поширення знань:</div>
             <div>
               навчаємо, як правильно діяти, якщо ви знайшли безпритульну
               тварину, щоб допомога була ефективною і безпечною.

@@ -1,19 +1,54 @@
 'use server';
 
+import { headers as _headers } from 'next/headers';
+import { email, object, string, union, ZodError } from 'zod';
+
 import clientPromise from '@app/ins/mongo-client';
 
 import { ContactFormData } from '../models/contact-form-data';
 
+const HelpForm = object({
+  name: string().trim(),
+  contacts: union([
+    /* email */ email().lowercase(),
+    /* phone number */ string().regex(/[\d\s()+-]+/),
+  ]),
+  location: string(),
+  message: string(),
+}).required();
+
 export default async function contactFormHandler(formData: ContactFormData) {
-  console.log('-form data', formData);
+  let data;
 
-  return {...formData, status: 'ok'};
+  try {
+    data = HelpForm.parse(formData);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return error.issues;
+    }
 
-  const c = await clientPromise;
+    throw error;
+  }
 
-  const result = await c.db().collection('connections').insertOne(formData);
+  const headers = await _headers();
+  const userAgent = headers.get('user-agent');
 
-  console.log('-result', result);
+  const extendedData = {
+    userAgent,
+    createdAt: Date.now(),
+  };
 
-  return { status: 'ok' };
+  const dbClient = await clientPromise;
+  const db = dbClient.db();
+
+  try {
+    await db.collection('connections').insertOne({ ...data, ...extendedData });
+
+    return { status: 'ok' };
+  } catch (error) {
+    // log the error
+    // console.log(error);
+
+    return { status: 'error' };
+  }
 }
