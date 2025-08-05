@@ -1,9 +1,9 @@
 import Image from 'next/image';
 
-import feedForCatImg from '@public/assets/help/delicates.png';
+import feedForCatImg from '@public/assets/help/delicates_transparent.png';
 import catAtHomeImg from '@public/assets/help/home-comfort.png';
-import medicineImg from '@public/assets/help/medicine.png';
-import educationImg from '@public/assets/help/teach-me.png';
+import medicineImg from '@public/assets/help/medicine_transparent.png';
+import educationImg from '@public/assets/help/teach-me_transparent.png';
 
 import Section from '../section/section';
 
@@ -22,52 +22,64 @@ export default function ProvideHelp() {
         долю тварини, не витрачаючи всі ресурси самотужки.
       </p>
 
-      <p>З нашої сторони Ви можете отримати:</p>
+      <p className="py-5 text-xl">З нашої сторони Ви можете отримати:</p>
 
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3">
+        <div className="flex items-center gap-3">
           <div className="flex-none">
             <Image src={medicineImg} alt="medicine" width={100} />
           </div>
 
           <div>
-            Консультації та допомога з лікуванням: ми допомагаємо знайти
-            ветеринарів, покриваємо частину витрат на лікування або стерилізацію
-            безпритульних тварин.
+            <div className="font-bold">
+              Консультації та допомога з лікуванням:
+            </div>
+            <div>
+              допомагаємо знайти ветеринарів, покриваємо частину витрат на
+              лікування або стерилізацію безпритульних тварин.
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between gap-3">
+        <div className="flex items-center gap-3">
           <div className="flex-none">
             <Image src={catAtHomeImg} alt="cat-at-home" width={100} />
           </div>
 
           <div>
-            Прилаштування тварин: ми розміщуємо інформацію про знайдених тварин
-            на наших платформах, допомагаємо із пошуком тимчасового або
-            постійного дому.
+            <div className="font-bold">Прилаштування тварин:</div>
+            <div>
+              розміщуємо інформацію про знайдених тварин на наших платформах,
+              допомагаємо із пошуком тимчасового або постійного дому.
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between gap-3">
+        <div className="flex items-center gap-3">
           <div className="flex-none">
             <Image src={feedForCatImg} alt="volunteer" width={100} />
           </div>
 
           <div>
-            Підтримка волонтерів: ми надаємо корм, переноски, медикаменти або
-            інші необхідні речі тим, хто тимчасово прихистив тварину.
+            <div className="font-bold">Підтримка волонтерів:</div>
+            <div>
+              надаємо корм, переноски, медикаменти або інші необхідні речі тим,
+              хто тимчасово прихистив тварину.
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between gap-3">
+        <div className="flex items-center gap-3">
           <div className="flex-none">
             <Image src={educationImg} alt="knowledge" width={100} />
           </div>
 
           <div>
-            Поширення знань: ми навчаємо, як правильно діяти, якщо ви знайшли
-            безпритульну тварину, щоб допомога була ефективною і безпечною.
+            <div className="font-bold">Поширення знань:</div>
+            <div>
+              навчаємо, як правильно діяти, якщо ви знайшли безпритульну
+              тварину, щоб допомога була ефективною і безпечною.
+            </div>
           </div>
         </div>
       </div>

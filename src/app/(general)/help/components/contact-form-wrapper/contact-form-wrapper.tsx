@@ -1,13 +1,11 @@
 'use client';
 
+import { ContactFormData } from '../../models/contact-form-data';
 import contactFormHandler from '../../server/contact-form-handler';
 import ContactForm from '../contact-form/contact-form';
 
-export default function ContactFormWrapper() {
-  const e = async (data) => {
-    const result = await contactFormHandler(data);
+const handler = (data: ContactFormData) => contactFormHandler(data);
 
-    console.log('-result', result);
-  };
-  return <ContactForm handler={e} />;
+export default function ContactFormWrapper() {
+  return <ContactForm handler={handler} />;
 }

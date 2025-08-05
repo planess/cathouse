@@ -1,5 +1,9 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import './styles/_font-ubuntu.css';
+@import './styles/_font-cuprum.css';
+@import './styles/_font-roboto.css';
 
+/* CSS variables */
 :root {
   --background: #f5f5f5;
   --foreground: #171717;
@@ -22,7 +26,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Roboto, sans-serif; */
+  /* font-family: Cuprum, sans-serif; */
+  font-family: 'Ubuntu Mono', sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 html,
@@ -36,4 +44,3 @@ body {
   color: #75aff2;
   /* background: linear-gradient(167deg,#fedc2a 4.31%, #75aff2 49.13%, #0e6ca7 79.88%); */
 }
-
