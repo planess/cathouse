@@ -26,7 +26,7 @@ export default function Header() {
   ));
 
   return (
-    <div className="flex px-20 py-3 items-center border-solid border-b border-b-gray-200">
+    <div className="flex px-20 py-3 items-center border-solid border-b border-b-gray-200 bg-white">
       <div className={clsx(styles.logoWrapper)}>
         <Image src={logo as string} alt="logo" width="120" />
       </div>

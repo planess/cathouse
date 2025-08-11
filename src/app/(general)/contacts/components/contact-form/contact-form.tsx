@@ -1,5 +1,3 @@
-'use client';
-
 import { createElement, JSX, useState } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 
@@ -11,10 +9,10 @@ import { ContactFormData } from '../../models/contact-form-data';
 export default function ContactForm({
   handler,
 }: ServerHandlerParams<ContactFormData>) {
-  const { register, handleSubmit, formState, getValues } =
-    useForm<ContactFormData>();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, formState, getValues } =
+    useForm<ContactFormData>();
 
   const http = handleSubmit(async (data) => {
     const response = await handler(data);
@@ -54,6 +52,7 @@ export default function ContactForm({
           }}
         />
       </div>
+
       <div className="flex flex-col">
         <Field
           label="Email або телефон"
@@ -66,18 +65,7 @@ export default function ContactForm({
           }}
         />
       </div>
-      <div className="flex flex-col">
-        <Field
-          label="Місцезнаходження"
-          element="input"
-          config={{
-            ...register('location', { required: true }),
-            type: 'text',
-            placeholder: 'Одразу будемо орієнтуватись на відстань між нами',
-            disabled: sent,
-          }}
-        />
-      </div>
+
       <div className="flex flex-col">
         <Field
           label="Повідомлення"

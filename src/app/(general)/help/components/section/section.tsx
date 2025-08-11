@@ -1,7 +1,9 @@
+import { ReactNode } from 'react';
+
 interface Prop {
   title?: string;
   text?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export default function Section({ title, text, children }: Prop) {

@@ -2,10 +2,11 @@
 @import './styles/_font-ubuntu.css';
 @import './styles/_font-cuprum.css';
 @import './styles/_font-roboto.css';
+@import './styles/_font-manrope.css';
 
 /* CSS variables */
 :root {
-  --background: #f5f5f5;
+  --background: #f9f9f9;
   --foreground: #171717;
 }
 
@@ -28,7 +29,8 @@ body {
   color: var(--foreground);
   /* font-family: Roboto, sans-serif; */
   /* font-family: Cuprum, sans-serif; */
-  font-family: 'Ubuntu Mono', sans-serif;
+  font-family: Manrope, sans-serif;
+  /* font-family: 'Ubuntu Mono', sans-serif; */
   font-weight: 400;
   font-style: normal;
 }
@@ -41,6 +43,6 @@ body {
 }
 
 .title {
-  color: #75aff2;
+  color: #333;
   /* background: linear-gradient(167deg,#fedc2a 4.31%, #75aff2 49.13%, #0e6ca7 79.88%); */
 }

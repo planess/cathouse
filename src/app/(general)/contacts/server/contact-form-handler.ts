@@ -8,7 +8,7 @@ import { ServerResponse } from '@app/models/server-response';
 
 import { ContactFormData } from '../models/contact-form-data';
 
-const HelpForm = object({
+const CommunicationForm = object({
   name: string().trim(),
   contacts: union([
     /* email */ email().lowercase(),
@@ -24,7 +24,7 @@ export async function handler(
   let data;
 
   try {
-    data = HelpForm.parse(formData);
+    data = CommunicationForm.parse(formData);
   } catch (error) {
     if (error instanceof ZodError) {
       return { status: 'error', errors: error.issues };
@@ -45,12 +45,13 @@ export async function handler(
   const db = dbClient.db();
 
   try {
-    await db.collection('connections').insertOne({ ...data, ...extendedData });
+    await db
+      .collection('communications')
+      .insertOne({ ...data, ...extendedData });
 
     return { status: 'ok' };
   } catch {
-    // log the error
-    // console.log(error);
+    // Log the error
 
     return { status: 'error' };
   }
