@@ -4,14 +4,13 @@ import { createElement, JSX, useState } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 
 import { Button } from '@app/components/button';
+import { ServerHandlerParams } from '@app/models/server-handler-params';
 
 import { ContactFormData } from '../../models/contact-form-data';
 
 export default function ContactForm({
   handler,
-}: {
-  handler: (data: ContactFormData) => Promise<{ status: string }>;
-}) {
+}: ServerHandlerParams<ContactFormData>) {
   const { register, handleSubmit, formState, getValues } =
     useForm<ContactFormData>();
   const [sent, setSent] = useState(false);
