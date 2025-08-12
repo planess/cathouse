@@ -9,6 +9,7 @@ export default function Map() {
     if (mref.current) {
       // Додаємо стилі Leaflet, якщо їх ще немає
       const leafletCssId = 'leaflet-css';
+
       if (!document.querySelector(`#${leafletCssId}`)) {
         const link = document.createElement('link');
         link.id = leafletCssId;
@@ -19,11 +20,14 @@ export default function Map() {
       }
 
       void (async () => {
-        
         try {
+          if (!mref.current) {
+            return;
+          }
+
           const L = await import('leaflet');
 
-          const map = L.map(mref.current).setView([49.7988997, 24.0472929], 14);
+          const map = L.map(mref.current);
 
           L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(
             map,
@@ -37,13 +41,12 @@ export default function Map() {
               [49.8183, 24.020425],
               [49.819075, 24.057332],
             ],
-            { color: '#00ff00', opacity: .5, interactive: false, },
+            { color: '#8E3A88', opacity: 0.5, interactive: false },
           ).addTo(map);
 
-
           map.fitBounds(polygon.getBounds());
-        } catch (error) {
-          console.error('Failed to load Leaflet:', error);
+        } catch {
+          // console.error('Failed to load Leaflet:', error);
         }
       })();
     }
