@@ -1,10 +1,8 @@
 import clsx from 'clsx';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import logo from '@public/assets/logo.svg';
-
+import Logo from './components/logo/logo';
 import styles from './header.module.scss';
 
 export default function Header() {
@@ -28,7 +26,7 @@ export default function Header() {
   return (
     <div className="flex px-20 py-3 items-center border-solid border-b border-b-gray-200 bg-white">
       <div className={clsx(styles.logoWrapper)}>
-        <Image src={logo as string} alt="logo" width="120" />
+        <Logo />
       </div>
 
       <div className="px-2 flex-auto">
