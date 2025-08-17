@@ -10,27 +10,17 @@ import { encrypt } from '@app/helpers/encrypt-browser';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
 import FormField from '../../../components/form-field/form-field';
+import { FormData } from '../../models/form-data';
+import { ServerFormData } from '../../models/server-form-data';
 import { register as handler } from '../../server/register';
-
-// interface for browser
-interface FormData {
-  identifier: string;
-  password: string;
-}
-
-// interface for server
-interface ServerFormData {
-  identifier: string;
-  passHash: string;
-}
 
 const transformer: Record<string, string> = {
   passHash: 'password',
 };
 
 export default function RegisterForm() {
-  const t = useTranslations('authorization');
   const router = useRouter();
+  const t = useTranslations('authorization');
   const { register, formState, handleSubmit, setError, clearErrors, reset } =
     useForm<FormData>({
       criteriaMode: 'all',
@@ -48,9 +38,9 @@ export default function RegisterForm() {
       return;
     }
 
-    try {
-      setPending(true);
+    setPending(true);
 
+    try {
       const passHash = await encrypt(cryptoKey, password);
       const formData: ServerFormData = {
         identifier,

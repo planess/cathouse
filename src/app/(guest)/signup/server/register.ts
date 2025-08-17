@@ -6,8 +6,8 @@ import { string, object, email, ZodError } from 'zod';
 import { decrypt } from '@app/helpers/decsrypt';
 import { hashBlake2 } from '@app/helpers/hash-blake2';
 import clientPromise from '@app/ins/mongo-client';
-import { ServerErrors } from '@app/models/server-errors';
-import { ServerResponse } from '@app/models/server-response';
+import { ResponseErrors } from '@app/models/response-errors.server';
+import { ServerActionResponse } from '@app/models/server-action-response.server';
 
 interface FormData {
   identifier: string;
@@ -16,7 +16,7 @@ interface FormData {
 
 const minPasswordLength = 6;
 
-export async function register(formData: FormData): Promise<ServerResponse> {
+export async function register(formData: FormData): Promise<ServerActionResponse> {
   let identifier: string;
   let passHash: string;
 
@@ -31,7 +31,7 @@ export async function register(formData: FormData): Promise<ServerResponse> {
     ({ identifier, passHash } = FormDataSchema.parse(formData));
   } catch (error) {
     if (error instanceof ZodError) {
-      const errors = {} as ServerErrors;
+      const errors = {} as ResponseErrors;
 
       for (const { path, message } of error.issues) {
         const key = path.join('.');
@@ -104,12 +104,15 @@ export async function register(formData: FormData): Promise<ServerResponse> {
     throw error;
   }
 
-  const hash = hashBlake2(originPassword, `!!${identifier}`);
+  const hash = await hashBlake2(originPassword, `!!${identifier}`);
 
   // Save new user into db collection 'users'
   try {
-    const amountOf = await db.collection('users').countDocuments();
-    const id = amountOf + 1;
+    // Find the maximum id in the users collection
+    const maxIdUser = await db
+      .collection('users')
+      .findOne<{ id: number }>({}, { sort: { id: -1 }, projection: { id: 1 } });
+    const id = (maxIdUser?.id ?? 0) + 1;
 
     await db.collection('users').insertOne({
       id, // unique
