@@ -31,6 +31,7 @@
     "want-account-link": "Готовий реєструватись",
     "saveUserErrorCommon": "Не вдалось зберегти реєстрацію",
     "internalError": "Проводимо технічну роботу. Реєстрація буде доступна дуже швидко.",
+    "wrongCredentials": "Користувача не знайдено",
     "form": {
       "hint": {
         "password": "Мінімум {n} символів, використайте спеціальні символи"
@@ -38,9 +39,11 @@
       "label": {
         "email": "Email",
         "password": "Пароль",
-        "register-button": "Поїхали"
+        "register-button": "Поїхали",
+        "auth-button": "Увійти"
       },
       "placeholder": {
+        "auth-password": "Пароль до профілю",
         "email": "Персональний email",
         "password": "Придумайте надійний пароль"
       },
