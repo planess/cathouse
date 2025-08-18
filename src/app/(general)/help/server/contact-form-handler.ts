@@ -4,7 +4,7 @@ import { headers as _headers } from 'next/headers';
 import { email, object, string, union, ZodError } from 'zod';
 
 import clientPromise from '@app/ins/mongo-client';
-import { ServerResponse } from '@app/models/server-response';
+import { ServerActionResponse } from '@app/models/server-action-response.server';
 
 import { ContactFormData } from '../models/contact-form-data';
 
@@ -20,7 +20,7 @@ const HelpForm = object({
 
 export async function handler(
   formData: ContactFormData,
-): Promise<ServerResponse> {
+): Promise<ServerActionResponse> {
   let data;
 
   try {
