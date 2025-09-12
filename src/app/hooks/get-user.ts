@@ -1,11 +1,10 @@
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 
-import type { User } from './use-user';
+import clientPromise from '@app/ins/mongo-client';
 
-export interface ServerAuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-}
+import type { User } from '../models/user';
+
+export type ServerAuthState = User | null;
 
 /**
  * Server-side function to get user authentication information
@@ -14,37 +13,43 @@ export interface ServerAuthState {
 export async function getUser(): Promise<ServerAuthState> {
   try {
     const cookieStore = await cookies();
-    const headersList = await headers();
 
     // Get authentication token from cookies or headers
-    const token =
-      cookieStore.get('authToken')?.value ??
-      headersList.get('authorization')?.replace('Bearer ', '') ??
-      null;
+    const token = cookieStore.get('token')?.value ?? null;
 
-    if (token === null || token === '') {
-      return {
-        user: null,
-        isAuthenticated: false,
-      };
+    if (!token) {
+      return null;
     }
 
-    // TODO: Implement token validation with your backend
-    // const user = await validateToken(token);
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
 
-    // For now, return not authenticated
-    // Replace this with your actual authentication logic
+    const session = await db.collection('sessions').findOne({ token });
+
+    if (!session) {
+      return null;
+    }
+
+    const user = await db.collection('users').findOne({ id: session.userId });
+
+    if (!user) {
+      // it is not supposed to exist session but not user
+      // console.error('Session exists but user does not:', session);
+      return null;
+    }
+
     return {
-      user: null,
-      isAuthenticated: false,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      createdAt: user.createdAt,
+      lastLogin: session.createdAt,
     };
   } catch {
     // Log error for debugging (remove in production or use proper logging)
     // console.error('Server authentication check failed:', error);
-    return {
-      user: null,
-      isAuthenticated: false,
-    };
+    return null;
   }
 }
 
@@ -52,16 +57,16 @@ export async function getUser(): Promise<ServerAuthState> {
  * Convenience function to check if user is authenticated on the server
  */
 export async function isAuthenticated(): Promise<boolean> {
-  const { isAuthenticated } = await getUser();
+  const user = await getUser();
 
-  return isAuthenticated;
+  return user !== null;
 }
 
 /**
  * Convenience function to get current user on the server
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const { user } = await getUser();
+  const user = await getUser();
 
   return user;
 }

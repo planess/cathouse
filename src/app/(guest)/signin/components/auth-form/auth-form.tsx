@@ -10,8 +10,8 @@ import { encrypt } from '@app/helpers/encrypt-browser';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
 import FormField from '../../../components/form-field/form-field';
+import { ServerFormData } from '../../../models/server-form-data';
 import { FormData as IAuthForm } from '../../models/form-data';
-import { ServerFormData } from '../../models/server-form-data';
 import { authenticate } from '../../server/authenticate';
 
 const transformer: Record<string, string> = {

@@ -1,5 +1,4 @@
 import { execSync } from 'child_process';
-import { join } from 'path';
 
 /**
  * Server-side migration runner
@@ -9,7 +8,9 @@ export class ServerMigrationRunner {
   private static instance: ServerMigrationRunner;
   private migrationsRun = false;
 
-  private constructor() { }
+  private constructor() {
+    // Private constructor to enforce singleton pattern
+  }
 
   public static getInstance(): ServerMigrationRunner {
     if (!ServerMigrationRunner.instance) {
@@ -35,19 +36,23 @@ export class ServerMigrationRunner {
    */
   public async runMigrations(): Promise<{ success: boolean; message: string }> {
     if (this.migrationsRun) {
-      return { success: true, message: 'Migrations already run in this session' };
+      return {
+        success: true,
+        message: 'Migrations already run in this session',
+      };
     }
 
     // Skip migrations in development unless forced
     if (!this.shouldRunMigrations()) {
       return {
         success: true,
-        message: 'Skipping migrations in development mode. Set FORCE_MIGRATIONS=true to enable.'
+        message:
+          'Skipping migrations in development mode. Set FORCE_MIGRATIONS=true to enable.',
       };
     }
 
     try {
-      console.log('Running database migrations...');
+      // console.log('Running database migrations...');
 
       // Get the project root directory
       const projectRoot = process.cwd();
@@ -56,21 +61,28 @@ export class ServerMigrationRunner {
       execSync('npx migrate-mongo up', {
         cwd: projectRoot,
         stdio: 'pipe', // Capture output instead of inheriting
-        env: { ...process.env }
+        env: { ...process.env },
       });
 
-      console.log('Database migrations completed successfully');
+      // console.log('Database migrations completed successfully');
       this.migrationsRun = true;
 
-      return { success: true, message: 'Database migrations completed successfully' };
+      return {
+        success: true,
+        message: 'Database migrations completed successfully',
+      };
     } catch (error) {
-      const errorMessage = `Error running migrations: ${error}`;
+      const errorMessage = `Error running migrations: ${error instanceof Error ? error.message : String(error)}`;
 
+      // eslint-disable-next-line no-console
       console.error(errorMessage);
 
       // In production, you might want to fail fast
       if (process.env.NODE_ENV === 'production') {
-        console.error('Migration failed in production. Application may not function correctly.');
+        // eslint-disable-next-line no-console
+        console.error(
+          'Migration failed in production. Application may not function correctly.',
+        );
       }
 
       return { success: false, message: errorMessage };
@@ -80,20 +92,23 @@ export class ServerMigrationRunner {
   /**
    * Check migration status
    */
-  public async getMigrationStatus(): Promise<{ success: boolean; status: string }> {
+  public async getMigrationStatus(): Promise<{
+    success: boolean;
+    status: string;
+  }> {
     try {
       const projectRoot = process.cwd();
       const output = execSync('npx migrate-mongo status', {
         cwd: projectRoot,
         encoding: 'utf8',
-        env: { ...process.env }
+        env: { ...process.env },
       });
 
       return { success: true, status: output };
     } catch (error) {
       return {
         success: false,
-        status: `Error checking migration status: ${error}`
+        status: `Error checking migration status: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -101,20 +116,22 @@ export class ServerMigrationRunner {
   /**
    * Create a new migration file
    */
-  public async createMigration(name: string): Promise<{ success: boolean; message: string }> {
+  public async createMigration(
+    name: string,
+  ): Promise<{ success: boolean; message: string }> {
     try {
       const projectRoot = process.cwd();
       const output = execSync(`npx migrate-mongo create ${name}`, {
         cwd: projectRoot,
         encoding: 'utf8',
-        env: { ...process.env }
+        env: { ...process.env },
       });
 
       return { success: true, message: output };
     } catch (error) {
       return {
         success: false,
-        message: `Error creating migration: ${error}`
+        message: `Error creating migration: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -122,7 +139,10 @@ export class ServerMigrationRunner {
   /**
    * Force run migrations (useful for development/testing)
    */
-  public async forceRunMigrations(): Promise<{ success: boolean; message: string }> {
+  public async forceRunMigrations(): Promise<{
+    success: boolean;
+    message: string;
+  }> {
     this.migrationsRun = false;
 
     return await this.runMigrations();

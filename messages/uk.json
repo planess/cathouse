@@ -32,6 +32,11 @@
     "saveUserErrorCommon": "Не вдалось зберегти реєстрацію",
     "internalError": "Проводимо технічну роботу. Реєстрація буде доступна дуже швидко.",
     "wrongCredentials": "Користувача не знайдено",
+    "title": {
+      "register": "Реєстрація",
+      "auth": "Авторизація",
+      "reset-password": "Відновлення пароля"
+    },
     "form": {
       "hint": {
         "password": "Мінімум {n} символів, використайте спеціальні символи"
@@ -40,17 +45,22 @@
         "email": "Email",
         "password": "Пароль",
         "register-button": "Поїхали",
-        "auth-button": "Увійти"
+        "auth-button": "Увійти",
+        "reset-password-button": "Надіслати листа"
       },
       "placeholder": {
         "auth-password": "Пароль до профілю",
         "email": "Персональний email",
+        "email-reset": "Email, на який зареєстрований акаунт",
         "password": "Придумайте надійний пароль"
       },
       "validation": {
         "minPasswordLength": "Мінімально {n} символів",
         "email": "Невірний формат email",
         "unknown": "Невідома дивна помилка"
+      },
+      "error": {
+        "required": "Поле обов'язкове"
       }
     }
   }

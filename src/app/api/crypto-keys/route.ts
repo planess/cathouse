@@ -1,23 +1,27 @@
 import { NextResponse } from 'next/server';
 
 import clientPromise from '../../ins/mongo-client';
+import { DbTables } from '@app/enum/db-tables';
 
 export async function GET() {
   try {
     const client = await clientPromise;
     const db = client.db();
-    const collection = db.collection('security');
+    const collection = db.collection(DbTables.encryption);
 
-    const keys = await collection.find({}).toArray();
+    // Find the most recent key sorted by createdAt
+    const record = await collection.findOne({}, { sort: { createdAt: -1 } });
 
-    // Convert dates back to proper format
-    const formattedKeys = keys.map((key) => ({
-      ...key,
-      createdAt: new Date(key.createdAt),
-      _id: key._id.toString(), // Convert ObjectId to string
-    }));
+    if (!record) {
+      return NextResponse.json(
+        { error: 'No encryption keys found' },
+        { status: 404 },
+      );
+    }
 
-    return NextResponse.json(formattedKeys);
+    return NextResponse.json({
+      key: record.publicKey,
+    });
   } catch {
     // console.error('Error fetching crypto keys:', error);
     return NextResponse.json(

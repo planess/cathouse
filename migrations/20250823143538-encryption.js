@@ -10,15 +10,16 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['algorithm', 'publicKey', 'privateKey', 'createdAt'],
+          required: ['algorithm', 'publicKey', 'privateKey', 'createdAt', 'createdBy'],
           properties: {
             algorithm: { bsonType: 'string' },
             publicKey: { bsonType: 'string' },
             privateKey: { bsonType: 'string' },
             createdAt: { bsonType: 'date' },
-          }
-        }
-      }
+            createdBy: { bsonType: 'objectId' },
+          },
+        },
+      },
     });
 
     await db.collection('encryption').createIndex({ createdAt: 1 });
@@ -33,5 +34,5 @@ module.exports = {
    */
   async down(db, client) {
     await db.collection('encryption').drop();
-  }
+  },
 };

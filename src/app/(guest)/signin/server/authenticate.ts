@@ -6,13 +6,14 @@ import { cookies as nextCookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 import { email, object, string, ZodError } from 'zod';
 
-import { decrypt } from '@app/helpers/decsrypt';
+import { DbTables } from '@app/enum/db-tables';
+import { decrypt } from '@app/helpers/decrypt';
 import { hashBlake2 } from '@app/helpers/hash-blake2';
 import clientPromise from '@app/ins/mongo-client';
 import { ResponseErrors } from '@app/models/response-errors.server';
 import { ServerActionResponse } from '@app/models/server-action-response.server';
 
-import { ServerFormData } from '../models/server-form-data';
+import { ServerFormData } from '../../models/server-form-data';
 
 export async function authenticate(
   rawData: ServerFormData,
@@ -49,7 +50,7 @@ export async function authenticate(
   const dbClient = await clientPromise;
   const db = dbClient.db();
   const securityRecords = await db
-    .collection('security')
+    .collection(DbTables.encryption)
     .findOne({}, { sort: { createdAt: -1 } });
 
   const privateKey = securityRecords?.privateKey as string;
@@ -88,13 +89,14 @@ export async function authenticate(
   try {
     // search user with credential combination
     record = await db
-      .collection('users')
+      .collection(DbTables.users)
       .findOne({ email: identifier, password: hash });
     console.log('--credentials', identifier, originPassword, hash);
     if (!record) {
       return { status: 'error', errors: { root: [t('wrongCredentials')] } };
     }
-  } catch {
+  } catch (error) {
+    console.error('Error finding user:', error);
     return { status: 'error' };
   }
 
@@ -110,12 +112,13 @@ export async function authenticate(
 
   try {
     // save into DB
-    await db.collection('sessions').insertOne({
-      userID: record.id,
+    await db.collection(DbTables.sessions).insertOne({
+      userID: record._id,
       token: sessionToken,
-      createdAt: Date.now(),
+      createdAt: new Date(),
     });
-  } catch {
+  } catch (error) {
+    console.error('Error saving session', error, record._id, sessionToken);
     return { status: 'error' };
   }
 
@@ -124,9 +127,9 @@ export async function authenticate(
   cookies.set('token', sessionToken, {
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     httpOnly: true,
-    // secure: true,
+    secure: process.env.NODE_ENV !== 'development',
     priority: 'high',
   });
 
-  return { status: 'ok', data: { token: sessionToken } };
+  return { status: 'ok' };
 }
