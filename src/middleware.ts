@@ -1,15 +1,28 @@
-import { NextResponse } from "next/server";
-import createMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from 'next/server';
 
-export default createMiddleware({
-  locales: ['en', 'uk'],
-  defaultLocale: 'uk',
-});
+export default function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-export function middleware(): NextResponse {
-  return NextResponse.next();
+  // Allow access to unavailable page and static files
+  if (
+    pathname.startsWith('/unavailable') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/assets') ||
+    pathname.startsWith('/fonts') ||
+    pathname.includes('favicon.ico') ||
+    pathname.includes('.') // Allow files with extensions
+  ) {
+    return NextResponse.next();
+  }
+
+  // Redirect all other requests to unavailable page
+  const url = request.nextUrl.clone();
+  url.pathname = '/unavailable';
+  url.search = '';
+  return NextResponse.redirect(url);
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|static|.*\\..*).*)"],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
