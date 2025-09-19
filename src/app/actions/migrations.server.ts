@@ -12,7 +12,7 @@ export async function runMigrations() {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to run migrations: ${error}`
+      message: `Failed to run migrations: ${error}`,
     };
   }
 }
@@ -26,7 +26,7 @@ export async function getMigrationStatus() {
   } catch (error) {
     return {
       success: false,
-      status: `Failed to check migration status: ${error}`
+      status: `Failed to check migration status: ${error}`,
     };
   }
 }
@@ -40,7 +40,7 @@ export async function forceRunMigrations() {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to force run migrations: ${error}`
+      message: `Failed to force run migrations: ${error}`,
     };
   }
 }
@@ -54,7 +54,7 @@ export async function createMigration(name: string) {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to create migration: ${error}`
+      message: `Failed to create migration: ${error}`,
     };
   }
 }
