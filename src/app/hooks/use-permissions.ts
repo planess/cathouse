@@ -16,7 +16,7 @@ export function usePermission(permission: SystemPermission, context?: string): C
   const isLoading = useUserLoading();
 
   const access = useMemo(
-    () => process.env.NODE_ENV === 'development' || (user?.scopes ?? []).includes(permission),
+    () => (user?.scopes ?? []).includes(permission),
     [user?.scopes, permission],
   );
 

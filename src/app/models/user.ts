@@ -1,8 +1,9 @@
+import { SystemPermission } from './system-permissions';
+
 export interface User {
   id: string;
   email: string;
-  name: string;
-  scopes: string[];
+  scopes: SystemPermission[];
   createdAt?: Date;
   lastLogin?: Date;
 }

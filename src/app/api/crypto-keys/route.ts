@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
-import clientPromise from '../../ins/mongo-client';
 import { DbTables } from '@app/enum/db-tables';
+
+import clientPromise from '../../ins/mongo-client';
 
 export async function GET() {
   try {
