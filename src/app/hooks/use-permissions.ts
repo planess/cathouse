@@ -2,6 +2,8 @@
 
 import { useMemo } from 'react';
 
+import { SystemPermission } from '@app/models/system-permissions';
+
 import { useUserLoading, useCurrentUser } from './use-user';
 
 interface CurrentUserPermission {
@@ -9,7 +11,7 @@ interface CurrentUserPermission {
   isLoading: boolean;
 }
 
-export function usePermission(permission: string, context?: string): CurrentUserPermission {
+export function usePermission(permission: SystemPermission, context?: string): CurrentUserPermission {
   const user = useCurrentUser();
   const isLoading = useUserLoading();
 
