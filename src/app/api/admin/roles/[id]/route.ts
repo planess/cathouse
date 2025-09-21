@@ -62,10 +62,12 @@ export async function PUT(
 // DELETE /api/admin/roles/:id - Delete a role (soft delete)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const dbClient = await clientPromise;
   const db = dbClient.db();
+
+  const { id } = await params;
 
   try {
     // TODO: Add authentication and permission check
@@ -81,7 +83,7 @@ export async function DELETE(
 
     // Soft delete - mark as inactive
     const result = await db.collection(DbTables.roles).updateOne(
-      { _id: new ObjectId(params.id) },
+      { _id: new ObjectId(id) },
       {
         $set: {
           isActive: false,
