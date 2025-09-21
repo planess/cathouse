@@ -5,9 +5,65 @@
     "history": "History",
     "help": "Help"
   },
+  "helppage": {
+    "title": "Mutual Aid",
+    "sections": {
+      "s1-title": "Let's together",
+      "s1-text": "help",
+      "s2-title": "support",
+      "s2-text": "each other"
+    }
+  },
   "contactspage": {
+    "title": "Contact",
     "aboutus": "We're a small, passionate team dedicated to animal welfare. While we don't have a physical shelter, we partner with veterinary clinics to provide treatment and temporary housing for animals in need as they wait for their forever homes.",
     "map1": "We primarily operate within the zone shown on the map. While our reach is focused, we strive to be helpful for as many animals as possible within our operational capacity.",
-    "map2": "We strive to expand our influence on helping stray animals over a larger zone. This requires the participation of more people, and we invite everyone to join the team."
+    "map2": "We strive to expand our influence on helping stray animals over a larger zone. This requires the participation of more people, and we invite everyone to join the team.",
+    "section1_title": "Always here",
+    "section2_title": "Message us",
+    "section2_intro": "Write your thoughts and we will try to take them into account in our work.",
+    "map_title": "Activity Zone"
+  },
+  "historypage": {
+    "title": "Potential friends",
+    "panel1": "The page displays part of the animals that are our history and inspiration. Each one has a unique story, characteristics and living conditions."
+  },
+  "authorization": {
+    "already-have-account-link": "Already registered",
+    "want-account-link": "Ready to register",
+    "saveUserErrorCommon": "Failed to save registration",
+    "internalError": "We are conducting technical work. Registration will be available very soon.",
+    "wrongCredentials": "User not found",
+    "title": {
+      "register": "Registration",
+      "auth": "Authorization",
+      "reset-password": "Password Recovery"
+    },
+    "form": {
+      "hint": {
+        "password": "Minimum {n} characters, use special characters"
+      },
+      "label": {
+        "email": "Email",
+        "password": "Password",
+        "register-button": "Let's go",
+        "auth-button": "Sign in",
+        "reset-password-button": "Send email"
+      },
+      "placeholder": {
+        "auth-password": "Profile password",
+        "email": "Personal email",
+        "email-reset": "Email where the account is registered",
+        "password": "Create a strong password"
+      },
+      "validation": {
+        "minPasswordLength": "Minimum {n} characters",
+        "email": "Invalid email format",
+        "unknown": "Unknown strange error"
+      },
+      "error": {
+        "required": "Field is required"
+      }
+    }
   }
 }
