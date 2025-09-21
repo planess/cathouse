@@ -72,7 +72,9 @@ export function RoleManagement() {
         name: formData.get('name') as string,
         description: formData.get('description') as string,
         permissions: formData.getAll('permissions') as string[],
-        inheritsFrom: formData.getAll('inheritsFrom').filter(Boolean) as string[],
+        inheritsFrom: formData
+          .getAll('inheritsFrom')
+          .filter(Boolean) as string[],
       };
 
       const response = await fetch('/api/admin/roles', {
@@ -88,7 +90,9 @@ export function RoleManagement() {
 
         void loadRoles();
       } else {
-        setError('Failed to create role');
+        const errorDetails = await response.json();
+        
+        setError('Failed to create role' + JSON.stringify(errorDetails.details));
       }
     } catch (err) {
       setError('Failed to create role');
@@ -107,7 +111,7 @@ export function RoleManagement() {
         isActive: formData.get('isActive') === 'true',
       };
 
-      const response = await fetch(`/api/admin/roles/${editingRole.id}`, {
+      const response = await fetch(`/api/admin/roles/${editingRole._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -117,9 +121,11 @@ export function RoleManagement() {
 
       if (response.ok) {
         setEditingRole(null);
-        loadRoles();
+        void loadRoles();
       } else {
-        setError('Failed to update role');
+        const errorDetails = await response.json();
+
+        setError('Failed to update role' + JSON.stringify(errorDetails.details));
       }
     } catch (err) {
       setError('Failed to update role');
@@ -152,10 +158,6 @@ export function RoleManagement() {
     return <div>Loading permissions...</div>;
   }
 
-  if (error !== null) {
-    return <div className="text-red-600">Error: {error}</div>;
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -180,6 +182,8 @@ export function RoleManagement() {
           </button>
         </PermissionGuard>
       </div>
+
+      <div className="border-t border-gray-200 pt-4">{error}</div>
 
       {/* Create Role Form */}
       {showCreateForm && (
