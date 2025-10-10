@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { redirect } from 'next/navigation';
 
+import { getUser } from '@app/hooks';
 import type { SystemPermission } from '@app/models/system-permissions';
 import { PermissionResolverService } from '@app/services/permission-resolver.service';
 
@@ -54,11 +55,10 @@ class AccessVerificationService extends Singleton {
       };
     }
 
-    const userPermissions =
-      await this.permissionResolver.getUserPermissions(
-        userId,
-        config.context,
-      );
+    const userPermissions = await this.permissionResolver.getUserPermissions(
+      userId,
+      config.context,
+    );
 
     let hasAccess = true;
     let denialReason: string | undefined;
@@ -109,7 +109,7 @@ class AccessVerificationService extends Singleton {
 
     if (!accessResult.hasAccess) {
       const redirectPath = config.unauthorizedRedirect ?? '/unauthorized';
-      
+
       redirect(redirectPath);
     }
 
@@ -161,11 +161,17 @@ const permissionResolverInstance =
  * Require user to have specific permission
  */
 export async function requirePermission(
-  userId: ObjectId,
   permission: SystemPermission,
   context?: string,
+  userId?: ObjectId,
 ): Promise<void> {
-  await accessServiceInstance.verifyPageAccess(userId, {
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  await accessServiceInstance.verifyPageAccess(a, {
     requiredPermissions: [permission],
     context,
   });
@@ -175,11 +181,17 @@ export async function requirePermission(
  * Require user to have any of the specified permissions
  */
 export async function requireAnyPermission(
-  userId: ObjectId,
   permissions: SystemPermission[],
   context?: string,
+  userId?: ObjectId,
 ): Promise<void> {
-  await accessServiceInstance.verifyPageAccess(userId, {
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  await accessServiceInstance.verifyPageAccess(a, {
     anyOfPermissions: permissions,
     context,
   });
@@ -189,11 +201,17 @@ export async function requireAnyPermission(
  * Require user to have all specified permissions
  */
 export async function requireAllPermissions(
-  userId: ObjectId,
   permissions: SystemPermission[],
   context?: string,
+  userId?: ObjectId,
 ): Promise<void> {
-  await accessServiceInstance.verifyPageAccess(userId, {
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  await accessServiceInstance.verifyPageAccess(a, {
     requiredPermissions: permissions,
     context,
   });
@@ -203,52 +221,65 @@ export async function requireAllPermissions(
  * Check if user has permission without redirecting
  */
 export async function hasPermission(
-  userId: ObjectId,
   permission: SystemPermission,
   context?: string,
+  userId?: ObjectId,
 ): Promise<boolean> {
-  return permissionResolverInstance.hasPermission(userId, permission, context);
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  return permissionResolverInstance.hasPermission(a, permission, context);
 }
 
 /**
  * Check if user has any of the specified permissions
  */
 export async function hasAnyPermission(
-  userId: ObjectId,
   permissions: SystemPermission[],
   context?: string,
+  userId?: ObjectId,
 ): Promise<boolean> {
-  return permissionResolverInstance.hasAnyPermission(
-    userId,
-    permissions,
-    context,
-  );
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  return permissionResolverInstance.hasAnyPermission(a, permissions, context);
 }
 
 /**
  * Check if user has all of the specified permissions
  */
 export async function hasAllPermissions(
-  userId: ObjectId,
   permissions: SystemPermission[],
   context?: string,
+  userId?: ObjectId,
 ): Promise<boolean> {
-  return permissionResolverInstance.hasAllPermissions(
-    userId,
-    permissions,
-    context,
-  );
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  return permissionResolverInstance.hasAllPermissions(a, permissions, context);
 }
 
 /**
  * Get all user permissions
  */
 export async function getUserPermissions(
-  userId: ObjectId,
   context?: string,
+  userId?: ObjectId,
 ): Promise<SystemPermission[]> {
-  return permissionResolverInstance.getUserPermissions(
-    userId,
-    context,
-  );
+  const a = userId ?? (await getUser())?.id;
+
+  if (!a) {
+    throw new Error('User not defined');
+  }
+
+  return permissionResolverInstance.getUserPermissions(a, context);
 }

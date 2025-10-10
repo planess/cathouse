@@ -1,23 +1,14 @@
 import { execSync } from 'child_process';
+import { rename } from 'node:fs/promises';
+
+import { Singleton } from './singleton';
 
 /**
  * Server-side migration runner
  * This should only be called from server-side code (API routes, server actions, etc.)
  */
-export class ServerMigrationRunner {
-  private static instance: ServerMigrationRunner;
+export class ServerMigrationRunner extends Singleton {
   private migrationsRun = false;
-
-  private constructor() {
-    // Private constructor to enforce singleton pattern
-  }
-
-  public static getInstance(): ServerMigrationRunner {
-    if (!ServerMigrationRunner.instance) {
-      ServerMigrationRunner.instance = new ServerMigrationRunner();
-    }
-    return ServerMigrationRunner.instance;
-  }
 
   /**
    * Check if migrations should run
@@ -121,13 +112,31 @@ export class ServerMigrationRunner {
   ): Promise<{ success: boolean; message: string }> {
     try {
       const projectRoot = process.cwd();
-      const output = execSync(`npx migrate-mongo create ${name}`, {
+      const output = execSync(`npx migrate-mongo create "${name}"`, {
         cwd: projectRoot,
         encoding: 'utf8',
         env: { ...process.env },
       });
 
-      return { success: true, message: output };
+      // rename file to use kebab-case instead of underscores
+      const formerFilename =
+        output.match(/Created:\s+(.+?\.js)\s/)?.[1] ?? null;
+
+      if (formerFilename === null) {
+        return {
+          success: false,
+          message: 'Could not determine created migration filename',
+        };
+      }
+
+      const filename = formerFilename.replaceAll('_', '-');
+
+      await rename(
+        `${projectRoot}/${formerFilename}`,
+        `${projectRoot}/${filename}`,
+      );
+
+      return { success: true, message: filename };
     } catch (error) {
       return {
         success: false,
@@ -156,4 +165,5 @@ export class ServerMigrationRunner {
   }
 }
 
-export const serverMigrationRunner = ServerMigrationRunner.getInstance();
+export const serverMigrationRunner =
+  ServerMigrationRunner.getInstance<ServerMigrationRunner>();

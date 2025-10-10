@@ -6,9 +6,9 @@ import { PermissionGuard } from '@app/components/permission-guard';
 import { Permission } from '@app/models/permission';
 import { Role } from '@app/models/role';
 
-import RoleCreating from '../role-creating';
-import RoleEditing from '../role-editing';
-import RoleList from '../role-list';
+import RoleCreating from './role-creating';
+import RoleEditing from './role-editing';
+import RoleList from './role-list';
 
 export function RoleManagement() {
   const [roles, setRoles] = useState<Role[]>([]);

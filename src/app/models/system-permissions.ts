@@ -13,63 +13,13 @@
  * - SYSTEM_PERMISSIONS.HELP_REQUEST_APPROVE = "help:request:approve"
  */
 export const SYSTEM_PERMISSIONS = {
-  // User management
-  /** Allows creating new user accounts in the system */
-  USER_CREATE: 'user:create',
-  /** Allows viewing user information and profiles */
-  USER_READ: 'user:read',
-  /** Allows modifying existing user information */
-  USER_UPDATE: 'user:update',
-  /** Allows permanently removing user accounts from the system */
-  USER_DELETE: 'user:delete',
+  // content maker
+  HISTORY_CREATE: 'history:create',
 
-  // Role management
-  /** Allows creating new roles and permission sets */
-  ROLE_CREATE: 'role:create',
-  /** Allows viewing role definitions and their permissions */
-  ROLE_READ: 'role:read',
-  /** Allows modifying existing role definitions and permissions */
-  ROLE_UPDATE: 'role:update',
-  /** Allows permanently removing roles from the system */
-  ROLE_DELETE: 'role:delete',
-  /** Allows assigning roles to users or removing roles from users */
+  // admin management
   ROLE_ASSIGN: 'role:assign',
-
-  // Content management
-  /** Allows creating new content items (posts, articles, etc.) */
-  CONTENT_CREATE: 'content:create',
-  /** Allows viewing content items */
-  CONTENT_READ: 'content:read',
-  /** Allows modifying existing content items */
-  CONTENT_UPDATE: 'content:update',
-  /** Allows permanently removing content items */
-  CONTENT_DELETE: 'content:delete',
-
-  // Help/Support management
-  /** Allows creating new help requests or support tickets */
-  HELP_REQUEST_CREATE: 'help:request:create',
-  /** Allows viewing help requests and their details */
-  HELP_REQUEST_READ: 'help:request:read',
-  /** Allows modifying help request information */
-  HELP_REQUEST_UPDATE: 'help:request:update',
-  /** Allows permanently removing help requests */
-  HELP_REQUEST_DELETE: 'help:request:delete',
-  /** Allows approving or rejecting help requests (moderation action) */
-  HELP_REQUEST_APPROVE: 'help:request:approve',
-
-  // History/Logs
-  /** Allows viewing system history, audit logs, and activity records */
-  HISTORY_READ: 'history:read',
-  /** Allows exporting system history and logs to external formats */
-  HISTORY_EXPORT: 'history:export',
-
-  // System administration
-  /** Allows changing system configuration settings */
-  SYSTEM_CONFIG: 'system:config',
-  /** Allows creating system backups and snapshots */
-  SYSTEM_BACKUP: 'system:backup',
-  /** Allows restoring system from backups */
-  SYSTEM_RESTORE: 'system:restore',
+  ROLE_CREATE: 'role:create',
+  ROLE_DELETE: 'role:delete',
 } as const;
 
 /**
