@@ -1,20 +1,18 @@
 import { createElement } from 'react';
 
-import { ElementType } from '../../models/element-type';
-import { FormFieldTag } from '../../models/form-field-tag';
+import { FormFieldErrorMessage } from '@app/models/form-field-error-message';
 
-export default function FormField<T extends ElementType>({
-  label,
-  hint,
-  config,
-  errors,
-  element,
-}: FormFieldTag<T>) {
-  const Element = createElement(element, {
-    className: 'bg-stone-50 flex-auto py-1 px-2 rounded-md',
-    ...config,
-  });
+export interface FormFieldProps {
+  label: string;
+  hint?: string;
+  errors?: FormFieldErrorMessage[];
+}
 
+interface A extends FormFieldProps {
+  Element: ReturnType<typeof createElement>;
+}
+
+export default function FormField({ Element, label, errors, hint }: A) {
   const errorHtml = (errors ?? []).map((error) => (
     <div className="flex px-2 py-[1px]" key={error}>
       <span className="basis-30 shrink-0" />

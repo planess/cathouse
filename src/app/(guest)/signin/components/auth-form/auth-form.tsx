@@ -9,7 +9,7 @@ import { Button } from '@app/components/button';
 import { encrypt } from '@app/helpers/encrypt-browser';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
-import FormField from '../../../components/form-field/form-field';
+import InputField from '../../../components/input-field/input-field';
 import { ServerFormData } from '../../../models/server-form-data';
 import { FormData as IAuthForm } from '../../models/form-data';
 import { authenticate } from '../../server/authenticate';
@@ -80,7 +80,7 @@ export default function AuthForm() {
   return (
     <form onSubmit={silentSubmit} className="flex flex-col gap-2">
       <div>
-        <FormField
+        <InputField
           label={t('form.label.email')}
           element="input"
           config={{
@@ -90,7 +90,7 @@ export default function AuthForm() {
         />
       </div>
       <div>
-        <FormField
+        <InputField
           label={t('form.label.password')}
           element="input"
           config={{

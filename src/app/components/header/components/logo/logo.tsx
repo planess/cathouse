@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, MouseEvent } from 'react';
 
-import logo from '@public/assets/logo.svg';
+import logo from '@public/assets/logo3.svg';
 
 export default function Logo() {
   const router = useRouter();

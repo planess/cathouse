@@ -26,7 +26,13 @@
   },
   "historypage": {
     "title": "Potential friends",
-    "panel1": "The page displays part of the animals that are our history and inspiration. Each one has a unique story, characteristics and living conditions."
+    "panel1": "The page displays part of the animals that are our history and inspiration. Each one has a unique story, characteristics and living conditions.",
+    "createHistory": "Create new history",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "summary": "Page {page} of {total}"
+    }
   },
   "authorization": {
     "already-have-account-link": "Already registered",

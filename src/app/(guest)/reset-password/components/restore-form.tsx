@@ -9,7 +9,7 @@ import { encrypt } from '@app/helpers/encrypt-browser';
 import { formatDuration } from '@app/helpers/format-duration';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
-import FormField from '../../components/form-field/form-field';
+import InputField from '../../components/input-field/input-field';
 import { ServerFormData } from '../../models/server-form-data';
 import { changePassword } from '../server/change-password';
 import { useTranslations } from 'next-intl';
@@ -88,7 +88,7 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
     <div>
       <form onSubmit={silentSubmit} className="flex flex-col gap-4">
         <div>
-          <FormField
+          <InputField
             label="New Password"
             element="input"
             config={{

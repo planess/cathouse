@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@app/components/button';
 import { HandlerParams } from '@app/models/handler-params.server';
 
-import FormField from '../../components/form-field/form-field';
+import InputField from '../../components/input-field/input-field';
 
 interface FormData {
   identifier: string;
@@ -38,7 +38,7 @@ export default function AuthForm({ handler }: HandlerParams<string>) {
   return (
     <form onSubmit={silentSubmit} className="flex flex-col gap-2">
       <div>
-        <FormField
+        <InputField
           label={t('form.label.email')}
           element="input"
           config={{

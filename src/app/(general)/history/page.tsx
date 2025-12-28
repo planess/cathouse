@@ -8,10 +8,23 @@ import { hasPermission } from '@app/services/access-verification.service';
 import List from './components/list/list';
 import Panel from './components/panel/panel';
 
-export default async function History() {
+type HistoryPageProps = {
+  searchParams?: {
+    page?: string | string[];
+  };
+};
+
+export default async function History({ searchParams }: HistoryPageProps) {
   const t = await getTranslations('historypage');
   const user = await getUser();
   const isAdmin = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE);
+  const rawPage = Array.isArray(searchParams?.page)
+    ? searchParams?.page?.[0]
+    : searchParams?.page;
+  const parsedPage = Number(rawPage ?? 1);
+  const currentPage = Number.isFinite(parsedPage) && parsedPage > 0
+    ? Math.floor(parsedPage)
+    : 1;
 
   return (
     <div className="px-6 py-7">
@@ -26,8 +39,6 @@ export default async function History() {
       {user && (
         <div className="text-center mb-4">
           <p>Welcome, {user.profile.firstName}!</p>
-
-          {}
         </div>
       )}
 
@@ -42,7 +53,7 @@ export default async function History() {
         </div>
       )}
 
-      <List list={[]} />
+      <List page={currentPage} />
     </div>
   );
 }

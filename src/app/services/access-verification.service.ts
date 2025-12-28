@@ -228,7 +228,7 @@ export async function hasPermission(
   const a = userId ?? (await getUser())?.id;
 
   if (!a) {
-    throw new Error('User not defined');
+    return false;
   }
 
   return permissionResolverInstance.hasPermission(a, permission, context);

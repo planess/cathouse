@@ -9,7 +9,7 @@ import { Button } from '@app/components/button';
 import { encrypt } from '@app/helpers/encrypt-browser';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
-import FormField from '../../../components/form-field/form-field';
+import InputField from '../../../components/input-field/input-field';
 import { FormData } from '../../models/form-data';
 import { ServerFormData } from '../../models/server-form-data';
 import { register as handler } from '../../server/register';
@@ -80,7 +80,7 @@ export default function RegisterForm() {
   return (
     <form className="flex flex-col gap-2" onSubmit={silentSubmit}>
       <div>
-        <FormField
+        <InputField
           label={t('form.label.email')}
           element="input"
           config={{
@@ -96,7 +96,7 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <FormField
+        <InputField
           label={t('form.label.password')}
           element="input"
           config={{

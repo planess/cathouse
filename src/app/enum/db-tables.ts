@@ -6,4 +6,7 @@ export enum DbTables {
   sessions = 'sessions',
   users = 'users',
   usersRestorePasswords = 'users-restore-passwords',
+  animals = 'animals',
+  people = 'people',
+  clinics = 'clinics',
 }
