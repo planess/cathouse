@@ -1,9 +1,11 @@
 'use server';
 
+import { InsertOneResult } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
 import { string, object, email, ZodError } from 'zod';
 
-import { decrypt } from '@app/helpers/decsrypt';
+import { DbTables } from '@app/enum/db-tables';
+import { decrypt } from '@app/helpers/decrypt';
 import { hashBlake2 } from '@app/helpers/hash-blake2';
 import clientPromise from '@app/ins/mongo-client';
 import { ResponseErrors } from '@app/models/response-errors.server';
@@ -16,7 +18,9 @@ interface FormData {
 
 const minPasswordLength = 6;
 
-export async function register(formData: FormData): Promise<ServerActionResponse> {
+export async function register(
+  formData: FormData,
+): Promise<ServerActionResponse> {
   let identifier: string;
   let passHash: string;
 
@@ -52,7 +56,7 @@ export async function register(formData: FormData): Promise<ServerActionResponse
   const dbP = await clientPromise;
   const db = dbP.db();
   const dbRecords = await db
-    .collection('security')
+    .collection(DbTables.encryption)
     .findOne({}, { sort: { createdAt: -1 } });
 
   const privateKey = dbRecords?.privateKey as string;
@@ -107,18 +111,15 @@ export async function register(formData: FormData): Promise<ServerActionResponse
   const hash = await hashBlake2(originPassword, `!!${identifier}`);
 
   // Save new user into db collection 'users'
+  let insertResult: InsertOneResult;
   try {
-    // Find the maximum id in the users collection
-    const maxIdUser = await db
-      .collection('users')
-      .findOne<{ id: number }>({}, { sort: { id: -1 }, projection: { id: 1 } });
-    const id = (maxIdUser?.id ?? 0) + 1;
-
-    await db.collection('users').insertOne({
-      id, // unique
+    insertResult = await db.collection(DbTables.users).insertOne({
       email: identifier, // unique
+      emailVerified: false,
       password: hash,
-      createdAt: Date.now(),
+      isActive: true,
+      roles: [],
+      createdAt: new Date(),
     });
   } catch (error) {
     return {
@@ -126,6 +127,22 @@ export async function register(formData: FormData): Promise<ServerActionResponse
       errors: {
         root: [
           error instanceof Error ? error.message : t('saveUserErrorCommon'),
+        ],
+      },
+    };
+  }
+
+  // Save profile
+  try {
+    await db.collection(DbTables.profiles).insertOne({
+      userID: insertResult.insertedId,
+    });
+  } catch (error) {
+    return {
+      status: 'error',
+      errors: {
+        root: [
+          error instanceof Error ? error.message : t('saveProfileErrorCommon'),
         ],
       },
     };

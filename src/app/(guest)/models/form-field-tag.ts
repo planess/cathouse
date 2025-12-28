@@ -1,14 +1,11 @@
 import { JSX } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
-import { FormFieldErrorMessage } from '@app/models/form-field-error-message';
+import { FormFieldProps } from '../components/form-field/form-field';
 
 import { ElementType } from './element-type';
 
-export interface FormFieldTag<T extends ElementType> {
-  label: string;
-  hint?: string;
-  config: UseFormRegisterReturn & JSX.IntrinsicElements[T];
+export interface FormFieldTag<T extends ElementType> extends FormFieldProps {
   element: T;
-  errors?: FormFieldErrorMessage[];
+  config: UseFormRegisterReturn & JSX.IntrinsicElements[T];
 }

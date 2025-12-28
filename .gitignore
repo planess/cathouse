@@ -12,10 +12,12 @@
 
 # testing
 /coverage
+.playwright-mcp/
 
 # next.js
 /.next/
 /out/
+.swc/
 
 # production
 /build
@@ -37,10 +39,11 @@ yarn-error.log*
 .info
 
 # vercel
-.vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# IDE
+.vscode/

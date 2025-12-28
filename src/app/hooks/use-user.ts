@@ -1,62 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role?: string;
-  createdAt?: Date;
-  lastLogin?: Date;
-}
+import { User } from '@app/models/user';
+import { UserContext } from '@app/providers/user';
 
 export interface AuthState {
   user: User | null;
   isLoading: boolean;
 }
 
-// Client-side hook implementation
-export function useUser(): AuthState {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    isLoading: true,
-  });
+export function useUser() {
+  const context = useContext(UserContext);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Check if user is authenticated (implement your logic here)
-        const token = localStorage.getItem('authToken');
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
 
-        if (token !== null) {
-          // TODO: Validate token with your backend
-          // const user = await validateToken(token);
-          // setAuthState({ user, isLoading: false });
-
-          // For now, just set loading to false
-          setAuthState({
-            user: null,
-            isLoading: false,
-          });
-        } else {
-          setAuthState({
-            user: null,
-            isLoading: false,
-          });
-        }
-      } catch {
-        setAuthState({
-          user: null,
-          isLoading: false,
-        });
-      }
-    };
-
-    void checkAuth();
-  }, []);
-
-  return authState;
+  return context;
 }
 
 // Convenience hooks for client components
@@ -72,8 +33,14 @@ export function useCurrentUser(): User | null {
   return user;
 }
 
-export function useAuthLoading(): boolean {
+export function useUserLoading(): boolean {
   const { isLoading } = useUser();
 
   return isLoading;
+}
+
+export function useUserRefreshing(): boolean {
+  const { isRefreshing } = useUser();
+
+  return isRefreshing;
 }

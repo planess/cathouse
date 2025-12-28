@@ -5,6 +5,16 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   // devIndicators: false,
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'pub-b01557542cb14ab3a2c20e32a7373072.r2.dev',
+        protocol: 'https',
+        pathname: '/**',
+        search: '',
+      },
+    ],
+  },
 };
 
 const intlPlugin = createNextIntlPlugin();

@@ -8,7 +8,7 @@ export default function Signup() {
 
   return (
     <div className="px-6 py-7">
-      <h1 className="text-3xl text-center mb-5">Реєстрація</h1>
+      <h1 className="text-3xl text-center mb-5">{t('title.register')}</h1>
 
       <div className="mb-3">
         <div className="text-center mb-3 -mx-6 p-3 bg-amber-50 border border-amber-100 text-lime-900">

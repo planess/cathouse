@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 
+import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 
 import clientPromise from '../../../ins/mongo-client';
@@ -19,30 +20,29 @@ export async function POST() {
       },
     });
 
-    const keyPairData = {
-      id: crypto.randomUUID(),
-      publicKey,
-      privateKey,
-      createdAt: new Date(),
-      algorithm: 'RSA-2048',
-    };
+    const createdAt = new Date();
+    const algorithm = 'RSA-2048';
 
     // Save to database
     const client = await clientPromise;
     const db = client.db();
-    const collection = db.collection('security');
+    const collection = db.collection('encryption');
 
-    const result = await collection.insertOne(keyPairData);
+    const result = await collection.insertOne({
+      id: crypto.randomUUID(),
+      algorithm,
+      publicKey,
+      privateKey,
+      createdAt,
+      createdBy: new ObjectId(crypto.createHash('md5').update('system').digest('hex').slice(0, 24)), // todo: change to real user id
+    });
 
     // Return only the public key to the client (private key stays on server)
     return NextResponse.json({
-      id: result.insertedId.toString(),
-      publicKey: keyPairData.publicKey,
-      createdAt: keyPairData.createdAt,
-      algorithm: keyPairData.algorithm,
+      key: publicKey,
     });
-  } catch {
-    // console.error('Error generating crypto key pair:', error);
+  } catch (error) {
+    console.error('Error generating crypto key pair:', error);
     return NextResponse.json(
       { error: 'Failed to generate key pair' },
       { status: 500 },
