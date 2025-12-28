@@ -19,6 +19,8 @@ export interface Role {
   description: string;
   /** Array of permission IDs that this role grants to users - defines what actions users with this role can perform */
   permissions: string[]; // Permission IDs
+  /** Array of permission IDs resolved from both direct permissions and inherited roles */
+  resolvedPermissions?: string[]; // Optional aggregated permissions
   /** Array of role IDs that this role inherits from - allows roles to automatically get permissions from other roles */
   inheritsFrom: string[]; // Role IDs to inherit from
   /** Whether this role is currently active and can be assigned to users - inactive roles are ignored in permission checks */

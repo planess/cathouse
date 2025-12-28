@@ -10,6 +10,18 @@ import RoleCreating from './role-creating';
 import RoleEditing from './role-editing';
 import RoleList from './role-list';
 
+const getStringArray = (formData: FormData, field: string): string[] => {
+  const uniqueValues = new Set<string>();
+
+  for (const value of formData.getAll(field)) {
+    if (typeof value === 'string' && value.trim().length > 0) {
+      uniqueValues.add(value);
+    }
+  }
+
+  return Array.from(uniqueValues);
+};
+
 export function RoleManagement() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -71,10 +83,8 @@ export function RoleManagement() {
       const roleData = {
         name: formData.get('name') as string,
         description: formData.get('description') as string,
-        permissions: formData.getAll('permissions') as string[],
-        inheritsFrom: formData
-          .getAll('inheritsFrom')
-          .filter(Boolean) as string[],
+        permissions: getStringArray(formData, 'permissions'),
+        inheritsFrom: getStringArray(formData, 'inheritsFrom'),
       };
 
       const response = await fetch('/api/admin/roles', {
@@ -106,8 +116,8 @@ export function RoleManagement() {
       const roleData = {
         name: formData.get('name') as string,
         description: formData.get('description') as string,
-        permissions: formData.getAll('permissions') as string[],
-        inheritsFrom: formData.getAll('inheritsFrom') as string[],
+        permissions: getStringArray(formData, 'permissions'),
+        inheritsFrom: getStringArray(formData, 'inheritsFrom'),
         isActive: formData.get('isActive') === 'true',
       };
 
@@ -200,6 +210,7 @@ export function RoleManagement() {
         <RoleEditing
           activeRole={editingRole}
           permissions={permissions}
+          roles={roles}
           submit={handleUpdateRole}
           cancel={() => setEditingRole(null)}
         />

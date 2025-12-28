@@ -4,6 +4,7 @@ import { Role } from '@app/models/role';
 interface RoleEditingProps {
   activeRole: Role;
   permissions: Permission[];
+  roles: Role[];
   cancel: () => void;
   submit: (formData: FormData) => void;
 }
@@ -11,9 +12,11 @@ interface RoleEditingProps {
 export default function RoleEditing({
   activeRole,
   permissions,
+  roles,
   cancel,
   submit,
 }: RoleEditingProps) {
+  const inheritableRoles = roles.filter(({ _id }) => _id !== activeRole._id);
   return (
     <div className="border rounded-lg p-6 bg-gray-50">
       <h3 className="text-lg font-semibold mb-4">
@@ -80,6 +83,27 @@ export default function RoleEditing({
             />
             <span className="text-sm">Active</span>
           </label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Inherits From
+          </label>
+          <p className="text-xs text-gray-500 mb-2">
+            Select roles whose permissions should cascade into this role.
+          </p>
+          <select
+            name="inheritsFrom"
+            multiple
+            defaultValue={activeRole.inheritsFrom}
+            className="w-full px-3 py-2 border rounded-md min-h-[7rem]"
+            size={Math.min(inheritableRoles.length, 6) || 1}
+          >
+            {inheritableRoles.map((role) => (
+              <option key={role._id} value={role._id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex gap-2">
           <button

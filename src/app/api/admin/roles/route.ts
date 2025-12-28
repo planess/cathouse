@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import { array, object, string, ZodError } from 'zod';
 
@@ -13,6 +14,104 @@ const RoleValidator = object({
   permissions: array(string()).min(1),
   inheritsFrom: array(string()),
 });
+
+type RawRoleDocument = {
+  _id: ObjectId;
+  name: string;
+  description?: string;
+  permissions?: ObjectId[];
+  inherits?: ObjectId[];
+  isActive?: boolean;
+  createdAt?: Date | string;
+  createdBy?: ObjectId | string;
+};
+
+type NormalizedRole = {
+  _id: string;
+  name: string;
+  description: string;
+  permissions: string[];
+  inheritsFrom: string[];
+  resolvedPermissions?: string[];
+  isActive: boolean;
+  createdAt?: string;
+  createdBy?: string;
+};
+
+const normalizeRoleDocument = (role: RawRoleDocument): NormalizedRole => {
+  const permissions = (role.permissions ?? []).map((id) => id.toString());
+  const inheritsFrom = (role.inherits ?? []).map((id) => id.toString());
+  const createdAt =
+    typeof role.createdAt === 'string'
+      ? role.createdAt
+      : role.createdAt?.toISOString();
+
+  return {
+    _id: role._id.toString(),
+    name: role.name,
+    description: role.description ?? '',
+    permissions,
+    inheritsFrom,
+    isActive: role.isActive ?? false,
+    createdAt,
+    createdBy:
+      typeof role.createdBy === 'string'
+        ? role.createdBy
+        : role.createdBy?.toString(),
+  };
+};
+
+const resolvePermissionsWithInheritance = (
+  roles: NormalizedRole[],
+): NormalizedRole[] => {
+  const roleMap = new Map<string, NormalizedRole>();
+  const resolvedCache = new Map<string, Set<string>>();
+
+  for (const role of roles) {
+    roleMap.set(role._id, role);
+  }
+
+  const resolvePermissions = (
+    roleId: string,
+    visiting: Set<string> = new Set(),
+  ): Set<string> => {
+    if (resolvedCache.has(roleId)) {
+      return resolvedCache.get(roleId)!;
+    }
+
+    if (visiting.has(roleId)) {
+      return new Set();
+    }
+
+    const role = roleMap.get(roleId);
+
+    if (!role) {
+      return new Set();
+    }
+
+    const aggregate = new Set(role.permissions);
+    const nextVisiting = new Set(visiting);
+
+    nextVisiting.add(roleId);
+
+    for (const parentId of role.inheritsFrom) {
+      const inheritedPermissions = resolvePermissions(parentId, nextVisiting);
+
+      for (const permission of inheritedPermissions) {
+        aggregate.add(permission);
+      }
+    }
+
+    resolvedCache.set(roleId, aggregate);
+
+    return aggregate;
+  };
+
+  return roles.map((role) => ({
+    ...role,
+    resolvedPermissions: Array.from(resolvePermissions(role._id)),
+  }));
+};
 
 // GET /api/admin/roles - Get all roles
 export async function GET(request: NextRequest) {
@@ -31,18 +130,15 @@ export async function GET(request: NextRequest) {
     const dbClient = await clientPromise;
     const db = dbClient.db();
 
-    const roles = await db.collection(DbTables.roles).find({}).toArray();
+    const roles = await db
+      .collection<RawRoleDocument>(DbTables.roles)
+      .find({})
+      .toArray();
 
-    const transformedRoles = roles.map((role) => {
-      const { inherits, ...rest } = role;
+    const normalizedRoles = roles.map(normalizeRoleDocument);
+    const resolvedRoles = resolvePermissionsWithInheritance(normalizedRoles);
 
-      return {
-        ...rest,
-        inheritsFrom: inherits as string[],
-      };
-    });
-
-    return NextResponse.json({ roles: transformedRoles });
+    return NextResponse.json({ roles: resolvedRoles });
   } catch (error) {
     console.error('Error fetching roles:', error);
     return NextResponse.json(

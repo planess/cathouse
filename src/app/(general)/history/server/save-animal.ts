@@ -47,6 +47,8 @@ export async function saveAnimal(
       draft: true,
       createdAt: now,
       createdBy: user.id,
+      ...(data.informator ? { informator: new ObjectId(data.informator) } : {}),
+      ...(data.description ? { description: data.description } : {}),
       ...(data.chipNumber ? { chipNumber: data.chipNumber } : {}),
       ...(data.birthday ? { birthday: data.birthday } : {}),
     });

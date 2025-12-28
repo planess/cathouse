@@ -6,6 +6,8 @@ import clientPromise from '@app/ins/mongo-client';
 
 import Card from '../card/card';
 import type { AnimalDocument } from '@app/models/animal';
+import { hasPermission } from '@app/services/access-verification.service';
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 
 const PAGE_SIZE = 10;
 
@@ -25,8 +27,11 @@ export default async function List({ page = 1 }: ListProps) {
   const safePage = Math.min(currentPage, totalPages);
   const skip = (safePage - 1) * PAGE_SIZE;
 
+  const isModerator = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE); // Placeholder for future use
+console.log('--- isModerator', isModerator);
+  // find only non-draft animals for general users
   const animals = await animalsCollection
-    .find({})
+    .find(isModerator ? {} : { draft: { $ne: true } })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(PAGE_SIZE)

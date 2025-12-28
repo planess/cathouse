@@ -135,7 +135,7 @@ export async function register(
   // Save profile
   try {
     await db.collection(DbTables.profiles).insertOne({
-      userID: insertResult.insertedId,
+      _id: insertResult.insertedId,
     });
   } catch (error) {
     return {

@@ -5,7 +5,7 @@ import type {
 } from '@app/models/animal';
 import { AnimalSex, AnimalStatus } from '@app/models/animal';
 
-export const placeholderImage = '/assets/help/medicine.png';
+export const placeholderImage = 'animals/empty-placeholder.jpg';
 
 export const statusTone: Record<AnimalStatus, string> = {
   [AnimalStatus.free]: 'bg-emerald-100 text-emerald-800',
@@ -34,13 +34,13 @@ export function resolveAnimalImage(
   domain?: string,
 ): string {
   const sanitizedDomain = domain?.replace(/\/$/, '');
-  const key = data.mainAsset?.key;
+  const key = data.mainAsset?.key ?? placeholderImage;
 
   if (key && sanitizedDomain) {
     return `${sanitizedDomain}/${key}`;
   }
 
-  return key ?? placeholderImage;
+  return key;
 }
 
 export function getAgeLabel(birthday?: Date) {

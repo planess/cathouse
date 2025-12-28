@@ -5,6 +5,8 @@ export interface ValidatedAnimalPayload {
   name: string;
   species: AnimalSpecies;
   sex: AnimalSex;
+  description?: string;
+  informator?: string;
   status: AnimalStatus;
   chipNumber?: string;
   birthday?: Date;
@@ -40,6 +42,11 @@ export function normalizeFormData(formData: FormData): ValidationResult {
   // if (birthdayValue === 'invalid') {
   //   return { success: false, error: 'Birth date is invalid.' };
   // }
+  const informator = getString(formData, 'informator') ?? undefined;
+  if (informator) {
+    // check if valid ObjectId?
+
+  }
 
   const statusValue = getString(formData, 'status');
   const status =
@@ -55,8 +62,10 @@ export function normalizeFormData(formData: FormData): ValidationResult {
       name,
       species: speciesValue as AnimalSpecies,
       sex: sexValue as AnimalSex,
+      description: getString(formData, 'description') ?? undefined,
       status,
       chipNumber,
+      informator,
       files: extractFiles(formData, 'image'),
     },
   };

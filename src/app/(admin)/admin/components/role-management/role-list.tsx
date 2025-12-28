@@ -17,10 +17,41 @@ export default function RoleList({
   onEdit,
   onDelete,
 }: RoleListProps) {
+  const renderPermissionBadges = (permissionIds: string[]) => {
+    if (permissionIds.length === 0) {
+      return (
+        <span className="text-xs text-gray-500">
+          No permissions assigned
+        </span>
+      );
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {permissionIds.map((permissionId) => {
+          const permission = permissions.find(({ _id }) => _id === permissionId);
+
+          return permission ? (
+            <span
+              key={permissionId}
+              className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
+            >
+              {permission.name}({permission.resource}:{permission.action})
+            </span>
+          ) : null;
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
       {roles.map((role) => (
-        <div key={role._id} className="border rounded-lg p-4">
+        <div
+          key={role._id}
+          className="border rounded-lg p-4"
+          data-role-id={role._id}
+        >
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-lg font-semibold">{role.name}</h3>
@@ -59,42 +90,43 @@ export default function RoleList({
             <h4 className="text-sm font-medium text-gray-700 mb-2">
               Inherits From:
             </h4>
-            <div className="flex flex-wrap gap-1">
-              {role.inheritsFrom.map((parentRoleId) => {
-                const parentRole = roles.find(
-                  ({ _id }) => _id === parentRoleId,
-                );
+            {role.inheritsFrom.length === 0 ? (
+              <span className="text-xs text-gray-500">
+                Does not inherit from other roles
+              </span>
+            ) : (
+              <div className="flex flex-wrap gap-1">
+                {role.inheritsFrom.map((parentRoleId) => {
+                  const parentRole = roles.find(
+                    ({ _id }) => _id === parentRoleId,
+                  );
 
-                return parentRole ? (
-                  <span
-                    key={parentRoleId}
-                    className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
-                  >
-                    {parentRole.name}
-                  </span>
-                ) : null;
-              })}
-            </div>
+                  return parentRole ? (
+                    <span
+                      key={parentRoleId}
+                      className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
+                    >
+                      {parentRole.name}
+                    </span>
+                  ) : null;
+                })}
+              </div>
+            )}
           </div>
-          <div className="mt-3">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">
-              Permissions:
-            </h4>
-            <div className="flex flex-wrap gap-1">
-              {role.permissions.map((permossionCode) => {
-                const permission = permissions.find(
-                  ({ _id }) => _id === permossionCode,
-                );
-
-                return permission ? (
-                  <span
-                    key={permossionCode}
-                    className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
-                  >
-                    {permission.name}({permission.resource}:{permission.action})
-                  </span>
-                ) : null;
-              })}
+          <div className="mt-3 space-y-3">
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                Effective Permissions (including inherited)
+              </h4>
+              {renderPermissionBadges(
+                role.resolvedPermissions ?? role.permissions,
+              )}
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                Direct Permissions
+              </h4>
+              {renderPermissionBadges(role.permissions)}
             </div>
           </div>
         </div>

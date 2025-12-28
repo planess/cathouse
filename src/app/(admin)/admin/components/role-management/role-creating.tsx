@@ -48,11 +48,15 @@ export default function RoleCreating({
           <label className="block text-sm font-medium mb-1">
             Inherits From
           </label>
+          <p className="text-xs text-gray-500 mb-2">
+            Select one or more roles whose permissions should be inherited.
+          </p>
           <select
             name="inheritsFrom"
-            className="w-full px-3 py-2 border rounded-md"
+            multiple
+            className="w-full px-3 py-2 border rounded-md min-h-[7rem]"
+            size={Math.min(roles.length, 6) || 1}
           >
-            <option value="">Select a role</option>
             {roles.map((role) => (
               <option key={role._id} value={role._id}>
                 {role.name}
