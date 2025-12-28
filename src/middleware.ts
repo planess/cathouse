@@ -1,28 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export default function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+import { routing } from './i18n/routing';
 
-  // Allow access to unavailable page and static files
+const COOKIE_NAME =
+  typeof routing.localeCookie === 'boolean'
+    ? 'test-locale-cookie'
+    : (routing.localeCookie?.name ?? 'test-locale-cookie');
+const SUPPORTED_LOCALES = routing.locales;
+
+// Skip static files & Next internals
+export const config = {
+  matcher: ['/((?!api|_next|static|.*\\..*).*)'],
+};
+
+export default function middleware(req: NextRequest) {
+  // If user already has a valid cookie — do nothing.
+  const existing = req.cookies.get(COOKIE_NAME)?.value;
+
   if (
-    pathname.startsWith('/unavailable') ||
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/assets') ||
-    pathname.startsWith('/fonts') ||
-    pathname.includes('favicon.ico') ||
-    pathname.includes('.') // Allow files with extensions
+    existing !== undefined &&
+    SUPPORTED_LOCALES.includes(existing as (typeof SUPPORTED_LOCALES)[number])
   ) {
     return NextResponse.next();
   }
 
-  // Redirect all other requests to unavailable page
-  const url = request.nextUrl.clone();
-  url.pathname = '/unavailable';
-  url.search = '';
-  return NextResponse.redirect(url);
+  // Detect and set once.
+  const detected = pickSupportedLocale(req.headers.get('accept-language'));
+  const res = NextResponse.next();
+
+  res.cookies.set({
+    name: COOKIE_NAME,
+    value: detected,
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    path: '/',
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV !== 'development', // optional
+  });
+
+  return res;
 }
 
-export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-};
+function pickSupportedLocale(acceptLanguage: string | null) {
+  if (acceptLanguage === null) {
+    return routing.defaultLocale;
+  }
+
+  // Very small parser: "uk-UA,uk;q=0.9,en;q=0.8"
+  // We check each tag in order and return first supported base tag.
+  for (const part of acceptLanguage.split(',')) {
+    const tag = part.split(';')[0].trim().toLowerCase(); // "uk-ua" | "uk" | "en"
+    const base = tag.split('-')[0]; // "uk" | "en"
+
+    if (
+      SUPPORTED_LOCALES.includes(base as (typeof SUPPORTED_LOCALES)[number])
+    ) {
+      return base;
+    }
+  }
+
+  return routing.defaultLocale;
+}

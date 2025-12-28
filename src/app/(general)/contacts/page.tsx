@@ -116,7 +116,7 @@ export default function Contacts() {
 
           <Section title={t('section2_title')}>
             <div className="mb-3">
-              Пишіть свої думки а ми постараємось врахувати їх у нашій роботі.
+              {t('section2_intro')}
             </div>
 
             <div>
@@ -126,7 +126,7 @@ export default function Contacts() {
         </div>
 
         <div className="flex-1/2 grow-0 shrink-0 md:pl-6">
-          <h3 className="text-2xl font-bold mb-5">Зона діяльності</h3>
+          <h3 className="text-2xl font-bold mb-5">{t('map_title')}</h3>
 
           <div className="flex flex-col gap-3 mb-4">
             <p>{t('map1')}</p>
