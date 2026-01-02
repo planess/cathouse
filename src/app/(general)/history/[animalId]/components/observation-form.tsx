@@ -3,8 +3,10 @@
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
 } from 'react';
@@ -14,9 +16,16 @@ import {
   createObservation,
   type SerializedObservation,
 } from '../server/create-observation';
+import { createInformator } from '../server/create-informator';
 import { HealthSlider } from './health-slider';
 import { LocationField, type LocationValue } from './location-field';
 import type { InformatorOption } from '../types';
+import { useModal } from '@app/hooks/use-modal';
+import { PlusIcon } from './icons';
+
+type CreateInformatorFormHandle = {
+  submit: () => Promise<InformatorOption>;
+};
 
 export type ObservationFormHandle = {
   submit: () => Promise<SerializedObservation>;
@@ -32,6 +41,7 @@ const ACCEPTED_MIME = 'image/png,image/jpeg';
 export const ObservationForm = forwardRef<ObservationFormHandle, ObservationFormProps>(
   ({ animalId, informatorOptions }, ref) => {
     const t = useTranslations('historypage.personal');
+    const modal = useModal();
     const [note, setNote] = useState('');
     const [informator, setInformator] = useState('');
     const [health, setHealth] = useState(5);
@@ -39,6 +49,16 @@ export const ObservationForm = forwardRef<ObservationFormHandle, ObservationForm
     const [files, setFiles] = useState<File[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [informatorOptionsState, setInformatorOptionsState] = useState(informatorOptions);
+    const informatorFormRef = useRef<CreateInformatorFormHandle | null>(null);
+    const collator = useMemo(
+      () => new Intl.Collator(undefined, { sensitivity: 'accent', numeric: true }),
+      [],
+    );
+
+    useEffect(() => {
+      setInformatorOptionsState(informatorOptions);
+    }, [informatorOptions]);
 
     const attachmentsSize = useMemo(
       () => files.reduce((total, file) => total + file.size, 0),
@@ -121,9 +141,45 @@ export const ObservationForm = forwardRef<ObservationFormHandle, ObservationForm
       }
     }, [animalId, files, health, informator, location, note, t]);
 
+    const handleCreateInformator = useCallback(async () => {
+      informatorFormRef.current = null;
+      const result = await modal.showModal<InformatorOption>({
+        title: t('form.informator_modal.title'),
+        description: t('form.informator_modal.description'),
+        content: () => <CreateInformatorForm ref={informatorFormRef} />,
+        dismissible: false,
+        size: 'sm',
+        actions: [
+          { label: t('form.cancel'), value: null },
+          {
+            label: t('form.submit'),
+            tone: 'primary',
+            onSelect: () => {
+              if (!informatorFormRef.current) {
+                throw new Error('Informator form is not ready yet.');
+              }
+
+              return informatorFormRef.current.submit();
+            },
+          },
+        ],
+      });
+
+      if (result) {
+        setInformatorOptionsState((previous) => {
+          if (previous.some((option) => option.value === result.value)) {
+            return previous;
+          }
+
+          return [...previous, result].sort((a, b) => collator.compare(a.label, b.label));
+        });
+        setInformator(result.value);
+      }
+    }, [collator, modal, t]);
+
     useImperativeHandle(ref, () => ({ submit }), [submit]);
 
-    const hasInformatorOptions = informatorOptions.length > 0;
+    const hasInformatorOptions = informatorOptionsState.length > 0;
 
     return (
       <div className="space-y-6">
@@ -139,14 +195,25 @@ export const ObservationForm = forwardRef<ObservationFormHandle, ObservationForm
             placeholder={t('form.note_placeholder')}
             className="w-full resize-none rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
           />
-          <p className="text-xs text-slate-500">{t('use_current_date')}</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900" htmlFor="observation-informator">
-              {t('form.informator_label')}
-            </label>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-slate-900" htmlFor="observation-informator">
+                {t('form.informator_label')}
+              </label>
+
+              <button
+                type="button"
+                onClick={handleCreateInformator}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
+                aria-label={t('form.informator_add_label')}
+                title={t('form.informator_add_label')}
+              >
+                <PlusIcon />
+              </button>
+            </div>
             <select
               id="observation-informator"
               value={informator}
@@ -159,7 +226,7 @@ export const ObservationForm = forwardRef<ObservationFormHandle, ObservationForm
                   ? t('form.informator_placeholder')
                   : t('form.informator_empty')}
               </option>
-              {informatorOptions.map((option) => (
+              {informatorOptionsState.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -244,6 +311,8 @@ export const ObservationForm = forwardRef<ObservationFormHandle, ObservationForm
               {t('form.assets_total', { count: files.length, size: formatBytes(attachmentsSize) })}
             </p>
           )}
+
+          <p className="text-xs text-slate-500 py-3">{t('use_current_date')}</p>
         </div>
 
         {error && (
@@ -263,3 +332,141 @@ export const ObservationForm = forwardRef<ObservationFormHandle, ObservationForm
 );
 
 ObservationForm.displayName = 'ObservationForm';
+
+const CreateInformatorForm = forwardRef<CreateInformatorFormHandle>(
+  (_props, ref) => {
+    const t = useTranslations('historypage.personal');
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [age, setAge] = useState('');
+    const [error, setError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const submit = useCallback(async () => {
+      setError(null);
+
+      if (!name.trim()) {
+        const message = t('form.informator_modal.name_error');
+        setError(message);
+        throw new Error(message);
+      }
+
+      if (!phone.trim()) {
+        const message = t('form.informator_modal.phone_error');
+        setError(message);
+        throw new Error(message);
+      }
+
+      const payload = new FormData();
+      payload.append('name', name.trim());
+      payload.append('phone', phone.trim());
+
+      if (age.trim()) {
+        payload.append('age', age.trim());
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        const response = await createInformator(payload);
+
+        if (!response.success) {
+          setError(response.message);
+          throw new Error(response.message);
+        }
+
+        return {
+          value: response.person.id,
+          label: response.person.name,
+        };
+      } finally {
+        setIsSubmitting(false);
+      }
+    }, [age, name, phone, t]);
+
+    useImperativeHandle(ref, () => ({ submit }), [submit]);
+
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label
+            className="text-sm font-medium text-slate-900"
+            htmlFor="informator-name"
+          >
+            {t('form.informator_modal.name_label')}
+          </label>
+          <input
+            id="informator-name"
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder={t('form.informator_modal.name_placeholder')}
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+            disabled={isSubmitting}
+          />
+          <p className="text-xs text-slate-500">
+            {t('form.informator_modal.name_hint')}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label
+            className="text-sm font-medium text-slate-900"
+            htmlFor="informator-phone"
+          >
+            {t('form.informator_modal.phone_label')}
+          </label>
+          <input
+            id="informator-phone"
+            type="tel"
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            placeholder={t('form.informator_modal.phone_placeholder')}
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+            disabled={isSubmitting}
+          />
+          <p className="text-xs text-slate-500">
+            {t('form.informator_modal.phone_hint')}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label
+            className="text-sm font-medium text-slate-900"
+            htmlFor="informator-age"
+          >
+            {t('form.informator_modal.age_label')}
+          </label>
+          <input
+            id="informator-age"
+            type="number"
+            min={0}
+            max={120}
+            value={age}
+            onChange={(event) => setAge(event.target.value)}
+            placeholder={t('form.informator_modal.age_placeholder')}
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+            disabled={isSubmitting}
+          />
+          <p className="text-xs text-slate-500">
+            {t('form.informator_modal.age_hint')}
+          </p>
+        </div>
+
+        {error && (
+          <p className="rounded-2xl bg-rose-50 px-4 py-2 text-sm text-rose-700">
+            {error}
+          </p>
+        )}
+
+        {isSubmitting && (
+          <p className="text-sm font-medium text-slate-600" aria-live="polite">
+            {t('form.informator_modal.saving')}
+          </p>
+        )}
+      </div>
+    );
+  },
+);
+
+CreateInformatorForm.displayName = 'CreateInformatorForm';
