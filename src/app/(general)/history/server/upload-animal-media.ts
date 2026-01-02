@@ -1,7 +1,7 @@
-import type { ObjectId } from 'mongodb';
-
 import { MediaAsset } from '@app/models/media-asset';
 import { r2Service } from '@app/services/r2.service';
+
+import type { ObjectId } from 'mongodb';
 
 export function uploadAnimalMedia(
   files: File[],

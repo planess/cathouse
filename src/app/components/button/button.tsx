@@ -4,6 +4,7 @@ interface ButtonProps {
   disabled: boolean;
   className: string;
   pending: boolean;
+  onClick: () => void;
 }
 
 export function Button({
@@ -11,6 +12,7 @@ export function Button({
   pending = false,
   children,
   className,
+  onClick,
 }: Partial<ButtonProps> & { children: string }) {
   return (
     <button
@@ -27,6 +29,7 @@ export function Button({
       )}
       type="submit"
       disabled={disabled || pending}
+      onClick={onClick}
     >
       {children}
       <span className="absolute hidden">...</span>

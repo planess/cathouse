@@ -4,6 +4,7 @@ import { getLocale, setRequestLocale } from 'next-intl/server';
 
 import './globals.css';
 
+import { ModalProvider } from './providers/modal';
 import { UserProvider } from './providers/user';
 
 import type { Metadata } from 'next';
@@ -39,7 +40,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider>
-          <UserProvider>{children}</UserProvider>
+          <UserProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </UserProvider>
         </NextIntlClientProvider>
       </body>
     </html>

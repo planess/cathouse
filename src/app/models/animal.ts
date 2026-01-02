@@ -76,7 +76,6 @@ export interface ObservationLocationCoordinates {
 }
 
 export interface ObservationLocation {
-  date: Date;
   address: string;
   coordinates: ObservationLocationCoordinates;
 }

@@ -274,12 +274,8 @@ module.exports = {
                   location: {
                     bsonType: 'object',
                     description: 'Location details of the observation',
-                    required: ['date', 'address', 'coordinates'],
+                    required: ['address', 'coordinates'],
                     properties: {
-                      date: {
-                        bsonType: 'date',
-                        description: 'Date when the location was recorded',
-                      },
                       address: {
                         bsonType: 'string',
                         description:
