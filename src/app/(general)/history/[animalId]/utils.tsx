@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 import type {
   AnimalDocument,
   AnimalObservation,
@@ -7,6 +9,12 @@ import type {
 } from '@app/models/animal';
 
 import { formatDate } from '../components/card/card.helpers';
+
+import {
+  CoronavirusIcon,
+  HealingIcon,
+  MedicationIcon,
+} from './components/icons';
 
 export type VaccinationEntry = {
   id: string;
@@ -18,7 +26,7 @@ export type VaccinationGroup = {
   key: string;
   title: string;
   accent: string;
-  icon: string;
+  icon: ReactElement;
   entries: VaccinationEntry[];
 };
 
@@ -59,21 +67,21 @@ export function buildVaccinationGroups(
     {
       key: 'rabies',
       title: 'Rabies',
-      icon: 'rabies-vaccine',
+      icon: <MedicationIcon />,
       accent: 'text-sky-700',
       entries: rabiesEntries,
     },
     {
       key: 'virus',
       title: 'Virus',
-        icon: 'virus-vaccine',
+      icon: <CoronavirusIcon />,
       accent: 'text-indigo-700',
       entries: virusEntries,
     },
     {
       key: 'dewormed',
       title: 'Dewormed',
-        icon: 'deworming',
+      icon: <HealingIcon />,
       accent: 'text-emerald-700',
       entries: parasiteEntries,
     },

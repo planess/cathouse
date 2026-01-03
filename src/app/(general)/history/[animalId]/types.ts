@@ -37,3 +37,20 @@ export type EditInfoInitialValues = {
   status: AnimalStatusValue;
   sterilized?: SterilizationFormValue | null;
 };
+
+export type ParasiteFormValue = {
+  name: string;
+  date: string;
+};
+
+export type VaccinationFormValue = {
+  name: string;
+  date: string;
+  clinic: string;
+};
+
+export type VaccinationModalInitialValues = {
+  parasites: ParasiteFormValue[];
+  rabies: VaccinationFormValue[];
+  virus: VaccinationFormValue[];
+};
