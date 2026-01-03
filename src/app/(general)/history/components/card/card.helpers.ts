@@ -43,14 +43,14 @@ export function resolveAnimalImage(
   return key;
 }
 
-export function getAgeLabel(birthday?: Date) {
+export function getAgeLabel(birthday?: Date): string {
   if (!birthday) {
-    return null;
+    return 'Unknown age';
   }
 
   const now = new Date();
   if (birthday > now) {
-    return null;
+    return 'Not born yet';
   }
 
   const diff = now.getTime() - birthday.getTime();
@@ -58,18 +58,18 @@ export function getAgeLabel(birthday?: Date) {
   const months = Math.floor((diff % YEAR_IN_MS) / MONTH_IN_MS);
 
   if (years > 0 && months > 0) {
-    return `${years}y ${months}m`;
+    return `${years}y ${months}m old`;
   }
 
   if (years > 0) {
-    return `${years}y`;
+    return `${years}y old`;
   }
 
   if (months > 0) {
-    return `${months}m`;
+    return `${months}m old`;
   }
 
-  return 'Just arrived';
+  return 'Born recently';
 }
 
 export function formatSexLabel(sex: AnimalSex) {
