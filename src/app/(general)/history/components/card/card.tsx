@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function Card({ data }: Props) {
-  const src = resolveAnimalImage(data, process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL);
+  const src = resolveAnimalImage(data.mainAsset?.key, process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL);
 
   const ageLabel = getAgeLabel(data.birthday);
   const statusLabel = formatLabel(data.status);

@@ -30,11 +30,11 @@ const YEAR_IN_MS = 1000 * 60 * 60 * 24 * 365.25;
 const MONTH_IN_MS = YEAR_IN_MS / 12;
 
 export function resolveAnimalImage(
-  data: AnimalDocument,
+  url?: string,
   domain?: string,
 ): string {
   const sanitizedDomain = domain?.replace(/\/$/, '');
-  const key = data.mainAsset?.key ?? placeholderImage;
+  const key = url ?? placeholderImage;
 
   if (key && sanitizedDomain) {
     return `${sanitizedDomain}/${key}`;

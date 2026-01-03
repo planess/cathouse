@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 export function ArrowIcon() {
   return (
     <svg
@@ -234,6 +236,28 @@ export function EmailIcon() {
       />
       <path
         d="M21 8.25l-9 6-9-6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function ChevronIcon({ isOpen }: { isOpen: boolean }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      className={clsx(
+        'h-5 w-5 text-slate-500 transition-transform duration-300',
+        isOpen ? 'rotate-180' : 'rotate-0',
+      )}
+    >
+      <path
+        d="M6 9l6 6 6-6"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"

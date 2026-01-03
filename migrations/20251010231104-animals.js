@@ -258,7 +258,7 @@ module.exports = {
               description: 'Array of observation records',
               items: {
                 bsonType: 'object',
-                oneOf: [
+                anyOf: [
                   { required: ['date', 'note', 'createdBy', 'createdAt'] },
                   { required: ['date', 'location', 'createdBy', 'createdAt'] },
                 ],
