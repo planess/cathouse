@@ -51,7 +51,7 @@ export default async function ResetPasswordPage({
     <div className="px-6 py-7">
       <h1 className="text-3xl text-center mb-5">{t('title.reset-password')}</h1>
 
-      <div className="w-120 mx-auto">{form}</div>
+      <div className="lg:w-120 mx-auto">{form}</div>
     </div>
   );
 }

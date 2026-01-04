@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@app/components/button';
@@ -12,7 +13,6 @@ import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 import InputField from '../../components/input-field/input-field';
 import { ServerFormData } from '../../models/server-form-data';
 import { changePassword } from '../server/change-password';
-import { useTranslations } from 'next-intl';
 
 interface RestoreFormProps {
   expiresIn: Date | null;
@@ -54,7 +54,6 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
 
     try {
       const passHash = await encrypt(cryptoKey, password);
-
       const response = await changePassword(code, passHash);
 
       if (response.status === 'error') {
@@ -94,7 +93,6 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
             config={{
               ...register('password', { required: true, minLength: 6 }),
               placeholder: 'Enter new password',
-
             }}
             hint={t('form.hint.password', { n: 6 })}
             errors={

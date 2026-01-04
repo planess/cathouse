@@ -15,12 +15,12 @@ export default function Signup() {
           Обрати напрям своєї участі можна у особистому кабінеті.
         </div>
 
-        <div className="w-120 mx-auto">
+        <div className="lg:w-120 mx-auto">
           <RegisterForm />
         </div>
       </div>
 
-      <div className="w-120 mx-auto flex justify-end mt-9">
+      <div className="lg:w-120 mx-auto flex justify-end mt-9">
         <Link className="text-sky-600 hover:underline" href="/signin">
           {t('already-have-account-link')}
         </Link>
