@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   title: 'Периметр',
   description: 'Благодійний фонд "Периметр" допомагає безпритульним тваринам',
   robots: 'noindex, nofollow',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
 };
 
 export default async function RootLayout({

@@ -42,6 +42,19 @@ body {
   height: 100%;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
 .title {
   color: #333;
   /* background: linear-gradient(167deg,#fedc2a 4.31%, #75aff2 49.13%, #0e6ca7 79.88%); */
