@@ -10,8 +10,8 @@ export default function Contacts() {
 
   return (
     <div className="px-6 py-7">
-      <div className="flex flex-col md:flex-row">
-        <div className="flex-1/2 flex flex-col gap-6 grow-0 shrink-0 pr-6">
+      <div className="flex flex-col lg:flex-row gap-y-6">
+        <div className="flex-1/2 flex flex-col gap-6 grow-0 shrink-0 lg:pr-6">
           <div>
             <h1 className="text-3xl font-bold title mb-4">{t('title')}</h1>
 
@@ -73,7 +73,7 @@ export default function Contacts() {
 
               <div className="flex gap-4">
                 <a
-                  href="https://t.me/perimeter_fund"
+                  href="https://t.me/periphery_foundation"
                   target="_blank"
                   className="flex flex-none gap-2 align-center text-sky-300"
                 >
@@ -96,7 +96,7 @@ export default function Contacts() {
                 </a>
 
                 <a
-                  href="https://instagram.com/perimeter.fund"
+                  href="https://instagram.com/periphery.foundation"
                   target="_blank"
                   className="flex flex-none gap-2 align-center text-sky-300"
                 >
@@ -115,9 +115,7 @@ export default function Contacts() {
           </Section>
 
           <Section title={t('section2_title')}>
-            <div className="mb-3">
-              {t('section2_intro')}
-            </div>
+            <div className="mb-3">{t('section2_intro')}</div>
 
             <div>
               <ContactFormWrapper />
@@ -125,7 +123,7 @@ export default function Contacts() {
           </Section>
         </div>
 
-        <div className="flex-1/2 grow-0 shrink-0 md:pl-6">
+        <div className="flex-1/2 grow-0 shrink-0 lg:pl-6">
           <h3 className="text-2xl font-bold mb-5">{t('map_title')}</h3>
 
           <div className="flex flex-col gap-3 mb-4">

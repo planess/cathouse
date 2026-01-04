@@ -120,7 +120,7 @@ function Field<T extends E>({ label, config, element }: R<T>) {
   });
 
   return (
-    <label className="flex p-[2px] rounded-lg bg-linear-to-r from-sky-50 to-zinc-50">
+    <label className="flex flex-col md:flex-row p-[2px] rounded-lg bg-linear-to-r from-sky-50 to-zinc-50">
       <span className="py-2 px-3 w-45">{label}</span>
       {Element}
     </label>
