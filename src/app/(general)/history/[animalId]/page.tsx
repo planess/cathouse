@@ -108,8 +108,8 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
       </div>
 
       <div className="text-sm text-slate-500 bg-[#F3F4F6] rounded-t-lg">
-        <div className="border-t-2 border border-slate-200 rounded-lg bg-white shadow-[0_25px_80px_rgba(15,23,42,0.08)] p-4 lg:p-6 grid grid-cols-[minmax(0,420px)_1fr] gap-x-6">
-          <div>
+        <div className="border-t-2 border border-slate-200 rounded-lg bg-white shadow-[0_25px_80px_rgba(15,23,42,0.08)] p-4 lg:p-6 grid lg:grid-cols-[minmax(0,420px)_1fr] gap-x-6">
+          <div className="hidden lg:block">
             <AvatarSection
               heroImage={heroImage}
               animal={animal}
@@ -146,6 +146,28 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
               animal={animal}
               sterilizedRecord={sterilizedRecord}
             />
+
+            <div className="lg:hidden mt-6">
+              <AvatarSection
+                heroImage={heroImage}
+                animal={animal}
+                canEdit={canEdit}
+              />
+
+              <AvatarSocialsSection
+                shareTelegramUrl={shareTelegramUrl}
+                shareEmailUrl={shareEmailUrl}
+              />
+
+              <Divider />
+
+              <ObservationSection
+                sortedObservations={sortedObservations}
+                animal={animal}
+                canEdit={canEdit}
+                informatorOptions={informatorOptions}
+              />
+            </div>
 
             <Divider />
 
