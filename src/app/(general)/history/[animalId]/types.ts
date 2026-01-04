@@ -54,3 +54,26 @@ export type VaccinationModalInitialValues = {
   rabies: VaccinationFormValue[];
   virus: VaccinationFormValue[];
 };
+
+export type TreatmentInterventionFormValue = {
+  date: string;
+  description: string;
+  clinic?: string;
+};
+
+export type TreatmentMedicationFormValue = {
+  name: string;
+  dosage?: string;
+  startDate: string;
+  endDate?: string;
+  clinic?: string;
+};
+
+export type TreatmentModalInitialValues = {
+  complaints: string;
+  startDate: string;
+  endDate?: string;
+  summary?: string;
+  interventions: TreatmentInterventionFormValue[];
+  medications: TreatmentMedicationFormValue[];
+};

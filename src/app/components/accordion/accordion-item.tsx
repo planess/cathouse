@@ -1,7 +1,5 @@
 'use client';
 
-import { ChevronIcon } from '@app/(general)/history/[animalId]/components/icons';
-import { Rate } from '@app/enum/rate';
 import clsx from 'clsx';
 import {
   useCallback,
@@ -13,11 +11,12 @@ import {
   type ReactNode,
 } from 'react';
 
+import { ChevronIcon } from '@app/(general)/history/[animalId]/components/icons';
+import { Rate } from '@app/enum/rate';
+
 export type AccordionRenderable =
   | ReactNode
   | ((state: { isOpen: boolean; toggle: () => void }) => ReactNode);
-
-
 
 export type AccordionItemProps = {
   /**

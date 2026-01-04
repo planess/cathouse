@@ -31,7 +31,7 @@ export type ModalOptions<T> = {
   actions?: ModalAction<T>[];
   dismissible?: boolean;
   dismissLabel?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 };
 
 type ModalContextValue = {
@@ -250,11 +250,15 @@ export function ModalProvider({ children }: ModalProviderProps) {
             ? options.content()
             : options.content ?? options.description;
 
+          const size = options.size ?? 'md';
           const sizeClass = {
             sm: 'max-w-md',
             md: 'max-w-lg',
             lg: 'max-w-2xl',
-          }[options.size ?? 'md'];
+            xl: 'max-w-4xl',
+            full: 'max-w-none',
+          }[size];
+          const isFullScreen = size === 'full';
 
           const isTop = index === modalStack.length - 1;
           const overlayOpacity = Math.min(0.45 + index * 0.08, 0.8);
@@ -286,6 +290,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
                 className={clsx(
                   'relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white p-6 shadow-2xl transition',
                   !isTop && 'scale-[0.98]',
+                  isFullScreen ? 'h-full' : '',
                   sizeClass,
                 )}
                 role="dialog"
