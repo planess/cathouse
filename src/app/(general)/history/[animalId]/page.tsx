@@ -177,6 +177,15 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
     })),
   };
 
+  const currentDomain = headers.get('host');
+  const currentProtocol = headers.get('x-forwarded-proto') ?? 'https';
+  const telegramShareUrl = `${currentProtocol}://${currentDomain}/history/${animal._id.toString()}`;
+  const shareText = encodeURIComponent(
+    `${animal.name} history at Periphery Foundation`,
+  );
+  const shareTelegramUrl = `https://t.me/share/url?url=${telegramShareUrl}&text=${shareText}`;
+  const shareEmailUrl = `mailto:info@perilines.com.ua?subject=${shareText}`;
+
   return (
     <div className="bg-slate-50 px-3 py-4 lg:py-5 mx-auto flex max-w-6xl flex-col gap-4">
       <div className="flex justify-between items-center">
@@ -226,26 +235,36 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
               )}
             </div>
 
-            <div className="flex flex-wrap gap-3 mt-3">
-              <a
-                href="https://t.me/periphery_foundation?animal=test"
-                target="_blank"
-                className="flex-1"
-              >
-                <TelegramIcon />
-              </a>
+            <div className="flex justify-around gap-3 mt-3">
+              <div className="w-8 h-8">
+                <a
+                  href={shareTelegramUrl}
+                  target="_blank"
+                  className="flex-1 justify-center items-center text-[#5CACDD]"
+                >
+                  <TelegramIcon />
+                </a>
+              </div>
 
-              <a href="tel:+380973959022" className="flex-1" target="_blank">
-                <PhoneIcon />
-              </a>
+              <div className="w-8 h-8">
+                <a
+                  href="tel:+380973959022"
+                  className="flex-1 justify-center items-center text-[#625a65]"
+                  target="_blank"
+                >
+                  <PhoneIcon />
+                </a>
+              </div>
 
-              <a
-                href="mailto:info@perilines.com.ua"
-                className="flex-1"
-                target="_blank"
-              >
-                <EmailIcon />
-              </a>
+              <div className="w-8 h-8">
+                <a
+                  href={shareEmailUrl}
+                  className="flex-1 justify-center items-center text-[#71706b]"
+                  target="_blank"
+                >
+                  <EmailIcon />
+                </a>
+              </div>
             </div>
 
             <Divider />
