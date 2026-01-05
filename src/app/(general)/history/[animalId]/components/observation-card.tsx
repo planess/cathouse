@@ -1,15 +1,16 @@
 import type { AnimalObservation } from '@app/models/animal';
 import Image from 'next/image';
 
+import { AccordionItem } from '@app/components/accordion';
+import { Rate } from '@app/enum/rate';
+
 import {
   buildMapHref,
   formatDate,
   resolveAnimalImage,
 } from '../../components/card/card.helpers';
 
-import { AccordionItem } from '@app/components/accordion';
 import { LocationIcon } from './icons';
-import { Rate } from '@app/enum/rate';
 
 interface ObservationCardProps {
   observation: AnimalObservation;
@@ -24,7 +25,10 @@ export function ObservationCard({ observation }: ObservationCardProps) {
 
   const locationLabel = (
     <span className="flex gap-1 items-center">
-      <LocationIcon /> {locationAddress}
+      <span className="text-sky-500">
+        <LocationIcon />
+      </span>{' '}
+      {locationAddress}
     </span>
   );
   const location = observation.location?.address ? (
@@ -53,7 +57,7 @@ export function ObservationCard({ observation }: ObservationCardProps) {
     </span>
   );
   const summary = observation.note ? <div>{observation.note}</div> : null;
- 
+
   const rate =
     healthScore >= 8
       ? Rate.ok
@@ -64,12 +68,11 @@ export function ObservationCard({ observation }: ObservationCardProps) {
           : healthScore > 0
             ? Rate.danger
             : undefined;
-             console.log(healthScore, typeof healthScore, healthScore > 0, healthScore > 7, rate);
   const imagePreview =
     observation.assets?.map(({ key }) =>
       resolveAnimalImage(key, process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL),
     ) ?? [];
-  const previewContent =imagePreview.length ? (
+  const previewContent = imagePreview.length ? (
     <div className="flex gap-2">
       {imagePreview.map((src, index) => (
         <Image

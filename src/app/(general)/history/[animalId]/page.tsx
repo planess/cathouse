@@ -1,7 +1,7 @@
-import { getTranslations } from 'next-intl/server';
 import { headers as httpHeaders } from 'next/headers';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 import { getUser } from '@app/hooks/get-user';
 import { Sterilized } from '@app/models/db/sterilized';
@@ -10,9 +10,7 @@ import { hasPermission } from '@app/services/access-verification.service';
 
 import {
   buildBadges,
-  buildMapHref,
   formatDate,
-  getLatestLocation,
   resolveAnimalImage,
 } from '../components/card/card.helpers';
 
@@ -63,8 +61,6 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
   );
   const heroBadges = buildBadges(animal);
   const createdLabel = formatDate(animal.createdAt);
-  const latestLocation = getLatestLocation(animal.observations);
-  const mapHref = latestLocation ? buildMapHref(latestLocation) : null;
   const sortedObservations = sortObservations(animal.observations);
 
   const sterilizedRecord: Sterilized | undefined =

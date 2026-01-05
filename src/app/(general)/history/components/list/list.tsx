@@ -1,13 +1,12 @@
-import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
-
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
+import type { AnimalDocument } from '@app/models/animal';
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { hasPermission } from '@app/services/access-verification.service';
 
 import Card from '../card/card';
-import type { AnimalDocument } from '@app/models/animal';
-import { hasPermission } from '@app/services/access-verification.service';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+
+import Pagination from './pagination';
 
 const PAGE_SIZE = 10;
 
@@ -16,7 +15,6 @@ type ListProps = {
 };
 
 export default async function List({ page = 1 }: ListProps) {
-  const t = await getTranslations('historypage');
   const currentPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
   const client = await clientPromise;
   const db = client.db();
@@ -28,7 +26,7 @@ export default async function List({ page = 1 }: ListProps) {
   const skip = (safePage - 1) * PAGE_SIZE;
 
   const isModerator = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE); // Placeholder for future use
-console.log('--- isModerator', isModerator);
+
   // find only non-draft animals for general users
   const animals = await animalsCollection
     .find(isModerator ? {} : { draft: { $ne: true } })
@@ -36,10 +34,6 @@ console.log('--- isModerator', isModerator);
     .skip(skip)
     .limit(PAGE_SIZE)
     .toArray();
-
-  const hasPrev = safePage > 1;
-  const hasNext = safePage < totalPages;
-  const buildHref = (pageNumber: number) => (pageNumber <= 1 ? '/history' : `/history?page=${pageNumber}`);
 
   return (
     <div className="flex flex-col gap-6">
@@ -51,45 +45,7 @@ console.log('--- isModerator', isModerator);
         ))}
       </div>
 
-      <nav className="flex items-center justify-center gap-4 text-sm" aria-label={t('pagination.summary', { page: safePage, total: totalPages })}>
-        {hasPrev ? (
-          <Link
-            href={buildHref(safePage - 1)}
-            className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-            aria-label={t('pagination.previous')}
-          >
-            {t('pagination.previous')}
-          </Link>
-        ) : (
-          <span
-            className="px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed select-none"
-            aria-disabled="true"
-          >
-            {t('pagination.previous')}
-          </span>
-        )}
-
-        <span className="text-gray-600">
-          {t('pagination.summary', { page: safePage, total: totalPages })}
-        </span>
-
-        {hasNext ? (
-          <Link
-            href={buildHref(safePage + 1)}
-            className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-            aria-label={t('pagination.next')}
-          >
-            {t('pagination.next')}
-          </Link>
-        ) : (
-          <span
-            className="px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed select-none"
-            aria-disabled="true"
-          >
-            {t('pagination.next')}
-          </span>
-        )}
-      </nav>
+      <Pagination safePage={safePage} totalPages={totalPages} />
     </div>
   );
 }

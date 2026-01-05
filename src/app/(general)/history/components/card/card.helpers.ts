@@ -29,10 +29,7 @@ type BadgeToneKey = keyof typeof badgeTone;
 const YEAR_IN_MS = 1000 * 60 * 60 * 24 * 365.25;
 const MONTH_IN_MS = YEAR_IN_MS / 12;
 
-export function resolveAnimalImage(
-  url?: string,
-  domain?: string,
-): string {
+export function resolveAnimalImage(url?: string, domain?: string): string {
   const sanitizedDomain = domain?.replace(/\/$/, '');
   const key = url ?? placeholderImage;
 
@@ -103,7 +100,9 @@ export function formatDate(date?: Date) {
   return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 }
 
-export function getLatestLocation(observations?: AnimalObservation[]) {
+export function getLatestObservation(
+  observations?: AnimalObservation[],
+): AnimalObservation | null {
   if (!observations?.length) {
     return null;
   }
@@ -111,7 +110,7 @@ export function getLatestLocation(observations?: AnimalObservation[]) {
   return (
     [...observations]
       .sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0))
-      .find((observation) => observation.location)?.location ?? null
+      .find((observation) => observation.location) ?? null
   );
 }
 

@@ -25,7 +25,7 @@ export default function Header() {
   ));
 
   return (
-    <div className="flex px-3 lg:px-20 py-3 items-center border-solid border-b border-b-gray-200 bg-white">
+    <div className="flex px-3 lg:px-20 py-3 items-center border-solid border-b border-b-gray-200 bg-white transition-[padding]">
       <div className={clsx(styles.logoWrapper, 'hidden lg:block', 'flex-none')}>
         <Logo />
       </div>

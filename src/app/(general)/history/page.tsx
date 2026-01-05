@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
-import { getUser } from '@app/hooks';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 
@@ -16,15 +15,13 @@ type HistoryPageProps = {
 
 export default async function History({ searchParams }: HistoryPageProps) {
   const t = await getTranslations('historypage');
-  const user = await getUser();
-  const isAdmin = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE);
+  const canCreate = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE);
   const rawPage = Array.isArray(searchParams?.page)
     ? searchParams?.page?.[0]
     : searchParams?.page;
   const parsedPage = Number(rawPage ?? 1);
-  const currentPage = Number.isFinite(parsedPage) && parsedPage > 0
-    ? Math.floor(parsedPage)
-    : 1;
+  const currentPage =
+    Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
 
   return (
     <div className="px-6 py-7">
@@ -36,17 +33,11 @@ export default async function History({ searchParams }: HistoryPageProps) {
         <Panel>{t('panel1')}</Panel>
       </div>
 
-      {user && (
-        <div className="text-center mb-4">
-          <p>Welcome, {user.profile.firstName}!</p>
-        </div>
-      )}
-
-      {isAdmin && (
-        <div className="text-center mb-4">
+      {canCreate && (
+        <div className="text-center flex py-4">
           <Link
             href="/history/create"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 transition w-full"
           >
             {t('createHistory')}
           </Link>

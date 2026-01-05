@@ -25,8 +25,8 @@
     "map_title": "Activity Zone"
   },
   "historypage": {
-    "title": "Potential friends",
-    "panel1": "The page displays part of the animals that are our history and inspiration. Each one has a unique story, characteristics and living conditions.",
+    "title": "History of our animals",
+    "panel1": "We register animals that we monitor, care for, and treat. Each history is our inspiration and helps coordinate the efforts of volunteers and clinics to provide the best care. Each record has a unique story, characteristics, and conditions.",
     "createHistory": "Create new history",
     "pagination": {
       "previous": "Previous",
