@@ -12,7 +12,7 @@ export default function Signup() {
 
       <div className="mb-3">
         <div className="text-center mb-3 -mx-6 p-3 bg-amber-50 border border-amber-100 text-lime-900">
-          Обрати напрям своєї участі можна у особистому кабінеті.
+          {t('notice.chooseDirection')}
         </div>
 
         <div className="lg:w-120 mx-auto">

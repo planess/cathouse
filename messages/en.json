@@ -3,7 +3,9 @@
     "home": "Home",
     "contacts": "Contacts",
     "history": "History",
-    "help": "Help"
+    "help": "Help",
+    "logoSecret": "Tap five times quickly to open the sign-in page",
+    "logoAltSmall": "Cathouse compact logo"
   },
   "helppage": {
     "title": "Mutual Aid",
@@ -12,6 +14,106 @@
       "s1-text": "help",
       "s2-title": "support",
       "s2-text": "each other"
+    },
+    "provide": {
+      "title": "When challenges appear",
+      "paragraphs": {
+        "intro1": "We know that not everyone can rescue, treat, or rehome animals alone, so the foundation supports people who refuse to stay indifferent.",
+        "intro2": "You are not left alone with a difficult situation. Your effort becomes part of a larger rescue system, letting you change an animal’s destiny without spending every resource on your own.",
+        "cta": "From our side you can receive:"
+      },
+      "benefits": {
+        "medical": {
+          "title": "Medical guidance and treatment support",
+          "description": "We help you find veterinarians and co-fund treatment or sterilization for stray animals.",
+          "alt": "Medicine and help illustration"
+        },
+        "adoption": {
+          "title": "Rehoming support",
+          "description": "We publish information about rescued animals on our platforms and help them find temporary or permanent homes.",
+          "alt": "Cat resting at home illustration"
+        },
+        "volunteers": {
+          "title": "Volunteer care",
+          "description": "We provide food, carriers, medications, and essentials to people who temporarily shelter an animal.",
+          "alt": "Volunteer feeding a cat illustration"
+        },
+        "education": {
+          "title": "Sharing knowledge",
+          "description": "We teach how to act safely and effectively when you find a stray animal.",
+          "alt": "Learning materials illustration"
+        }
+      }
+    },
+    "receive": {
+      "title": "Join the support network",
+      "intro": "Any help is tangible and important. The more people step in, the lighter the load for everyone—that is exactly the approach we want to build.",
+      "callout": "We need active participants for different directions:",
+      "areas": {
+        "observation": {
+          "title": "Operational observation",
+          "paragraphs": {
+            "p1": "Trips to assigned locations help us search for and monitor stray animals, assess their health, count individuals, and record conditions like shelter, food access, and interaction with people or other animals.",
+            "p2": "Every visit ends with a short report describing health status, location specifics, potential risks (for example hostile people or unsafe areas), and recommendations such as urgent veterinary help or sterilization."
+          }
+        },
+        "response": {
+          "title": "Field response",
+          "paragraphs": {
+            "p1": "We capture stray animals for sterilization, treatment, or relocation, respond to emergencies where animals need immediate help, and evaluate every scene to choose the next steps.",
+            "p2": "Volunteers transport animals to safe places, clinics, or shelters using nets, carriers, or other tools; experience with animals (clinics, shelters, volunteer programs) is a plus.",
+            "p3": "Detailed documentation is crucial: the location, animal condition, capture circumstances, and next actions, such as transferring the case to veterinary services."
+          }
+        },
+        "medical": {
+          "title": "Medical support (requires education)",
+          "paragraphs": {
+            "p1": "Volunteers perform medical examinations, assess health, and carry out procedures such as vaccination, sterilization, or treatment both in equipped rooms and directly in the field.",
+            "p2": "They handle wound care, administer medicines, or perform surgeries; in the field they stabilize animals, provide first aid, and help organize transport to a safe place or clinic.",
+            "p3": "Accurate records about each animal, procedures, medicines, and follow-up recommendations are required in either digital or paper form."
+          }
+        },
+        "it": {
+          "title": "IT field",
+          "paragraphs": {
+            "p1": "We are building a convenient platform for visitors and volunteers—personal dashboards, interactive stray-location maps, and trip-planning tools."
+          },
+          "rolesIntro": "To keep the process efficient we welcome specialists in different roles:",
+          "roles": {
+            "designers": {
+              "label": "designers",
+              "description": "to craft inviting and accessible interfaces"
+            },
+            "analysts": {
+              "label": "business analysts",
+              "description": "to capture user needs and prioritize features"
+            },
+            "developers": {
+              "label": "JavaScript developers",
+              "description": "to implement product functionality"
+            },
+            "testers": {
+              "label": "testers",
+              "description": "to guarantee quality before releases"
+            },
+            "devops": {
+              "label": "DevOps engineers",
+              "description": "to configure and maintain infrastructure"
+            }
+          }
+        },
+        "care": {
+          "title": "Care and guardianship",
+          "paragraphs": {
+            "p1": "The foundation does not have a large shelter, so temporary housing for adult or young stray pets during quarantine or treatment is incredibly valuable.",
+            "p2": "A covered, safe area—or an adapted wing of a home or commercial space—dramatically accelerates assistance. Several small safe houses across the city are easier to support than transporting every animal to one distant site. Safety and comfort for people and animals remain the main criteria.",
+            "p3": "We provide food, bedding, litter boxes, and other supplies. Volunteers record health updates, procedures, medicines, and care recommendations in whichever format is convenient.",
+            "p4": "Ideas on how to organize such spaces, even without your own premises, are also a meaningful contribution."
+          }
+        }
+      },
+      "closing": "We appreciate every level of involvement—from one-time help to regular participation—and we will always respect your experience and comfort when selecting tasks.",
+      "contactCta": "Send us a message and let’s get acquainted ❤️"
     }
   },
   "contactspage": {
@@ -22,7 +124,13 @@
     "section1_title": "Always here",
     "section2_title": "Message us",
     "section2_intro": "Write your thoughts and we will try to take them into account in our work.",
-    "map_title": "Activity Zone"
+    "map_title": "Activity Zone",
+    "links": {
+      "emailAria": "Open email app",
+      "phoneAria": "Call the listed phone number",
+      "telegramAria": "Open our Telegram channel",
+      "instagramAria": "Open our Instagram profile"
+    }
   },
   "historypage": {
     "title": "History of our animals",
@@ -236,6 +344,9 @@
       "auth": "Authorization",
       "reset-password": "Password Recovery"
     },
+    "notice": {
+      "chooseDirection": "You can choose how you want to contribute in your personal dashboard."
+    },
     "form": {
       "hint": {
         "password": "Minimum {n} characters, use special characters"
@@ -262,5 +373,58 @@
         "required": "Field is required"
       }
     }
+  },
+  "homepage": {
+    "title": "Welcome to Cathouse",
+    "description": "This sandbox page confirms the platform is running correctly.",
+    "checklist": {
+      "title": "Internationalization test",
+      "helper": "The navigation labels below reuse the translations from the header."
+    }
+  },
+  "locationpage": {
+    "title": "Location",
+    "body": "We are preparing an interactive map with our active zones. Stay tuned."
+  },
+  "footer": {
+    "tagline": "Since {year} with care for our little friends",
+    "attribution": "by {org}"
+  },
+  "contactForm": {
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "So we know how to greet you when we meet"
+      },
+      "contacts": {
+        "label": "Email or phone",
+        "placeholder": "So we can reach back out"
+      },
+      "location": {
+        "label": "Location",
+        "placeholder": "Helps us estimate the distance between us right away"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Describe how you can help, when, and how often"
+      }
+    },
+    "submit": "Send",
+    "status": {
+      "success": "Your message has been sent and we're already reviewing it. {name}, we will reply to the {channel} {contact} as soon as possible.",
+      "channel": {
+        "email": "email",
+        "phone": "number"
+      },
+      "defaultName": "friend"
+    }
+  },
+  "layout": {
+    "title": "Perimeter",
+    "description": "The Perimeter charity foundation helps stray animals"
+  },
+  "unavailable": {
+    "title": "The site will be back soon",
+    "description": "We are performing maintenance right now. Please come back a bit later."
   }
 }

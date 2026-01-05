@@ -2,8 +2,10 @@
 
 import { createElement, JSX, useState } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@app/components/button';
+import { formatDisplayName } from '@app/helpers/format-display-name';
 import { HandlerParams } from '@app/models/handler-params.server';
 
 import { ContactFormData } from '../../models/contact-form-data';
@@ -15,6 +17,7 @@ export default function ContactForm({
     useForm<ContactFormData>();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('contactForm');
 
   const http = handleSubmit(async (data) => {
     const response = await handler(data);
@@ -44,47 +47,46 @@ export default function ContactForm({
     <form onSubmit={a} className="flex flex-col gap-1">
       <div className="flex flex-col">
         <Field
-          label="Ім'я"
+          label={t('fields.name.label')}
           element="input"
           config={{
             ...register('name', { required: true }),
             type: 'text',
-            placeholder: 'Будемо знати як звертатись при зустрічі',
+            placeholder: t('fields.name.placeholder'),
             disabled: sent,
           }}
         />
       </div>
       <div className="flex flex-col">
         <Field
-          label="Email або телефон"
+          label={t('fields.contacts.label')}
           element="input"
           config={{
             ...register('contacts', { required: true }),
             type: 'text',
-            placeholder: 'Щоб вийти на зворотній контакт',
+            placeholder: t('fields.contacts.placeholder'),
             disabled: sent,
           }}
         />
       </div>
       <div className="flex flex-col">
         <Field
-          label="Місцезнаходження"
+          label={t('fields.location.label')}
           element="input"
           config={{
             ...register('location', { required: true }),
             type: 'text',
-            placeholder: 'Одразу будемо орієнтуватись на відстань між нами',
+            placeholder: t('fields.location.placeholder'),
             disabled: sent,
           }}
         />
       </div>
       <div className="flex flex-col">
         <Field
-          label="Повідомлення"
+          label={t('fields.message.label')}
           config={{
             ...register('message', { required: true }),
-            placeholder:
-              'Розкажіть детально чим можете допомагати, коли і як часто',
+            placeholder: t('fields.message.placeholder'),
             disabled: sent,
           }}
           element="textarea"
@@ -96,7 +98,7 @@ export default function ContactForm({
           <Thankyou contact={getValues('contacts')} name={getValues('name')} />
         ) : (
           <Button className="ml-auto" disabled={loading || !formState.isValid}>
-            Надіслати
+            {t('submit')}
           </Button>
         )}
       </div>
@@ -106,13 +108,18 @@ export default function ContactForm({
 
 function Thankyou({ contact, name }: { contact: string; name: string }) {
   const isEmail = /[^@]+@[^@]{2,}/.test(contact);
+  const t = useTranslations('contactForm');
+  const normalizedName = formatDisplayName(name);
+  const resolvedName = normalizedName ?? t('status.defaultName');
+  const channelKey = isEmail ? 'email' : 'phone';
 
   return (
     <div>
-      Повідомлення надіслано і ми уже беремось його переглядати.{' '}
-      {name[0].toUpperCase()}
-      {name.slice(1).toLowerCase()}, намагатимемось дати швидку реакцію на{' '}
-      {isEmail ? 'email' : 'номер'} <strong>{contact}</strong>.
+      {t('status.success', {
+        name: resolvedName,
+        channel: t(`status.channel.${channelKey}`),
+        contact,
+      })}
     </div>
   );
 }

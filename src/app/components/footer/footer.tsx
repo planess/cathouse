@@ -1,6 +1,10 @@
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
+  const t = useTranslations('footer');
+  const foundationYear = 2024;
+  const org = 'Planess Group';
+
   return (
     <footer className="">
       {/* <div>
@@ -8,8 +12,8 @@ export default function Footer() {
       </div> */}
 
       <div className="bg-neutral-800 text-neutral-100 text-sm px-3 lg:px-20 py-3 flex flex-wrap justify-end gap-x-2 gap-y-1 transition-[padding]">
-        <span>Since 2024 with care for our little friends</span>
-        <span>by Planess Group</span>
+        <span>{t('tagline', { year: foundationYear })}</span>
+        <span>{t('attribution', { org })}</span>
       </div>
     </footer>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef } from 'react';
 
@@ -12,6 +13,7 @@ const CLICK_TARGET_COUNT = 5;
 export default function LogoSmall() {
   const router = useRouter();
   const clickTimesRef = useRef<number[]>([]);
+  const t = useTranslations('header');
 
   const handlePointerDown = useCallback(() => {
     const now = Date.now();
@@ -29,11 +31,11 @@ export default function LogoSmall() {
   return (
     <button
       type="button"
-      aria-label="Швидко тапніть 5 разів, щоб перейти до входу"
+      aria-label={t('logoSecret')}
       className="inline-flex items-center bg-transparent border-0 p-0 cursor-pointer"
       onPointerDown={handlePointerDown}
     >
-      <Image src={logo as string} alt="Logo Small" width={50} />
+      <Image src={logo as string} alt={t('logoAltSmall')} width={50} />
     </button>
   );
 }
