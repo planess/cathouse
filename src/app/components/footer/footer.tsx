@@ -7,7 +7,7 @@ export default function Footer() {
         <Link href="location">Location</Link>
       </div> */}
 
-      <div className="bg-neutral-800 text-neutral-100 text-sm px-3 lg:px-20 py-3 flex justify-end gap-2 transition-[padding]">
+      <div className="bg-neutral-800 text-neutral-100 text-sm px-3 lg:px-20 py-3 flex flex-wrap justify-end gap-x-2 gap-y-1 transition-[padding]">
         <span>Since 2024 with care for our little friends</span>
         <span>by Planess Group</span>
       </div>
