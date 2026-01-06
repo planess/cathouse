@@ -24,6 +24,9 @@ playwright-report/
 # production
 /build
 
+# development
+/_temp
+
 # misc
 .DS_Store
 *.pem

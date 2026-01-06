@@ -2,16 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument } from '@app/models/animal';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
-import {
-  parseTreatmentFormData,
-} from './treatment-payload';
+import { parseTreatmentFormData } from './treatment-payload';
 import { TreatmentPayloadError } from './treatment-payload-error';
 
 export type TreatmentMutationSuccess = {
@@ -49,19 +46,6 @@ export async function createTreatment(
     };
   }
 
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
-
-  if (!hasHistoryAccess) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have permission to manage treatments.',
-    };
-  }
-
   let parsedPayload;
 
   try {
@@ -84,7 +68,9 @@ export async function createTreatment(
   const db = client.db();
   const animalsCollection = db.collection<AnimalDocument>(DbTables.animals);
 
-  const animal = await animalsCollection.findOne({ _id: parsedPayload.animalId });
+  const animal = await animalsCollection.findOne({
+    _id: parsedPayload.animalId,
+  });
 
   if (!animal) {
     return {
@@ -95,16 +81,14 @@ export async function createTreatment(
     };
   }
 
-  const isOwner = animal.createdBy?.equals
-    ? animal.createdBy.equals(user.id)
-    : animal.createdBy?.toString() === user.id.toString();
+  const hasHistoryAccess = await editHistoryGranted(animal.createdBy);
 
-  if (!isOwner) {
+  if (!hasHistoryAccess) {
     return {
       success: false,
       status: 403,
       errorCode: 'FORBIDDEN',
-      message: 'You do not have access to this record.',
+      message: 'You do not have permission to manage treatments.',
     };
   }
 

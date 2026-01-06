@@ -24,8 +24,10 @@ export default function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Detect and set once.
-  const detected = pickSupportedLocale(req.headers.get('accept-language'));
+  // Detect browser locale only to keep the helper in sync, but always seed Ukrainian.
+  /*/ const detected = pickSupportedLocale(req.headers.get('accept-language')); /*/
+  const browserPreferred = pickSupportedLocale(req.headers.get('accept-language'));
+  const detected = routing.defaultLocale && browserPreferred;/**/
   const res = NextResponse.next();
 
   res.cookies.set({

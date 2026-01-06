@@ -1,12 +1,12 @@
+import { ObjectId } from 'mongodb';
 import { headers as httpHeaders } from 'next/headers';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
-import { getUser } from '@app/hooks/get-user';
+import { editHistoryGranted } from '@app/accessors/edit-history-granted';
+import { publishHistoryGranted } from '@app/accessors/publish-history-granted';
 import { Sterilized } from '@app/models/db/sterilized';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
 import {
   buildBadges,
@@ -39,21 +39,17 @@ type PageProps = {
 };
 
 export default async function AnimalHistoryPage({ params }: PageProps) {
-  const isVolunteer = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE);
-  const animal = await loadAnimal(params.animalId, Boolean(isVolunteer));
+  const animalId = params.animalId;
+  const canEdit = await editHistoryGranted(new ObjectId(animalId));
+  const animal = await loadAnimal(params.animalId, canEdit);
 
   if (!animal) {
     notFound();
   }
 
-  const user = await getUser();
+  const canPublish = await publishHistoryGranted(animal.createdBy);
   const t = await getTranslations('historypage');
   const headers = await httpHeaders();
-
-  const forceEdit = false; // flag for admin override
-  const canEdit =
-    (isVolunteer && user?.id.toString() === animal.createdBy.toString()) ||
-    forceEdit;
   const backHref = resolveHistoryBackHref(headers.get('referer'));
   const heroImage = resolveAnimalImage(
     animal.mainAsset?.key,
@@ -96,7 +92,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
           {t('personal.backtohistory')}
         </Link>
 
-        {canEdit && isDraft && (
+        {canPublish && isDraft && (
           <div className="flex gap-4 items-center">
             <PublishButton animalId={animal._id} />
           </div>

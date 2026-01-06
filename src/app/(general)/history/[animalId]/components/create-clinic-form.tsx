@@ -1,15 +1,12 @@
 'use client';
 
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useState,
-} from 'react';
 import { useTranslations } from 'next-intl';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
+
+import { createClinic } from '../server/create-clinic';
 
 import { LocationField, type LocationValue } from './location-field';
-import { createClinic } from '../server/create-clinic';
+
 import type { ClinicOption } from '../types';
 
 export type CreateClinicFormHandle = {

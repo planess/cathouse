@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useCallback, useRef } from 'react';
 
 import { useModal } from '@app/hooks/use-modal';
 
@@ -11,10 +11,8 @@ import {
   EditVaccinationsForm,
   type EditVaccinationsFormHandle,
 } from './edit-vaccinations-form';
-import type {
-  ClinicOption,
-  VaccinationModalInitialValues,
-} from '../types';
+
+import type { ClinicOption, VaccinationModalInitialValues } from '../types';
 
 type EditVaccinationsProps = {
   animalId: string;
@@ -68,9 +66,6 @@ export default function EditVaccinations({
   }, [animalId, clinicOptions, initialValues, modal, router, t]);
 
   return (
-    <EditButton
-      label={t('edit_vaccinations_label')}
-      onClick={editHandler}
-    />
+    <EditButton label={t('edit_vaccinations_label')} onClick={editHandler} />
   );
 }

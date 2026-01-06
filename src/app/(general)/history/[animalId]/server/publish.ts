@@ -2,25 +2,16 @@
 
 import { ObjectId } from 'mongodb';
 
+import { publishHistoryGranted } from '@app/accessors/publish-history-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
 export async function publishAnimal(animalId: ObjectId) {
   const user = await getUser();
 
   if (!user) {
     throw new Error('Unauthorized');
-  }
-
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
-
-  if (!hasHistoryAccess) {
-    throw new Error('Forbidden');
   }
 
   const animalObjectId = new ObjectId(animalId);
@@ -31,13 +22,7 @@ export async function publishAnimal(animalId: ObjectId) {
 
   if (!animal) {
     throw new Error('Animal not found');
-  }
-
-  const isOwner = animal.createdBy?.equals
-    ? animal.createdBy.equals(user.id)
-    : animal.createdBy?.toString() === user.id.toString();
-
-  if (!isOwner) {
+  } else if (!(await publishHistoryGranted(animal.createdBy))) {
     throw new Error('Forbidden');
   }
 

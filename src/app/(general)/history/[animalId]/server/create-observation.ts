@@ -4,13 +4,12 @@ import { ObjectId } from 'mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument, AnimalObservation } from '@app/models/animal';
 import type { MediaAsset } from '@app/models/media-asset';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
 import { uploadAnimalMedia } from '../../server/upload-animal-media';
 
@@ -121,19 +120,6 @@ export async function createObservation(
     };
   }
 
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
-
-  if (!hasHistoryAccess) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have permission to add observations.',
-    };
-  }
-
   const rawPayload: Payload = {
     animalId: formData.get('animalId')?.toString() ?? '',
     note: formData.get('note')?.toString(),
@@ -190,6 +176,31 @@ export async function createObservation(
 
   const animalObjectId = new ObjectId(animalId);
   const informatorId = informator ? new ObjectId(informator) : undefined;
+
+  const client = await clientPromise;
+  const db = client.db();
+  const animalsCollection = db.collection<AnimalDocument>(DbTables.animals);
+  const animal = await animalsCollection.findOne({ _id: animalObjectId });
+
+  if (!animal) {
+    return {
+      success: false,
+      status: 404,
+      errorCode: 'NOT_FOUND',
+      message: 'Animal was not found.',
+    };
+  }
+
+  const hasHistoryAccess = await editHistoryGranted(animal.createdBy);
+
+  if (!hasHistoryAccess) {
+    return {
+      success: false,
+      status: 403,
+      errorCode: 'FORBIDDEN',
+      message: 'You do not have permission to add observations.',
+    };
+  }
 
   const files = formData
     .getAll('assets')
@@ -253,33 +264,6 @@ export async function createObservation(
       errorCode: 'INVALID_INPUT',
       message:
         'Address and both coordinates are required when location is provided.',
-    };
-  }
-
-  const client = await clientPromise;
-  const db = client.db();
-  const animalsCollection = db.collection<AnimalDocument>(DbTables.animals);
-  const animal = await animalsCollection.findOne({ _id: animalObjectId });
-
-  if (!animal) {
-    return {
-      success: false,
-      status: 404,
-      errorCode: 'NOT_FOUND',
-      message: 'Animal was not found.',
-    };
-  }
-
-  const isOwner = animal.createdBy?.equals
-    ? animal.createdBy.equals(user.id)
-    : animal.createdBy?.toString() === user.id.toString();
-
-  if (!isOwner) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have access to this record.',
     };
   }
 

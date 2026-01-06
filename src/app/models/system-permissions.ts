@@ -14,7 +14,19 @@
  */
 export const SYSTEM_PERMISSIONS = {
   // content maker
-  HISTORY_CREATE: 'history:create',
+  HISTORY_CREATE: 'history:create', // also "UPDATE" included for own records
+  HISTORY_PUBLISH: 'history:publish', // only own records
+  HISTORY_UPDATE_ANY: 'history:update:any', // update any records
+  HISTORY_PUBLISH_ANY: 'history:publish:any', // publish any records
+  HISTORY_DELETE: 'history:delete', // for admin
+
+  INFORMATOR_CREATE: 'informator:create',
+  INFORMATOR_UPDATE: 'informator:update',
+  INFORMATOR_DELETE: 'informator:delete',
+
+  CLINIC_CREATE: 'clinic:create',
+  CLINIC_UPDATE: 'clinic:update',
+  CLINIC_DELETE: 'clinic:delete',
 
   // admin management
   ROLE_ASSIGN: 'role:assign',

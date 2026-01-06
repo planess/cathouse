@@ -4,12 +4,11 @@ import { ObjectId } from 'mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument } from '@app/models/animal';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
 const MAX_RECORDS_PER_SECTION = 200;
 
@@ -112,19 +111,6 @@ export async function updateVaccinations(
     };
   }
 
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
-
-  if (!hasHistoryAccess) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have permission to edit this animal.',
-    };
-  }
-
   let rawParasites: unknown[] = [];
   let rawRabies: unknown[] = [];
   let rawVirus: unknown[] = [];
@@ -177,16 +163,14 @@ export async function updateVaccinations(
     };
   }
 
-  const isOwner = animal.createdBy?.equals
-    ? animal.createdBy.equals(user.id)
-    : animal.createdBy?.toString() === user.id.toString();
+  const hasHistoryAccess = await editHistoryGranted(animal.createdBy);
 
-  if (!isOwner) {
+  if (!hasHistoryAccess) {
     return {
       success: false,
       status: 403,
       errorCode: 'FORBIDDEN',
-      message: 'You do not have access to this record.',
+      message: 'You do not have permission to edit this animal.',
     };
   }
 

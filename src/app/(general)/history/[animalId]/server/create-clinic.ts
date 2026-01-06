@@ -3,11 +3,11 @@
 import { MongoServerError } from 'mongodb';
 import { z } from 'zod';
 
+import { createClinicGranted } from '@app/accessors/create-clinic-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+
 import type { ClinicOption } from '../types';
 
 const payloadSchema = z.object({
@@ -59,7 +59,9 @@ type CreateClinicError = {
 
 export type CreateClinicResponse = CreateClinicSuccess | CreateClinicError;
 
-export async function createClinic(formData: FormData): Promise<CreateClinicResponse> {
+export async function createClinic(
+  formData: FormData,
+): Promise<CreateClinicResponse> {
   const user = await getUser();
 
   if (!user) {
@@ -68,19 +70,6 @@ export async function createClinic(formData: FormData): Promise<CreateClinicResp
       status: 401,
       errorCode: 'UNAUTHORIZED',
       message: 'Sign in to add clinics.',
-    };
-  }
-
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
-
-  if (!hasHistoryAccess) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have permission to add clinics.',
     };
   }
 
@@ -108,6 +97,17 @@ export async function createClinic(formData: FormData): Promise<CreateClinicResp
   const db = client.db();
   const clinicsCollection = db.collection(DbTables.clinics);
   const now = new Date();
+
+  const hasHistoryAccess = await createClinicGranted();
+
+  if (!hasHistoryAccess) {
+    return {
+      success: false,
+      status: 403,
+      errorCode: 'FORBIDDEN',
+      message: 'You do not have permission to add clinics.',
+    };
+  }
 
   try {
     const insertResult = await clinicsCollection.insertOne({

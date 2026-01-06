@@ -2,18 +2,16 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument } from '@app/models/animal';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
-import {
-  parseTreatmentFormData,
-} from './treatment-payload';
-import type { TreatmentMutationResponse } from './create-treatment';
+import { parseTreatmentFormData } from './treatment-payload';
 import { TreatmentPayloadError } from './treatment-payload-error';
+
+import type { TreatmentMutationResponse } from './create-treatment';
 
 export async function updateTreatment(
   formData: FormData,
@@ -26,19 +24,6 @@ export async function updateTreatment(
       status: 401,
       errorCode: 'UNAUTHORIZED',
       message: 'Sign in to manage treatments.',
-    };
-  }
-
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
-
-  if (!hasHistoryAccess) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have permission to manage treatments.',
     };
   }
 
@@ -76,7 +61,9 @@ export async function updateTreatment(
   const db = client.db();
   const animalsCollection = db.collection<AnimalDocument>(DbTables.animals);
 
-  const animal = await animalsCollection.findOne({ _id: parsedPayload.animalId });
+  const animal = await animalsCollection.findOne({
+    _id: parsedPayload.animalId,
+  });
 
   if (!animal) {
     return {
@@ -87,16 +74,14 @@ export async function updateTreatment(
     };
   }
 
-  const isOwner = animal.createdBy?.equals
-    ? animal.createdBy.equals(user.id)
-    : animal.createdBy?.toString() === user.id.toString();
+  const hasHistoryAccess = await editHistoryGranted(animal.createdBy);
 
-  if (!isOwner) {
+  if (!hasHistoryAccess) {
     return {
       success: false,
       status: 403,
       errorCode: 'FORBIDDEN',
-      message: 'You do not have access to this record.',
+      message: 'You do not have permission to manage treatments.',
     };
   }
 
@@ -114,14 +99,20 @@ export async function updateTreatment(
   try {
     const result = await animalsCollection.updateOne(
       { _id: parsedPayload.animalId },
-      { $set: { [`vetTreatments.${treatmentIndex}`]: parsedPayload.treatment } },
+      {
+        $set: { [`vetTreatments.${treatmentIndex}`]: parsedPayload.treatment },
+      },
     );
 
     if (!result.acknowledged || result.modifiedCount === 0) {
       throw new Error('Update rejected.');
     }
   } catch (error) {
-    console.error('[updateTreatment] Unable to update treatment', error, JSON.stringify(error.errInfo));
+    console.error(
+      '[updateTreatment] Unable to update treatment',
+      error,
+      JSON.stringify(error.errInfo),
+    );
 
     return {
       success: false,

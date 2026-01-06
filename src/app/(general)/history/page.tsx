@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+import { createHistoryGranted } from '@app/accessors/create-history-granted';
 
 import List from './components/list/list';
 import Panel from './components/panel/panel';
@@ -15,7 +14,7 @@ type HistoryPageProps = {
 
 export default async function History({ searchParams }: HistoryPageProps) {
   const t = await getTranslations('historypage');
-  const canCreate = await hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE);
+  const canCreate = await createHistoryGranted();
   const rawPage = Array.isArray(searchParams?.page)
     ? searchParams?.page?.[0]
     : searchParams?.page;
@@ -44,7 +43,9 @@ export default async function History({ searchParams }: HistoryPageProps) {
         </div>
       )}
 
-      <List page={currentPage} />
+      <div className="mt-4">
+        <List page={currentPage} />
+      </div>
     </div>
   );
 }

@@ -3,11 +3,10 @@
 import { MongoServerError, type ObjectId } from 'mongodb';
 import { z } from 'zod';
 
+import { createInformatorGranted } from '@app/accessors/create-informator-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
-import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
 
 type PersonDocument = {
   _id?: ObjectId;
@@ -79,9 +78,7 @@ export async function createInformator(
     };
   }
 
-  const hasHistoryAccess = await hasPermission(
-    SYSTEM_PERMISSIONS.HISTORY_CREATE,
-  );
+  const hasHistoryAccess = await createInformatorGranted();
 
   if (!hasHistoryAccess) {
     return {

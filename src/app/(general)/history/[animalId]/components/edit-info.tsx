@@ -1,16 +1,14 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useCallback, useRef } from 'react';
 
 import { useModal } from '@app/hooks/use-modal';
 
 import { EditButton } from './edit-button';
-import {
-  EditInfoForm,
-  type EditInfoFormHandle,
-} from './edit-info-form';
+import { EditInfoForm, type EditInfoFormHandle } from './edit-info-form';
+
 import type {
   ClinicOption,
   EditInfoInitialValues,
