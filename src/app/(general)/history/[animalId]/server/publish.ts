@@ -7,7 +7,7 @@ import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 
-export async function publishAnimal(animalId: ObjectId) {
+export async function publishAnimal(animalId: string) {
   const user = await getUser();
 
   if (!user) {

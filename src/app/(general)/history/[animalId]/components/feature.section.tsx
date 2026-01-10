@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl';
+
 import { AnimalDocument } from '@app/models/animal';
 import { Sterilized } from '@app/models/db/sterilized';
 
@@ -12,22 +14,31 @@ export default function FeatureSection({
   animal,
   sterilizedRecord,
 }: FeatureSectionProps) {
+  const cardTranslations = useTranslations('historypage.card');
   const sterilizedDate = formatDate(sterilizedRecord?.date);
-  const sterilizedLabel = sterilizedRecord ? 'Yes' : 'No';
+  const sterilizedLabel = cardTranslations(
+    sterilizedRecord ? 'answers.yes' : 'answers.no',
+  );
 
   return (
     <div className="grid gap-x-3 gap-y-4 grid-cols-2 grid-cols-[minmax(150px,max-content)_1fr] text-sm text-slate-600">
-      <span className="font-medium text-sm text-slate-500">Sex</span>
+      <span className="font-medium text-sm text-slate-500">
+        {cardTranslations('labels.sex')}
+      </span>
       <span className="font-semibold text-slate-900">
-        {formatSexLabel(animal.sex)}
+        {formatSexLabel(animal.sex, cardTranslations)}
       </span>
 
-      <span className="font-medium text-sm text-slate-500">Chip number</span>
+      <span className="font-medium text-sm text-slate-500">
+        {cardTranslations('labels.chip')}
+      </span>
       <span className="font-semibold text-slate-900">
         {animal.chipNumber ?? '—'}
       </span>
 
-      <span className="font-medium text-sm text-slate-500">Sterilized</span>
+      <span className="font-medium text-sm text-slate-500">
+        {cardTranslations('labels.sterilized')}
+      </span>
       <span className="font-semibold text-slate-900">
         {sterilizedLabel}{' '}
         {sterilizedDate && (

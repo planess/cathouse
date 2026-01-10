@@ -1,9 +1,17 @@
+import { DateTime } from 'luxon';
+
 import type {
   AnimalDocument,
   AnimalObservation,
   ObservationLocation,
 } from '@app/models/animal';
 import { AnimalSex, AnimalStatus } from '@app/models/animal';
+
+type ClientTranslateFn = ReturnType<typeof import('next-intl').useTranslations>;
+type ServerTranslateFn = Awaited<
+  ReturnType<typeof import('next-intl/server').getTranslations>
+>;
+type TranslateFn = ClientTranslateFn | ServerTranslateFn;
 
 export const placeholderImage = 'animals/empty-placeholder.jpg';
 
@@ -28,6 +36,36 @@ type BadgeToneKey = keyof typeof badgeTone;
 
 const YEAR_IN_MS = 1000 * 60 * 60 * 24 * 365.25;
 const MONTH_IN_MS = YEAR_IN_MS / 12;
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+const ageUnitKeyMap = {
+  year: 'age.year',
+  month: 'age.month',
+  day: 'age.day',
+} as const;
+
+const ageFallbackLabels = {
+  year: { singular: 'year', plural: 'years' },
+  month: { singular: 'month', plural: 'months' },
+  day: { singular: 'day', plural: 'days' },
+} as const;
+
+type AgeUnit = keyof typeof ageUnitKeyMap;
+
+function formatAgePart(value: number, unit: AgeUnit, t?: TranslateFn) {
+  if (!value) {
+    return null;
+  }
+
+  if (t) {
+    return t(ageUnitKeyMap[unit], { count: value });
+  }
+
+  const fallback = ageFallbackLabels[unit];
+  const unitLabel = value === 1 ? fallback.singular : fallback.plural;
+
+  return `${value} ${unitLabel}`;
+}
 
 export function resolveAnimalImage(url?: string, domain?: string): string {
   const sanitizedDomain = domain?.replace(/\/$/, '');
@@ -40,56 +78,57 @@ export function resolveAnimalImage(url?: string, domain?: string): string {
   return key;
 }
 
-export function getAgeLabel(birthday?: Date): string {
+export function getAgeLabel(birthday?: Date, t?: TranslateFn): string {
   if (!birthday) {
-    return 'Unknown age';
+    return t?.('age.unknown') ?? 'Unknown age';
   }
 
   const now = new Date();
   if (birthday > now) {
-    return 'Not born yet';
+    return t?.('age.unborn') ?? 'Not born yet';
   }
 
   const diff = now.getTime() - birthday.getTime();
   const years = Math.floor(diff / YEAR_IN_MS);
-  const months = Math.floor((diff % YEAR_IN_MS) / MONTH_IN_MS);
+  const remainderAfterYears = diff - years * YEAR_IN_MS;
+  const months = Math.floor(remainderAfterYears / MONTH_IN_MS);
+  const remainderAfterMonths = remainderAfterYears - months * MONTH_IN_MS;
+  const days = Math.floor(remainderAfterMonths / DAY_IN_MS);
 
-  if (years > 0 && months > 0) {
-    return `${years}y ${months}m old`;
+  const parts = [
+    formatAgePart(years, 'year', t),
+    formatAgePart(months, 'month', t),
+    formatAgePart(days, 'day', t),
+  ].filter(Boolean) as string[];
+
+  if (!parts.length) {
+    return t?.('age.recent') ?? 'Born recently';
   }
 
-  if (years > 0) {
-    return `${years}y old`;
-  }
-
-  if (months > 0) {
-    return `${months}m old`;
-  }
-
-  return 'Born recently';
+  const value = parts[0];
+  return t?.('age.oldSuffix', { value }) ?? `${value} old`;
 }
 
-export function formatSexLabel(sex: AnimalSex) {
+export function formatSexLabel(sex: AnimalSex, t?: TranslateFn) {
   switch (sex) {
     case AnimalSex.male:
-      return 'Male';
+      return t?.('sex.male') ?? 'Male';
     case AnimalSex.female:
-      return 'Female';
+      return t?.('sex.female') ?? 'Female';
     default:
-      return 'Unknown';
+      return t?.('labels.unknown') ?? 'Unknown';
   }
 }
 
-export function formatLabel(value?: string) {
+export function formatLabel(value?: string, t?: TranslateFn) {
   if (!value) {
-    return 'Unknown';
+    return t?.('card.labels.unknown') ?? 'Unknown';
   }
 
-  return value
-    .split(/[-_\s]+/)
-    .filter(Boolean)
-    .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
-    .join(' ');
+  return (
+    t?.(`personal.status.${value.replaceAll(/[\s_-]+/g, '-').toLowerCase()}`) ??
+    value
+  );
 }
 
 export function formatDate(date?: Date) {
@@ -97,7 +136,9 @@ export function formatDate(date?: Date) {
     return null;
   }
 
-  return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
+  return DateTime.fromJSDate(date)
+    .setLocale('uk')
+    .toLocaleString(DateTime.DATE_FULL);
 }
 
 export function getLatestObservation(
@@ -129,18 +170,24 @@ export function buildMapHref(location: ObservationLocation) {
   return null;
 }
 
-export function buildBadges(data: AnimalDocument) {
+export function buildBadges(data: AnimalDocument, t?: TranslateFn) {
   const badges: Array<{ label: string; tone: BadgeToneKey }> = [];
 
   if (data.vetMarkers?.sterilized) {
-    badges.push({ label: 'Sterilized', tone: 'success' });
+    badges.push({
+      label: t?.('badges.sterilized') ?? 'Sterilized',
+      tone: 'success',
+    });
   }
 
   if (
     data.vetMarkers?.rabiesVaccination?.length ||
     data.vetMarkers?.virusVaccination?.length
   ) {
-    badges.push({ label: 'Vaccinated', tone: 'info' });
+    badges.push({
+      label: t?.('badges.vaccinated') ?? 'Vaccinated',
+      tone: 'info',
+    });
   }
 
   const hasActiveTreatment = data.vetTreatments?.some(
@@ -151,9 +198,15 @@ export function buildBadges(data: AnimalDocument) {
   );
 
   if (hasActiveTreatment) {
-    badges.push({ label: 'Under treatment', tone: 'warning' });
+    badges.push({
+      label: t?.('badges.underTreatment') ?? 'Under treatment',
+      tone: 'warning',
+    });
   } else if (hasCompletedTreatment) {
-    badges.push({ label: 'Cured', tone: 'success' });
+    badges.push({
+      label: t?.('badges.cured') ?? 'Cured',
+      tone: 'success',
+    });
   }
 
   return badges;

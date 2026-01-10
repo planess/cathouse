@@ -32,7 +32,7 @@ export async function TreatmentCard({
     formatDate(treatment.startDate) ?? t('personal.treatments_unknown_date');
   const endLabel = treatment.endDate
     ? formatDate(treatment.endDate)
-    : t('personal.treatments_in_progress');
+    : '' /* t('personal.treatments_in_progress') */;
   const interventions = treatment.interventions ?? [];
   const medications = treatment.medications ?? [];
 
@@ -69,6 +69,9 @@ export async function TreatmentCard({
           </p>
           <ul className="space-y-1 list-disc pl-5">
             {medications.map((entry, index) => {
+              const start = entry.endDate
+                ? formatDate(entry.startDate)
+                : t('personal.treatments_unknown_date');
               const end = entry.endDate
                 ? formatDate(entry.endDate)
                 : t('personal.treatments_in_progress');
@@ -76,9 +79,7 @@ export async function TreatmentCard({
               return (
                 <li key={`medication-${index}`}>
                   <span>
-                    {formatDate(entry.startDate) ??
-                      t('personal.treatments_unknown_date')}
-                    {entry.endDate && <span> to {end}</span>}:
+                    {t('personal.treatments_start_end_label', { start, end })}:
                   </span>
                   <span>{entry.name}</span>
                   {entry.dosage && <span> - {entry.dosage}</span>}

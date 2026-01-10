@@ -1,28 +1,28 @@
 'use client';
 
-import { ObjectId } from 'mongodb';
-import { useCallback } from 'react';
-import { Button } from '@app/components/button';
-import { publishAnimal } from '../server/publish';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+
+import { Button } from '@app/components/button';
+
+import { publishAnimal } from '../server/publish';
 
 interface PublishButtonProps {
-  animalId: ObjectId;
+  animalId: string;
 }
 
 export default function PublishButton({ animalId }: PublishButtonProps) {
-    const router = useRouter();
+  const router = useRouter();
 
   const handlePublish = useCallback(async () => {
     // Call the publishAnimal function from the server
     try {
-      const {success} = await publishAnimal(animalId);
+      const { success } = await publishAnimal(animalId);
 
       if (!success) {
         throw new Error('Publish failed');
       }
 
-      console.log('Animal published successfully', success);
       // reload the page
       router.refresh();
     } catch {

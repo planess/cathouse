@@ -8,15 +8,23 @@ import {
   useMemo,
   useRef,
   useState,
+  type ButtonHTMLAttributes,
   type ReactNode,
 } from 'react';
 
 import { ChevronIcon } from '@app/(general)/history/[animalId]/components/icons';
 import { Rate } from '@app/enum/rate';
 
+export type AccordionRenderState = {
+  isOpen: boolean;
+  toggle: () => void;
+  toggleButtonProps: ButtonHTMLAttributes<HTMLButtonElement>;
+  chevron: ReactNode;
+};
+
 export type AccordionRenderable =
   | ReactNode
-  | ((state: { isOpen: boolean; toggle: () => void }) => ReactNode);
+  | ((state: AccordionRenderState) => ReactNode);
 
 export type AccordionItemProps = {
   /**
@@ -130,6 +138,21 @@ export function AccordionItem({
     onToggle?.(next);
   }, [disabled, isControlled, onToggle, resolvedOpen]);
 
+  const toggleButtonProps = useMemo<ButtonHTMLAttributes<HTMLButtonElement>>(
+    () => ({
+      type: 'button',
+      className: clsx(
+        'flex w-full items-center gap-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/50',
+        disabled && 'cursor-not-allowed opacity-60',
+      ),
+      'aria-expanded': resolvedOpen,
+      'aria-controls': contentId,
+      onClick: handleToggle,
+      disabled,
+    }),
+    [contentId, disabled, handleToggle, resolvedOpen],
+  );
+
   const toneClasses = useMemo(() => {
     return (
       (rate && theme[rate]) || {
@@ -139,13 +162,40 @@ export function AccordionItem({
     );
   }, [rate]);
 
+  const hasDetails = useMemo(() => Boolean(details), [details]);
+
+  const renderState = useMemo<AccordionRenderState>(
+    () => ({
+      isOpen: resolvedOpen,
+      toggle: handleToggle,
+      toggleButtonProps,
+      chevron: <ChevronIcon isOpen={resolvedOpen} />,
+    }),
+    [handleToggle, resolvedOpen, toggleButtonProps],
+  );
+
   const render = useCallback(
     (node: AccordionRenderable) =>
-      typeof node === 'function'
-        ? node({ isOpen: resolvedOpen, toggle: handleToggle })
-        : node,
-    [handleToggle, resolvedOpen],
+      typeof node === 'function' ? node(renderState) : node,
+    [renderState],
   );
+
+  const header = useMemo(() => {
+    if (typeof title === 'function') {
+      return render(title);
+    }
+
+    if (hasDetails) {
+      return (
+        <button {...toggleButtonProps}>
+          <div className="flex-1 overflow-hidden">{title}</div>
+          <ChevronIcon isOpen={resolvedOpen} />
+        </button>
+      );
+    }
+
+    return <div className="flex-1 overflow-hidden">{title}</div>;
+  }, [hasDetails, render, title, toggleButtonProps, resolvedOpen]);
 
   return (
     <article
@@ -156,20 +206,7 @@ export function AccordionItem({
         className,
       )}
     >
-      <button
-        type="button"
-        className={clsx(
-          'flex w-full items-center gap-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/50',
-          disabled && 'cursor-not-allowed opacity-60',
-        )}
-        aria-expanded={resolvedOpen}
-        aria-controls={contentId}
-        onClick={handleToggle}
-        disabled={disabled}
-      >
-        <div className="flex-1 overflow-hidden">{render(title)}</div>
-        <ChevronIcon isOpen={resolvedOpen} />
-      </button>
+      {header}
 
       {summary && (
         <div className="mt-3 text-sm font-medium text-slate-600">
@@ -177,20 +214,22 @@ export function AccordionItem({
         </div>
       )}
 
-      <div
-        id={contentId}
-        aria-hidden={!resolvedOpen}
-        className={clsx(
-          'overflow-hidden transition-[max-height,opacity] duration-300 ease-out',
-          resolvedOpen ? 'opacity-100' : 'opacity-0',
-          bodyClassName,
-        )}
-        style={{ maxHeight: resolvedOpen ? `${contentHeight}px` : '0px' }}
-      >
-        <div ref={detailsRef} className="pt-4 text-slate-700">
-          {render(details)}
+      {hasDetails && (
+        <div
+          id={contentId}
+          aria-hidden={!resolvedOpen}
+          className={clsx(
+            'overflow-hidden transition-[max-height,opacity] duration-300 ease-out',
+            resolvedOpen ? 'opacity-100' : 'opacity-0',
+            bodyClassName,
+          )}
+          style={{ maxHeight: resolvedOpen ? `${contentHeight}px` : '0px' }}
+        >
+          <div ref={detailsRef} className="pt-4 text-slate-700">
+            {render(details)}
+          </div>
         </div>
-      </div>
+      )}
     </article>
   );
 }

@@ -785,7 +785,7 @@ export const TreatmentForm = forwardRef<
 
           <div className="grid gap-x-3 grid-cols-[minmax(100px,40%)_1fr_auto]">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
+              <div className="flex flex-col lg:flex-row gap-2 overflow-x-hidden">
                 <div>
                   <label
                     className="text-sm font-medium text-slate-900"
@@ -925,14 +925,16 @@ export const TreatmentForm = forwardRef<
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleAddMedication}
-              className="self-center inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
-              aria-label={t('form.treatment_modal.add_button_label')}
-            >
-              <PlusIcon />
-            </button>
+            <div className="border-l border-slate-200 pl-2 flex items-center">
+              <button
+                type="button"
+                onClick={handleAddMedication}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
+                aria-label={t('form.treatment_modal.add_button_label')}
+              >
+                <PlusIcon />
+              </button>
+            </div>
           </div>
         </section>
 

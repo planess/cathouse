@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 import { AnimalDocument } from '@app/models/animal';
 
@@ -14,7 +15,8 @@ interface AvatarProps {
 }
 
 export default function AvatarSection({ heroImage, animal, canEdit }: AvatarProps) {
-  const statusLabel = formatLabel(animal.status);
+  const cardTranslations = useTranslations('historypage');
+  const statusLabel = formatLabel(animal.status, cardTranslations);
 
   return (
     <div className="relative overflow-hidden rounded-lg bg-slate-100 shadow-[0_0_8px_rgba(0,0,0,0.1)]">

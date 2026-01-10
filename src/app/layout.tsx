@@ -7,7 +7,7 @@ import './globals.css';
 import { ModalProvider } from './providers/modal';
 import { UserProvider } from './providers/user';
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,13 +27,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title: t('title'),
     description: t('description'),
     robots: 'noindex, nofollow',
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-      maximumScale: 1,
-    },
   };
 }
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export default async function RootLayout({
   children,

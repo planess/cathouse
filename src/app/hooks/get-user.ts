@@ -29,10 +29,8 @@ type ServerAuthState = AA | null;
 export async function getUser(): Promise<ServerAuthState> {
   try {
     const cookieStore = await cookies();
-console.log('--cookieStore', cookieStore);
     // Get authentication token from cookies or headers
     const token = cookieStore.get('token')?.value ?? null;
-console.log('--token', token);
     if (!token) {
       return null;
     }
@@ -47,7 +45,6 @@ console.log('--token', token);
     if (!session) {
       return null;
     }
-console.log('--session', session);
     const user = (await db
       .collection(DbTables.users)
       .findOne({ _id: session.userID })) as User | null;

@@ -145,6 +145,14 @@ export function LocationField({
 
       map.setView(DEFAULT_COORDINATES, 12);
 
+      if (locationRef.current) {
+        updateMarker(
+          locationRef.current.latitude,
+          locationRef.current.longitude,
+        );
+        setStatusMessage(detectedLabel);
+      }
+
       map.on('click', (event) => {
         const { lat, lng } = event.latlng;
         onChange({

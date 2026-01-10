@@ -22,7 +22,7 @@ export default async function VaccinationSection({
 }: VaccinationSectionProps) {
   const t = await getTranslations('historypage');
 
-  const vaccinationGroups = buildVaccinationGroups(animal);
+  const vaccinationGroups = buildVaccinationGroups(animal, t);
   const hasVaccinationRecords = vaccinationGroups.some(
     (group) => group.entries.length > 0,
   );

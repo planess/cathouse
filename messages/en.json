@@ -1,4 +1,6 @@
 {
+  "yes": "Yes",
+  "no": "No",
   "header": {
     "home": "Home",
     "contacts": "Contacts",
@@ -159,9 +161,24 @@
       "treatments_medications": "Medications",
       "treatments_start_label": "Start: {date}",
       "treatments_end_label": "End: {date}",
+      "treatments_start_end_label": "{start} - {end}",
       "edit_button_label": "Edit general info",
       "no_observations": "No observations recorded yet",
       "use_current_date": "Creating the record the date will be set to current moment",
+      "status": {
+        "free": "Outside",
+        "under-treatment": "Under treatment",
+        "sheltered": "In shelter",
+        "returned": "Returned to habitat",
+        "adopted": "Adopted",
+        "dead": "Passed away",
+        "unknown": "Unknown"
+      },
+      "vaccination": {
+        "parasites": "Parasites",
+        "rabies": "Rabies",
+        "virus": "Virus"
+      },
       "form": {
         "submit": "Add",
         "close": "Close",
@@ -330,6 +347,46 @@
         "sterilization_clinic_placeholder": "Select a clinic (optional)",
         "saving_general": "Saving changes...",
         "saving": "Saving observation..."
+      }
+    },
+    "card": {
+      "age": {
+        "unknown": "Unknown age",
+        "unborn": "Not born yet",
+        "recent": "Born recently",
+        "oldSuffix": "{value} old",
+        "year": "{count, plural, one {{count} year} other {{count} years}}",
+        "month": "{count, plural, one {{count} month} other {{count} months}}",
+        "day": "{count, plural, one {{count} day} other {{count} days}}"
+      },
+      "labels": {
+        "unknown": "Unknown",
+        "age": "Age:",
+        "lastSeen": "Last seen:",
+        "createdOn": "Created on {date}",
+        "createdAt": "Created: {date}",
+        "sex": "Sex",
+        "chip": "Chip number",
+        "sterilized": "Sterilized"
+      },
+      "descriptionFallback": "There is no description yet for this animal. Add one to help adopters learn more.",
+      "actions": {
+        "openMap": "Open map",
+        "viewProfile": "View profile"
+      },
+      "answers": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "sex": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "badges": {
+        "sterilized": "Sterilized",
+        "vaccinated": "Vaccinated",
+        "underTreatment": "Under treatment",
+        "cured": "Cured"
       }
     }
   },

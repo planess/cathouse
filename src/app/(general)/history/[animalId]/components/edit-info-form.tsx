@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
   forwardRef,
   useCallback,
@@ -8,7 +9,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useTranslations } from 'next-intl';
 
 import { useModal } from '@app/hooks/use-modal';
 
@@ -20,14 +20,15 @@ import {
   type EditInfoInitialValues,
   type InformatorOption,
 } from '../types';
-import {
-  CreateInformatorForm,
-  type CreateInformatorFormHandle,
-} from './create-informator-form';
+
 import {
   CreateClinicForm,
   type CreateClinicFormHandle,
 } from './create-clinic-form';
+import {
+  CreateInformatorForm,
+  type CreateInformatorFormHandle,
+} from './create-informator-form';
 import { PlusIcon } from './icons';
 
 export type EditInfoFormHandle = {

@@ -1,14 +1,18 @@
+import { useTranslations } from 'next-intl';
+
 import { AnimalDocument } from '@app/models/animal';
 import { Sterilized } from '@app/models/db/sterilized';
+
 import { formatDate, getAgeLabel } from '../../components/card/card.helpers';
-import EditInfo from './edit-info';
-import { ClockIcon } from './icons';
 import { formatInputDate } from '../format-input-date';
 import {
   ClinicOption,
   EditInfoInitialValues,
   InformatorOption,
 } from '../types';
+
+import EditInfo from './edit-info';
+import { ClockIcon } from './icons';
 
 interface InfoSectionProps {
   animal: AnimalDocument;
@@ -25,7 +29,12 @@ export default function InfoSection({
   informatorOptions,
   clinicOptions,
 }: InfoSectionProps) {
-  const ageLabel = getAgeLabel(animal.birthday);
+  const cardTranslations = useTranslations('historypage.card');
+  const ageLabel = getAgeLabel(animal.birthday, cardTranslations);
+  const createdAtFormatted = formatDate(animal.createdAt);
+  const createdChipLabel = createdAtFormatted
+    ? cardTranslations('labels.createdAt', { date: createdAtFormatted })
+    : null;
   const editInfoInitialValues: EditInfoInitialValues = {
     name: animal.name,
     birthday: formatInputDate(animal.birthday),
@@ -54,9 +63,11 @@ export default function InfoSection({
         </div>
 
         <div className="flex gap-2 items-center">
-          <span className="flex gap-2 items-center text-sm bg-slate-100 text-slate-500 rounded-full px-3 py-1">
-            <ClockIcon /> <span>Created: {formatDate(animal.createdAt)}</span>
-          </span>
+          {createdChipLabel && (
+            <span className="flex gap-2 items-center text-sm bg-slate-100 text-slate-500 rounded-full px-3 py-1">
+              <ClockIcon /> <span>{createdChipLabel}</span>
+            </span>
+          )}
           {canEdit && (
             <EditInfo
               animalId={animal._id?.toString() ?? ''}

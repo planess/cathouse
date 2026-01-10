@@ -33,29 +33,32 @@ import VaccinationSection from './vaccination.section';
 import type { ClinicOption, InformatorOption } from './types';
 
 type PageProps = {
-  params: {
+  params: Promise<{
     animalId: string;
-  };
+  }>;
 };
 
 export default async function AnimalHistoryPage({ params }: PageProps) {
-  const animalId = params.animalId;
+  const { animalId } = await params;
   const canEdit = await editHistoryGranted(new ObjectId(animalId));
-  const animal = await loadAnimal(params.animalId, canEdit);
+  const animal = await loadAnimal(animalId, canEdit);
 
   if (!animal) {
     notFound();
   }
 
   const canPublish = await publishHistoryGranted(animal.createdBy);
-  const t = await getTranslations('historypage');
+  const [t, cardTranslations] = await Promise.all([
+    getTranslations('historypage'),
+    getTranslations('historypage.card'),
+  ]);
   const headers = await httpHeaders();
   const backHref = resolveHistoryBackHref(headers.get('referer'));
   const heroImage = resolveAnimalImage(
     animal.mainAsset?.key,
     process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL,
   );
-  const heroBadges = buildBadges(animal);
+  const heroBadges = buildBadges(animal, cardTranslations);
   const createdLabel = formatDate(animal.createdAt);
   const sortedObservations = sortObservations(animal.observations);
 
@@ -74,7 +77,8 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
 
   const currentDomain = headers.get('host');
   const currentProtocol = headers.get('x-forwarded-proto') ?? 'https';
-  const telegramShareUrl = `${currentProtocol}://${currentDomain}/history/${animal._id.toString()}`;
+  const animalIdString = animal._id.toString();
+  const telegramShareUrl = `${currentProtocol}://${currentDomain}/history/${animalIdString}`;
   const shareText = encodeURIComponent(
     `${animal.name} history at Periphery Foundation`,
   );
@@ -94,7 +98,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
 
         {canPublish && isDraft && (
           <div className="flex gap-4 items-center">
-            <PublishButton animalId={animal._id} />
+            <PublishButton animalId={animalIdString} />
           </div>
         )}
       </div>
@@ -180,7 +184,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
         </div>
 
         <div className="text-gray-500 px-4 lg:px-6 py-2">
-          {t('personal.reference')}: #{animal._id.toString()}
+          {t('personal.reference')}: #{animalIdString}
         </div>
       </div>
     </div>

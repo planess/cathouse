@@ -16,6 +16,12 @@ import {
   MedicationIcon,
 } from './components/icons';
 
+type ClientTranslateFn = ReturnType<typeof import('next-intl').useTranslations>;
+type ServerTranslateFn = Awaited<
+  ReturnType<typeof import('next-intl/server').getTranslations>
+>;
+type TranslateFn = ClientTranslateFn | ServerTranslateFn;
+
 export type VaccinationEntry = {
   id: string;
   label: string;
@@ -52,6 +58,7 @@ export function sortTreatments(treatments?: VetTreatmentRecord[]) {
 
 export function buildVaccinationGroups(
   animal: AnimalDocument,
+  t: TranslateFn,
 ): VaccinationGroup[] {
   const rabiesEntries = normalizeVaccinationEntries(
     animal.vetMarkers?.rabiesVaccination,
@@ -66,21 +73,21 @@ export function buildVaccinationGroups(
   return [
     {
       key: 'rabies',
-      title: 'Rabies',
+      title: t('personal.vaccination.rabies'),
       icon: <MedicationIcon />,
       accent: 'text-sky-700',
       entries: rabiesEntries,
     },
     {
       key: 'virus',
-      title: 'Virus',
+      title: t('personal.vaccination.virus'),
       icon: <CoronavirusIcon />,
       accent: 'text-indigo-700',
       entries: virusEntries,
     },
     {
       key: 'dewormed',
-      title: 'Dewormed',
+      title: t('personal.vaccination.parasites'),
       icon: <HealingIcon />,
       accent: 'text-emerald-700',
       entries: parasiteEntries,

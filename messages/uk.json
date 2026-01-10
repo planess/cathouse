@@ -1,4 +1,6 @@
 {
+  "yes": "Так",
+  "no": "Ні",
   "header": {
     "home": "Головна",
     "contacts": "Комунікація",
@@ -159,9 +161,24 @@
       "treatments_medications": "Препарати",
       "treatments_start_label": "Початок: {date}",
       "treatments_end_label": "Завершення: {date}",
+      "treatments_start_end_label": "{start} - {end}",
       "edit_button_label": "Редагувати дані",
       "no_observations": "Спостереження ще не записані",
       "use_current_date": "Під час створення запису дата буде встановлена на поточний момент",
+      "status": {
+        "free": "На вулиці",
+        "under-treatment": "На лікуванні",
+        "sheltered": "У притулку",
+        "returned": "Повернено на місце",
+        "adopted": "Прилаштовано",
+        "dead": "Втрачено",
+        "unknown": "Невідомо"
+      },
+      "vaccination": {
+        "parasites": "Паразити",
+        "rabies": "Сказ",
+        "virus": "Вірусні"
+      },
       "form": {
         "submit": "Додати",
         "close": "Закрити",
@@ -330,6 +347,46 @@
         "sterilization_clinic_placeholder": "Оберіть клініку (необов'язково)",
         "saving_general": "Зберігаємо зміни...",
         "saving": "Зберігаємо спостереження..."
+      }
+    },
+    "card": {
+      "age": {
+        "unknown": "Невідомий вік",
+        "unborn": "Ще не народилось",
+        "recent": "Народилось зовсім нещодавно",
+        "oldSuffix": "{value}",
+        "year": "{count, plural, one {{count} рік} few {{count} роки} many {{count} років} other {{count} років}}",
+        "month": "{count, plural, one {{count} місяць} few {{count} місяці} many {{count} місяців} other {{count} місяців}}",
+        "day": "{count, plural, one {{count} день} few {{count} дні} many {{count} днів} other {{count} днів}}"
+      },
+      "labels": {
+        "unknown": "Невідомо",
+        "age": "Вік:",
+        "lastSeen": "Де бачили востаннє:",
+        "createdOn": "Створено {date}",
+        "createdAt": "Створено: {date}",
+        "sex": "Стать",
+        "chip": "Номер чипа",
+        "sterilized": "Стерилізовано"
+      },
+      "descriptionFallback": "Поки що немає опису для цієї тварини. Додайте його, щоб опікунам легше було знайомитись.",
+      "actions": {
+        "openMap": "Відкрити мапу",
+        "viewProfile": "Переглянути профіль"
+      },
+      "answers": {
+        "yes": "Так",
+        "no": "Ні"
+      },
+      "sex": {
+        "male": "Самець",
+        "female": "Самка"
+      },
+      "badges": {
+        "sterilized": "Стерилізовано",
+        "vaccinated": "Вакциновано",
+        "underTreatment": "Під лікуванням",
+        "cured": "Одужало"
       }
     }
   },

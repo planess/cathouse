@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 import type { AnimalDocument } from '@app/models/animal';
 
@@ -16,7 +17,6 @@ import {
   buildMapHref,
   formatDate,
   formatLabel,
-  formatSexLabel,
   getAgeLabel,
   getLatestObservation,
   resolveAnimalImage,
@@ -28,20 +28,26 @@ interface Props {
 }
 
 export default function Card({ data }: Props) {
+  const t = useTranslations('historypage');
+  const cardTranslations = useTranslations('historypage.card');
   const src = resolveAnimalImage(
     data.mainAsset?.key,
     process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL,
   );
-  const ageLabel = getAgeLabel(data.birthday);
-  const statusLabel = formatLabel(data.status);
-  const sexLabel = formatSexLabel(data.sex);
+  const ageLabel = getAgeLabel(data.birthday, cardTranslations);
+  const statusLabel = formatLabel(data.status, t);
   const createdAtLabel = formatDate(data.createdAt);
+  const createdAtText = createdAtLabel
+    ? cardTranslations('labels.createdOn', { date: createdAtLabel })
+    : null;
   const latestObservation = getLatestObservation(data.observations);
   const mapHref = latestObservation?.location
     ? buildMapHref(latestObservation.location)
     : null;
-  const badges = buildBadges(data);
+  const badges = buildBadges(data, cardTranslations);
   const detailsHref = data._id ? `/history/${data._id.toString()}` : null;
+  const descriptionText =
+    data.description ?? cardTranslations('descriptionFallback');
 
   return (
     <div className="bg-[#f3f4f6] rounded-t-lg">
@@ -91,19 +97,22 @@ export default function Card({ data }: Props) {
             </h3>
 
             <div className="flex gap-x-2 text-sm text-slate-600">
-              <span className="font-semibold">Age:</span>
+              <span className="font-semibold">
+                {cardTranslations('labels.age')}
+              </span>
               <span>{ageLabel}</span>
             </div>
           </div>
 
           <div className="text-sm leading-relaxed text-slate-600">
-            {data.description ??
-              'There is no description yet for this animal. Add one to help adopters learn more.'}
+            {descriptionText}
           </div>
 
           {latestObservation && (
             <div className="flex flex-col py-3 text-sm text-slate-600">
-              <div className="font-semibold">Last seen:</div>
+              <div className="font-semibold">
+                {cardTranslations('labels.lastSeen')}
+              </div>
               <div className="flex gap-x-2 items-center text-slate-500">
                 <span>
                   <LocationIcon />
@@ -116,7 +125,7 @@ export default function Card({ data }: Props) {
                     rel="noreferrer noopener"
                     className="text-sky-400 underline-offset-4 hover:underline flex items-center gap-1"
                   >
-                    <span>Open map</span>{' '}
+                    <span>{cardTranslations('actions.openMap')}</span>{' '}
                     <span>
                       <ExternalLinkIcon />
                     </span>
@@ -141,14 +150,14 @@ export default function Card({ data }: Props) {
               href={detailsHref}
               className="inline-flex justify-center items-center rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-900 hover:text-white"
             >
-              View profile
+              {cardTranslations('actions.viewProfile')}
             </Link>
           )}
         </div>
       </article>
 
       <div className="flex justify-end text-xs text-slate-500 py-2 px-4 lg:px-6">
-        {createdAtLabel && <span>Created on {createdAtLabel}</span>}
+        {createdAtText && <span>{createdAtText}</span>}
       </div>
     </div>
   );

@@ -76,6 +76,7 @@ export default function EditTreatment({
 
   return (
     <EditButton
+      tag="span"
       label={t('form.treatment_modal.edit_label')}
       onClick={handler}
     />
