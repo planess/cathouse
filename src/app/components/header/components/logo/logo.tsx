@@ -20,7 +20,7 @@ export default function Logo() {
 
   return (
     <span onClick={nav} aria-hidden>
-      <Image src={logo as string} alt="logo" width="120" />
+      <Image src={logo as string} alt="logo" width="120" height={undefined} />
     </span>
   );
 }

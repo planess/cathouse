@@ -35,7 +35,7 @@ export default function LogoSmall() {
       className="inline-flex items-center bg-transparent border-0 p-0 cursor-pointer"
       onPointerDown={handlePointerDown}
     >
-      <Image src={logo as string} alt={t('logoAltSmall')} width={50} />
+      <Image src={logo as string} alt={t('logoAltSmall')} width={50} height={undefined} />
     </button>
   );
 }

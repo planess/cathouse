@@ -190,24 +190,24 @@ export function buildBadges(data: AnimalDocument, t?: TranslateFn) {
     });
   }
 
-  const hasActiveTreatment = data.vetTreatments?.some(
-    (treatment) => !treatment.endDate,
-  );
-  const hasCompletedTreatment = data.vetTreatments?.some((treatment) =>
-    Boolean(treatment.endDate),
-  );
+  // const hasActiveTreatment = data.vetTreatments?.some(
+  //   (treatment) => !treatment.endDate,
+  // );
+  // const hasCompletedTreatment = data.vetTreatments?.some((treatment) =>
+  //   Boolean(treatment.endDate),
+  // );
 
-  if (hasActiveTreatment) {
-    badges.push({
-      label: t?.('badges.underTreatment') ?? 'Under treatment',
-      tone: 'warning',
-    });
-  } else if (hasCompletedTreatment) {
-    badges.push({
-      label: t?.('badges.cured') ?? 'Cured',
-      tone: 'success',
-    });
-  }
+  // if (hasActiveTreatment) {
+  //   badges.push({
+  //     label: t?.('badges.underTreatment') ?? 'Under treatment',
+  //     tone: 'warning',
+  //   });
+  // } else if (hasCompletedTreatment) {
+  //   badges.push({
+  //     label: t?.('badges.cured') ?? 'Cured',
+  //     tone: 'success',
+  //   });
+  // }
 
   return badges;
 }

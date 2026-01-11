@@ -7,14 +7,15 @@ import List from './components/list/list';
 import Panel from './components/panel/panel';
 
 type HistoryPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     page?: string | string[];
-  };
+  }>;
 };
 
-export default async function History({ searchParams }: HistoryPageProps) {
+export default async function History({ searchParams: searchParamsPromise }: HistoryPageProps) {
   const t = await getTranslations('historypage');
   const canCreate = await createHistoryGranted();
+  const searchParams = await searchParamsPromise;
   const rawPage = Array.isArray(searchParams?.page)
     ? searchParams?.page?.[0]
     : searchParams?.page;
