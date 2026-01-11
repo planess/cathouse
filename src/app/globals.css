@@ -59,3 +59,78 @@ body {
   color: #333;
   /* background: linear-gradient(167deg,#fedc2a 4.31%, #75aff2 49.13%, #0e6ca7 79.88%); */
 }
+
+@keyframes cathouse-modal-slide-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--modal-origin-translate-x, 0px), var(--modal-origin-translate-y, -56px), 0)
+      scale(0.82);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes cathouse-modal-fade-out {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -2vh, 0) scale(0.96);
+  }
+}
+
+@keyframes cathouse-overlay-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes cathouse-overlay-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.modal-overlay {
+  animation: cathouse-overlay-fade-in 0.5s ease forwards;
+}
+
+.modal-overlay[data-state='closing'] {
+  animation: cathouse-overlay-fade-out 0.5s ease forwards;
+}
+
+.modal-panel {
+  --modal-origin-translate-x: 0px;
+  --modal-origin-translate-y: -56px;
+  animation: cathouse-modal-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center;
+}
+
+.modal-panel[data-state='closing'] {
+  animation: cathouse-modal-fade-out 0.5s ease forwards;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-overlay[data-state='closing'],
+  .modal-panel,
+  .modal-panel[data-state='closing'] {
+    animation-duration: 0ms;
+    animation-fill-mode: forwards;
+  }
+}

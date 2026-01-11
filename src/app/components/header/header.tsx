@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Logo from './components/logo/logo';
 import LogoSmall from './components/logo/Logo-small';
 import styles from './header.module.scss';
+import { ReportDialogTrigger } from '../report-dialog';
 
 export default function Header() {
   const t = useTranslations('header');
@@ -25,7 +26,7 @@ export default function Header() {
   ));
 
   return (
-    <div className="flex px-3 lg:px-20 py-3 items-center border-solid border-b border-b-gray-200 bg-white transition-[padding]">
+    <div className="flex items-center border-b border-solid border-b-gray-200 bg-white px-3 py-3 transition-[padding] lg:px-20">
       <div className={clsx(styles.logoWrapper, 'hidden lg:block', 'flex-none')}>
         <Logo />
       </div>
@@ -34,10 +35,14 @@ export default function Header() {
         <LogoSmall />
       </div>
 
-      <div className="px-2 flex-auto">
+      <div className="flex-auto px-2">
         <nav>
           <ul className="flex justify-center">{lhtml}</ul>
         </nav>
+      </div>
+
+      <div className="flex-none">
+        <ReportDialogTrigger />
       </div>
     </div>
   );

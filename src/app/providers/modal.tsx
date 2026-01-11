@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import {
   createContext,
+  type CSSProperties,
   type ReactNode,
   useCallback,
   useEffect,
@@ -11,6 +12,10 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+
+const MODAL_EXIT_MS = 500;
+
+type ModalLifecycleState = 'open' | 'closing';
 
 export type ModalTone = 'primary' | 'secondary' | 'danger' | 'ghost';
 
@@ -24,6 +29,13 @@ export type ModalAction<T> = {
   autoClose?: boolean;
 };
 
+export type ModalOrigin = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 export type ModalOptions<T> = {
   title?: string;
   content?: ReactNode | (() => ReactNode);
@@ -32,6 +44,7 @@ export type ModalOptions<T> = {
   dismissible?: boolean;
   dismissLabel?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  origin?: ModalOrigin;
 };
 
 type ModalContextValue = {
@@ -44,6 +57,8 @@ type InternalModalState = {
   options: ModalOptions<unknown>;
   resolve: (value: unknown) => void;
   id: number;
+  status: ModalLifecycleState;
+  origin: ModalOrigin | null;
 };
 
 const defaultContext: ModalContextValue = {
@@ -65,9 +80,26 @@ export function ModalProvider({ children }: ModalProviderProps) {
   const activeModal = modalStack[modalStack.length - 1] ?? null;
   const bodyStyleCacheRef = useRef<{ overflow: string; paddingRight: string } | null>(null);
   const scrollbarWidthRef = useRef(0);
+  const pointerOriginRef = useRef<ModalOrigin | null>(null);
+  const exitTimersRef = useRef<Map<number, number>>(new Map());
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      pointerOriginRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        width: 1,
+        height: 1,
+      };
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+
+    return () => window.removeEventListener('pointerdown', handlePointerDown);
   }, []);
 
   const dismissModal = useCallback((result?: unknown) => {
@@ -77,10 +109,36 @@ export function ModalProvider({ children }: ModalProviderProps) {
         return current;
       }
 
-      const closing = current[current.length - 1];
-      closing?.resolve(result);
+      const lastIndex = current.length - 1;
+      const target = current[lastIndex];
 
-      return current.slice(0, -1);
+      if (!target) {
+        return current;
+      }
+
+      if (target.status === 'closing') {
+        return current;
+      }
+
+      target.resolve(result);
+
+      if (typeof window !== 'undefined') {
+        const timeoutId = window.setTimeout(() => {
+          setModalStack((state) => state.filter((modal) => modal.id !== target.id));
+          exitTimersRef.current.delete(target.id);
+        }, MODAL_EXIT_MS);
+
+        exitTimersRef.current.set(target.id, timeoutId);
+      }
+
+      return current.map((modal, index) =>
+        index === lastIndex
+          ? {
+              ...modal,
+              status: 'closing',
+            }
+          : modal,
+      );
     });
   }, []);
 
@@ -93,6 +151,8 @@ export function ModalProvider({ children }: ModalProviderProps) {
             options,
             resolve: resolve as (value: unknown) => void,
             id: Date.now() + Math.random(),
+            status: 'open',
+            origin: cloneOrigin(options.origin ?? pointerOriginRef.current),
           },
         ]);
       }),
@@ -176,6 +236,18 @@ export function ModalProvider({ children }: ModalProviderProps) {
     }
     scrollbarWidthRef.current = 0;
   }, []);
+
+  useEffect(
+    () => () => {
+      exitTimersRef.current.forEach((timeoutId) => {
+        if (typeof window !== 'undefined') {
+          window.clearTimeout(timeoutId);
+        }
+      });
+      exitTimersRef.current.clear();
+    },
+    [],
+  );
 
   const handleAction = useCallback(
     async (action: ModalAction<unknown>, modalId: number) => {
@@ -262,25 +334,31 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
           const isTop = index === modalStack.length - 1;
           const overlayOpacity = Math.min(0.45 + index * 0.08, 0.8);
+          const lifecycleState = state.status;
+          const isClosing = lifecycleState === 'closing';
+          const isTopAndActive = isTop && !isClosing;
+          const panelStyle = resolveModalOriginStyle(state.origin ?? options.origin);
 
           return (
             <div
               key={state.id}
               className={clsx(
-                'fixed inset-0 flex items-center justify-center px-4 py-6 backdrop-blur-sm',
-                isTop ? 'pointer-events-auto' : 'pointer-events-none',
+                'modal-overlay fixed inset-0 flex items-center justify-center px-4 py-6 backdrop-blur-sm',
+                isTopAndActive ? 'pointer-events-auto' : 'pointer-events-none',
               )}
               style={{
                 zIndex: 50 + index,
                 backgroundColor: `rgba(15,23,42,${overlayOpacity})`,
               }}
+              data-state={lifecycleState}
             >
               <button
                 type="button"
                 className="absolute inset-0 h-full w-full cursor-default"
                 aria-label="Dismiss modal overlay"
+                disabled={!isTopAndActive}
                 onClick={() => {
-                  if (isTop && dismissible) {
+                  if (isTopAndActive && dismissible) {
                     dismissModal();
                   }
                 }}
@@ -288,22 +366,24 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
               <div
                 className={clsx(
-                  'relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white p-6 shadow-2xl transition',
-                  !isTop && 'scale-[0.98]',
+                  'modal-panel relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white p-6 shadow-2xl transition',
+                  (!isTop || isClosing) && 'scale-[0.98]',
                   isFullScreen ? 'h-full' : '',
                   sizeClass,
                 )}
                 role="dialog"
                 aria-modal="true"
-                aria-hidden={!isTop}
+                aria-hidden={!isTopAndActive}
+                data-state={lifecycleState}
+                style={panelStyle}
               >
                 {dismissible && (
                   <button
                     type="button"
-                    onClick={() => isTop && dismissModal()}
+                    onClick={() => isTopAndActive && dismissModal()}
                     className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
                     aria-label="Close modal"
-                    disabled={!isTop}
+                    disabled={!isTopAndActive}
                   >
                     <CloseIcon />
                   </button>
@@ -329,18 +409,18 @@ export function ModalProvider({ children }: ModalProviderProps) {
                   {actions.map((action) => {
                     const tone = action.tone ?? 'secondary';
                     const actionId = action.id ?? action.label;
-                    const isLoading = pendingActionId === actionId && isTop;
+                    const isLoading = pendingActionId === actionId && isTopAndActive;
 
                     return (
                       <button
                         key={actionId}
                         type="button"
-                        disabled={action.disabled || isLoading || !isTop}
+                        disabled={action.disabled || isLoading || !isTopAndActive}
                         onClick={() => void handleAction(action, state.id)}
                         className={clsx(
                           'inline-flex min-w-[96px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition',
                           resolveToneClass(tone),
-                          (action.disabled || isLoading || !isTop) && 'opacity-60',
+                          (action.disabled || isLoading || !isTopAndActive) && 'opacity-60',
                         )}
                       >
                         {isLoading ? 'Please wait…' : action.label}
@@ -363,6 +443,32 @@ export function ModalProvider({ children }: ModalProviderProps) {
       {renderModals()}
     </ModalContext.Provider>
   );
+}
+
+function cloneOrigin(origin?: ModalOrigin | null): ModalOrigin | null {
+  if (!origin) {
+    return null;
+  }
+
+  const { x, y, width, height } = origin;
+
+  return { x, y, width, height };
+}
+
+function resolveModalOriginStyle(origin?: ModalOrigin | null): CSSProperties {
+  if (typeof window === 'undefined' || !origin) {
+    return {};
+  }
+
+  const viewportCenterX = window.innerWidth / 2;
+  const viewportCenterY = window.innerHeight / 2;
+  const originCenterX = origin.x + origin.width / 2;
+  const originCenterY = origin.y + origin.height / 2;
+
+  return {
+    '--modal-origin-translate-x': `${originCenterX - viewportCenterX}px`,
+    '--modal-origin-translate-y': `${originCenterY - viewportCenterY}px`,
+  } as CSSProperties;
 }
 
 function resolveToneClass(tone: ModalTone) {

@@ -9,6 +9,13 @@
     "logoSecret": "Tap five times quickly to open the sign-in page",
     "logoAltSmall": "Cathouse compact logo"
   },
+  "reportDialog": {
+    "buttonLabel": "Report",
+    "title": "Send a quick report",
+    "description": "Share the situation and how we can reach you. We'll route it to the right volunteer as soon as possible.",
+    "placeholder": "Contact details and channels will appear here soon.",
+    "closeLabel": "Close"
+  },
   "helppage": {
     "title": "Mutual Aid",
     "sections": {
