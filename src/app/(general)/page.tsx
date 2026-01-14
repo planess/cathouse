@@ -211,14 +211,15 @@ export default function Home() {
               {t('tnr.title')}
             </h2>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {tnrSteps.map((step) => (
               <div
                 key={step.index}
                 className={clsx(
                   'flex flex-col gap-3 group rounded-xl border border-gray-100 bg-white p-6 hover:border-[#00a6f4]/50 transition-colors',
                   {
-                    'lg:col-span-2': step.index >= tnrSteps.length,
+                    'xl:col-span-2': step.index >= tnrSteps.length,
+                    'lg:col-span-3': step.index >= tnrSteps.length,
                     'md:col-span-2': step.index >= tnrSteps.length,
                   },
                 )}
