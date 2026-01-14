@@ -444,6 +444,95 @@
     "checklist": {
       "title": "Internationalization test",
       "helper": "The navigation labels below reuse the translations from the header."
+    },
+    "hero": {
+      "announcement": {
+        "note": "Our foundation supports stray animals, however we are <strong>not a shelter</strong> and cannot keep animals permanently. We collaborate with veterinarians for treatment and release them back to their habitat"
+      },
+      "title": {
+        "lead": "Saving lives on <highlight>the streets</highlight>"
+      },
+      "description": "We focus on Trap-Neuter-Return to humanely control the population without cruelty",
+      "ctaReport": "Report an animal",
+      "ctaDonate": "Donate",
+      "ctaHelp": "Get involved",
+      "badge": {
+        "label": "Health verified",
+        "value": "Cleared for release"
+      },
+      "healthCard": {
+        "title": "Healthy and monitored",
+        "status": "Checked with a partner clinic today"
+      }
+    },
+    "mission": {
+      "title": "Our mission: Control & Response",
+      "description": "Our goal is simple: reduce suffering through sterilization. Every surgery prevents dozens of kittens from harsh street life",
+      "features": {
+        "population": {
+          "title": "Population control",
+          "description": "Humane sterilization is the most effective long-term solution for stray animals."
+        },
+        "medical": {
+          "title": "Medical assistance",
+          "description": "We secure vaccines and trauma treatment for stray cats."
+        },
+        "community": {
+          "title": "Community support",
+          "description": "We train and equip neighbors so they can protect local colonies."
+        }
+      }
+    },
+    "tnr": {
+      "label": "TNR path",
+      "title": "7 steps to a better life",
+      "steps": {
+        "1": {
+          "title": "Observation",
+          "description": "We begin with careful street monitoring to understand colony size and members."
+        },
+        "2": {
+          "title": "Identification",
+          "description": "The team checks ear clips and tags to see which cats are already sterilized and who still needs help."
+        },
+        "3": {
+          "title": "Capture",
+          "description": "We use humane traps and a lot of patience so the process stays calm and safe."
+        },
+        "4": {
+          "title": "Veterinary visit",
+          "description": "Each cat sees a licensed vet for diagnostics, sterilization, and vaccinations."
+        },
+        "5": {
+          "title": "Treatment & sterilization",
+          "description": "The core step that prevents uncontrolled reproduction and heals injuries or parasites."
+        },
+        "6": {
+          "title": "Rehabilitation",
+          "description": "Cats recover in quiet foster homes with observation 24/7 until the stress disappears."
+        },
+        "7": {
+          "title": "Return or adoption",
+          "description": "Healthy cats return to their territory or enter our adoption program for loving homes."
+        }
+      }
+    },
+    "tracker": {
+      "title": "Track & Protect",
+      "subtitle": "Colony monitoring system",
+      "description": "Become the guardian of your neighborhood. Report new observations and feeding stations so our mobile teams reach the animals that need help most.",
+      "actions": {
+        "reports": "Register new animal observations",
+        "stations": "Mark feeding stations",
+        "emergency": "Request urgent veterinary aid"
+      },
+      "cta": "Access live map",
+      "card": {
+        "title": "Colony #42",
+        "status": "Latest activity",
+        "value": "New sighting in Zone B",
+        "timestamp": "2 hours ago"
+      }
     }
   },
   "locationpage": {
