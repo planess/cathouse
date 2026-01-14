@@ -7,7 +7,10 @@
     "history": "History",
     "help": "Help",
     "logoSecret": "Tap five times quickly to open the sign-in page",
-    "logoAltSmall": "Cathouse compact logo"
+    "logoAltSmall": "Cathouse compact logo",
+    "menuTitle": "Navigation",
+    "menuOpenLabel": "Open navigation menu",
+    "menuCloseLabel": "Close navigation menu"
   },
   "reportDialog": {
     "buttonLabel": "Report",

@@ -7,7 +7,10 @@
     "history": "Історія",
     "help": "Підтримка",
     "logoSecret": "Швидко тапніть 5 разів, щоб перейти до входу",
-    "logoAltSmall": "Малий логотип Cathouse"
+    "logoAltSmall": "Малий логотип Cathouse",
+    "menuTitle": "Меню",
+    "menuOpenLabel": "Відкрити меню навігації",
+    "menuCloseLabel": "Закрити меню навігації"
   },
   "reportDialog": {
     "buttonLabel": "Повідомити",
