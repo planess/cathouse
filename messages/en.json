@@ -474,7 +474,7 @@
     },
     "mission": {
       "title": "Our mission: Control & Response",
-      "description": "Our goal is simple: reduce suffering through sterilization. Every surgery prevents dozens of kittens from harsh street life",
+      "description": "Every surgery prevents dozens of kittens from harsh street life. Our goal is to reduce animal suffering and improve their quality of life.",
       "features": {
         "population": {
           "title": "Population control",
@@ -508,7 +508,7 @@
         },
         "4": {
           "title": "Veterinary visit",
-          "description": "Each cat sees a licensed vet for diagnostics, sterilization, and vaccinations."
+          "description": "Each animal sees a licensed vet for diagnostics, and vaccinations."
         },
         "5": {
           "title": "Treatment & sterilization",
@@ -516,22 +516,22 @@
         },
         "6": {
           "title": "Rehabilitation",
-          "description": "Cats recover in quiet foster homes with observation 24/7 until the stress disappears."
+          "description": "Animals recover in specialized facilities with care until they are healthy."
         },
         "7": {
           "title": "Return or adoption",
-          "description": "Healthy cats return to their territory or enter our adoption program for loving homes."
+          "description": "Wild animals return to their territory. Socialized animals seek loving homes through publications."
         }
       }
     },
     "tracker": {
       "title": "Track & Protect",
       "subtitle": "Colony monitoring system",
-      "description": "Become the guardian of your neighborhood. Report new observations and feeding stations so our mobile teams reach the animals that need help most.",
+      "description": "Become the guardian of your neighborhood. Report observations and help us keep track of local colonies.",
       "actions": {
         "reports": "Register new animal observations",
-        "stations": "Mark feeding stations",
-        "emergency": "Request urgent veterinary aid"
+        "stations": "Report a state of animals in your area",
+        "emergency": "Request a help in emergencies"
       },
       "cta": "Access live map",
       "card": {
