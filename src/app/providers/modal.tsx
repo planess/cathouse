@@ -43,7 +43,7 @@ export type ModalOptions<T> = {
   actions?: ModalAction<T>[];
   dismissible?: boolean;
   dismissLabel?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'; // default: 'md'
   origin?: ModalOrigin;
 };
 
@@ -397,7 +397,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
                   )}
 
                   {options.description && (
-                    <p className="mb-4 text-sm text-slate-600">{options.description}</p>
+                    <div className="mb-4 text-sm text-slate-600">{options.description}</div>
                   )}
 
                   {content && (

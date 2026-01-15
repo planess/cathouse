@@ -56,7 +56,7 @@ export default function Header() {
       </div>
 
       <div className="ml-auto flex-none">
-        <ReportDialogTrigger />
+        <ReportDialogTrigger text={t('emergencyButton')} />
       </div>
     </div>
   );

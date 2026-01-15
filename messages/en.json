@@ -10,13 +10,17 @@
     "logoAltSmall": "Cathouse compact logo",
     "menuTitle": "Navigation",
     "menuOpenLabel": "Open navigation menu",
-    "menuCloseLabel": "Close navigation menu"
+    "menuCloseLabel": "Close navigation menu",
+    "emergencyButton": "Report an animal"
   },
   "reportDialog": {
     "buttonLabel": "Report",
-    "title": "Send a quick report",
-    "description": "Share the situation and how we can reach you. We'll route it to the right volunteer as soon as possible.",
-    "placeholder": "Contact details and channels will appear here soon.",
+    "title": "Share an emergency",
+    "description1": "We are based in Lviv, but please remember - we are <strong>not a shelter</strong> and do not have our own facilities for long-term animal care. We primarily recommend reaching out to:",
+    "description2": "<info><highlight>https://lkplev.com|LKP Lev</highlight>, Lviv, Promyslova St. 56</info>",
+    "description3": "<info><highlight>https://www.domivka.org.ua|Domivka Vryatovanykh Tvaryn</highlight>, Lviv, Dovbusha St. 24</info>",
+    "description4": "There are similar organizations in other cities that can provide assistance.",
+    "description": "Choose a convenient way to contact us, describe the problem, and we'll route it to the right volunteer as soon as possible.",
     "closeLabel": "Close"
   },
   "helppage": {
@@ -450,12 +454,12 @@
     },
     "hero": {
       "announcement": {
-        "note": "Our foundation supports stray animals, however we are <strong>not a shelter</strong> and cannot keep animals permanently. We collaborate with veterinarians for treatment and release them back to their habitat"
+        "note": "Our foundation supports stray animals, however we are <strong>not a shelter</strong> and cannot keep animals permanently. We collaborate with veterinarians for treatment and release them back to their previous or new habitats."
       },
       "title": {
         "lead": "Saving lives on <highlight>the streets</highlight>"
       },
-      "description": "We focus on Trap-Neuter-Return to humanely control the population without cruelty",
+      "description": "We focus on <tooltip>TNR|Trap-Neuter-Return</tooltip> to humanely control the population without cruelty and support <tooltip>colonies|We call this term the habitats of stray cats</tooltip>.",
       "ctaReport": "Report an animal",
       "ctaDonate": "Donate",
       "ctaHelp": "Get involved",
