@@ -1,9 +1,11 @@
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import Alert from '@app/components/alert/alert';
-import Link from 'next/link';
 import { ReportDialogTrigger } from '@app/components/report-dialog';
+import { Tooltip } from '@app/components/tooltip';
+
 import {
   CaptureIcon,
   CheckRoundIcon,
@@ -23,30 +25,40 @@ const trackerActionKeys = ['reports', 'stations', 'emergency'] as const;
 
 const icons = [
   <RoundIcon
+    key={1}
     icon={<VisibilityIcon />}
     className="bg-[#00a6f4]/10 text-[#00a6f4]"
   />,
   <RoundIcon
+    key={2}
     icon={<SearchIcon />}
     className="bg-[#00a6f4]/10 text-[#00a6f4]"
   />,
   <RoundIcon
+    key={3}
     icon={<CaptureIcon />}
     className="bg-[#00a6f4]/10 text-[#00a6f4]"
   />,
   <RoundIcon
+    key={4}
     icon={<MedicalBoxIcon />}
     className="bg-[#00a6f4]/10 text-[#00a6f4]"
   />,
   <RoundIcon
+    key={5}
     icon={<VaccinesIcon />}
     className="bg-[#00a6f4]/10 text-[#00a6f4]"
   />,
   <RoundIcon
+    key={6}
     icon={<HomeCareIcon />}
     className="bg-[#00a6f4]/10 text-[#00a6f4]"
   />,
-  <RoundIcon icon={<PetsIcon />} className="bg-[#00a6f4]/10 text-[#00a6f4]" />,
+  <RoundIcon
+    key={7}
+    icon={<PetsIcon />}
+    className="bg-[#00a6f4]/10 text-[#00a6f4]"
+  />,
 ];
 
 export default function Home() {
@@ -98,7 +110,20 @@ export default function Home() {
                 })}
               </h1>
               <p className="text-slate-600 text-base md:text-lg font-normal leading-relaxed dark:text-gray-300 mx-auto ">
-                {t('hero.description')}
+                {t.rich('hero.description', {
+                  tooltip: (chunks) => {
+                    const sp = String(chunks).split('|');
+
+                    return (
+                      <Tooltip
+                        targetClassName="border-b border-stone-300"
+                        text={sp[1]}
+                      >
+                        {sp[0]}
+                      </Tooltip>
+                    );
+                  },
+                })}
               </p>
             </div>
 
@@ -115,7 +140,7 @@ export default function Home() {
           </div>
 
           <div className="flex-1 w-full relative">
-            <div className="absolute -z-10 top-10 right-10 w-[80%] h-[80%] bg-gradient-to-tr from-primary/30 to-blue-200 rounded-full blur-3xl opacity-40"></div>
+            <div className="absolute -z-10 top-10 right-10 w-[80%] h-[80%] bg-gradient-to-tr from-primary/30 to-blue-200 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
             <div className="rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl relative">
               <div
                 className="w-full h-full bg-cover bg-center"
@@ -125,7 +150,7 @@ export default function Home() {
                     "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKnnXIPPVqgZnDRm5pdUsAtRDGC4qLtuC01Tq-bWifMzkXsXIITUUSfqPbjFk4IDXFuMCzkyCfNhgDCZE5ahLDrAALPnFzS9gjgDf7ftx8OQiuAVY0iwwgDOwQgUODUGOerUU0h3q9Azxc-85MZW6pRF31CcN3YRetsSiuPUctavOAZNO_39IWo3QGmUcKEpCysHI596tpfuzLr6Neh20o8iHvm5DMm2D4W4nY8NSvVD-lTQlvq14eUQOH5DYHouMo6y8WHjelgOc')",
                 }}
               ></div>
-              <div className="absolute bottom-6 left-6 right-6 bg-white/90 dark:bg-[#1a331a]/90 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-lg flex items-center gap-4">
+              <div className="absolute bottom-6 left-6 right-6 bg-white/90 dark:bg-[#1a331a]/90 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-lg flex items-center gap-4 pointer-events-none">
                 <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg text-blue-600 dark:text-blue-300">
                   <span>
                     <svg
@@ -275,7 +300,7 @@ export default function Home() {
                 alt="Cat Tracker Illustration"
               />
 
-              <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/90 px-4 py-2 text-xs p-4 shadow-lg flex items-center gap-3 border border-white/30">
+              <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/90 px-4 py-2 text-xs p-4 shadow-lg flex items-center gap-3 border border-white/30 pointer-events-none">
                 <div className="flex-1 text-slate-700 flex flex-col gap-1">
                   <span className="font-semibold">
                     {t('tracker.card.status')}

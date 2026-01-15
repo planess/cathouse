@@ -4,14 +4,24 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useCallback, type MouseEvent } from 'react';
 
+import {
+  InstagramIcon,
+  PhoneIcon,
+  TelegramIcon,
+} from '@app/(general)/history/[animalId]/components/icons';
 import { useModal } from '@app/hooks/use-modal';
+
+import Alert from '../alert/alert';
 
 type ReportDialogTriggerProps = {
   className?: string;
   text?: string;
 };
 
-export function ReportDialogTrigger({ className, text }: ReportDialogTriggerProps) {
+export function ReportDialogTrigger({
+  className,
+  text,
+}: ReportDialogTriggerProps) {
   const { showModal } = useModal();
   const t = useTranslations('reportDialog');
 
@@ -20,6 +30,7 @@ export function ReportDialogTrigger({ className, text }: ReportDialogTriggerProp
       const rect = event.currentTarget.getBoundingClientRect();
 
       void showModal({
+        size: 'xl',
         origin: {
           x: rect.left,
           y: rect.top,
@@ -29,14 +40,73 @@ export function ReportDialogTrigger({ className, text }: ReportDialogTriggerProp
         title: t('title'),
         content: (
           <div className="space-y-4">
-            <p className="text-base text-slate-700">{t('description')}</p>
+            {[1, 2, 3, 4].map((val) => (
+              <div className="text-base text-slate-700" key={val}>
+                {t.rich(`description${val}`, {
+                  strong: (children) => (
+                    <strong className="font-bold">{children}</strong>
+                  ),
+                  highlight: (children) => {
+                    const sp = String(children)?.split('|');
 
-            <div className="rounded-2xl border border-dashed border-sky-200 bg-sky-50/80 p-4 text-sm text-slate-600">
-              {t('placeholder')}
+                    return (
+                      <a
+                        href={sp[0]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-cyan-600 underline underline-offset-2 hover:text-cyan-700"
+                      >
+                        {sp[1]}
+                      </a>
+                    );
+                  },
+                  info: (children) => <Alert text={children} />,
+                })}
+              </div>
+            ))}
+
+            <hr className="border-gray-200" />
+
+            <div>{t('description')}</div>
+
+            <div className="flex flex-col gap-4">
+              <a
+                className="flex gap-2 items-center"
+                href="tel: +380973959022"
+                target="_blank"
+              >
+                <span className="text-sky-300 basis-5">
+                  <PhoneIcon />
+                </span>
+                <span>+38(097) 39 59 022</span>
+              </a>
+
+              <a
+                href="https://t.me/periphery_foundation"
+                target="_blank"
+                className="flex gap-2 items-center"
+              >
+                <span className="text-sky-300 size-6">
+                  <TelegramIcon />
+                </span>
+                <span>periphery_foundation</span>
+              </a>
+
+              <a
+                href="https://instagram.com/periphery.foundation"
+                target="_blank"
+                className="flex gap-2 items-center "
+              >
+                <span className="text-sky-300 size-6">
+                  <InstagramIcon />
+                </span>
+                <span>periphery.foundation</span>
+              </a>
             </div>
           </div>
         ),
-        dismissLabel: t('closeLabel'),
+        dismissible: true,
+        actions: [],
       });
     },
     [showModal, t],

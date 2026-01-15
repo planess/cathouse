@@ -6,7 +6,7 @@ interface AlertProps {
   text: React.ReactNode | string;
 }
 
-export default async function Alert({ text }: AlertProps) {
+export default function Alert({ text }: AlertProps) {
   // render svg
   // render svg nativelly
   return (
