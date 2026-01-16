@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "tsc": "tsc --noEmit",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
@@ -10,7 +11,7 @@
     "test": "jest",
     "test:e2e": "playwright test",
     "vercel": "vercel",
-    "deploy:preview": "vercel deploy",
+    "deploy:preview": "deploy.preview.bat",
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",
     "migrate:status": "migrate-mongo status",

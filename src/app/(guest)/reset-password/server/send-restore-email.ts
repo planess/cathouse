@@ -30,23 +30,13 @@ export async function sendRestoreEmail(
     return { status: 'ok' };
   }
 
-  // 2. Create a password reset token and store it
+  // 2. Generate a password reset token
   // todo: generate a secure random token under crypto hash
-  const code = await hashBlake2(
-    `${user._id.toString()}-${Date.now()}-${Math.random()}`, email);
-
-  try {
-    await db
-      .collection(DbTables.usersRestorePasswords)
-      .updateOne(
-        { userID: user._id },
-        { $set: { code, createdAt: new Date() } },
-        { upsert: true },
-      );
-  } catch (error) {
-    console.error('Error storing reset token:', error);
-    return { status: 'error' };
-  }
+  const code =
+    (await hashBlake2(
+      `${user._id.toString()}-${Date.now()}-${Math.random()}`,
+      email,
+    )) + (process.env.NODE_ENV === 'development' ? '-dev' : '');
 
   // 3. Generate email content and send email
   const subject = 'Reset your password';
@@ -83,6 +73,23 @@ export async function sendRestoreEmail(
     return {
       status: 'error',
       errors: { identifier: ['Failed to send email'] },
+    };
+  }
+
+  // 4. Store the reset token in the database
+  try {
+    await db
+      .collection(DbTables.usersRestorePasswords)
+      .updateOne(
+        { userID: user._id },
+        { $set: { code, createdAt: new Date() } },
+        { upsert: true },
+      );
+  } catch (error) {
+    console.error('Error storing reset token:', error);
+    return {
+      status: 'error',
+      errors: { identifier: ['Failed to store reset token'] },
     };
   }
 
