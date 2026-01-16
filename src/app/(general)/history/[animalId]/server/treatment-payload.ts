@@ -164,7 +164,7 @@ export function parseTreatmentFormData(formData: FormData) {
 
   if (!parsed.success) {
     throw new TreatmentPayloadError(
-      parsed.error.errors[0]?.message ?? 'Invalid payload.',
+      parsed.error.issues[0]?.message ?? 'Invalid payload.',
     );
   }
 

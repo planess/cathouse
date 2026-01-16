@@ -46,7 +46,7 @@ export default function EditTreatment({
       dismissible: false,
       size: 'xl',
       actions: [
-        { label: t('form.cancel'), value: null },
+        { label: t('form.cancel'), value: void 0 },
         {
           label: t('form.save'),
           tone: 'primary',

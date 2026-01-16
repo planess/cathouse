@@ -120,7 +120,7 @@ export async function createObservation(
     };
   }
 
-  const rawPayload: Payload = {
+  const rawPayload = {
     animalId: formData.get('animalId')?.toString() ?? '',
     note: formData.get('note')?.toString(),
     informator: formData.get('informator')?.toString(),
@@ -137,7 +137,7 @@ export async function createObservation(
       success: false,
       status: 400,
       errorCode: 'INVALID_INPUT',
-      message: parsedPayload.error.errors[0]?.message ?? 'Invalid payload.',
+      message: parsedPayload.error.issues[0]?.message ?? 'Invalid payload.',
     };
   }
 
@@ -332,9 +332,14 @@ export async function createObservation(
       },
     );
   } catch (error) {
+    const errInfo =
+      error && typeof error === 'object' && 'errInfo' in error
+        ? JSON.stringify((error as { errInfo?: unknown }).errInfo)
+        : undefined;
+
     console.error(
       `[createObservation] Unable to save observation for ${animalObjectId.toHexString()}`,
-      JSON.stringify(error.errInfo),
+      errInfo,
       error,
     );
 

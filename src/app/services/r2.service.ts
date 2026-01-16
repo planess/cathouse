@@ -40,10 +40,6 @@ export class R2Service extends Singleton {
     });
   }
 
-  static getInstance(): R2Service {
-    return super.getInstance<R2Service>();
-  }
-
   async uploadFiles(files: File[], options: UploadOptions = {}): Promise<MediaAsset[]> {
     if (!files.length) {
       return [];
@@ -120,4 +116,4 @@ export class R2Service extends Singleton {
   }
 }
 
-export const r2Service = R2Service.getInstance();
+export const r2Service = R2Service.getInstance<R2Service>();

@@ -108,10 +108,15 @@ export async function updateTreatment(
       throw new Error('Update rejected.');
     }
   } catch (error) {
+    const errInfo =
+      error && typeof error === 'object' && 'errInfo' in error
+        ? JSON.stringify((error as { errInfo?: unknown }).errInfo)
+        : undefined;
+
     console.error(
       '[updateTreatment] Unable to update treatment',
       error,
-      JSON.stringify(error.errInfo),
+      errInfo,
     );
 
     return {

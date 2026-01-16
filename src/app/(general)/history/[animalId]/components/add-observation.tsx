@@ -42,7 +42,7 @@ export default function AddObservation({
       dismissible: false,
       size: 'lg',
       actions: [
-        { label: t('personal.form.close'), value: null },
+        { label: t('personal.form.close'), value: void 0 },
         {
           label: t('personal.form.submit'),
           tone: 'primary',

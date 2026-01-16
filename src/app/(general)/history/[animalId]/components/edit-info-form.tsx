@@ -93,7 +93,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
         dismissible: false,
         size: 'sm',
         actions: [
-          { label: t('form.cancel'), value: null },
+          { label: t('form.cancel'), value: void 0 },
           {
             label: t('form.submit'),
             tone: 'primary',
@@ -129,7 +129,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
         dismissible: false,
         size: 'lg',
         actions: [
-          { label: t('form.cancel'), value: null },
+          { label: t('form.cancel'), value: void 0 },
           {
             label: t('form.submit'),
             tone: 'primary',
@@ -171,7 +171,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
       });
     }, []);
 
-    const submit = useCallback(async () => {
+    const submit = useCallback<() => Promise<'updated'>>(async () => {
       setError(null);
 
       if (!name.trim()) {

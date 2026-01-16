@@ -37,7 +37,7 @@ export default function AddTreatment({ animalId, clinicOptions }: AddTreatmentPr
       dismissible: false,
       size: 'xl',
       actions: [
-        { label: t('form.cancel'), value: null },
+        { label: t('form.cancel'), value: void 0 },
         {
           label: t('form.submit'),
           tone: 'primary',

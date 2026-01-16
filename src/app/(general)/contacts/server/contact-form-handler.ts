@@ -27,7 +27,7 @@ export async function handler(
     data = CommunicationForm.parse(formData);
   } catch (error) {
     if (error instanceof ZodError) {
-      return { status: 'error', errors: error.issues };
+      return { status: 'error', errors: error.issues as any };
     }
 
     throw error;

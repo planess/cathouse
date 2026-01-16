@@ -55,7 +55,7 @@ export interface VetInterventionRecord {
 
 export interface VetMedicineRecord {
   name: string;
-  dosage: string;
+  dosage?: string;
   startDate: Date;
   endDate?: Date;
   clinic?: Clinic;

@@ -265,7 +265,7 @@ export const EditVaccinationsForm = forwardRef<
     return { parasites, rabies, virus };
   }, [parasiteItems, rabiesItems, virusItems]);
 
-  const submit = useCallback(async () => {
+  const submit = useCallback<() => Promise<'updated'>>(async () => {
     const { parasites, rabies, virus } = serialize();
 
     const hasInvalidRecord = [...parasites, ...rabies, ...virus].some(

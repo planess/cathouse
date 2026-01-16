@@ -12,17 +12,17 @@ import type { ClinicOption } from '../types';
 
 const payloadSchema = z.object({
   name: z
-    .string({ required_error: 'Provide the clinic name.' })
+    .string()
     .trim()
     .min(2, 'Provide the clinic name.')
     .max(160, 'Name is too long.'),
   address: z
-    .string({ required_error: 'Provide the clinic address.' })
+    .string()
     .trim()
     .min(4, 'Provide the clinic address.')
     .max(240, 'Address is too long.'),
   latitude: z
-    .string({ required_error: 'Select clinic coordinates.' })
+    .string()
     .trim()
     .refine((value) => value.length > 0, {
       message: 'Select clinic coordinates.',
@@ -32,7 +32,7 @@ const payloadSchema = z.object({
       message: 'Latitude value is invalid.',
     }),
   longitude: z
-    .string({ required_error: 'Select clinic coordinates.' })
+    .string()
     .trim()
     .refine((value) => value.length > 0, {
       message: 'Select clinic coordinates.',
@@ -73,7 +73,7 @@ export async function createClinic(
     };
   }
 
-  const rawPayload: Payload = {
+  const rawPayload = {
     name: formData.get('name')?.toString() ?? '',
     address: formData.get('address')?.toString() ?? '',
     latitude: formData.get('latitude')?.toString() ?? '',

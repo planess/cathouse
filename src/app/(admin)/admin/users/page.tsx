@@ -71,7 +71,7 @@ async function getRoleList() {
   const dbClient = await clientPromise;
   const db = dbClient.db();
 
-  return db.collection(DbTables.roles).find({isActive: true}).toArray();
+  return db.collection(DbTables.roles).find({ isActive: true }).toArray();
 }
 
 async function deleteRole(userId: ObjectId, roleId: ObjectId) {
@@ -89,18 +89,18 @@ async function addRole(userId: ObjectId, roleId: string) {
 }
 
 function deleteRoleFactory(userId: ObjectId, roleId: ObjectId) {
-  return async function() {
+  return async function () {
     'use server';
 
-    return deleteRole(new ObjectId(userId), new ObjectId( roleId));
+    return deleteRole(new ObjectId(userId), new ObjectId(roleId)).then(() => void 0);
   };
 }
 
 function addRoleFactory(userId: ObjectId) {
-  return async function(roleId: string) {
+  return async function (roleId: string) {
     'use server';
 
-    return addRole(userId, roleId);
+    return addRole(userId, roleId).then(() => void 0);
   };
 }
 

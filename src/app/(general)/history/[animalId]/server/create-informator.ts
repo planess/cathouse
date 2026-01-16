@@ -19,12 +19,12 @@ type PersonDocument = {
 
 const payloadSchema = z.object({
   name: z
-    .string({ required_error: 'Provide the informator name.' })
+    .string()
     .trim()
     .min(2, 'Provide the informator name.')
     .max(120, 'Name is too long.'),
   phone: z
-    .string({ required_error: 'Provide the phone number.' })
+    .string()
     .trim()
     .min(6, 'Provide a valid phone number.')
     .max(32, 'Phone number is too long.'),

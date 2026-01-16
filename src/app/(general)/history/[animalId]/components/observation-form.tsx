@@ -156,7 +156,7 @@ export const ObservationForm = forwardRef<
       dismissible: false,
       size: 'sm',
       actions: [
-        { label: t('form.cancel'), value: null },
+        { label: t('form.cancel'), value: void 0 },
         {
           label: t('form.submit'),
           tone: 'primary',

@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, type Document, type UpdateFilter } from 'mongodb';
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
@@ -67,7 +67,10 @@ export class RBACService extends Singleton {
     try {
       const result = await db
         .collection(DbTables.users)
-        .updateOne({ _id: userId }, { $pull: { roles: roleId } });
+        .updateOne(
+          { _id: userId },
+          { $pull: { roles: roleId } } as unknown as UpdateFilter<Document>,
+        );
 
       return {
         success: true,
@@ -188,7 +191,7 @@ export class RBACService extends Singleton {
         .collection(DbTables.roles)
         .updateOne(
           { _id: roleId },
-          { $pull: { permissions: { $in: permissionId } } },
+          { $pull: { permissions: { $in: permissionId } } } as unknown as UpdateFilter<Document>,
         );
 
       return { success: true };

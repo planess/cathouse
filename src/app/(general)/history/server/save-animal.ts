@@ -88,11 +88,15 @@ export async function saveAnimal(
       return { success: false, error: 'Chip ID already exists.' };
     }
 
-    console.error(
-      'Failed to save animal',
-      error,
-      JSON.stringify(error.errInfo?.details?.schemaRulesNotSatisfied),
-    );
+    const errInfo =
+      error && typeof error === 'object' && 'errInfo' in error
+        ? JSON.stringify(
+            (error as { errInfo?: { details?: { schemaRulesNotSatisfied?: unknown } } }).errInfo
+              ?.details?.schemaRulesNotSatisfied,
+          )
+        : undefined;
+
+    console.error('Failed to save animal', error, errInfo);
     return { success: false, error: 'Unable to save animal right now.' };
   }
 }

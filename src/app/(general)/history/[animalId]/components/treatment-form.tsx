@@ -315,7 +315,7 @@ export const TreatmentForm = forwardRef<
           dismissible: false,
           size: 'lg',
           actions: [
-            { label: t('form.cancel'), value: null },
+            { label: t('form.cancel'), value: void 0 },
             {
               label: t('form.submit'),
               tone: 'primary',
@@ -368,7 +368,7 @@ export const TreatmentForm = forwardRef<
         }));
     }, [medicationItems]);
 
-    const submit = useCallback(async () => {
+    const submit = useCallback<() => Promise<'saved'>>(async () => {
       setError(null);
 
       if (!complaints.trim()) {

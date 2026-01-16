@@ -35,6 +35,8 @@ export interface TooltipProps {
   targetClassName?: string;
 }
 
+type TooltipTriggerElement = ReactElement<{ 'aria-describedby'?: string }>;
+
 export function Tooltip({
   text,
   children,
@@ -162,14 +164,14 @@ export function Tooltip({
 
   const isElementChild = isValidElement(children);
   const existingDescribedBy = isElementChild
-    ? (children as ReactElement).props?.['aria-describedby']
+    ? (children as TooltipTriggerElement).props?.['aria-describedby']
     : undefined;
   const describedByValue = isActive
     ? [existingDescribedBy, tooltipId].filter(Boolean).join(' ')
     : existingDescribedBy;
 
   const trigger = isElementChild ? (
-    cloneElement(children as ReactElement, {
+    cloneElement(children as TooltipTriggerElement, {
       'aria-describedby': describedByValue ?? undefined,
     })
   ) : (

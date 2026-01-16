@@ -19,7 +19,7 @@ const payloadSchema = z.object({
       message: 'Animal identifier is invalid.',
     }),
   name: z
-    .string({ required_error: 'Provide the animal name.' })
+    .string()
     .trim()
     .min(2, 'Provide the animal name.')
     .max(120, 'Name is too long.'),
@@ -47,10 +47,7 @@ const payloadSchema = z.object({
     .string()
     .optional()
     .transform((value) => value?.trim() || undefined),
-  status: z.nativeEnum(AnimalStatus, {
-    required_error: 'Select the animal status.',
-    invalid_type_error: 'Select the animal status.',
-  }),
+  status: z.nativeEnum(AnimalStatus),
   sterilizedEnabled: z
     .string()
     .optional()
@@ -109,7 +106,7 @@ export async function updateAnimalInfo(
     };
   }
 
-  const rawPayload: Payload = {
+  const rawPayload = {
     animalId: formData.get('animalId')?.toString() ?? '',
     name: formData.get('name')?.toString() ?? '',
     birthday: formData.get('birthday')?.toString(),

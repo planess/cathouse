@@ -49,7 +49,7 @@ export default function EditInfo({
       dismissible: false,
       size: 'lg',
       actions: [
-        { label: t('form.cancel'), value: null },
+        { label: t('form.cancel'), value: void 0 },
         {
           label: t('form.save'),
           tone: 'primary',

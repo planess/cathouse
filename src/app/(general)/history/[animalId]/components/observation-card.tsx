@@ -34,7 +34,7 @@ export function ObservationCard({ observation }: ObservationCardProps) {
   const location = observation.location?.address ? (
     observation.location.coordinates ? (
       <a
-        href={buildMapHref(observation.location)}
+        href={buildMapHref(observation.location) ?? undefined}
         target="_blank"
         rel="noreferrer noopener"
         className="text-blue-500"
@@ -59,15 +59,17 @@ export function ObservationCard({ observation }: ObservationCardProps) {
   const summary = observation.note ? <div>{observation.note}</div> : null;
 
   const rate =
-    healthScore >= 8
-      ? Rate.ok
-      : healthScore >= 6
-        ? Rate.satisfactory
-        : healthScore >= 4
-          ? Rate.risk
-          : healthScore > 0
-            ? Rate.danger
-            : undefined;
+    typeof healthScore === 'number'
+      ? healthScore >= 8
+        ? Rate.ok
+        : healthScore >= 6
+          ? Rate.satisfactory
+          : healthScore >= 4
+            ? Rate.risk
+            : healthScore > 0
+              ? Rate.danger
+              : undefined
+      : undefined;
   const imagePreview =
     observation.assets?.map(({ key }) =>
       resolveAnimalImage(key, process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL),

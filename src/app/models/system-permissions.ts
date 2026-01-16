@@ -45,4 +45,5 @@ export const SYSTEM_PERMISSIONS = {
  * - const userPerms: SystemPermission[] = ['user:read', 'help:request:create']
  */
 export type SystemPermission =
-  (typeof SYSTEM_PERMISSIONS)[keyof typeof SYSTEM_PERMISSIONS];
+  | (typeof SYSTEM_PERMISSIONS)[keyof typeof SYSTEM_PERMISSIONS]
+  | `${string}:${string}`;

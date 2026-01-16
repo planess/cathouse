@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     id: record._id.toString(),
     email: record.email,
     // name: profile.name,
-    scopes: await getUserPermissions(record._id),
+    scopes: await getUserPermissions(undefined, record._id),
     createdAt: record.createdAt,
     lastLogin: activeSession.createdAt,
   } as User;

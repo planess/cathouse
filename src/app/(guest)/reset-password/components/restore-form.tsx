@@ -37,6 +37,11 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
   const t = useTranslations('authorization');
 
   useEffect(() => {
+    if (!expiresIn) {
+      setLeft(0);
+      return;
+    }
+
     setLeft(Math.floor((expiresIn.getTime() - Date.now()) / 1000));
 
     const interval = setInterval(() => {

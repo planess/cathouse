@@ -15,7 +15,7 @@ const AREAS = [
     roles: ['designers', 'analysts', 'developers', 'testers', 'devops'],
   },
   { key: 'care', paragraphKeys: ['p1', 'p2', 'p3', 'p4'] },
-] as const;
+] as {key: string; paragraphKeys: string[]; rolesIntroKey?: string; roles?: string[]}[];
 
 export default function ReceiveHelp() {
   const t = useTranslations('helppage.receive');

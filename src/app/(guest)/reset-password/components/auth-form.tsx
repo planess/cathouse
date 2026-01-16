@@ -35,6 +35,24 @@ export default function AuthForm({ handler }: HandlerParams<string>) {
   });
   const silentSubmit = (event: FormEvent) => void onSubmit(event);
 
+  const identifierErrors: string[] = (() => {
+    if (!('identifier' in formState.errors)) {
+      return [];
+    }
+
+    const error = formState.errors.identifier;
+
+    if (typeof error?.message === 'string' && error.message.length > 0) {
+      return [error.message];
+    }
+
+    if (error?.type) {
+      return [t(`form.error.${error.type}`)];
+    }
+
+    return [];
+  })();
+
   return (
     <form onSubmit={silentSubmit} className="flex flex-col gap-2">
       <div>
@@ -45,7 +63,7 @@ export default function AuthForm({ handler }: HandlerParams<string>) {
             ...register('identifier', { required: true }),
             placeholder: t('form.placeholder.email-reset'),
           }}
-          errors={'identifier' in formState.errors ? (formState.errors.identifier?.message?.length > 0 ? [formState.errors.identifier.message] : [t(`form.error.${formState.errors.identifier.type}`)]) : []}
+          errors={identifierErrors}
          
         />
       </div>
