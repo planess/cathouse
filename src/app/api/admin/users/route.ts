@@ -1,8 +1,9 @@
+import { ObjectId } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { RBACService } from '@app/services/rbac.service';
 
-const rbacService = RBACService.getInstance();
+const rbacService = RBACService.getInstance<RBACService>();
 
 // GET /api/admin/users - Get all users with their roles
 export async function GET(request: NextRequest) {
@@ -13,14 +14,14 @@ export async function GET(request: NextRequest) {
     //   resource: 'user',
     //   action: 'read'
     // });
-    
+
     // if (!hasPermission) {
     //   return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     // }
 
     const dbClient = await (await import('@app/ins/mongo-client')).default;
     const db = dbClient.db();
-    
+
     const users = await db
       .collection('users')
       .find({ isActive: true })
@@ -37,12 +38,12 @@ export async function GET(request: NextRequest) {
             isActive: true,
             $or: [
               { expiresAt: { $exists: false } },
-              { expiresAt: { $gt: Date.now() } }
-            ]
+              { expiresAt: { $gt: Date.now() } },
+            ],
           })
           .toArray();
 
-        const roleIds = userRoles.map(ur => ur.roleId);
+        const roleIds = userRoles.map((ur) => ur.roleId);
         const roles = await db
           .collection('roles')
           .find({ id: { $in: roleIds } })
@@ -50,13 +51,13 @@ export async function GET(request: NextRequest) {
 
         return {
           ...user,
-          roles: roles.map(r => ({
+          roles: roles.map((r) => ({
             id: r.id,
             name: r.name,
-            description: r.description
-          }))
+            description: r.description,
+          })),
         };
-      })
+      }),
     );
 
     return NextResponse.json({ users: usersWithRoles });
@@ -64,7 +65,7 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching users:', error);
     return NextResponse.json(
       { error: 'Failed to fetch users' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/users/:id/roles - Assign a role to a user
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // TODO: Add authentication and permission check
@@ -81,7 +82,7 @@ export async function POST(
     //   resource: 'role',
     //   action: 'assign'
     // });
-    
+
     // if (!hasPermission) {
     //   return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     // }
@@ -92,7 +93,7 @@ export async function POST(
     if (!roleId) {
       return NextResponse.json(
         { error: 'Role ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -100,17 +101,16 @@ export async function POST(
     const grantedBy = 'current-user-id';
 
     const success = await rbacService.assignRole(
-      params.id,
-      roleId,
-      grantedBy,
+      new ObjectId(params.id),
+      new ObjectId(roleId),
       context,
-      expiresAt ? new Date(expiresAt).getTime() : undefined
+      expiresAt ? new Date(expiresAt).getTime() : undefined,
     );
 
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to assign role' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -119,7 +119,7 @@ export async function POST(
     console.error('Error assigning role:', error);
     return NextResponse.json(
       { error: 'Failed to assign role' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -127,7 +127,7 @@ export async function POST(
 // DELETE /api/admin/users/:id/roles/:roleId - Remove a role from a user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; roleId: string } }
+  { params }: { params: { id: string; roleId: string } },
 ) {
   try {
     // TODO: Add authentication and permission check
@@ -136,7 +136,7 @@ export async function DELETE(
     //   resource: 'role',
     //   action: 'assign'
     // });
-    
+
     // if (!hasPermission) {
     //   return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     // }
@@ -144,16 +144,16 @@ export async function DELETE(
     const { searchParams } = new URL(request.url);
     const context = searchParams.get('context') || undefined;
 
-    const success = await rbacService.removeRole(
+    const success = await rbacService.removeRoleForUser(
       params.id,
       params.roleId,
-      context
+      context,
     );
 
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to remove role' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -162,7 +162,7 @@ export async function DELETE(
     console.error('Error removing role:', error);
     return NextResponse.json(
       { error: 'Failed to remove role' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

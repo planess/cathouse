@@ -3,11 +3,8 @@ import { ObjectId } from 'mongodb';
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 import type { Permission } from '@app/models/permission';
-import type { PermissionCheck } from '@app/models/permission-check';
 import type { Role } from '@app/models/role';
-import type { SystemPermission } from '@app/models/system-permissions';
 
-import { PermissionResolverService } from './permission-resolver.service';
 import { Singleton } from './singleton';
 
 /**
