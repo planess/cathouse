@@ -300,7 +300,10 @@ export default function Home() {
           <div className="flex justify-center items-center">
             <div className="relative">
               <img
-                src="https://pub-b01557542cb14ab3a2c20e32a7373072.r2.dev/c949f56386fb3bf3ca901814052b5481.jpg"
+                src={
+                  process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL +
+                  '/c949f56386fb3bf3ca901814052b5481.jpg'
+                }
                 alt="Cat Tracker Illustration"
               />
 
