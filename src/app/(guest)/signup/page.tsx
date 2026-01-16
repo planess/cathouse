@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import RegisterForm from './components/register-form/register-form';
+
+import type { Metadata } from 'next';
 
 export default function Signup() {
   const t = useTranslations('authorization');
@@ -27,4 +32,15 @@ export default function Signup() {
       </div>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('authorization'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('title.register'), siteTitle),
+  };
 }

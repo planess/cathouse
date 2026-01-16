@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { publishHistoryGranted } from '@app/accessors/publish-history-granted';
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { Sterilized } from '@app/models/db/sterilized';
 
 import {
@@ -31,6 +32,7 @@ import { sortObservations } from './utils';
 import VaccinationSection from './vaccination.section';
 
 import type { ClinicOption, InformatorOption } from './types';
+import type { Metadata } from 'next';
 
 type PageProps = {
   params: Promise<{
@@ -189,4 +191,31 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
       </div>
     </div>
   );
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { animalId } = await params;
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('historypage'),
+    getSiteTitle(),
+  ]);
+
+  if (!ObjectId.isValid(animalId)) {
+    return {
+      title: composeMetadataTitle(t('title'), siteTitle),
+    };
+  }
+
+  const canEdit = await editHistoryGranted(new ObjectId(animalId));
+  const animal = await loadAnimal(animalId, canEdit);
+
+  if (!animal) {
+    return {
+      title: composeMetadataTitle(t('title'), siteTitle),
+    };
+  }
+
+  return {
+    title: composeMetadataTitle(animal.name ?? t('title'), siteTitle),
+  };
 }

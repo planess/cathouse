@@ -7,7 +7,7 @@
     "history": "History",
     "help": "Help",
     "logoSecret": "Tap five times quickly to open the sign-in page",
-    "logoAltSmall": "Cathouse compact logo",
+    "logoAltSmall": "Foundation compact logo",
     "menuTitle": "Navigation",
     "menuOpenLabel": "Open navigation menu",
     "menuCloseLabel": "Close navigation menu",
@@ -445,8 +445,20 @@
       }
     }
   },
+  "adminpage": {
+    "title": "Admin panel",
+    "users": {
+      "title": "User management"
+    },
+    "roles": {
+      "title": "Roles management"
+    },
+    "migrations": {
+      "title": "Database migrations"
+    }
+  },
   "homepage": {
-    "title": "Welcome to Cathouse",
+    "title": "Welcome to Foundation",
     "description": "This sandbox page confirms the platform is running correctly.",
     "checklist": {
       "title": "Internationalization test",
@@ -580,8 +592,8 @@
     }
   },
   "layout": {
-    "title": "Perimeter",
-    "description": "The Perimeter charity foundation helps stray animals"
+    "title": "Periphery",
+    "description": "The Periphery charity foundation helps stray animals"
   },
   "unavailable": {
     "title": "The site will be back soon",

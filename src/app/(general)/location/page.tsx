@@ -1,4 +1,9 @@
 import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+
+import type { Metadata } from 'next';
 
 export default function Location() {
   const t = useTranslations('locationpage');
@@ -9,4 +14,15 @@ export default function Location() {
       <p className="text-lg text-zinc-700">{t('body')}</p>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('locationpage'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('title'), siteTitle),
+  };
 }

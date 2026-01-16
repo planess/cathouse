@@ -2,9 +2,12 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
 import { createHistoryGranted } from '@app/accessors/create-history-granted';
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import List from './components/list/list';
 import Panel from './components/panel/panel';
+
+import type { Metadata } from 'next';
 
 type HistoryPageProps = {
   searchParams?: Promise<{
@@ -49,4 +52,15 @@ export default async function History({ searchParams: searchParamsPromise }: His
       </div>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('historypage'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('title'), siteTitle),
+  };
 }

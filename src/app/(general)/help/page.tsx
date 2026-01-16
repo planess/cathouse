@@ -1,8 +1,12 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+
 import ProvideHelp from './components/section-provide-help/provide-help';
 import ReceiveHelp from './components/section-receive-help/receive-help';
+
+import type { Metadata } from 'next';
 
 export default function Help() {
   const t = useTranslations('helppage');
@@ -22,10 +26,13 @@ export default function Help() {
   );
 }
 
-export async function generateMetadata() {
-  const t = await getTranslations('helppage');
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('helppage'),
+    getSiteTitle(),
+  ]);
 
   return {
-    title: `${t('title')} | Perimeter`,
+    title: composeMetadataTitle(t('title'), siteTitle),
   };
 }

@@ -8,7 +8,7 @@ class EmailService extends Singleton {
     context = 'info',
   ): Promise<Response> {
     const formData = new FormData();
-    formData.append('from', `Perimeter <${context}@perilines.com.ua>`);
+    formData.append('from', `Periphery Foundation<${context}@perilines.com.ua>`);
     formData.append('to', to);
     formData.append('subject', subject);
     formData.append('text', body);

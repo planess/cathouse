@@ -1,10 +1,13 @@
 import { getTranslations } from 'next-intl/server';
 
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import clientPromise from '@app/ins/mongo-client';
 
 import AuthFormWrapper from './components/auth-form-wrapper';
 import RestoreForm from './components/restore-form';
 import { sendRestoreEmail } from './server/send-restore-email';
+
+import type { Metadata } from 'next';
 
 export default async function ResetPasswordPage({
   searchParams,
@@ -54,4 +57,15 @@ export default async function ResetPasswordPage({
       <div className="lg:w-120 mx-auto">{form}</div>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('authorization'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('title.reset-password'), siteTitle),
+  };
 }

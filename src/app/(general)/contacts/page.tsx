@@ -1,6 +1,8 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+
 import {
   InstagramIcon,
   PhoneIcon,
@@ -10,6 +12,8 @@ import {
 import ContactFormWrapper from './components/contact-form-wrapper/contact-form-wrapper';
 import Map from './components/map/map';
 import Section from './components/section/section';
+
+import type { Metadata } from 'next';
 
 export default function Contacts() {
   const t = useTranslations('contactspage');
@@ -107,10 +111,13 @@ export default function Contacts() {
   );
 }
 
-export async function generateMetadata() {
-  const t = await getTranslations('contactspage');
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('contactspage'),
+    getSiteTitle(),
+  ]);
 
   return {
-    title: `${t('title')} | Perimeter`,
+    title: composeMetadataTitle(t('title'), siteTitle),
   };
 }

@@ -1,4 +1,10 @@
+import { getTranslations } from 'next-intl/server';
+
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+
 import Form from './components/form';
+
+import type { Metadata } from 'next';
 
 export default function Page() {
   return (
@@ -12,4 +18,15 @@ export default function Page() {
       </div>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('historypage'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('createHistory'), siteTitle),
+  };
 }

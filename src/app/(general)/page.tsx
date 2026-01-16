@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import Alert from '@app/components/alert/alert';
 import { ReportDialogTrigger } from '@app/components/report-dialog';
 import { Tooltip } from '@app/components/tooltip';
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import {
   CaptureIcon,
@@ -19,6 +21,8 @@ import {
   VaccinesIcon,
   VisibilityIcon,
 } from './history/[animalId]/components/icons';
+
+import type { Metadata } from 'next';
 
 const missionKeys = ['population', 'medical', 'community'] as const;
 const trackerActionKeys = ['reports', 'stations', 'emergency'] as const;
@@ -335,4 +339,15 @@ function RoundIcon({ className, icon }: RoundIconProps) {
       <span className="size-6">{icon}</span>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('homepage'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('title'), siteTitle),
+  };
 }

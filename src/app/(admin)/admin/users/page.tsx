@@ -1,13 +1,17 @@
 'use server';
 
 import { ObjectId } from 'mongodb';
+import { getTranslations } from 'next-intl/server';
 
 import { DbTables } from '@app/enum/db-tables';
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import clientPromise from '@app/ins/mongo-client';
 import { RBACService } from '@app/services/rbac.service';
 
 import Chip from './components/chip';
 import Selector from './components/selector';
+
+import type { Metadata } from 'next';
 
 export default async function Page() {
   const users = await getUserList();
@@ -97,5 +101,16 @@ function addRoleFactory(userId: ObjectId) {
     'use server';
 
     return addRole(userId, roleId);
+  };
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('adminpage'),
+    getSiteTitle(),
+  ]);
+
+  return {
+    title: composeMetadataTitle(t('users.title'), siteTitle),
   };
 }
