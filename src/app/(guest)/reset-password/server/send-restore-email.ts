@@ -53,7 +53,19 @@ export async function sendRestoreEmail(
       emailResponse = { status: 200 };
     } else {
       const headers = await clientHeaders();
-      const duration = 15; // minutes
+      let duration = 0; // minutes
+
+      const indexes = await db.collection('users-restore-passwords').indexes();
+      const indexTemp = indexes.find(
+        (idx) =>
+          (idx.name?.startsWith('createdAt') ?? false) &&
+          Number.isInteger(idx.expireAfterSeconds),
+      );
+
+      if (indexTemp?.expireAfterSeconds !== undefined) {
+        duration = Math.floor(indexTemp.expireAfterSeconds / 60);
+      }
+
       const lang = 'uk-UA'; // todo: get user language preference
       const [t, m] = await Promise.all([
         getTranslations('emails.restore-password'),

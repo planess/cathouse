@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -15,7 +15,7 @@ import { ServerFormData } from '../../models/server-form-data';
 import { changePassword } from '../server/change-password';
 
 interface RestoreFormProps {
-  expiresIn: Date | null;
+  expiresIn: Date;
   code: string;
 }
 
@@ -31,25 +31,26 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
   const router = useRouter();
   const { register, handleSubmit, setError, reset, formState, clearErrors } =
     useForm<FormData>({ criteriaMode: 'all' });
-  const [left, setLeft] = useState(0);
+  const [left, setLeft] = useState(
+    Math.floor((expiresIn.getTime() - Date.now()) / 1000),
+  );
   const { cryptoKey, isLoading, error: cryptoError } = useCryptoKeys();
   const [pending, setPending] = useState(false);
   const t = useTranslations('authorization');
 
   useEffect(() => {
-    if (!expiresIn) {
-      setLeft(0);
-      return;
-    }
-
-    setLeft(Math.floor((expiresIn.getTime() - Date.now()) / 1000));
-
     const interval = setInterval(() => {
       setLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(interval);
   }, [expiresIn, setLeft]);
+
+  useEffect(() => {
+    if (left <= 0) {
+      redirect('/reset-password');
+    }
+  }, [left]);
 
   const onSubmit = handleSubmit(async ({ password }) => {
     if (!cryptoKey || pending) {

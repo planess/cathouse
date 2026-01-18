@@ -8,13 +8,14 @@ import RestoreForm from './components/restore-form';
 import { sendRestoreEmail } from './server/send-restore-email';
 
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export default async function ResetPasswordPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const code = (await searchParams).code as string ?? null;
+  const code = ((await searchParams).code as string) ?? null;
 
   const t = await getTranslations('authorization');
 
@@ -37,14 +38,14 @@ export default async function ResetPasswordPage({
       );
       const expSec = indexTemp?.expireAfterSeconds;
 
-      let expiresIn = null;
-
       if (expSec !== undefined) {
-        expiresIn = new Date(codeExists.createdAt);
+        const expiresIn = new Date(codeExists.createdAt);
         expiresIn.setTime(expiresIn.getTime() + expSec * 1000);
-      }
 
-      form = <RestoreForm expiresIn={expiresIn} code={code} />;
+        form = <RestoreForm expiresIn={expiresIn} code={code} />;
+      } else {
+        redirect('/reset-password');
+      }
     }
   } else {
     form = <AuthFormWrapper handler={sendRestoreEmail} />;
