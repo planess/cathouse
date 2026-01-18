@@ -598,5 +598,24 @@
   "unavailable": {
     "title": "The site will be back soon",
     "description": "We are performing maintenance right now. Please come back a bit later."
+  },
+  "emails": {
+    "restore-password": {
+      "subject": "Password Reset Request",
+      "title": "Restore Access",
+      "heading": "Forgot your password?",
+      "txt1": "Hey, you received a request to reset your password.",
+      "txt2": "Click the button below to get new access.",
+      "buttonLabel": "Reset My Password",
+      "expiration": "This link is only valid for {duration} and expires at {expiry}.",
+      "trouble": "Having trouble?",
+      "ignore": "Didn't request a password reset? You can ignore this message, although, we highly recommend you make sure your email service is under the control or change current password to enhance security.",
+      "address": "Lviv, Ukraine",
+      "donotReply": "This email was sent automatically, please do not reply to it."
+    }
+  },
+  "duration": {
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "hours": "{count, plural, one {# hour} other {# hours}}"
   }
 }

@@ -1,12 +1,13 @@
 'use client';
 
-import { HandlerParams } from '@app/models/handler-params.server';
+import Link from 'next/link';
+import { useCallback, useState } from 'react';
 
 import { requestKeyGeneration } from '@app/helpers/request-key-generation';
 import { useCryptoKeysError } from '@app/hooks/use-crypto-keys';
-import { useCallback, useState } from 'react';
+import { HandlerParams } from '@app/models/handler-params.server';
+
 import AuthForm from './auth-form';
-import Link from 'next/link';
 
 export default function AuthFormWrapper({ handler }: HandlerParams<string>) {
   const [sent, setSent] = useState(false);
