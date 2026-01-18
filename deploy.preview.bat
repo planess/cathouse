@@ -7,7 +7,7 @@ ren .env .env.temp
 ren .env.local .env.local.temp
 
 @REM run deploy command
-call npm run vercel deploy
+call npm run vercel deploy -- --debug
 
 @REM rename .env files back to original
 ren .env.temp .env

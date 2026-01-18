@@ -4,7 +4,7 @@ export async function getEmailHtml(
   name: string,
   params: Record<string, string> = {},
 ): Promise<string> {
-  let template = await readFile(`email-template/${name}.html`, 'utf-8');
+  let template = await readFile(`src/email-template/${name}.html`, 'utf-8');
 
   for (const [key, value] of Object.entries(params)) {
     template = template.replaceAll(new RegExp(`{{${key}}}`, 'g'), value);

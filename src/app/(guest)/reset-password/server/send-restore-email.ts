@@ -1,12 +1,11 @@
 'use server';
 
-import { readFile } from 'node:fs/promises';
-
 import { DateTime } from 'luxon';
 import { headers as clientHeaders } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 
 import { DbTables } from '@app/enum/db-tables';
+import { getEmailAssets } from '@app/helpers/get-email-assets';
 import { getEmailHtml } from '@app/helpers/get-email-template';
 import { hashBlake2 } from '@app/helpers/hash-blake2';
 import clientPromise from '@app/ins/mongo-client';
@@ -112,16 +111,7 @@ export async function sendRestoreEmail(
         donotReply: t('donotReply'),
       });
 
-      const [logo, iconLock] = await Promise.all([
-        readFile('email-template/assets/logo.png').then((data) => ({
-          data,
-          filename: 'logo.png',
-        })),
-        readFile('email-template/assets/icon-lock.png').then((data) => ({
-          data,
-          filename: 'icon-lock.png',
-        })),
-      ]);
+      const inlineImages = await getEmailAssets(['logo.png', 'icon-lock.png']);
 
       emailResponse = await emailService.sendEmail(
         email,
@@ -129,7 +119,10 @@ export async function sendRestoreEmail(
         body,
         'support',
         [],
-        [logo, iconLock],
+        inlineImages.filter(Boolean) as Exclude<
+          (typeof inlineImages)[number],
+          null
+        >[],
       );
     }
   } catch (error: unknown) {

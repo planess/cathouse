@@ -22,7 +22,7 @@
       "@app/*": ["./src/app/*"],
       "@i18n/*": ["./src/i18n/*"],
       "@public/*": ["./public/*"],
-      "@email/*": ["./email-template/*"]
+      "@email/*": ["./src/email-template/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
