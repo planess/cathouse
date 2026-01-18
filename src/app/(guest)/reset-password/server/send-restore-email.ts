@@ -37,7 +37,23 @@ export async function sendRestoreEmail(
     return { status: 'ok' };
   }
 
-  // 2. Generate a password reset token
+  // 2. Validate the missing of existing reset tokens
+  if (
+    await db
+      .collection(DbTables.usersRestorePasswords)
+      .findOne({ _id: user._id })
+  ) {
+    return {
+      status: 'error',
+      errors: {
+        identifier: [
+          'A reset request is already pending. Please check your email.',
+        ],
+      },
+    };
+  }
+
+  // 3. Generate a password reset token
   // todo: generate a secure random token under crypto hash
   const code =
     (await hashBlake2(
@@ -45,7 +61,7 @@ export async function sendRestoreEmail(
       email,
     )) + (process.env.NODE_ENV === 'development' ? '-dev' : '');
 
-  // 3. Generate email content and send email
+  // 4. Generate email content and send email
   let emailResponse;
   try {
     if (process.env.NODE_ENV === 'development') {
@@ -55,7 +71,9 @@ export async function sendRestoreEmail(
       const headers = await clientHeaders();
       let duration = 0; // minutes
 
-      const indexes = await db.collection('users-restore-passwords').indexes();
+      const indexes = await db
+        .collection(DbTables.usersRestorePasswords)
+        .indexes();
       const indexTemp = indexes.find(
         (idx) =>
           (idx.name?.startsWith('createdAt') ?? false) &&
@@ -135,15 +153,11 @@ export async function sendRestoreEmail(
     };
   }
 
-  // 4. Store the reset token in the database
+  // 5. Store the reset token in the database
   try {
     await db
       .collection(DbTables.usersRestorePasswords)
-      .updateOne(
-        { userID: user._id },
-        { $set: { code, createdAt: new Date() } },
-        { upsert: true },
-      );
+      .insertOne({ _id: user._id, code, createdAt: new Date() });
   } catch (error) {
     console.error('Error storing reset token:', error);
     return {

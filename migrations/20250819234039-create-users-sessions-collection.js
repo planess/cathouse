@@ -36,9 +36,7 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['userID'],
           properties: {
-            userID: { bsonType: 'objectId' },
             firstName: { bsonType: 'string' },
             lastName: { bsonType: 'string' },
             sex: { bsonType: 'string', enum: ['male', 'female'] },
@@ -67,13 +65,7 @@ module.exports = {
     await db.collection('users').createIndex({ isActive: 1 });
     await db.collection('users').createIndex({ createdAt: 1 });
 
-    await db
-      .collection('profiles')
-      .createIndex({ userID: 1 }, { unique: true });
-
-    await db
-      .collection('sessions')
-      .createIndex({ userID: 1 });
+    await db.collection('sessions').createIndex({ userID: 1 });
     await db.collection('sessions').createIndex({ token: 1 }, { unique: true });
 
     // insert first admin user
@@ -86,12 +78,8 @@ module.exports = {
       createdAt: new Date(),
     });
     await db.collection('profiles').insertOne({
-      userID: userRecord.insertedId,
+      _id: userRecord.insertedId,
     });
-
-    console.info(
-      'Users and profiles collection created with schema validation and indexes',
-    );
   },
 
   /**
@@ -104,7 +92,5 @@ module.exports = {
     await db.collection('users').drop();
     await db.collection('profiles').drop();
     await db.collection('sessions').drop();
-
-    console.info('Users and profiles collections dropped');
   },
 };

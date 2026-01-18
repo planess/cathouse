@@ -9,12 +9,8 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['userID', 'code', 'createdAt'],
+          required: ['code', 'createdAt'],
           properties: {
-            userID: {
-              bsonType: 'objectId',
-              description: 'ID of the user requesting password restoration',
-            },
             code: {
               bsonType: 'string',
               description: 'Unique code for password restoration',
@@ -27,13 +23,10 @@ module.exports = {
 
     await db
       .collection('users-restore-passwords')
-      .createIndex({ email: 1 }, { unique: true });
-    await db
-      .collection('users-restore-passwords')
       .createIndex({ code: 1 }, { unique: true });
     await db
       .collection('users-restore-passwords')
-      .createIndex({ createdAt: 1 }, { expireAfterSeconds: 600 });
+      .createIndex({ createdAt: 1 }, { expireAfterSeconds: 900 });
   },
 
   /**

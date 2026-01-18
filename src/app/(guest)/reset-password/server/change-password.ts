@@ -75,7 +75,7 @@ export async function changePassword(
       const errors = {} as ResponseErrors;
 
       for (const { path, message } of error.issues) {
-        const key = 'passHash';//path.join('.');
+        const key = 'passHash'; //path.join('.');
 
         errors[key] ??= [];
         errors[key].push(message);
@@ -90,9 +90,7 @@ export async function changePassword(
   let user;
 
   try {
-    user = await db
-      .collection(DbTables.users)
-      .findOne({ _id: urp.userID as ObjectId });
+    user = await db.collection(DbTables.users).findOne({ _id: urp._id });
   } catch (error) {
     console.error('Error finding user:', error);
     return { status: 'error' };
@@ -109,7 +107,7 @@ export async function changePassword(
     await db
       .collection(DbTables.users)
       .updateOne(
-        { _id: urp.userID as ObjectId },
+        { _id: user._id },
         { $set: { password: hash } },
         { upsert: false },
       );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { FormEvent, useEffect } from 'react';
+import { FormEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@app/components/button';
@@ -15,25 +15,32 @@ interface FormData {
 
 export default function AuthForm({ handler }: HandlerParams<string>) {
   const t = useTranslations('authorization');
-  const { register, handleSubmit, formState, setError, clearErrors, reset } = useForm<FormData>({ criteriaMode: 'all'});
+  const [pending, setPending] = useState(false);
+  const { register, handleSubmit, formState, setError, clearErrors, reset } =
+    useForm<FormData>({ criteriaMode: 'all' });
 
   const onSubmit = handleSubmit(async (args) => {
-
     if (!formState.isValid) {
       return;
     }
-    
+
     const response = await handler(args.identifier);
 
     if (response.status === 'ok') {
       reset();
       clearErrors();
     } else {
-      
+      setPending(false);
       // setError('identifier', { type: 'manual', message: response.message });
     }
   });
-  const silentSubmit = (event: FormEvent) => void onSubmit(event);
+  const silentSubmit = (event: FormEvent) => {
+    if (!pending) {
+      setPending(true);
+
+      void onSubmit(event);
+    }
+  };
 
   const identifierErrors: string[] = (() => {
     if (!('identifier' in formState.errors)) {
@@ -64,11 +71,16 @@ export default function AuthForm({ handler }: HandlerParams<string>) {
             placeholder: t('form.placeholder.email-reset'),
           }}
           errors={identifierErrors}
-         
         />
       </div>
 
-      <Button className="mt-4 ml-auto" disabled={!formState.isValid}>{t('form.label.reset-password-button')}</Button>
+      <Button
+        className="mt-4 ml-auto"
+        disabled={!formState.isValid}
+        pending={pending}
+      >
+        {t('form.label.reset-password-button')}
+      </Button>
     </form>
   );
 }

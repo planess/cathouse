@@ -149,8 +149,6 @@ module.exports = {
         },
       },
     );
-
-    console.info('Roles and permissions collections created with default data');
   },
 
   /**
@@ -162,7 +160,5 @@ module.exports = {
     // Rollback: drop the collections
     await db.collection('roles').drop();
     await db.collection('permissions').drop();
-
-    console.info('Roles and permissions collections dropped');
   },
 };

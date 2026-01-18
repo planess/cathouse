@@ -23,8 +23,6 @@ module.exports = {
     });
 
     await db.collection('encryption').createIndex({ createdAt: 1 });
-
-    console.log('Encryption collection created with validation');
   },
 
   /**
