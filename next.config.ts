@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingIncludes: {
+    '/**': ['./email-templates/**'],
+  },
 };
 
 const intlPlugin = createNextIntlPlugin();

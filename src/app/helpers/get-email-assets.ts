@@ -8,7 +8,7 @@ export async function getEmailAssets(
 
   return Promise.all(
     names.map((name) =>
-      readFile(`src/email-template/assets/${name}`).then(
+      readFile(`email-templates/assets/${name}`).then(
         (value) => ({
           name,
           data: value,
