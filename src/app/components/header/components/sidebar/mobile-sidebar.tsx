@@ -4,6 +4,11 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useEffect, useId, useState } from 'react';
 
+import {
+  CloseIcon,
+  MenuIcon,
+} from '@app/(general)/history/[animalId]/components/icons';
+
 type SidebarLink = {
   key: string;
   href: string;
@@ -17,7 +22,12 @@ interface MobileSidebarProps {
   closeLabel: string;
 }
 
-export default function MobileSidebar({ links, title, openLabel, closeLabel }: MobileSidebarProps) {
+export default function MobileSidebar({
+  links,
+  title,
+  openLabel,
+  closeLabel,
+}: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const panelId = useId();
   const titleId = useId();
@@ -60,30 +70,18 @@ export default function MobileSidebar({ links, title, openLabel, closeLabel }: M
         aria-label={openLabel}
         aria-expanded={isOpen}
         aria-controls={panelId}
-        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-900 transition hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-800 focus-visible:ring-offset-2"
+        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-900 dark:text-gray-100 transition-colors dark:hover:bg-zinc-800 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-800 focus-visible:ring-offset-2"
         onClick={() => setIsOpen(true)}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-5 w-5"
-          aria-hidden="true"
-        >
-          <line x1="4" x2="20" y1="6" y2="6" />
-          <line x1="4" x2="20" y1="12" y2="12" />
-          <line x1="4" x2="20" y1="18" y2="18" />
-        </svg>
+        <MenuIcon />
       </button>
 
       <div
         className={clsx(
           'fixed inset-0 z-40 bg-gray-900/40 transition-opacity duration-200',
-          isOpen ? 'opacity-100 pointer-events-auto' : 'pointer-events-none opacity-0',
+          isOpen
+            ? 'opacity-100 pointer-events-auto'
+            : 'pointer-events-none opacity-0',
         )}
         onClick={closeSidebar}
         aria-hidden="true"
@@ -95,34 +93,24 @@ export default function MobileSidebar({ links, title, openLabel, closeLabel }: M
         aria-modal="true"
         role="dialog"
         className={clsx(
-          'fixed inset-y-0 left-0 z-50 flex w-72 max-w-[80vw] flex-col bg-white shadow-xl transition-transform duration-200',
+          'fixed inset-y-0 left-0 z-50 flex w-72 max-w-[80vw] flex-col bg-white dark:bg-neutral-800 shadow-xl transition-transform duration-200',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
-          <span id={titleId} className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          <span
+            id={titleId}
+            className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-50 transition-colors"
+          >
             {title}
           </span>
           <button
             type="button"
             aria-label={closeLabel}
-            className="rounded-md p-2 text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-800 focus-visible:ring-offset-2"
+            className="rounded-md p-2 text-gray-500 dark:text-gray-200 transition-colors hover:text-gray-900 dark:hover:text-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-800 focus-visible:ring-offset-2"
             onClick={closeSidebar}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <CloseIcon />
           </button>
         </div>
 
@@ -132,7 +120,7 @@ export default function MobileSidebar({ links, title, openLabel, closeLabel }: M
               <li key={link.key}>
                 <Link
                   href={link.href}
-                  className="block rounded-md px-2 py-2 text-base font-medium text-gray-900 transition hover:bg-gray-50"
+                  className="block rounded-md px-2 py-2 text-base font-medium text-gray-900 dark:text-zinc-200 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700"
                   onClick={closeSidebar}
                 >
                   {link.label}
