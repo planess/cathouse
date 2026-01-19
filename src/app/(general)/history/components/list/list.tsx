@@ -64,7 +64,9 @@ export default async function List({ page = 1 }: ListProps) {
         ))}
       </div>
 
-      <Pagination safePage={safePage} totalPages={totalPages} />
+      {totalItems > PAGE_SIZE && (
+        <Pagination safePage={safePage} totalPages={totalPages} />
+      )}
     </div>
   );
 }

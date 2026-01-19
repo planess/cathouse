@@ -15,7 +15,12 @@ const AREAS = [
     roles: ['designers', 'analysts', 'developers', 'testers', 'devops'],
   },
   { key: 'care', paragraphKeys: ['p1', 'p2', 'p3', 'p4'] },
-] as {key: string; paragraphKeys: string[]; rolesIntroKey?: string; roles?: string[]}[];
+] as {
+  key: string;
+  paragraphKeys: string[];
+  rolesIntroKey?: string;
+  roles?: string[];
+}[];
 
 export default function ReceiveHelp() {
   const t = useTranslations('helppage.receive');
@@ -31,7 +36,9 @@ export default function ReceiveHelp() {
           {AREAS.map(({ key, paragraphKeys, roles, rolesIntroKey }) => (
             <GenerateList key={key} title={t(`areas.${key}.title`)}>
               {paragraphKeys.map((paragraph) => (
-                <p key={paragraph}>{t(`areas.${key}.paragraphs.${paragraph}`)}</p>
+                <p key={paragraph}>
+                  {t(`areas.${key}.paragraphs.${paragraph}`)}
+                </p>
               ))}
 
               {rolesIntroKey && (
@@ -41,7 +48,8 @@ export default function ReceiveHelp() {
                   <ul className="list-disc list-inside">
                     {roles?.map((role) => (
                       <li key={role}>
-                        <em>{t(`areas.${key}.roles.${role}.label`)}</em> {t(`areas.${key}.roles.${role}.description`)}
+                        <em>{t(`areas.${key}.roles.${role}.label`)}</em>{' '}
+                        {t(`areas.${key}.roles.${role}.description`)}
                       </li>
                     ))}
                   </ul>

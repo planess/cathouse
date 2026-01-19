@@ -125,7 +125,7 @@ interface R<T extends E> {
 function Field<T extends E>({ label, config, element }: R<T>) {
   const Element = createElement(element, {
     className:
-      'bg-stone-50 flex-auto p-2 dark:bg-stone-300 dark:placeholder:text-stone-400',
+      'bg-stone-50 flex-auto p-2 dark:bg-stone-300 dark:placeholder:text-stone-400 dark:text-stone-900',
     ...config,
   });
 

@@ -15,7 +15,9 @@ type HistoryPageProps = {
   }>;
 };
 
-export default async function History({ searchParams: searchParamsPromise }: HistoryPageProps) {
+export default async function History({
+  searchParams: searchParamsPromise,
+}: HistoryPageProps) {
   const t = await getTranslations('historypage');
   const canCreate = await createHistoryGranted();
   const searchParams = await searchParamsPromise;
@@ -29,7 +31,7 @@ export default async function History({ searchParams: searchParamsPromise }: His
   return (
     <div className="px-6 py-7">
       <div>
-        <h1 className="text-3xl text-center font-bold title mb-4">
+        <h1 className="text-3xl text-center font-bold dark:text-stone-50 mb-4">
           {t('title')}
         </h1>
 
