@@ -1,14 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCallback, useRef } from 'react';
 
 import logo from '@public/assets/logo3_small.svg';
 
-const CLICK_WINDOW_MS = 1500;
-const CLICK_TARGET_COUNT = 5;
+import { CLICK_TARGET_COUNT, CLICK_WINDOW_MS } from './logo.const';
 
 export default function LogoSmall() {
   const router = useRouter();
@@ -35,7 +34,12 @@ export default function LogoSmall() {
       className="inline-flex items-center bg-transparent border-0 p-0 cursor-pointer"
       onPointerDown={handlePointerDown}
     >
-      <Image src={logo as string} alt={t('logoAltSmall')} width={50} height={undefined} />
+      <Image
+        src={logo as string}
+        alt={t('logoAltSmall')}
+        width={50}
+        height={undefined}
+      />
     </button>
   );
 }
