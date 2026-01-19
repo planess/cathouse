@@ -48,7 +48,7 @@ export type ModalOptions<T> = {
 };
 
 type ModalContextValue = {
-  showModal: <T,>(options: ModalOptions<T>) => Promise<T | undefined>;
+  showModal: <T>(options: ModalOptions<T>) => Promise<T | undefined>;
   dismissModal: (result?: unknown) => void;
   isOpen: boolean;
 };
@@ -78,7 +78,10 @@ export function ModalProvider({ children }: ModalProviderProps) {
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const activeModal = modalStack[modalStack.length - 1] ?? null;
-  const bodyStyleCacheRef = useRef<{ overflow: string; paddingRight: string } | null>(null);
+  const bodyStyleCacheRef = useRef<{
+    overflow: string;
+    paddingRight: string;
+  } | null>(null);
   const scrollbarWidthRef = useRef(0);
   const pointerOriginRef = useRef<ModalOrigin | null>(null);
   const exitTimersRef = useRef<Map<number, number>>(new Map());
@@ -97,7 +100,9 @@ export function ModalProvider({ children }: ModalProviderProps) {
       };
     };
 
-    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    window.addEventListener('pointerdown', handlePointerDown, {
+      passive: true,
+    });
 
     return () => window.removeEventListener('pointerdown', handlePointerDown);
   }, []);
@@ -124,7 +129,9 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
       if (typeof window !== 'undefined') {
         const timeoutId = window.setTimeout(() => {
-          setModalStack((state) => state.filter((modal) => modal.id !== target.id));
+          setModalStack((state) =>
+            state.filter((modal) => modal.id !== target.id),
+          );
           exitTimersRef.current.delete(target.id);
         }, MODAL_EXIT_MS);
 
@@ -225,17 +232,21 @@ export function ModalProvider({ children }: ModalProviderProps) {
     scrollbarWidthRef.current = 0;
   }, [isMounted, modalStack.length]);
 
-  useEffect(() => () => {
-    if (bodyStyleCacheRef.current) {
-      document.body.style.overflow = bodyStyleCacheRef.current.overflow;
-      document.body.style.paddingRight = bodyStyleCacheRef.current.paddingRight;
-      bodyStyleCacheRef.current = null;
-    } else {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-    }
-    scrollbarWidthRef.current = 0;
-  }, []);
+  useEffect(
+    () => () => {
+      if (bodyStyleCacheRef.current) {
+        document.body.style.overflow = bodyStyleCacheRef.current.overflow;
+        document.body.style.paddingRight =
+          bodyStyleCacheRef.current.paddingRight;
+        bodyStyleCacheRef.current = null;
+      } else {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }
+      scrollbarWidthRef.current = 0;
+    },
+    [],
+  );
 
   useEffect(
     () => () => {
@@ -309,7 +320,9 @@ export function ModalProvider({ children }: ModalProviderProps) {
         {modalStack.map((state, index) => {
           const { options } = state;
           const dismissible = options.dismissible ?? true;
-          const actions = (options.actions as ModalAction<unknown>[] | undefined) ?? [
+          const actions = (options.actions as
+            | ModalAction<unknown>[]
+            | undefined) ?? [
             {
               id: 'default-modal-close',
               label: options.dismissLabel ?? 'Close',
@@ -318,9 +331,10 @@ export function ModalProvider({ children }: ModalProviderProps) {
             },
           ];
 
-          const content = typeof options.content === 'function'
-            ? options.content()
-            : options.content ?? options.description;
+          const content =
+            typeof options.content === 'function'
+              ? options.content()
+              : (options.content ?? options.description);
 
           const size = options.size ?? 'md';
           const sizeClass = {
@@ -337,7 +351,9 @@ export function ModalProvider({ children }: ModalProviderProps) {
           const lifecycleState = state.status;
           const isClosing = lifecycleState === 'closing';
           const isTopAndActive = isTop && !isClosing;
-          const panelStyle = resolveModalOriginStyle(state.origin ?? options.origin);
+          const panelStyle = resolveModalOriginStyle(
+            state.origin ?? options.origin,
+          );
 
           return (
             <div
@@ -366,7 +382,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
               <div
                 className={clsx(
-                  'modal-panel relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white p-6 shadow-2xl transition',
+                  'modal-panel relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 p-6 shadow-2xl transition',
                   (!isTop || isClosing) && 'scale-[0.98]',
                   isFullScreen ? 'h-full' : '',
                   sizeClass,
@@ -391,13 +407,15 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
                 <div className="flex-1 overflow-y-auto pr-1">
                   {options.title && (
-                    <h2 className="mb-2 text-2xl font-semibold text-slate-900">
+                    <h2 className="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-200">
                       {options.title}
                     </h2>
                   )}
 
                   {options.description && (
-                    <div className="mb-4 text-sm text-slate-600">{options.description}</div>
+                    <div className="mb-4 text-sm text-slate-600">
+                      {options.description}
+                    </div>
                   )}
 
                   {content && (
@@ -409,18 +427,22 @@ export function ModalProvider({ children }: ModalProviderProps) {
                   {actions.map((action) => {
                     const tone = action.tone ?? 'secondary';
                     const actionId = action.id ?? action.label;
-                    const isLoading = pendingActionId === actionId && isTopAndActive;
+                    const isLoading =
+                      pendingActionId === actionId && isTopAndActive;
 
                     return (
                       <button
                         key={actionId}
                         type="button"
-                        disabled={action.disabled || isLoading || !isTopAndActive}
+                        disabled={
+                          action.disabled || isLoading || !isTopAndActive
+                        }
                         onClick={() => void handleAction(action, state.id)}
                         className={clsx(
                           'inline-flex min-w-[96px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition',
                           resolveToneClass(tone),
-                          (action.disabled || isLoading || !isTopAndActive) && 'opacity-60',
+                          (action.disabled || isLoading || !isTopAndActive) &&
+                            'opacity-60',
                         )}
                       >
                         {isLoading ? 'Please wait…' : action.label}

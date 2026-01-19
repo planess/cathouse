@@ -41,7 +41,10 @@ export function ReportDialogTrigger({
         content: (
           <div className="space-y-4">
             {[1, 2, 3, 4].map((val) => (
-              <div className="text-base text-slate-700" key={val}>
+              <div
+                className="text-base text-slate-700 dark:text-slate-200"
+                key={val}
+              >
                 {t.rich(`description${val}`, {
                   strong: (children) => (
                     <strong className="font-bold">{children}</strong>
@@ -54,7 +57,7 @@ export function ReportDialogTrigger({
                         href={sp[0]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-cyan-600 underline underline-offset-2 hover:text-cyan-700"
+                        className="font-medium text-cyan-600 underline underline-offset-2 hover:text-cyan-700 dark:text-cyan-500 dark:hover:text-cyan-400"
                       >
                         {sp[1]}
                       </a>
@@ -67,9 +70,11 @@ export function ReportDialogTrigger({
 
             <hr className="border-gray-200" />
 
-            <div>{t('description')}</div>
+            <div className="text-slate-700 dark:text-slate-200">
+              {t('description')}
+            </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 items-start text-slate-700 dark:text-slate-200">
               <a
                 className="flex gap-2 items-center"
                 href="tel: +380973959022"
@@ -117,7 +122,7 @@ export function ReportDialogTrigger({
       type="button"
       className={clsx(
         'inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold shadow-sm transition',
-        'bg-rose-400 text-white hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500',
+        'bg-rose-400 text-white hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500',
         'active:bg-rose-600 disabled:opacity-60',
         className,
       )}

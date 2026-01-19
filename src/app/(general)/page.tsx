@@ -180,7 +180,7 @@ export default function Home() {
             {missionFeatures.map((feature) => (
               <div
                 key={feature.key}
-                className="rounded-2xl bg-[#f6f8f6] dark:bg-gray-700 border border-slate-100 dark:border-slate-600 p-6 hover:shadow-lg dark:hover:shadow-slate-300 transition-shadow flex flex-col items-center text-center"
+                className="rounded-2xl bg-[#f6f8f6] dark:bg-gray-700 border border-slate-100 dark:border-slate-600 p-6 hover:shadow-md dark:hover:shadow-slate-300 transition-shadow flex flex-col items-center text-center"
               >
                 {feature.key === 'population' && (
                   <RoundIcon
