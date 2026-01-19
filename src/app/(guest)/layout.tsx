@@ -1,12 +1,22 @@
+import Footer from '../components/footer/footer';
 import Header from '../components/header/header';
 
 export default function GuestLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div>
-      <Header />
-      <main>{children}</main>
+    <div className="flex flex-col min-h-full">
+      <div className="flex-none">
+        <Header />
+      </div>
+
+      <main className="flex-auto bg-[#f6f8f6] dark:bg-stone-800 text-slate-900 dark:text-stone-50 transition-colors">
+        {children}
+      </main>
+
+      <div className="flex-none">
+        <Footer />
+      </div>
     </div>
   );
 }
