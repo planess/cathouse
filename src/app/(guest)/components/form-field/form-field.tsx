@@ -22,7 +22,7 @@ export default function FormField({ Element, label, errors, hint }: A) {
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="flex p-[2px] rounded-lg bg-linear-to-r from-orange-100 to-zinc-50 hover:to-orange-200 items-center">
+      <label className="flex p-0.5 rounded-lg bg-linear-to-r from-orange-100 to-zinc-50 hover:to-orange-200 items-center">
         <span className="basis-30 text-sm font-medium text-gray-700 py-1 px-2">
           {label}
         </span>
@@ -31,13 +31,13 @@ export default function FormField({ Element, label, errors, hint }: A) {
       </label>
 
       {Boolean(hint) && (
-        <div className="flex px-[2px]">
+        <div className="flex px-0.5">
           <span className="basis-30 shrink-0" />
           <span className="text-xs text-gray-600 px-2">{hint}</span>
         </div>
       )}
 
-      {errorHtml.length > 0 && <div className="px-[2px]">{errorHtml}</div>}
+      {errorHtml.length > 0 && <div className="px-0.5">{errorHtml}</div>}
     </div>
   );
 }
