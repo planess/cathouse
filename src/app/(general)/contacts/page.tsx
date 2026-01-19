@@ -23,9 +23,9 @@ export default function Contacts() {
       <div className="flex flex-col lg:flex-row gap-y-6">
         <div className="flex-1/2 flex flex-col gap-6 grow-0 shrink-0 lg:pr-6">
           <div>
-            <h1 className="text-3xl font-bold title mb-4">{t('title')}</h1>
+            <h1 className="text-3xl font-bold mb-4 dark:text-stone-50">{t('title')}</h1>
 
-            <div className="text-zinc-800">{t('aboutus')}</div>
+            <div className="text-zinc-800 dark:text-stone-50">{t('aboutus')}</div>
           </div>
 
           <Section title={t('section1_title')}>

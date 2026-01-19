@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
+import { ReactNode } from 'react';
 
+import Section from '../../../contacts/components/section/section';
 import ContactFormWrapper from '../contact-form-wrapper/contact-form-wrapper';
-import Section from '../section/section';
 
 const AREAS = [
   { key: 'observation', paragraphKeys: ['p1', 'p2'] },

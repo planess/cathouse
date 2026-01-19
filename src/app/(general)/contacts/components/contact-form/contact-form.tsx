@@ -1,8 +1,8 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { createElement, JSX, useState } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
 
 import { Button } from '@app/components/button';
 import { formatDisplayName } from '@app/helpers/format-display-name';
@@ -124,12 +124,13 @@ interface R<T extends E> {
 
 function Field<T extends E>({ label, config, element }: R<T>) {
   const Element = createElement(element, {
-    className: 'bg-stone-50 flex-auto p-2',
+    className:
+      'bg-stone-50 flex-auto p-2 dark:bg-stone-300 dark:placeholder:text-stone-400',
     ...config,
   });
 
   return (
-    <label className="flex flex-col md:flex-row p-[2px] rounded-lg bg-linear-to-r from-sky-50 to-zinc-50">
+    <label className="flex flex-col md:flex-row p-0.5 rounded-lg bg-linear-to-r from-sky-50 to-zinc-50 dark:from-zinc-500 dark:to-zinc-700">
       <span className="py-2 px-3 w-45">{label}</span>
       {Element}
     </label>

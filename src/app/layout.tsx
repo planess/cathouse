@@ -54,7 +54,11 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider>
           <UserProvider>
-            <ModalProvider>{children}</ModalProvider>
+            <ModalProvider>
+              <main className="bg-[#f6f8f6] dark:bg-stone-800 text-slate-900 dark:text-stone-50 transition-colors">
+                {children}
+              </main>
+            </ModalProvider>
           </UserProvider>
         </NextIntlClientProvider>
       </body>

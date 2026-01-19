@@ -11,7 +11,7 @@ export default function Footer() {
         <Link href="location">Location</Link>
       </div> */}
 
-      <div className="bg-neutral-800 text-neutral-100 text-sm px-3 lg:px-20 py-3 flex flex-wrap justify-end gap-x-2 gap-y-1 transition-[padding]">
+      <div className="bg-neutral-800 text-neutral-100 dark:bg-stone-800 text-sm px-3 lg:px-20 py-3 flex flex-wrap justify-end gap-x-2 gap-y-1 transition-[padding]">
         <span>{t('tagline', { year: foundationYear })}</span>
         <span>{t('attribution', { org })}</span>
       </div>

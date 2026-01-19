@@ -68,7 +68,7 @@ export default function Home() {
   );
 
   return (
-    <main className="bg-[#f6f8f6] dark:bg-gray-900 text-slate-900 dark:text-stone-50 transition-colors">
+    <>
       <div className="px-4 py-16 sm:px-6 lg:px-8">
         <section className="mx-auto max-w-6xl grid gap-10 lg:grid-cols-[minmax(0,1fr)_460px]">
           <div className="space-y-8">
@@ -165,7 +165,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-      <div className="bg-white dark:bg-gray-800 px-4 py-16 sm:px-6 lg:px-8 lg:py-24 transition-colors">
+      <div className="bg-white dark:bg-zinc-800 px-4 py-16 sm:px-6 lg:px-8 lg:py-24 transition-colors">
         <section className="mx-auto space-y-10 max-w-240">
           <div className="mx-auto max-w-2xl space-y-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -252,7 +252,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-      <div className="bg-white dark:bg-gray-800 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div className="bg-white dark:bg-zinc-800 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <section className="mx-auto max-w-6xl grid gap-12 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-6">
             <div className="text-center space-y-3">
@@ -311,7 +311,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-    </main>
+    </>
   );
 }
 

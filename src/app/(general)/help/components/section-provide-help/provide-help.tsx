@@ -6,7 +6,7 @@ import catAtHomeImg from '@public/assets/help/home-comfort.png';
 import medicineImg from '@public/assets/help/medicine_transparent.png';
 import educationImg from '@public/assets/help/teach-me_transparent.png';
 
-import Section from '../section/section';
+import Section from '../../../contacts/components/section/section';
 
 const BENEFITS = [
   { key: 'medical', image: medicineImg },

@@ -13,7 +13,7 @@ export default function Help() {
 
   return (
     <div className="px-6 py-7">
-      <h1 className="text-4xl font-bold text-center title my-6">
+      <h1 className="text-4xl font-bold text-center dark:text-stone-50 my-6">
         {t('title')}
       </h1>
 
