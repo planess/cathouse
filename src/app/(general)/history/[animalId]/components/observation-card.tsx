@@ -37,7 +37,7 @@ export function ObservationCard({ observation }: ObservationCardProps) {
         href={buildMapHref(observation.location) ?? undefined}
         target="_blank"
         rel="noreferrer noopener"
-        className="text-blue-500 dark:text-sky-400"
+        className="text-blue-500 dark:text-sky-400 transition-colors"
       >
         {locationLabel}
       </a>
@@ -47,7 +47,7 @@ export function ObservationCard({ observation }: ObservationCardProps) {
   ) : null;
   const title = (
     <span className="flex gap-3 text-sm">
-      <span className="font-medium text-gray-900 dark:text-slate-200">{dateLabel}</span>
+      <span className="font-medium text-gray-900 dark:text-slate-200 transition-colors">{dateLabel}</span>
       {location && (
         <>
           <span className="border-l border-slate-300"></span>

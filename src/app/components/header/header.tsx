@@ -26,7 +26,7 @@ export default function Header() {
     <li key={key} className="mx-1 lg:mx-3">
       <Link
         href={href}
-        className="inline-block px-2 py-1 text-gray-800 dark:text-gray-50"
+        className="inline-block px-2 py-1 text-gray-800 dark:text-gray-50 transition-colors"
       >
         {label}
       </Link>

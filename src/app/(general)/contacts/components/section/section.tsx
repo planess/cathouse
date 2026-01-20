@@ -7,9 +7,9 @@ interface Props {
 
 export default function Section({ title, children }: Props) {
   return (
-    <div className="bg-stone-50 dark:bg-gray-700 dark:border-gray-500 dark:border rounded-md p-6 shadow-md">
+    <div className="bg-stone-50 dark:bg-gray-700 dark:border-gray-500 dark:border rounded-md p-6 shadow-md transition-colors">
       {Boolean(title) && (
-        <h2 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-slate-200">
+        <h2 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-slate-200 transition-colors">
           {title}
         </h2>
       )}

@@ -50,8 +50,8 @@ export default function Card({ data }: Props) {
     data.description ?? cardTranslations('descriptionFallback');
 
   return (
-    <div className="bg-[#f3f4f6] dark:bg-neutral-600 rounded-t-lg">
-      <article className="group flex flex-col gap-6 rounded-lg border border-slate-100 bg-white dark:bg-neutral-700 dark:border-neutral-600 p-5 shadow-[0_25px_80px_rgba(15,23,42,0.08)] transition hover:shadow-[0_35px_100px_rgba(15,23,42,0.12)] md:flex-row md:p-8">
+    <div className="bg-[#f3f4f6] dark:bg-neutral-600 rounded-t-lg transition-colors">
+      <article className="group flex flex-col gap-6 rounded-lg border border-slate-100 bg-white dark:bg-neutral-700 dark:border-neutral-600 p-5 shadow-[0_25px_80px_rgba(15,23,42,0.08)] hover:shadow-[0_35px_100px_rgba(15,23,42,0.12)] md:flex-row md:p-8 transition-colors">
         <div className="relative w-full overflow-hidden rounded-2xl bg-slate-100 md:max-w-xs">
           <Image
             src={src}
@@ -92,11 +92,11 @@ export default function Card({ data }: Props) {
 
         <div className="flex flex-1 flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h3 className="text-2xl font-semibold text-slate-900 md:text-3xl dark:text-slate-200">
+            <h3 className="text-2xl font-semibold text-slate-900 md:text-3xl dark:text-slate-200 transition-colors">
               {data.name}
             </h3>
 
-            <div className="flex gap-x-2 text-sm text-slate-600 dark:text-slate-300">
+            <div className="flex gap-x-2 text-sm text-slate-600 dark:text-slate-300 transition-colors">
               <span className="font-semibold">
                 {cardTranslations('labels.age')}
               </span>
@@ -104,16 +104,16 @@ export default function Card({ data }: Props) {
             </div>
           </div>
 
-          <div className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          <div className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 transition-colors">
             {descriptionText}
           </div>
 
           {latestObservation && (
-            <div className="flex flex-col py-3 text-sm text-slate-600 dark:text-slate-300">
+            <div className="flex flex-col py-3 text-sm text-slate-600 dark:text-slate-300 transition-colors">
               <div className="font-semibold">
                 {cardTranslations('labels.lastSeen')}
               </div>
-              <div className="flex gap-x-2 items-center text-slate-500 dark:text-stone-400">
+              <div className="flex gap-x-2 items-center text-slate-500 dark:text-stone-400 transition-colors">
                 <span>
                   <LocationIcon />
                 </span>
@@ -132,7 +132,7 @@ export default function Card({ data }: Props) {
                   </a>
                 )}
               </div>
-              <div className="flex gap-x-2 items-center text-slate-500 dark:text-stone-400">
+              <div className="flex gap-x-2 items-center text-slate-500 dark:text-stone-400 transition-colors">
                 <span>
                   <ClockIcon />
                 </span>
@@ -148,7 +148,7 @@ export default function Card({ data }: Props) {
           {detailsHref && (
             <Link
               href={detailsHref}
-              className="inline-flex justify-center items-center rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-900 hover:text-white dark:text-slate-100 dark:bg-slate-600 dark:hover:bg-slate-700"
+              className="inline-flex justify-center items-center rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-900 hover:text-white dark:text-slate-100 dark:bg-slate-600 dark:hover:bg-slate-700"
             >
               {cardTranslations('actions.viewProfile')}
             </Link>
@@ -156,7 +156,7 @@ export default function Card({ data }: Props) {
         </div>
       </article>
 
-      <div className="flex justify-end text-xs text-slate-500 dark:text-slate-200 py-2 px-4 lg:px-6">
+      <div className="flex justify-end text-xs text-slate-500 dark:text-slate-200 py-2 px-4 lg:px-6 transition-colors">
         {createdAtText && <span>{createdAtText}</span>}
       </div>
     </div>

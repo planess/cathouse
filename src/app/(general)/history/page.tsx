@@ -31,7 +31,7 @@ export default async function History({
   return (
     <div className="px-6 py-7">
       <div>
-        <h1 className="text-3xl text-center font-bold dark:text-stone-50 mb-4">
+        <h1 className="text-3xl text-center font-bold dark:text-stone-50 mb-4 transition-colors">
           {t('title')}
         </h1>
 

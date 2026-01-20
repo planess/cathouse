@@ -382,7 +382,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
               <div
                 className={clsx(
-                  'modal-panel relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 p-6 shadow-2xl transition',
+                  'modal-panel relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 p-6 shadow-2xl transition-colors',
                   (!isTop || isClosing) && 'scale-[0.98]',
                   isFullScreen ? 'h-full' : '',
                   sizeClass,
@@ -407,19 +407,19 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
                 <div className="flex-1 overflow-y-auto pr-1">
                   {options.title && (
-                    <h2 className="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-200">
+                    <h2 className="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-200 transition-colors">
                       {options.title}
                     </h2>
                   )}
 
                   {options.description && (
-                    <div className="mb-4 text-sm text-slate-600 dark:text-slate-300">
+                    <div className="mb-4 text-sm text-slate-600 dark:text-slate-300 transition-colors">
                       {options.description}
                     </div>
                   )}
 
                   {content && (
-                    <div className="mt-4 text-slate-700 dark:text-slate-200">
+                    <div className="mt-4 text-slate-700 dark:text-slate-200 transition-colors">
                       {content}
                     </div>
                   )}
@@ -441,7 +441,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
                         }
                         onClick={() => void handleAction(action, state.id)}
                         className={clsx(
-                          'inline-flex min-w-24 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition',
+                          'inline-flex min-w-24 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-colors',
                           resolveToneClass(tone),
                           (action.disabled || isLoading || !isTopAndActive) &&
                             'opacity-60',

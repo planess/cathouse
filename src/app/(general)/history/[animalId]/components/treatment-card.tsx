@@ -37,7 +37,7 @@ export async function TreatmentCard({
   const medications = treatment.medications ?? [];
 
   const summaryNode = (
-    <p className="text-sm font-semibold text-rose-600 dark:text-red-400">
+    <p className="text-sm font-semibold text-rose-600 dark:text-red-400 transition-colors">
       {t('personal.treatments_complaints', {
         complaints: treatment.complaints,
       })}
@@ -45,10 +45,10 @@ export async function TreatmentCard({
   );
 
   const detailsNode = (
-    <div className="space-y-4 text-sm text-slate-600 dark:text-stone-300">
+    <div className="space-y-4 text-sm text-slate-600 dark:text-stone-300 transition-colors">
       {interventions.length > 0 && (
         <div>
-          <p className="mb-1 font-semibold text-slate-900 dark:text-stone-200">
+          <p className="mb-1 font-semibold text-slate-900 dark:text-stone-200 transition-colors">
             {t('personal.treatments_interventions')}
           </p>
           <ul className="space-y-1 list-disc pl-5">
@@ -64,7 +64,7 @@ export async function TreatmentCard({
 
       {medications.length > 0 && (
         <div>
-          <p className="mb-1 font-semibold text-slate-900 dark:text-stone-200">
+          <p className="mb-1 font-semibold text-slate-900 dark:text-stone-200 transition-colors">
             {t('personal.treatments_medications')}
           </p>
           <ul className="space-y-1 list-disc pl-5">
@@ -98,12 +98,12 @@ export async function TreatmentCard({
   const titleNode = (
     <div className="flex items-center gap-3">
       <div className="flex-1 flex text-sm gap-2">
-        <span className="font-semibold text-slate-900 dark:text-slate-200">
+        <span className="font-semibold text-slate-900 dark:text-slate-200 transition-colors">
           {t('personal.treatments_start_label', { date: startLabel })}
         </span>
-        <span className="border-l border-slate-300 dark:border-stone-600" />
+        <span className="border-l border-slate-300 dark:border-stone-600 transition-colors" />
         <span
-          className={clsx({
+          className={clsx('transition-colors', {
             'text-slate-400 dark:text-stone-400': !treatment.endDate,
             'text-slate-900 font-semibold dark:text-stone-200':
               treatment.endDate,

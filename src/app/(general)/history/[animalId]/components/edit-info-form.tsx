@@ -258,7 +258,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-200"
+              className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
               htmlFor="animal-name"
             >
               {t('form.name_label')}
@@ -268,13 +268,13 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
             />
           </div>
 
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-200"
+              className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
               htmlFor="animal-birthday"
             >
               {t('form.birthday_label')}
@@ -284,14 +284,14 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               type="date"
               value={birthday}
               onChange={(event) => setBirthday(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <label
-            className="text-sm font-medium text-slate-900 dark:text-slate-200"
+            className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
             htmlFor="animal-description"
           >
             {t('form.description_label')}
@@ -302,14 +302,14 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
             onChange={(event) => setDescription(event.target.value)}
             rows={4}
             placeholder={t('form.description_placeholder')}
-            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
           />
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-200"
+              className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
               htmlFor="animal-passport"
             >
               {t('form.passport_label')}
@@ -319,13 +319,13 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               type="text"
               value={passportCode}
               onChange={(event) => setPassportCode(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
             />
           </div>
 
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-200"
+              className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
               htmlFor="animal-chip"
             >
               {t('form.chip_label')}
@@ -335,7 +335,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               type="text"
               value={chipNumber}
               onChange={(event) => setChipNumber(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
             />
           </div>
         </div>
@@ -344,7 +344,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <label
-                className="text-sm font-medium text-slate-900 dark:text-slate-200"
+                className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
                 htmlFor="animal-informator"
               >
                 {t('form.informator_label')}
@@ -353,7 +353,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               <button
                 type="button"
                 onClick={handleAddInformator}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 dark:bg-stone-700 dark:text-stone-50 transition hover:border-slate-900 hover:text-slate-900"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 dark:bg-stone-700 dark:text-stone-50 transition-colors hover:border-slate-900 hover:text-slate-900"
                 aria-label={t('form.informator_add_label')}
                 title={t('form.informator_add_label')}
               >
@@ -366,7 +366,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               value={informator}
               onChange={(event) => setInformator(event.target.value)}
               disabled={!hasInformatorOptions}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 transition-colors"
             >
               <option value="">
                 {hasInformatorOptions
@@ -386,7 +386,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
 
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-200"
+              className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
               htmlFor="animal-status"
             >
               {t('form.status_label')}
@@ -397,7 +397,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               onChange={(event) =>
                 setStatus(event.target.value as AnimalStatusValue)
               }
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
             >
               {statusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -408,21 +408,21 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
           </div>
         </div>
 
-        <section className="rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:bg-gray-700 dark:border-gray-600">
+        <section className="rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:bg-gray-700 dark:border-gray-600 transition-colors">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-300">
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-300 transition-colors">
                 {t('form.sterilization_title')}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
                 {t('form.sterilization_description')}
               </p>
             </div>
 
-            <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-300">
+            <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:bg-zinc-500 dark:text-stone-50"
+                className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                 checked={sterilizedEnabled}
                 onChange={handleSterilizedToggle}
               />
@@ -435,7 +435,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               <div className="grid gap-4 lg:grid-cols-2">
                 <div className="space-y-2">
                   <label
-                    className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                    className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                     htmlFor="sterilization-date"
                   >
                     {t('form.sterilization_date_label')}
@@ -445,13 +445,13 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
                     type="date"
                     value={sterilizedDate}
                     onChange={(event) => setSterilizedDate(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-zinc-500 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-zinc-500 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
-                    className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                    className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                     htmlFor="sterilization-method"
                   >
                     {t('form.sterilization_method_label')}
@@ -464,7 +464,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
                       setSterilizedMethod(event.target.value)
                     }
                     placeholder={t('form.sterilization_method_placeholder')}
-                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-zinc-500 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-zinc-500 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
                   />
                 </div>
               </div>
@@ -472,7 +472,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <label
-                    className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                    className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                     htmlFor="sterilization-clinic"
                   >
                     {t('form.sterilization_clinic_label')}
@@ -481,7 +481,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
                   <button
                     type="button"
                     onClick={handleAddClinic}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                     aria-label={t('form.clinic_modal.add_label')}
                     title={t('form.clinic_modal.add_label')}
                   >
@@ -494,7 +494,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
                   value={sterilizedClinic}
                   onChange={(event) => setSterilizedClinic(event.target.value)}
                   disabled={!hasClinicOptions}
-                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-zinc-500 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-zinc-500 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 transition-colors"
                 >
                   <option value="">
                     {hasClinicOptions

@@ -42,7 +42,7 @@ export function ReportDialogTrigger({
           <div className="space-y-4">
             {[1, 2, 3, 4].map((val) => (
               <div
-                className="text-base text-slate-700 dark:text-slate-200"
+                className="text-base text-slate-700 dark:text-slate-200 transition-colors"
                 key={val}
               >
                 {t.rich(`description${val}`, {
@@ -57,7 +57,7 @@ export function ReportDialogTrigger({
                         href={sp[0]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-cyan-600 underline underline-offset-2 hover:text-cyan-700 dark:text-cyan-500 dark:hover:text-cyan-400"
+                        className="font-medium text-cyan-600 underline underline-offset-2 hover:text-cyan-700 dark:text-cyan-500 dark:hover:text-cyan-400 transition-colors"
                       >
                         {sp[1]}
                       </a>
@@ -70,11 +70,11 @@ export function ReportDialogTrigger({
 
             <hr className="border-gray-200" />
 
-            <div className="text-slate-700 dark:text-slate-200">
+            <div className="text-slate-700 dark:text-slate-200 transition-colors">
               {t('description')}
             </div>
 
-            <div className="flex flex-col gap-4 items-start text-slate-700 dark:text-slate-200">
+            <div className="flex flex-col gap-4 items-start text-slate-700 dark:text-slate-200 transition-colors">
               <a
                 className="flex gap-2 items-center"
                 href="tel: +380973959022"

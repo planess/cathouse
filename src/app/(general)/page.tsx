@@ -39,7 +39,7 @@ const icons = [
   <RoundIcon
     key={idx + 1}
     icon={icon}
-    className="bg-[#00a6f4]/10 text-[#00a6f4] dark:bg-zinc-400 dark:text-sky-900"
+    className="bg-[#00a6f4]/10 text-[#00a6f4] dark:bg-zinc-400 dark:text-sky-900 transition-colors"
   />
 ));
 
@@ -99,7 +99,7 @@ export default function Home() {
                     return (
                       <Tooltip
                         targetClassName="border-b border-stone-300"
-                        panelClassName="dark:bg-slate-100 dark:text-stone-700"
+                        panelClassName="dark:bg-slate-100 dark:text-stone-700 transition-colors"
                         text={sp[1]}
                       >
                         {sp[0]}
@@ -136,7 +136,7 @@ export default function Home() {
                 }}
               />
               <div className="absolute bottom-6 left-6 right-6 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm py-2 px-4 rounded-xl border border-white/50 dark:border-stone-700 shadow-lg flex items-center gap-4 pointer-events-none">
-                <div className="bg-blue-100 dark:bg-blue-200 p-2 rounded-lg text-sky-500 dark:text-blue-900">
+                <div className="bg-blue-100 dark:bg-blue-200 p-2 rounded-lg text-sky-500 dark:text-blue-900 transition-colors">
                   <span>
                     <svg
                       aria-hidden="true"
@@ -153,10 +153,10 @@ export default function Home() {
                   </span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm dark:text-slate-50">
+                  <h3 className="font-bold text-sm dark:text-slate-50 transition-colors">
                     {t('hero.badge.label')}
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-emerald-400">
+                  <p className="text-xs text-gray-500 dark:text-emerald-400 transition-colors">
                     {t('hero.badge.value')}
                   </p>
                 </div>
@@ -171,7 +171,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               {t('mission.title')}
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 transition-colors">
               {t('mission.description')}
             </p>
           </div>
@@ -252,23 +252,23 @@ export default function Home() {
           </div>
         </section>
       </div>
-      <div className="bg-white dark:bg-zinc-800 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div className="bg-white dark:bg-zinc-800 px-4 py-16 sm:px-6 lg:px-8 lg:py-24 transition-colors">
         <section className="mx-auto max-w-6xl grid gap-12 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-6">
             <div className="text-center space-y-3">
               <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-500">
                 {t('tracker.subtitle')}
               </p>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-gray-300 mt-2">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-gray-300 mt-2 transition-colors">
                 {t('tracker.title')}
               </h2>
             </div>
 
-            <p className="text-lg text-slate-600 dark:text-slate-300">
+            <p className="text-lg text-slate-600 dark:text-slate-300 transition-colors">
               {t('tracker.description')}
             </p>
 
-            <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
+            <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-200 transition-colors">
               {trackerActions.map((action) => (
                 <li key={action} className="flex items-start gap-3">
                   <span className="inline-flex size-5 items-center justify-center rounded-full text-xs font-semibold text-emerald-600">

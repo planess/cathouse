@@ -14,7 +14,7 @@ export default function InputField<T extends ElementType>({
   const Element = createElement(element, {
     ...config,
     className:
-      'bg-stone-50 flex-auto py-1 px-2 rounded-md dark:bg-stone-700 dark:text-stone-50',
+      'bg-stone-50 flex-auto py-1 px-2 rounded-md dark:bg-stone-700 dark:text-stone-50 transition-colors',
   });
 
   return (

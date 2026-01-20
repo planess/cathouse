@@ -30,7 +30,7 @@ export default async function TreatmentSection({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-slate-900 dark:text-slate-200">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-slate-900 dark:text-slate-200 transition-colors">
           {t('personal.treatments')}
         </h2>
 

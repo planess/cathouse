@@ -56,15 +56,15 @@ export default function InfoSection({
     <>
       <div className="flex justify-between items-start">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold text-slate-900 lg:text-4xl dark:text-slate-200">
+          <h1 className="text-3xl font-bold text-slate-900 lg:text-4xl dark:text-slate-200 transition-colors">
             {animal.name}
           </h1>
-          <div className="text-sm text-slate-600 dark:text-slate-300">{ageLabel}</div>
+          <div className="text-sm text-slate-600 dark:text-slate-300 transition-colors">{ageLabel}</div>
         </div>
 
         <div className="flex gap-2 items-center">
           {createdChipLabel && (
-            <span className="flex gap-2 items-center text-sm bg-slate-100 text-slate-500 rounded-full px-3 py-1 dark:bg-slate-500 dark:text-slate-100">
+            <span className="flex gap-2 items-center text-sm bg-slate-100 text-slate-500 rounded-full px-3 py-1 dark:bg-slate-500 dark:text-slate-100 transition-colors">
               <ClockIcon /> <span>{createdChipLabel}</span>
             </span>
           )}
@@ -79,7 +79,7 @@ export default function InfoSection({
         </div>
       </div>
 
-      <div className="mt-4 text-slate-600 dark:text-slate-200">
+      <div className="mt-4 text-slate-600 dark:text-slate-200 transition-colors">
         <p className="text-base ">{animal.description}</p>
       </div>
     </>

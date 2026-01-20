@@ -135,12 +135,12 @@ interface R<T extends E> {
 function Field<T extends E>({ label, config, element }: R<T>) {
   const Element = createElement(element, {
     className:
-      'bg-stone-50 flex-auto p-2 dark:bg-stone-300 dark:placeholder:text-stone-400 dark:text-stone-900',
+      'bg-stone-50 flex-auto p-2 dark:bg-stone-300 dark:placeholder:text-stone-400 dark:text-stone-900 transition-colors',
     ...config,
   });
 
   return (
-    <label className="flex flex-col lg:flex-row p-0.5 rounded-lg bg-linear-to-r from-sky-50 to-zinc-50 dark:from-zinc-500 dark:to-zinc-700">
+    <label className="flex flex-col lg:flex-row p-0.5 rounded-lg bg-linear-to-r from-sky-50 to-zinc-50 dark:from-zinc-500 dark:to-zinc-700 transition-colors">
       <span className="py-2 px-3 w-45">{label}</span>
       {Element}
     </label>

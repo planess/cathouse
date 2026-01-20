@@ -193,7 +193,7 @@ export const ObservationForm = forwardRef<
     <div className="space-y-6">
       <div className="space-y-2">
         <label
-          className="text-sm font-medium text-slate-900 dark:text-slate-200"
+          className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
           htmlFor="observation-note"
         >
           {t('form.note_label')}
@@ -204,7 +204,7 @@ export const ObservationForm = forwardRef<
           onChange={(event) => setNote(event.target.value)}
           rows={3}
           placeholder={t('form.note_placeholder')}
-          className="w-full resize-none rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+          className="w-full resize-none rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-stone-700 dark:text-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
         />
       </div>
 
@@ -212,7 +212,7 @@ export const ObservationForm = forwardRef<
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-200"
+              className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
               htmlFor="observation-informator"
             >
               {t('form.informator_label')}
@@ -221,7 +221,7 @@ export const ObservationForm = forwardRef<
             <button
               type="button"
               onClick={handleCreateInformator}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-neutral-400 "
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-neutral-400 "
               aria-label={t('form.informator_add_label')}
               title={t('form.informator_add_label')}
             >
@@ -232,7 +232,7 @@ export const ObservationForm = forwardRef<
             id="observation-informator"
             value={informator}
             onChange={(event) => setInformator(event.target.value)}
-            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-stone-700 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 dark:bg-stone-700 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 transition-colors"
             disabled={!hasInformatorOptions}
           >
             <option value="">
@@ -246,7 +246,7 @@ export const ObservationForm = forwardRef<
               </option>
             ))}
           </select>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
             {t('form.informator_hint')}
           </p>
           {!hasInformatorOptions && (
@@ -284,12 +284,12 @@ export const ObservationForm = forwardRef<
       <div className="space-y-3">
         <div>
           <label
-            className="text-sm font-medium text-slate-900 dark:text-slate-200"
+            className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors"
             htmlFor="observation-assets"
           >
             {t('form.assets_label')}
           </label>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
             {t('form.assets_hint')}
           </p>
         </div>
@@ -300,7 +300,7 @@ export const ObservationForm = forwardRef<
           accept={ACCEPTED_MIME}
           multiple
           onChange={handleFilesChange}
-          className="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-6 text-sm text-slate-600 transition hover:border-slate-900 dark:text-slate-300"
+          className="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-6 text-sm text-slate-600 transition-colors hover:border-slate-900 dark:text-slate-300"
         />
 
         {files.length > 0 && (

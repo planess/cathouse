@@ -475,14 +475,14 @@ export const TreatmentForm = forwardRef<
 
     return (
       <div className="space-y-6">
-        <p className="text-base font-semibold text-slate-900 dark:text-slate-300">
+        <p className="text-base font-semibold text-slate-900 dark:text-slate-300 transition-colors">
           {formTitle}
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-slate-900 dark:text-slate-300"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
               htmlFor="treatment-complaints"
             >
               {t('form.treatment_modal.complaints_label')}
@@ -493,14 +493,14 @@ export const TreatmentForm = forwardRef<
               onChange={(event) => setComplaints(event.target.value)}
               rows={3}
               placeholder={t('form.treatment_modal.complaints_placeholder')}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50"
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50 transition-colors"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <label
-                className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                 htmlFor="treatment-start"
               >
                 {t('form.treatment_modal.start_date_label')}
@@ -510,13 +510,13 @@ export const TreatmentForm = forwardRef<
                 type="date"
                 value={startDate}
                 onChange={(event) => setStartDate(event.target.value)}
-                className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50"
+                className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50 transition-colors"
               />
             </div>
 
             <div className="space-y-2">
               <label
-                className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                 htmlFor="treatment-end"
               >
                 {t('form.treatment_modal.end_date_label')}
@@ -526,7 +526,7 @@ export const TreatmentForm = forwardRef<
                 type="date"
                 value={endDate}
                 onChange={(event) => setEndDate(event.target.value)}
-                className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50"
+                className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50 transition-colors"
               />
               <p className="text-xs text-slate-500">
                 {t('form.treatment_modal.end_date_hint')}
@@ -535,13 +535,13 @@ export const TreatmentForm = forwardRef<
           </div>
         </div>
 
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
           {swipeHint}
         </p>
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4 dark:bg-gray-700 dark:border-gray-600">
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4 dark:bg-gray-700 dark:border-gray-600 transition-colors">
           <header>
-            <p className="text-base font-semibold text-slate-900 dark:text-slate-300">
+            <p className="text-base font-semibold text-slate-900 dark:text-slate-300 transition-colors">
               {t('form.treatment_modal.interventions_title')}
             </p>
             <p className="text-sm text-slate-500">
@@ -610,7 +610,7 @@ export const TreatmentForm = forwardRef<
             <div className="flex flex-col gap-2">
               <div>
                 <label
-                  className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                  className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                   htmlFor="intervention-date"
                 >
                   {t('form.treatment_modal.date_label')}
@@ -625,13 +625,13 @@ export const TreatmentForm = forwardRef<
                       date: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                 />
               </div>
 
               <div>
                 <label
-                  className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                  className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                   htmlFor="intervention-clinic"
                 >
                   {t('form.treatment_modal.clinic_label')}
@@ -648,7 +648,7 @@ export const TreatmentForm = forwardRef<
                           clinic: event.target.value,
                         }))
                       }
-                      className="flex-auto w-full max-w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                      className="flex-auto w-full max-w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                     >
                       <option value="">
                         {hasClinicOptions
@@ -673,7 +673,7 @@ export const TreatmentForm = forwardRef<
                         })),
                       )
                     }
-                    className="basis-[32px] shrink-0 inline-flex items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
+                    className="basis-[32px] shrink-0 inline-flex items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                     aria-label={t('form.clinic_modal.add_label')}
                   >
                     <PlusIcon />
@@ -684,7 +684,7 @@ export const TreatmentForm = forwardRef<
 
             <div className="flex-1">
               <label
-                className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                 htmlFor="intervention-description"
               >
                 {t('form.treatment_modal.description_label')}
@@ -699,14 +699,14 @@ export const TreatmentForm = forwardRef<
                     description: event.target.value,
                   }))
                 }
-                className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
               />
             </div>
 
             <button
               type="button"
               onClick={handleAddIntervention}
-              className="self-center inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
+              className="self-center inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
               aria-label={t('form.treatment_modal.add_button_label')}
             >
               <PlusIcon />
@@ -714,12 +714,12 @@ export const TreatmentForm = forwardRef<
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4 dark:bg-gray-700 dark:border-gray-600">
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4 dark:bg-gray-700 dark:border-gray-600 transition-colors">
           <header>
-            <p className="text-base font-semibold text-slate-900 dark:text-slate-300">
+            <p className="text-base font-semibold text-slate-900 dark:text-slate-300 transition-colors">
               {t('form.treatment_modal.medications_title')}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
               {t('form.treatment_modal.medications_description')}
             </p>
           </header>
@@ -792,7 +792,7 @@ export const TreatmentForm = forwardRef<
               <div className="flex flex-col lg:flex-row gap-2 overflow-x-hidden">
                 <div>
                   <label
-                    className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                    className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                     htmlFor="medication-start"
                   >
                     {t('form.treatment_modal.date_label')}
@@ -807,13 +807,13 @@ export const TreatmentForm = forwardRef<
                         startDate: event.target.value,
                       }))
                     }
-                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                   />
                 </div>
 
                 <div>
                   <label
-                    className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                    className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                     htmlFor="medication-end"
                   >
                     {t('form.treatment_modal.end_date_label')}
@@ -828,14 +828,14 @@ export const TreatmentForm = forwardRef<
                         endDate: event.target.value,
                       }))
                     }
-                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                    className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
                 <label
-                  className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                  className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                   htmlFor="medication-clinic"
                 >
                   {t('form.treatment_modal.clinic_label')}
@@ -852,7 +852,7 @@ export const TreatmentForm = forwardRef<
                           clinic: event.target.value,
                         }))
                       }
-                      className="flex-auto w-full max-w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                      className="flex-auto w-full max-w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                     >
                       <option value="">
                         {hasClinicOptions
@@ -877,7 +877,7 @@ export const TreatmentForm = forwardRef<
                         })),
                       )
                     }
-                    className="basis-[32px] shrink-0 inline-flex items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
+                    className="basis-[32px] shrink-0 inline-flex items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                     aria-label={t('form.clinic_modal.add_label')}
                   >
                     <PlusIcon />
@@ -889,7 +889,7 @@ export const TreatmentForm = forwardRef<
             <div className="flex flex-col gap-2">
               <div>
                 <label
-                  className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                  className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                   htmlFor="medication-name"
                 >
                   {t('form.treatment_modal.medication_name_label')}
@@ -904,12 +904,12 @@ export const TreatmentForm = forwardRef<
                       name: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                 />
               </div>
               <div>
                 <label
-                  className="text-sm font-medium text-slate-900 dark:text-slate-300"
+                  className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
                   htmlFor="medication-dosage"
                 >
                   {t('form.treatment_modal.medication_dosage_label')}
@@ -924,7 +924,7 @@ export const TreatmentForm = forwardRef<
                       dosage: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
+                  className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
                 />
               </div>
             </div>
@@ -933,7 +933,7 @@ export const TreatmentForm = forwardRef<
               <button
                 type="button"
                 onClick={handleAddMedication}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                 aria-label={t('form.treatment_modal.add_button_label')}
               >
                 <PlusIcon />
@@ -944,7 +944,7 @@ export const TreatmentForm = forwardRef<
 
         <div className="space-y-2">
           <label
-            className="text-sm font-medium text-slate-900 dark:text-slate-300"
+            className="text-sm font-medium text-slate-900 dark:text-slate-300 transition-colors"
             htmlFor="treatment-summary"
           >
             {t('form.treatment_modal.summary_label')}
@@ -955,7 +955,7 @@ export const TreatmentForm = forwardRef<
             onChange={(event) => setSummary(event.target.value)}
             rows={3}
             placeholder={t('form.treatment_modal.summary_placeholder')}
-            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50"
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50 transition-colors"
           />
         </div>
 

@@ -207,7 +207,7 @@ export function AccordionItem({
   return (
     <article
       className={clsx(
-        'rounded-md border px-4 py-3 transition border-l-4',
+        'rounded-md border px-4 py-3 transition-colors border-l-4',
         toneClasses.bar,
         toneClasses.wrapper,
         className,
@@ -216,7 +216,7 @@ export function AccordionItem({
       {header}
 
       {summary && (
-        <div className="mt-3 text-sm font-medium text-slate-600 dark:text-slate-300">
+        <div className="mt-3 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors">
           {render(summary)}
         </div>
       )}
@@ -232,7 +232,7 @@ export function AccordionItem({
           )}
           style={{ maxHeight: resolvedOpen ? `${contentHeight}px` : '0px' }}
         >
-          <div ref={detailsRef} className="pt-4 text-slate-700 dark:text-stone-300">
+          <div ref={detailsRef} className="pt-4 text-slate-700 dark:text-stone-300 transition-colors">
             {render(details)}
           </div>
         </div>

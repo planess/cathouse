@@ -26,7 +26,7 @@ export default async function ObservationSection({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium uppercase text-gray-900 dark:text-slate-200">
+        <h2 className="text-sm font-medium uppercase text-gray-900 dark:text-slate-200 transition-colors">
           {t('personal.observations')}
         </h2>
 

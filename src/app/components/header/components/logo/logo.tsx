@@ -35,10 +35,10 @@ export default function Logo() {
 
   return (
     <span onClick={nav} aria-hidden>
-      <span className="dark:hidden">
+      <span className="dark:hidden transition">
         <Image src={logo as string} alt="logo" width="120" height={undefined} />
       </span>
-      <span className="hidden dark:inline">
+      <span className="hidden dark:inline transition">
         <Image
           src={logodark as string}
           alt="logo"
