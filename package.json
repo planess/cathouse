@@ -11,7 +11,8 @@
     "test": "jest",
     "test:e2e": "playwright test",
     "vercel": "vercel",
-    "deploy:preview": "deploy.preview.bat",
+    "preview:deploy": "node _temp/preview.env/deploy.js",
+    "preview:migrate": "node _temp/preview.env/migrate.js",
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",
     "migrate:status": "migrate-mongo status",
@@ -68,6 +69,7 @@
     "sass": "^1.89.2",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vercel": "^44.7.3"
+    "vercel": "^44.7.3",
+    "yargs": "^18.0.0"
   }
 }

@@ -36,9 +36,14 @@ export async function handler(
   const headers = await _headers();
   const userAgent = headers.get('user-agent');
 
+  const forwardedFor = headers.get('x-forwarded-for');
+  const realIp = headers.get('x-real-ip');
+  const ip = forwardedFor?.split(',')[0]?.trim() ?? realIp ?? 'unknown';
+
   const extendedData = {
+    ip,
     userAgent,
-    createdAt: Date.now(),
+    createdAt: new Date(),
   };
 
   const dbClient = await clientPromise;
@@ -48,9 +53,9 @@ export async function handler(
     await db.collection('connections').insertOne({ ...data, ...extendedData });
 
     return { status: 'ok' };
-  } catch {
+  } catch (error) {
     // log the error
-    // console.log(error);
+    console.log(error, data, extendedData);
 
     return { status: 'error' };
   }
