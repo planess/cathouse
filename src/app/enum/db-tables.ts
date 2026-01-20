@@ -9,4 +9,5 @@ export enum DbTables {
   animals = 'animals',
   people = 'people',
   clinics = 'clinics',
+  connections = 'connections',
 }

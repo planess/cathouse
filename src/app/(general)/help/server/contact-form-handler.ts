@@ -3,6 +3,7 @@
 import { headers as _headers } from 'next/headers';
 import { email, object, string, union, ZodError } from 'zod';
 
+import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 import { ServerActionResponse } from '@app/models/server-action-response.server';
 
@@ -50,7 +51,9 @@ export async function handler(
   const db = dbClient.db();
 
   try {
-    await db.collection('connections').insertOne({ ...data, ...extendedData });
+    await db
+      .collection(DbTables.connections)
+      .insertOne({ ...data, ...extendedData });
 
     return { status: 'ok' };
   } catch (error) {
