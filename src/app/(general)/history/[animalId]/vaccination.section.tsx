@@ -47,7 +47,7 @@ export default async function VaccinationSection({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium uppercase text-slate-900">
+        <h2 className="text-sm font-medium uppercase text-slate-900 dark:text-slate-200">
           {t('personal.vaccinations')}
         </h2>
 
@@ -69,7 +69,7 @@ export default async function VaccinationSection({
                 <div className="flex flex-col gap-1">
                   <h4
                     className={clsx(
-                      'text-xs font-semibold uppercase text-slate-700 flex gap-2 items-center',
+                      'text-xs font-semibold uppercase text-slate-700 flex gap-2 items-center dark:text-slate-300',
                       group.accent,
                     )}
                   >
@@ -81,10 +81,10 @@ export default async function VaccinationSection({
                 <ul className="flex flex-col gap-4">
                   {group.entries.map((entry) => (
                     <li key={entry.id} className="flex flex-col">
-                      <span className="text-sm font-semibold text-slate-900">
+                      <span className="text-sm font-semibold text-slate-900 dark:text-slate-200">
                         {entry.dateLabel ?? '—'}
                       </span>
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-400 dark:text-slate-400">
                         {entry.label || '—'}
                       </span>
                     </li>

@@ -413,13 +413,15 @@ export function ModalProvider({ children }: ModalProviderProps) {
                   )}
 
                   {options.description && (
-                    <div className="mb-4 text-sm text-slate-600">
+                    <div className="mb-4 text-sm text-slate-600 dark:text-slate-300">
                       {options.description}
                     </div>
                   )}
 
                   {content && (
-                    <div className="mt-4 text-slate-700">{content}</div>
+                    <div className="mt-4 text-slate-700 dark:text-slate-200">
+                      {content}
+                    </div>
                   )}
                 </div>
 
@@ -439,7 +441,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
                         }
                         onClick={() => void handleAction(action, state.id)}
                         className={clsx(
-                          'inline-flex min-w-[96px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition',
+                          'inline-flex min-w-24 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition',
                           resolveToneClass(tone),
                           (action.disabled || isLoading || !isTopAndActive) &&
                             'opacity-60',
@@ -496,7 +498,7 @@ function resolveModalOriginStyle(origin?: ModalOrigin | null): CSSProperties {
 function resolveToneClass(tone: ModalTone) {
   switch (tone) {
     case 'primary':
-      return 'bg-slate-900 text-white hover:bg-slate-800';
+      return 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-sky-500 dark:text-slate-900 dark:hover:bg-sky-600';
     case 'danger':
       return 'bg-rose-600 text-white hover:bg-rose-700';
     case 'ghost':

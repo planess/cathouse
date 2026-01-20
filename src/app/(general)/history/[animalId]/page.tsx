@@ -42,10 +42,16 @@ type PageProps = {
 
 export default async function AnimalHistoryPage({ params }: PageProps) {
   const { animalId } = await params;
-  const canEdit = await editHistoryGranted(new ObjectId(animalId));
-  const animal = await loadAnimal(animalId, canEdit);
+
+  const animal = await loadAnimal(animalId);
 
   if (!animal) {
+    notFound();
+  }
+
+  const canEdit = await editHistoryGranted(animal?.createdBy);
+
+  if (!canEdit && animal.draft) {
     notFound();
   }
 
@@ -88,11 +94,11 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
   const shareEmailUrl = `mailto:info@perilines.com.ua?subject=${shareText}`;
 
   return (
-    <div className="bg-slate-50 px-3 py-4 lg:py-5 mx-auto flex max-w-6xl flex-col gap-4">
+    <div className="bg-slate-50 px-3 py-4 lg:py-5 mx-auto flex max-w-6xl flex-col gap-4 dark:bg-stone-800">
       <div className="flex justify-between items-center">
         <Link
           href={backHref}
-          className="flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-900"
+          className="flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-100 dark:hover:text-slate-200"
         >
           <ArrowIcon />
           {t('personal.backtohistory')}
@@ -105,8 +111,8 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
         )}
       </div>
 
-      <div className="text-sm text-slate-500 bg-[#F3F4F6] rounded-t-lg">
-        <div className="border-t-2 border border-slate-200 rounded-lg bg-white shadow-[0_25px_80px_rgba(15,23,42,0.08)] p-4 lg:p-6 grid lg:grid-cols-[minmax(0,420px)_1fr] gap-x-6">
+      <div className="text-sm text-slate-500 bg-[#F3F4F6] rounded-t-lg dark:bg-neutral-600 p-[4px_1px_1px]">
+        <div className="rounded-lg bg-white dark:bg-neutral-700 dark:shadow-none shadow-[0_25px_80px_rgba(15,23,42,0.08)] p-4 lg:p-6 grid lg:grid-cols-[minmax(0,420px)_1fr] gap-x-6">
           <div className="hidden lg:block">
             <AvatarSection
               heroImage={heroImage}
@@ -185,7 +191,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="text-gray-500 px-4 lg:px-6 py-2">
+        <div className="text-gray-500 px-4 lg:px-6 py-2 dark:text-slate-200">
           {t('personal.reference')}: #{animalIdString}
         </div>
       </div>
@@ -193,7 +199,9 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
   );
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { animalId } = await params;
   const [t, siteTitle] = await Promise.all([
     getTranslations('historypage'),
@@ -206,8 +214,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const canEdit = await editHistoryGranted(new ObjectId(animalId));
-  const animal = await loadAnimal(animalId, canEdit);
+  const animal = await loadAnimal(animalId);
 
   if (!animal) {
     return {

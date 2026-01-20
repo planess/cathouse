@@ -69,19 +69,22 @@ export type AccordionItemProps = {
 
 const theme = {
   [Rate.ok]: {
-    wrapper: 'bg-green-50 border-green-100',
+    wrapper:
+      'bg-green-50 border-green-100 dark:bg-lime-800/40 dark:border-green-700',
     bar: 'border-l-green-300',
   },
   [Rate.satisfactory]: {
-    wrapper: 'bg-amber-50 border-amber-100',
+    wrapper:
+      'bg-amber-50 border-amber-100 dark:bg-amber-800/40 dark:border-amber-700',
     bar: 'border-l-amber-300',
   },
   [Rate.risk]: {
-    wrapper: 'bg-orange-50 border-orange-100',
+    wrapper:
+      'bg-orange-50 border-orange-100 dark:bg-orange-800/40 dark:border-orange-700',
     bar: 'border-l-orange-300',
   },
   [Rate.danger]: {
-    wrapper: 'bg-red-50 border-red-100',
+    wrapper: 'bg-red-50 border-red-100 dark:bg-red-800/40 dark:border-red-700',
     bar: 'border-l-red-300',
   },
 };
@@ -156,8 +159,8 @@ export function AccordionItem({
   const toneClasses = useMemo(() => {
     return (
       (rate && theme[rate]) || {
-        wrapper: 'bg-slate-50 border-slate-100',
-        bar: 'border-l-slate-300',
+        wrapper: 'bg-slate-50 border-slate-100 dark:bg-stone-800/40 dark:border-stone-700',
+        bar: 'border-l-slate-300 dark:border-stone-600',
       }
     );
   }, [rate]);
@@ -194,7 +197,11 @@ export function AccordionItem({
       );
     }
 
-    return <div className="flex-1 overflow-hidden">{title}</div>;
+    return (
+      <div className="flex-1 overflow-hidden text-slate-900 dark:text-slate-200">
+        {title}
+      </div>
+    );
   }, [hasDetails, render, title, toggleButtonProps, resolvedOpen]);
 
   return (
@@ -209,7 +216,7 @@ export function AccordionItem({
       {header}
 
       {summary && (
-        <div className="mt-3 text-sm font-medium text-slate-600">
+        <div className="mt-3 text-sm font-medium text-slate-600 dark:text-slate-300">
           {render(summary)}
         </div>
       )}
@@ -225,7 +232,7 @@ export function AccordionItem({
           )}
           style={{ maxHeight: resolvedOpen ? `${contentHeight}px` : '0px' }}
         >
-          <div ref={detailsRef} className="pt-4 text-slate-700">
+          <div ref={detailsRef} className="pt-4 text-slate-700 dark:text-stone-300">
             {render(details)}
           </div>
         </div>

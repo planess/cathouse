@@ -24,7 +24,7 @@ export default function AvatarSocialsSection({
       <div className="w-8 h-8">
         <a
           href="tel:+380973959022"
-          className="flex-1 justify-center items-center text-[#625a65]"
+          className="flex-1 justify-center items-center text-[#625a65] dark:text-neutral-200"
           target="_blank"
         >
           <PhoneIcon />
@@ -34,7 +34,7 @@ export default function AvatarSocialsSection({
       <div className="w-8 h-8">
         <a
           href={shareEmailUrl}
-          className="flex-1 justify-center items-center text-[#71706b]"
+          className="flex-1 justify-center items-center text-[#71706b] dark:text-neutral-200"
           target="_blank"
         >
           <EmailIcon />

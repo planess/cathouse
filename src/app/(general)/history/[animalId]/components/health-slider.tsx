@@ -26,16 +26,20 @@ export function HealthSlider({
       <div className="flex items-center justify-between">
         <label
           htmlFor={sliderId}
-          className="text-sm font-medium text-slate-900"
+          className="text-sm font-medium text-slate-900 dark:text-slate-200"
         >
           {label}
         </label>
-        <span className="rounded-full bg-slate-900/10 px-3 py-0.5 text-xs font-semibold text-slate-900">
+        <span className="rounded-full bg-slate-900/10 px-3 py-0.5 text-xs font-semibold text-slate-900 dark:bg-stone-200 dark:text-slate-700">
           {value}
         </span>
       </div>
 
-      {description && <p className="text-sm text-slate-500">{description}</p>}
+      {description && (
+        <p className="text-sm text-slate-500 dark:text-slate-300">
+          {description}
+        </p>
+      )}
 
       <input
         id={sliderId}
@@ -45,7 +49,7 @@ export function HealthSlider({
         step={1}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-slate-900"
+        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-slate-900 dark:bg-stone-700 dark:accent-slate-200"
       />
 
       <div className="flex justify-between text-[10px] uppercase tracking-wide text-slate-400">

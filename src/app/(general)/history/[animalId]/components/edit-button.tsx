@@ -27,7 +27,7 @@ export function EditButton({
   return (
     <Tag
       {...attrs}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:border border-slate-200 text-slate-600 transition-colors hover:border-slate-300 bg-neutral-800/20 hover:text-slate-900 dark:text-white dark:hover:text-slate-100"
       aria-label={label}
       onClick={onClick}
     >

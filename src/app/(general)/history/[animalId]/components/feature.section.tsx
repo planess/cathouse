@@ -21,28 +21,28 @@ export default function FeatureSection({
   );
 
   return (
-    <div className="grid gap-x-3 gap-y-4 grid-cols-2 grid-cols-[minmax(150px,max-content)_1fr] text-sm text-slate-600">
-      <span className="font-medium text-sm text-slate-500">
+    <div className="grid gap-x-3 gap-y-4 grid-cols-[minmax(150px,max-content)_1fr] text-sm text-slate-600">
+      <span className="font-medium text-sm text-slate-500 dark:text-slate-400">
         {cardTranslations('labels.sex')}
       </span>
-      <span className="font-semibold text-slate-900">
+      <span className="font-semibold text-slate-900 dark:text-slate-200">
         {formatSexLabel(animal.sex, cardTranslations)}
       </span>
 
-      <span className="font-medium text-sm text-slate-500">
+      <span className="font-medium text-sm text-slate-500 dark:text-slate-400">
         {cardTranslations('labels.chip')}
       </span>
-      <span className="font-semibold text-slate-900">
+      <span className="font-semibold text-slate-900 dark:text-slate-200">
         {animal.chipNumber ?? '—'}
       </span>
 
-      <span className="font-medium text-sm text-slate-500">
+      <span className="font-medium text-sm text-slate-500 dark:text-slate-400">
         {cardTranslations('labels.sterilized')}
       </span>
-      <span className="font-semibold text-slate-900">
+      <span className="font-semibold text-slate-900 dark:text-slate-200">
         {sterilizedLabel}{' '}
         {sterilizedDate && (
-          <span className="text-xs font-normal text-slate-500">
+          <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
             ({sterilizedDate})
           </span>
         )}

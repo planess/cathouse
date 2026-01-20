@@ -31,13 +31,13 @@ export async function TreatmentCard({
   const startLabel =
     formatDate(treatment.startDate) ?? t('personal.treatments_unknown_date');
   const endLabel = treatment.endDate
-    ? formatDate(treatment.endDate) ?? ''
-    : '' /* t('personal.treatments_in_progress') */;
+    ? (formatDate(treatment.endDate) ?? '')
+    : ''; /* t('personal.treatments_in_progress') */
   const interventions = treatment.interventions ?? [];
   const medications = treatment.medications ?? [];
 
   const summaryNode = (
-    <p className="text-sm font-semibold text-rose-600">
+    <p className="text-sm font-semibold text-rose-600 dark:text-red-400">
       {t('personal.treatments_complaints', {
         complaints: treatment.complaints,
       })}
@@ -45,10 +45,10 @@ export async function TreatmentCard({
   );
 
   const detailsNode = (
-    <div className="space-y-4 text-sm text-slate-600">
+    <div className="space-y-4 text-sm text-slate-600 dark:text-stone-300">
       {interventions.length > 0 && (
         <div>
-          <p className="mb-1 font-semibold text-slate-900">
+          <p className="mb-1 font-semibold text-slate-900 dark:text-stone-200">
             {t('personal.treatments_interventions')}
           </p>
           <ul className="space-y-1 list-disc pl-5">
@@ -64,7 +64,7 @@ export async function TreatmentCard({
 
       {medications.length > 0 && (
         <div>
-          <p className="mb-1 font-semibold text-slate-900">
+          <p className="mb-1 font-semibold text-slate-900 dark:text-stone-200">
             {t('personal.treatments_medications')}
           </p>
           <ul className="space-y-1 list-disc pl-5">
@@ -73,7 +73,8 @@ export async function TreatmentCard({
                 formatDate(entry.startDate) ??
                 t('personal.treatments_unknown_date');
               const end = entry.endDate
-                ? formatDate(entry.endDate) ?? t('personal.treatments_unknown_date')
+                ? (formatDate(entry.endDate) ??
+                  t('personal.treatments_unknown_date'))
                 : t('personal.treatments_in_progress');
 
               return (
@@ -96,15 +97,16 @@ export async function TreatmentCard({
 
   const titleNode = (
     <div className="flex items-center gap-3">
-      <div className="flex-1 flex text-sm flex gap-2">
-        <span className="font-semibold text-slate-900">
+      <div className="flex-1 flex text-sm gap-2">
+        <span className="font-semibold text-slate-900 dark:text-slate-200">
           {t('personal.treatments_start_label', { date: startLabel })}
         </span>
-        <span className="border-l border-slate-300"></span>
+        <span className="border-l border-slate-300 dark:border-stone-600" />
         <span
           className={clsx({
-            'text-slate-400': !treatment.endDate,
-            'text-slate-900 font-semibold': treatment.endDate,
+            'text-slate-400 dark:text-stone-400': !treatment.endDate,
+            'text-slate-900 font-semibold dark:text-stone-200':
+              treatment.endDate,
           })}
         >
           {t('personal.treatments_end_label', { date: endLabel })}

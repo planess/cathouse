@@ -70,7 +70,7 @@ export const CreateClinicForm = forwardRef<CreateClinicFormHandle>(
       <div className="space-y-4">
         <div className="space-y-2">
           <label
-            className="text-sm font-medium text-slate-900"
+            className="text-sm font-medium text-slate-900 dark:text-slate-300"
             htmlFor="clinic-name"
           >
             {t('form.clinic_modal.name_label')}
@@ -81,7 +81,7 @@ export const CreateClinicForm = forwardRef<CreateClinicFormHandle>(
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder={t('form.clinic_modal.name_placeholder')}
-            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 dark:bg-stone-700 dark:text-stone-50"
             disabled={isSubmitting}
           />
           <p className="text-xs text-slate-500">

@@ -247,9 +247,13 @@ export function LocationField({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-900">{label}</p>
+          <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
+            {label}
+          </p>
           {description && (
-            <p className="text-sm text-slate-500">{description}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {description}
+            </p>
           )}
         </div>
 
@@ -257,7 +261,7 @@ export function LocationField({
           <button
             type="button"
             onClick={handleClear}
-            className="text-xs font-semibold text-rose-600 transition hover:text-rose-700"
+            className="text-xs font-semibold text-rose-600 transition-colors hover:text-rose-700"
           >
             {clearLabel}
           </button>
@@ -268,12 +272,12 @@ export function LocationField({
         <div ref={containerRef} className="h-64 w-full rounded-t-2xl" />
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-sm">
-          <p className="text-slate-600">{statusMessage}</p>
+          <p className="text-slate-600 dark:text-slate-400">{statusMessage}</p>
           <button
             type="button"
             onClick={handleDetectLocation}
             disabled={isLocating}
-            className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-400 disabled:opacity-60"
+            className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-400 dark:text-slate-400 disabled:opacity-60"
           >
             {isLocating ? detectingLabel : detectLabel}
           </button>
@@ -281,7 +285,7 @@ export function LocationField({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-900">
+        <label className="text-sm font-medium text-slate-900 dark:text-slate-200">
           {addressLabel}
         </label>
         <input
@@ -289,13 +293,13 @@ export function LocationField({
           value={value?.address ?? ''}
           onChange={handleAddressChange}
           placeholder={addressPlaceholder}
-          className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+          className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-stone-700 dark:text-stone-50"
           disabled={!value}
         />
       </div>
 
       {value && (
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
           {coordinatesLabel}: {value.latitude.toFixed(5)},{' '}
           {value.longitude.toFixed(5)}
         </p>

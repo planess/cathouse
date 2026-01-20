@@ -380,15 +380,15 @@ export const EditVaccinationsForm = forwardRef<
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-slate-600">{swipeHint}</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400">{swipeHint}</p>
 
-      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:bg-gray-700 dark:border-gray-600 transition-colors">
         <header className="mb-3 flex items-start justify-between gap-4">
           <div>
-            <p className="text-base font-semibold text-slate-900">
+            <p className="text-base font-semibold text-slate-900 dark:text-slate-300">
               {t('form.vaccinations_modal.parasites_title')}
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {t('form.vaccinations_modal.parasites_description')}
             </p>
           </div>
@@ -404,7 +404,7 @@ export const EditVaccinationsForm = forwardRef<
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_minmax(0,160px)_auto]">
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="parasite-name"
             >
               {t('form.vaccinations_modal.name_label')}
@@ -417,13 +417,13 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 name: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
             />
           </div>
 
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="parasite-date"
             >
               {t('form.vaccinations_modal.date_label')}
@@ -436,7 +436,7 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 date: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
             />
           </div>
 
@@ -444,7 +444,7 @@ export const EditVaccinationsForm = forwardRef<
             <button
               type="button"
               onClick={addParasite}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
               aria-label={t('form.vaccinations_modal.add_button_label')}
             >
               <PlusIcon />
@@ -453,13 +453,13 @@ export const EditVaccinationsForm = forwardRef<
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:bg-gray-700 dark:border-gray-600 transition-colors">
         <header className="mb-3 flex items-start justify-between gap-4">
           <div>
-            <p className="text-base font-semibold text-slate-900">
+            <p className="text-base font-semibold text-slate-900 dark:text-slate-300">
               {t('form.vaccinations_modal.rabies_title')}
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {t('form.vaccinations_modal.rabies_description')}
             </p>
           </div>
@@ -475,7 +475,7 @@ export const EditVaccinationsForm = forwardRef<
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_minmax(0,160px)_minmax(0,200px)_auto]">
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="rabies-name"
             >
               {t('form.vaccinations_modal.name_label')}
@@ -488,13 +488,13 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 name: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
             />
           </div>
 
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="rabies-date"
             >
               {t('form.vaccinations_modal.date_label')}
@@ -507,13 +507,13 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 date: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
             />
           </div>
 
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="rabies-clinic"
             >
               {t('form.vaccinations_modal.clinic_label')}
@@ -525,7 +525,7 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 clinic: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 dark:bg-zinc-500 dark:text-stone-50"
               disabled={!hasClinicOptions}
             >
               <option value="">
@@ -545,7 +545,7 @@ export const EditVaccinationsForm = forwardRef<
             <button
               type="button"
               onClick={() => addVaccination('rabies')}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 disabled:opacity-60"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 disabled:opacity-60 dark:bg-zinc-500 dark:text-stone-50"
               aria-label={t('form.vaccinations_modal.add_button_label')}
               disabled={!hasClinicOptions}
             >
@@ -561,13 +561,13 @@ export const EditVaccinationsForm = forwardRef<
         )}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:bg-gray-700 dark:border-gray-600 transition-colors">
         <header className="mb-3 flex items-start justify-between gap-4">
           <div>
-            <p className="text-base font-semibold text-slate-900">
+            <p className="text-base font-semibold text-slate-900 dark:text-slate-300">
               {t('form.vaccinations_modal.virus_title')}
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {t('form.vaccinations_modal.virus_description')}
             </p>
           </div>
@@ -583,7 +583,7 @@ export const EditVaccinationsForm = forwardRef<
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_minmax(0,160px)_minmax(0,200px)_auto]">
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="virus-name"
             >
               {t('form.vaccinations_modal.name_label')}
@@ -596,13 +596,13 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 name: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
             />
           </div>
 
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="virus-date"
             >
               {t('form.vaccinations_modal.date_label')}
@@ -615,13 +615,13 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 date: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50"
             />
           </div>
 
           <div>
             <label
-              className="text-sm font-medium text-slate-900"
+              className="text-sm font-medium text-slate-900 dark:text-slate-300"
               htmlFor="virus-clinic"
             >
               {t('form.vaccinations_modal.clinic_label')}
@@ -633,7 +633,7 @@ export const EditVaccinationsForm = forwardRef<
                 ...prev,
                 clinic: event.target.value,
               }))}
-              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60"
+              className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 dark:bg-zinc-500 dark:text-stone-50"
               disabled={!hasClinicOptions}
             >
               <option value="">
@@ -653,7 +653,7 @@ export const EditVaccinationsForm = forwardRef<
             <button
               type="button"
               onClick={() => addVaccination('virus')}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 disabled:opacity-60"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-900 hover:text-slate-900 disabled:opacity-60 dark:bg-zinc-500 dark:text-stone-50"
               aria-label={t('form.vaccinations_modal.add_button_label')}
               disabled={!hasClinicOptions}
             >
