@@ -30,7 +30,7 @@ export function CookieConsent() {
 
           <button
             type="button"
-            className="inline-flex flex-1 items-center justify-center rounded-lg bg-sky-500/90 px-4 py-2 text-sm leading-none font-semibold text-white transition hover:bg-sky-500 focus:outline-2 focus:outline-blue-300 focus:outline-offset-2 focus:outline-solid"
+            className="inline-flex flex-1 items-center justify-center rounded-lg bg-emerald-500/90 px-4 py-2 text-sm leading-none font-semibold text-white transition hover:bg-emerald-500 focus:outline-2 focus:outline-emerald-300 focus:outline-offset-2 focus:outline-solid"
             onClick={setAgree}
           >
             {t('agree')}
