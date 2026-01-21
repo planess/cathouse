@@ -29,6 +29,13 @@ export type ModalAction<T> = {
   autoClose?: boolean;
 };
 
+export type ModalHandle<T> = Promise<T | undefined> & {
+  id: number;
+  setActionEnabled: (actionId: string, enabled: boolean) => void;
+  enableAction: (actionId: string) => void;
+  disableAction: (actionId: string) => void;
+};
+
 export type ModalOrigin = {
   x: number;
   y: number;
@@ -48,7 +55,7 @@ export type ModalOptions<T> = {
 };
 
 type ModalContextValue = {
-  showModal: <T>(options: ModalOptions<T>) => Promise<T | undefined>;
+  showModal: <T>(options: ModalOptions<T>) => ModalHandle<T>;
   dismissModal: (result?: unknown) => void;
   isOpen: boolean;
 };
@@ -62,7 +69,13 @@ type InternalModalState = {
 };
 
 const defaultContext: ModalContextValue = {
-  showModal: async () => undefined,
+  showModal: () =>
+    createModalHandle(Promise.resolve(undefined), {
+      id: 0,
+      setActionEnabled: () => undefined,
+      enableAction: () => undefined,
+      disableAction: () => undefined,
+    }),
   dismissModal: () => undefined,
   isOpen: false,
 };
@@ -149,21 +162,70 @@ export function ModalProvider({ children }: ModalProviderProps) {
     });
   }, []);
 
+  const setActionDisabled = useCallback(
+    (modalId: number, actionId: string, disabled: boolean) => {
+      setModalStack((current) =>
+        current.map((modal) => {
+          if (modal.id !== modalId || !modal.options.actions) {
+            return modal;
+          }
+
+          const nextActions = modal.options.actions.map((action) => {
+            const resolvedId = action.id ?? action.label;
+
+            if (resolvedId !== actionId) {
+              return action;
+            }
+
+            if (action.disabled === disabled) {
+              return action;
+            }
+
+            return {
+              ...action,
+              disabled,
+            };
+          });
+
+          return {
+            ...modal,
+            options: {
+              ...modal.options,
+              actions: nextActions,
+            },
+          };
+        }),
+      );
+    },
+    [],
+  );
+
   const showModal = useCallback(
-    <T,>(options: ModalOptions<T>) =>
-      new Promise<T | undefined>((resolve) => {
+    <T,>(options: ModalOptions<T>) => {
+      const modalId = Date.now() + Math.random();
+
+      const promise = new Promise<T | undefined>((resolve) => {
         setModalStack((current) => [
           ...current,
           {
             options,
             resolve: resolve as (value: unknown) => void,
-            id: Date.now() + Math.random(),
+            id: modalId,
             status: 'open',
             origin: cloneOrigin(options.origin ?? pointerOriginRef.current),
           },
         ]);
-      }),
-    [],
+      });
+
+      return createModalHandle(promise, {
+        id: modalId,
+        setActionEnabled: (actionId, enabled) =>
+          setActionDisabled(modalId, actionId, !enabled),
+        enableAction: (actionId) => setActionDisabled(modalId, actionId, false),
+        disableAction: (actionId) => setActionDisabled(modalId, actionId, true),
+      });
+    },
+    [setActionDisabled],
   );
 
   useEffect(() => {
@@ -506,6 +568,18 @@ function resolveToneClass(tone: ModalTone) {
     default:
       return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
   }
+}
+
+function createModalHandle<T>(
+  promise: Promise<T | undefined>,
+  controls: {
+    id: number;
+    setActionEnabled: (actionId: string, enabled: boolean) => void;
+    enableAction: (actionId: string) => void;
+    disableAction: (actionId: string) => void;
+  },
+): ModalHandle<T> {
+  return Object.assign(promise, controls);
 }
 
 function CloseIcon() {
