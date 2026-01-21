@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
-import { getUser } from '@app/hooks';
+import { getUser } from '@app/hooks/get-user';
 
 export default async function Footer() {
   const t = await getTranslations('footer');

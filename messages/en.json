@@ -1,6 +1,12 @@
 {
   "yes": "Yes",
   "no": "No",
+  "cookieConsent": {
+    "text": "We use cookies to improve your experience. Please confirm your choice.",
+    "agree": "Agree",
+    "reject": "Reject",
+    "untilAccept": "Functionality is limited until you accept cookies."
+  },
   "header": {
     "home": "Home",
     "contacts": "Contacts",

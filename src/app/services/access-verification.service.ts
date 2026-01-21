@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { redirect } from 'next/navigation';
 
-import { getUser } from '@app/hooks';
+import { getUser } from '@app/hooks/get-user';
 import type { SystemPermission } from '@app/models/system-permissions';
 import { PermissionResolverService } from '@app/services/permission-resolver.service';
 

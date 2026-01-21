@@ -35,7 +35,7 @@ export default function Header() {
 
   return (
     <header className="flex items-center border-b border-solid border-b-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-700 px-3 py-3 transition-[padding] lg:px-20">
-      <div className="flex flex-none items-center gap-6">
+      <div className="flex flex-none items-center gap-2 sm:gap-6 transition-[gap]">
         <div className="md:hidden">
           <MobileSidebar
             links={localizedLinks}

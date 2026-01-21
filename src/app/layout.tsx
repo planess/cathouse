@@ -4,6 +4,7 @@ import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import './globals.css';
 
+import { CookieConsent } from './components/cookie-consent';
 import { ModalProvider } from './providers/modal';
 import { UserProvider } from './providers/user';
 
@@ -54,7 +55,10 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider>
           <UserProvider>
-            <ModalProvider>{children}</ModalProvider>
+            <ModalProvider>
+              {children}
+              <CookieConsent />
+            </ModalProvider>
           </UserProvider>
         </NextIntlClientProvider>
       </body>
