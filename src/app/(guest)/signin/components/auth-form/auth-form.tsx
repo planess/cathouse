@@ -6,9 +6,7 @@ import { FormEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@app/components/button';
-import { Tooltip } from '@app/components/tooltip';
 import { encrypt } from '@app/helpers/encrypt-browser';
-import { useCookieAgreement } from '@app/hooks/use-cookie-agreement';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
 import InputField from '../../../components/input-field/input-field';
@@ -23,8 +21,6 @@ const transformer: Record<string, string> = {
 export default function AuthForm() {
   const router = useRouter();
   const t = useTranslations('authorization');
-  const tt = useTranslations('cookieConsent');
-  const { isAccepted } = useCookieAgreement();
   const { register, handleSubmit, formState, setError, clearErrors, reset } =
     useForm<IAuthForm>({
       criteriaMode: 'all',
@@ -112,21 +108,13 @@ export default function AuthForm() {
         </div>
       )}
 
-      {isAccepted ? (
-        <Button
-          className="mt-4 ml-auto"
-          pending={pending}
-          disabled={isLoading || !formState.isValid || !cryptoKey}
-        >
-          {t('form.label.auth-button')}
-        </Button>
-      ) : (
-        <div className="ml-auto mt-4">
-          <Tooltip text={tt('untilAccept')}>
-            <Button disabled>{t('form.label.auth-button')}</Button>
-          </Tooltip>
-        </div>
-      )}
+      <Button
+        className="mt-4 ml-auto"
+        pending={pending}
+        disabled={isLoading || !formState.isValid || !cryptoKey}
+      >
+        {t('form.label.auth-button')}
+      </Button>
     </form>
   );
 }

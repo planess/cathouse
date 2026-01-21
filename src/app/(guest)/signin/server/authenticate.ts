@@ -127,7 +127,7 @@ export async function authenticate(
   const cookies = await nextCookies();
 
   cookies.set('token', sessionToken, {
-    expires: new Date(Date.now() + PERIOD),
+    // expires: new Date(Date.now() + PERIOD),
     httpOnly: true,
     secure: process.env.NODE_ENV !== 'development',
     priority: 'high',
