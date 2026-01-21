@@ -2,8 +2,8 @@
   "yes": "Yes",
   "no": "No",
   "cookieConsent": {
-    "text": "We use cookies to improve your experience. Please confirm your choice.",
-    "agree": "Agree",
+    "text": "We only use technical cookies necessary for the proper functioning of the site (including session and authorization storage). These cookies are not used for advertising.",
+    "agree": "Accept",
     "reject": "Reject",
     "untilAccept": "Functionality is limited until you accept cookies."
   },
