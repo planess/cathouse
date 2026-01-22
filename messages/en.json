@@ -5,7 +5,18 @@
     "text": "We only use technical cookies necessary for the proper functioning of the site (including session and authorization storage). These cookies are not used for advertising.",
     "agree": "Accept",
     "reject": "Reject",
-    "untilAccept": "Functionality is limited until you accept cookies."
+    "tune": "Customize",
+    "untilAccept": "This functionality depends on your consent to the use of cookies."
+  },
+  "gdpr": {
+    "default": {
+      "title": "Personal data processing consent",
+      "content": "Please review and accept the personal data processing consent to continue.",
+      "declineLabel": "Decline",
+      "acceptLabel": "Accept",
+      "triggerLabel": "Review consent",
+      "declinedError": "GDPR consent declined"
+    }
   },
   "header": {
     "home": "Home",
@@ -136,6 +147,10 @@
       },
       "closing": "We appreciate every level of involvement—from one-time help to regular participation—and we will always respect your experience and comfort when selecting tasks.",
       "contactCta": "Send us a message and let’s get acquainted ❤️"
+    },
+    "modal": {
+      "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Peryferiia”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
+      "checkboxLabel": "I consent to the processing of my personal data"
     }
   },
   "contactspage": {
@@ -152,6 +167,171 @@
       "phoneAria": "Call the listed phone number",
       "telegramAria": "Open our Telegram channel",
       "instagramAria": "Open our Instagram profile"
+    },
+    "modal": {
+      "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Peryferiia”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
+      "checkboxLabel": "I consent to the processing of my personal data"
+    }
+  },
+  "privacypage": {
+    "title": "Privacy Policy",
+    "updated": "Last updated: {date}",
+    "intro": "We respect your privacy and explain what data we collect, why we collect it, and how we protect it when you use Cathouse or contact the Foundation.",
+    "sections": {
+      "who": {
+        "title": "Who we are",
+        "items": {
+          "controller": "Data controller: Charitable Foundation “Peryferiya”.",
+          "edrpou": "EDRPOU: 45962629.",
+          "email": "Contact email for data protection matters: <email>info@perilines.com.ua.</email>",
+          "contactPerson": "Data protection contact person is available via this email. The Foundation has not appointed a separate data protection officer because the scale of processing does not pose special risk (Art. 24 of the Law)."
+        }
+      },
+      "definitions": {
+        "title": "Definitions",
+        "items": {
+          "intro": "Under the Law of Ukraine “On Personal Data Protection”, we use the following terms:",
+          "personalData": "Personal data: any information relating to an identified or identifiable natural person.",
+          "processing": "Processing of personal data: any action or set of actions such as collection, registration, accumulation, storage, adaptation, change, renewal, use, dissemination, depersonalization, or destruction.",
+          "subject": "Data subject: a natural person whose data is processed.",
+          "controller": "Data controller: the Foundation that determines the purpose and means of processing.",
+          "processor": "Data processor: a person entrusted by the Foundation to process data under a contract."
+        }
+      },
+      "children": {
+        "title": "Children",
+        "items": {
+          "open": "The Foundation's website is open to all users regardless of age.",
+          "noTarget": "We do not target activities at minors and do not enter into agreements or interact with children without the participation and consent of their legal representatives.",
+          "under14Consent": "If processing personal data of persons under 14 is necessary, it is carried out only with parental or legal representative consent.",
+          "noSensitive": "We do not process children’s data without such consent and do not collect sensitive data about children (Art. 7 of the Law)."
+        }
+      },
+      "sensitive": {
+        "title": "Prohibition on sensitive data",
+        "items": {
+          "ban": "We do not process sensitive personal data such as racial or ethnic origin, political, religious or philosophical beliefs, membership in political parties or trade unions, health, sex life, biometric or genetic data (Art. 7 of the Law).",
+          "exception": "If such processing becomes necessary (for example, for medical assistance to volunteers), it will be carried out only with your consent or in other cases provided by law."
+        }
+      },
+      "collection": {
+        "title": "Information we collect with your consent",
+        "items": {
+          "contact": "Contact details you provide (name, email, phone) when you reach out or submit forms.",
+          "technical": "Basic technical data such as IP address, device type, and browser for security and analytics.",
+          "content": "Content you choose to share, such as messages about animals or files you upload.",
+          "payments": "We do not store payment card details; payments are processed by third-party providers.",
+          "notice": "When collecting data, we inform you about the controller, data composition, your rights, processing purpose, and recipients (Art. 12 of the Law). If data is collected indirectly, the notice is provided within 30 days."
+        }
+      },
+      "analytics": {
+        "title": "Technical and behavioral data",
+        "items": {
+          "data": "We may collect technical and behavioral data such as pages visited, interactions with site elements, frequency and duration of use, and device parameters (browser type, operating system, approximate city-level location).",
+          "use": "This data helps analyze site performance and improve usability, stability, and effectiveness, and understand how users interact with our content.",
+          "consent": "Collection and processing of behavioral and analytics data occur only with your consent via the cookie management mechanism."
+        }
+      },
+      "use": {
+        "title": "How we use information",
+        "items": {
+          "respond": "Respond to your requests and coordinate help.",
+          "organize": "Organize assistance for animals and manage requests.",
+          "volunteers": "Coordinate volunteers and partners involved in care.",
+          "reporting": "Keep required reporting and documentation.",
+          "maintain": "Maintain site functionality, prevent abuse, and improve performance.",
+          "legal": "Comply with legal obligations and protect our volunteers and partners.",
+          "noAutomated": "We do not use data for automated decision-making or legally significant profiling."
+        }
+      },
+      "basis": {
+        "title": "Legal basis for processing",
+        "items": {
+          "consent": "Your consent where required.",
+          "request": "Your request or inquiry addressed to the Foundation.",
+          "obligation": "Compliance with legal obligations.",
+          "legitimate": "Our legitimate interest in security and operational needs.",
+          "principles": "Processing is transparent and follows adequacy, accuracy, and storage limitation principles (Art. 6 of the Law). A change of purpose requires new consent."
+        }
+      },
+      "cookies": {
+        "title": "Cookies and localStorage",
+        "items": {
+          "necessary": "We use both technically necessary cookies for site operation and analytical cookies—only after obtaining user consent.",
+          "noAds": "We do not use cookies for advertising.",
+          "analytics": "Cookies are used only after consent and help us understand usage and improve the service.",
+          "control": "You can manage cookies in your browser settings.",
+          "withdraw": "You can change or withdraw your consent at any time through cookie settings."
+        }
+      },
+      "email": {
+        "title": "Email communications",
+        "items": {
+          "purpose": "We may send informational messages, news, or reports to email addresses voluntarily provided when contacting, registering, or interacting with the Foundation.",
+          "optout": "You can opt out at any time using the unsubscribe link or by emailing the Foundation.",
+          "notice": "When sending emails, we inform you about the option to unsubscribe (Art. 21 of the Law)."
+        }
+      },
+      "sharing": {
+        "title": "Data sharing",
+        "items": {
+          "partners": "We share information only with trusted partners to provide help.",
+          "clinics": "Veterinary clinics, when needed to help animals.",
+          "payments": "Payment service providers for processing donations or fees.",
+          "providers": "Technical service providers (hosting, email) that support the website.",
+          "noSale": "We do not sell personal data, nor use data for marketing or targeted advertising.",
+          "noMarketingTargeting": "Data is not used for individual marketing targeting or shared with third parties for advertising purposes.",
+          "legal": "We may disclose data if required by law.",
+          "processors": "Processors (partners) handle data only within the scope and purpose defined by contract with the Foundation and are obliged to protect it (Art. 4 of the Law).",
+          "notice": "Where consent is required, we notify you about data transfer within 10 days (Art. 21 of the Law)."
+        }
+      },
+      "international": {
+        "title": "International data transfers",
+        "items": {
+          "transfers": "If we use international services, data may be processed outside Ukraine.",
+          "safeguards": "We apply appropriate safeguards in line with applicable law.",
+          "adequacy": "Transfers occur only to countries with an adequate level of protection (EEA, Council of Europe Convention signatories) or with safeguards such as contracts or consent, as provided by Art. 29 of the Law."
+        }
+      },
+      "retention": {
+        "title": "Data retention",
+        "items": {
+          "duration": "We keep data only as long as needed for the purposes described above.",
+          "inquiries": "Inquiries are stored for the time required to process and follow up.",
+          "volunteer": "Volunteer data is retained according to internal policies and legal requirements.",
+          "financial": "Financial records are stored for statutory periods.",
+          "cleanup": "We delete or anonymize data when it is no longer required.",
+          "deletionNotice": "When processing ends, data is deleted or destroyed (Art. 15 of the Law). We notify you about deletion within 10 days."
+        }
+      },
+      "breach": {
+        "title": "Data breach response",
+        "items": {
+          "response": "If a data breach is detected, the Foundation immediately takes mitigation steps, assesses risks, and, if the breach threatens your rights, notifies you within 72 hours and the Commissioner when required."
+        }
+      },
+      "security": {
+        "title": "Security",
+        "items": {
+          "measures": "We apply technical and organizational measures to protect data.",
+          "accessControl": "Access to personal data is limited to authorized persons.",
+          "measuresDetails": "Measures include encryption, access controls, regular audits, staff training, and protection from unauthorized access (Art. 24 of the Law). Staff sign confidentiality undertakings."
+        }
+      },
+      "updates": {
+        "title": "Policy updates",
+        "items": {
+          "changes": "We may update this policy from time to time. The current version is always available on this page.",
+          "material": "For material changes (e.g., a new processing purpose), we will notify you via email or on the website (Art. 21 of the Law).",
+          "effective": "Effective date: {consentDate}"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "If you have questions about this policy or your data, contact us and we will respond as soon as possible.",
+        "emailLabel": "info@perilines.com.ua"
+      }
     }
   },
   "historypage": {
@@ -566,7 +746,10 @@
   },
   "footer": {
     "tagline": "Since {year} with care for our little friends",
-    "attribution": "by {org}"
+    "attribution": "by {org}",
+    "links": {
+      "privacy": "Privacy Policy"
+    }
   },
   "contactForm": {
     "fields": {
