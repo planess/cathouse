@@ -169,19 +169,19 @@
       "instagramAria": "Open our Instagram profile"
     },
     "modal": {
-      "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Peryferiia”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
+      "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Periphery”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
       "checkboxLabel": "I consent to the processing of my personal data"
     }
   },
   "privacypage": {
     "title": "Privacy Policy",
     "updated": "Last updated: {date}",
-    "intro": "We respect your privacy and explain what data we collect, why we collect it, and how we protect it when you use Cathouse or contact the Foundation.",
+    "intro": "We respect your privacy and explain why and what data we collect and how we protect it when you use this site or contact the Foundation.",
     "sections": {
       "who": {
         "title": "Who we are",
         "items": {
-          "controller": "Data controller: Charitable Foundation “Peryferiya”.",
+          "controller": "Data controller: Charitable Foundation “Periphery”.",
           "edrpou": "EDRPOU: 45962629.",
           "email": "Contact email for data protection matters: <email>info@perilines.com.ua.</email>",
           "contactPerson": "Data protection contact person is available via this email. The Foundation has not appointed a separate data protection officer because the scale of processing does not pose special risk (Art. 24 of the Law)."
@@ -215,7 +215,7 @@
         }
       },
       "collection": {
-        "title": "Information we collect with your consent",
+        "title": "Information we collect after your consent",
         "items": {
           "contact": "Contact details you provide (name, email, phone) when you reach out or submit forms.",
           "technical": "Basic technical data such as IP address, device type, and browser for security and analytics.",
@@ -308,7 +308,7 @@
       "breach": {
         "title": "Data breach response",
         "items": {
-          "response": "If a data breach is detected, the Foundation immediately takes mitigation steps, assesses risks, and, if the breach threatens your rights, notifies you within 72 hours and the Commissioner when required."
+          "response": "If a data breach is detected, the Foundation immediately takes mitigation steps, assesses risks, and, if the breach threatens your rights, notifies you within 72 hours and the Commissioner of the Verkhovna Rada of Ukraine on Human Rights (Art. 18 of the Law)."
         }
       },
       "security": {
