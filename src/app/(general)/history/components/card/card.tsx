@@ -126,7 +126,7 @@ export default function Card({ data }: Props) {
                     className="text-sky-400 underline-offset-4 hover:underline flex items-center gap-1"
                   >
                     <span>{cardTranslations('actions.openMap')}</span>{' '}
-                    <span>
+                    <span className="size-4">
                       <ExternalLinkIcon />
                     </span>
                   </a>
