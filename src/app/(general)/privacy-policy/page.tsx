@@ -102,7 +102,11 @@ export default function PrivacyPolicyPage() {
 
         <div className="space-y-8">
           {sections.map((section) => (
-            <div key={section.key} className="space-y-3">
+            <div
+              key={section.key}
+              id={section.key}
+              className="space-y-3 scroll-mt-24"
+            >
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                 {section.title}
               </h2>

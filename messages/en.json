@@ -744,11 +744,52 @@
     "title": "Location",
     "body": "We are preparing an interactive map with our active zones. Stay tuned."
   },
+  "legalinfopage": {
+    "title": "Legal information",
+    "checkLink": "Check the details <link>here</link>",
+    "sections": {
+      "requisites": {
+        "title": "Foundation details",
+        "labels": {
+          "fullName": "Full legal name",
+          "edrpou": "EDRPOU",
+          "location": "Location",
+          "contacts": "Contacts",
+          "head": "Head of the foundation",
+          "nonprofitStatus": "Non-profit status"
+        },
+        "items": {
+          "fullName": "PERIPHERY CHARITABLE FOUNDATION",
+          "edrpou": "45962629",
+          "location": "Lviv, Ukraine, 79048",
+          "contacts": "<phone>+38 (097) 39 59 022</phone>, <email>info@perilines.com.ua</email>, <telegram>Telegram</telegram>, <instagram>Instagram</instagram>",
+          "head": "Duleba Oleh",
+          "nonprofitStatus": "Entered into the register in accordance with Decision No. 2513054600489 under category 0036 (charitable organizations). Check the status <link>here</link>."
+        }
+      },
+      "documents": {
+        "title": "Policies and documents",
+        "items": {
+          "statute": "<pdf>Statute|/Statut-Foundation.pdf</pdf>. Describes the basic principles and rules of the foundation.",
+          "privacy": "<link>Privacy Policy</link>. Explains how we handle personal data."
+        }
+      },
+      "about": {
+        "title": "About the foundation",
+        "items": {
+          "mission": "Our mission is to help stray animals through rescue, treatment, and rehoming support.",
+          "noShelter": "We do not operate a permanent shelter and work with veterinary clinics and temporary foster care.",
+          "requests": "For official requests, reports, or document copies, contact us at <email>info@perilines.com.ua</email>."
+        }
+      }
+    }
+  },
   "footer": {
     "tagline": "Since {year} with care for our little friends",
     "attribution": "by {org}",
     "links": {
-      "privacy": "Privacy Policy"
+      "privacy": "Privacy Policy",
+      "legal": "Legal information"
     }
   },
   "contactForm": {

@@ -12,12 +12,25 @@ export default async function Footer() {
   const org = 'Planess Group';
 
   return (
-    <footer className="bg-neutral-800 text-neutral-100 text-sm px-3 lg:px-20 transition-[padding] border-t-gray-400">
+    <footer className="bg-neutral-800 text-neutral-300 text-sm px-3 lg:px-20 transition-[padding] border-t-gray-400">
       <div className="flex justify-between py-3 ">
         <div className="space-3">
           <ul>
-            <li>
-              <Link href="/privacy-policy">{t('links.privacy')}</Link>
+            <li className="py-1">
+              <Link
+                href="/privacy-policy"
+                className="py-1 inline-block hover:text-neutral-200"
+              >
+                {t('links.privacy')}
+              </Link>
+            </li>
+            <li className="py-1">
+              <Link
+                href="/legal-info"
+                className="py-1 inline-block hover:text-neutral-200"
+              >
+                {t('links.legal')}
+              </Link>
             </li>
           </ul>
         </div>
