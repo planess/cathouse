@@ -159,7 +159,8 @@ export function AccordionItem({
   const toneClasses = useMemo(() => {
     return (
       (rate && theme[rate]) || {
-        wrapper: 'bg-slate-50 border-slate-100 dark:bg-stone-800/40 dark:border-stone-700',
+        wrapper:
+          'bg-slate-50 border-slate-100 dark:bg-stone-800/40 dark:border-stone-700',
         bar: 'border-l-slate-300 dark:border-stone-600',
       }
     );
@@ -172,7 +173,11 @@ export function AccordionItem({
       isOpen: resolvedOpen,
       toggle: handleToggle,
       toggleButtonProps,
-      chevron: <ChevronIcon isOpen={resolvedOpen} />,
+      chevron: (
+        <span className={clsx('text-slate-500 transition-transform duration-300 size-5', { 'rotate-180': resolvedOpen })}>
+          <ChevronIcon />
+        </span>
+      ),
     }),
     [handleToggle, resolvedOpen, toggleButtonProps],
   );
@@ -192,7 +197,9 @@ export function AccordionItem({
       return (
         <button {...toggleButtonProps}>
           <div className="flex-1 overflow-hidden">{title}</div>
-          <ChevronIcon isOpen={resolvedOpen} />
+          <span className={clsx('text-slate-500 transition-transform duration-300 size-5', { 'rotate-180': resolvedOpen })}>
+            <ChevronIcon />
+          </span>
         </button>
       );
     }
@@ -232,7 +239,10 @@ export function AccordionItem({
           )}
           style={{ maxHeight: resolvedOpen ? `${contentHeight}px` : '0px' }}
         >
-          <div ref={detailsRef} className="pt-4 text-slate-700 dark:text-stone-300 transition-colors">
+          <div
+            ref={detailsRef}
+            className="pt-4 text-slate-700 dark:text-stone-300 transition-colors"
+          >
             {render(details)}
           </div>
         </div>
