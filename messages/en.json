@@ -1019,66 +1019,189 @@
   },
   "offerpage": {
     "title": "Public offer",
-    "intro": "This document sets the terms for accepting charitable donations to the foundation. By making a donation, you confirm that you have read and agree to these terms.",
-    "issuer": {
-      "title": "Offer issuer",
-      "description": "The offer is made by the charitable organization that accepts donations for its statutory activities.",
-      "requisites": {
-        "labels": {
-          "fullName": "Full legal name",
-          "edrpou": "EDRPOU",
-          "location": "Location"
+    "intro": "This document sets the terms for making voluntary charitable donations to the Foundation’s programs. By making a payment, you agree to these terms.",
+    "nav": {
+      "title": "Document contents",
+      "subtitle": "Last updated: November 1, 2024",
+      "items": {
+        "section1": "General provisions",
+        "section2": "Subject and purpose of the donation",
+        "section3": "Use of donations",
+        "section4": "Use of balances and redistribution",
+        "section5": "Non-refundable donations",
+        "section6": "Liability of the parties",
+        "section7": "Transparency and reporting",
+        "section8": "Personal data confidentiality",
+        "section9": "Force majeure circumstances",
+        "section10": "Final provisions",
+        "requisites": "Requisites"
+      }
+    },
+    "sections": {
+      "general": {
+        "title": "General provisions",
+        "p1": "This Public Offer (the “Offer”) is an official proposal by the Periphery Charitable Foundation (the “Foundation”), represented by its Director acting under the Charter, to conclude a voluntary charitable donation agreement with any individual or legal entity (the “Donor”).",
+        "p2": "The Offer is governed by the Law of Ukraine “On Charitable Activities and Charitable Organizations”, the Civil Code of Ukraine, and other applicable regulations.",
+        "p3": "Acceptance of the Offer (full and unconditional acceptance of its terms) occurs when the charitable donation is credited to the Foundation’s bank account — via payment systems on the website or by bank details. From that moment, the donation agreement is deemed concluded.",
+        "definitions": {
+          "title": "Definitions",
+          "p1": "Public offer — a valid proposal of the Foundation, published on the website, addressed to an indefinite number of persons, to conclude a donation agreement on the terms set out in this Offer.",
+          "p2": "Acceptance — the Donor’s full and unconditional acceptance of the Offer terms by making a charitable donation.",
+          "p3": "Donor — any legally capable individual or legal entity that voluntarily makes a charitable donation.",
+          "p4": "Charitable donation — a voluntary, free-of-charge transfer of funds by the Donor into the Foundation’s ownership to achieve statutory goals.",
+          "p5": "Foundation — the Periphery Charitable Foundation, registered in accordance with the laws of Ukraine."
+        }
+      },
+      "donation": {
+        "title": "Subject and purpose of the donation",
+        "p1": "A charitable donation is voluntary, free of charge, and does not provide any reward or material benefit to the Donor.",
+        "p2": "The purpose of the donation is to finance the Foundation’s statutory activities, namely: humane regulation of stray animal populations through the TNR program(Trap-Neuter-Return); sterilization / castration of cats; veterinary assistance, treatment, vaccination, parasite control; temporary care during rehabilitation; procurement of food, medicines, equipment for trapping and logistics; socialization and finding homes for cats that can be adopted.",
+        "rightsTitle": "Donor rights",
+        "rights": {
+          "p1": "Determine the amount and purpose of the donation.",
+          "p2": "Receive information on the use of funds through public reports on the Foundation’s website.",
+          "p3": "Submit requests to the Foundation regarding activities and reporting."
         },
+        "obligationsTitle": "Donor obligations",
+        "obligations": {
+          "p1": "Review the Offer terms before making a payment.",
+          "p2": "Provide accurate data for payment processing."
+        },
+        "foundationRightsTitle": "Foundation rights",
+        "foundationRights": {
+          "p1": "Use donations exclusively for statutory purposes.",
+          "p2": "Amend the Offer with publication on the website.",
+          "p3": "Enter into separate agreements with Donors on terms different from those in the Offer."
+        },
+        "foundationObligationsTitle": "Foundation obligations",
+        "foundationObligations": {
+          "p1": "Use funds for their intended purposes and publish reports.",
+          "p2": "Ensure confidentiality of the Donor’s personal data.",
+          "p3": "Inform about Offer changes by updating the website."
+        }
+      },
+      "use": {
+        "title": "Use of donations",
+        "general": {
+          "title": "General account",
+          "description": "Funds received on the relevant account without a specified purpose are used to ensure uninterrupted Foundation operations and cover priority needs (sterilization, treatment, food, transport, veterinary services)."
+        },
+        "targeted": {
+          "title": "Targeted collections",
+          "description": "Funds received on a special account with an additional specified purpose (e.g., “for sterilization”, “for treatment of cat #X”, “for food”), funds are used exclusively for that purpose. Main targeted expense areas:",
+          "items": {
+            "catch": {
+              "title": "Trapping and logistics:",
+              "description": "equipment, traps, transport."
+            },
+            "sterilization": {
+              "title": "Sterilization and castration:",
+              "description": "payment for procedures at veterinary clinics."
+            },
+            "treatment": {
+              "title": "Treatment and vaccination:",
+              "description": "medicines, tests, inpatient care, vaccinations."
+            },
+            "food": {
+              "title": "Food:",
+              "description": "quality food for animals in temporary care and street colonies under supervision."
+            }
+          }
+        },
+        "distribution": {
+          "title": "Approximate allocation of incoming funds",
+          "p1": "~70% — direct medical aid and sterilization.",
+          "p2": "~20% — food, temporary care, logistics.",
+          "p3": "~10% — administrative expenses necessary to implement programs."
+        },
+        "recurring": {
+          "title": "Recurring payments",
+          "p1": "If the Donor chooses recurring payments (subscription), funds are automatically charged monthly (or at the chosen interval) from the Donor’s card.",
+          "p2": "The Donor can cancel the subscription at any time through their bank account, payment system (e.g., WayForPay/LiqPay), or by emailing the Foundation. Cancellation takes effect from the next billing period.",
+          "p3": "The Foundation is not responsible for the technical aspects of recurring payments provided by payment systems."
+        }
+      },
+      "leftovers": {
+        "title": "Use of balances and redistribution",
+        "p1": "If more funds are collected than needed for a specific announced project/animal, the remaining amount is automatically redirected to the Foundation’s general account.",
+        "p2": "These funds are used for other urgent needs: emergency surgeries, food, sterilization of new colonies, etc.",
+        "p3": "If it becomes impossible to achieve the stated purpose for reasons beyond the Foundation’s control (animal died, escaped, project canceled, etc.), the funds are redirected to similar statutory purposes."
+      },
+      "nonRefundable": {
+        "title": "Non-refundable donations",
+        "p1": "Under Ukrainian law, a charitable donation is non-refundable and is not subject to return.",
+        "p2": "By making a payment, the Donor confirms they have read the Offer terms and understand the non-refundable nature of the contribution.",
+        "p3": "Exception — technical errors of payment systems (double charge, etc.), confirmed by bank documents."
+      },
+      "liability": {
+        "title": "Liability of the parties",
+        "p2": "The Donor is responsible for the accuracy of the provided data and the legality of the funds’ source.",
+        "p3": "In case of a breach of the Offer terms, the parties are liable in accordance with Ukrainian law."
+      },
+      "transparency": {
+        "title": "Transparency and reporting",
+        "p1": "The Foundation adheres to principles of maximum openness. We publish detailed financial reports (income, expenses, photos/acts of completed work) in the “Reports” section on the website."
+      },
+      "confidentiality": {
+        "title": "Personal data confidentiality",
+        "p1": "By making a donation, the Donor consents to the processing of personal data (full name, email, phone number, payment data) necessary to execute the agreement and keep records.",
+        "p2": "The Foundation undertakes to protect this data in accordance with the Law of Ukraine “On Personal Data Protection” and not to transfer it to third parties for commercial purposes."
+      },
+      "forceMajeure": {
+        "title": "Force majeure circumstances",
+        "p1": "The parties are released from liability for non-performance or improper performance of obligations if caused by force majeure circumstances such as: war, natural disasters, fires, floods, earthquakes, epidemics, strikes, decisions of public authorities, etc.",
+        "p2": "The party invoking force majeure must promptly notify the other party.",
+        "p3": "After force majeure ends, obligations resume."
+      },
+      "final": {
+        "title": "Final provisions",
+        "p1": "The Foundation reserves the right to amend the Offer. The new version takes effect upon publication on the website.",
+        "p2": "All disputes related to this Offer are resolved through negotiations. If no agreement is reached, disputes are resolved in court at the place of the Foundation’s registration in accordance with Ukrainian law. The applicable law is exclusively the law of Ukraine.",
+        "term": {
+          "title": "Term of the Offer",
+          "p1": "The Offer is valid indefinitely from the date of its publication on the Foundation’s website.",
+          "p2": "The Foundation may terminate the Offer at any time by publishing a notice on the website 7 days before termination.",
+          "p3": "Agreements concluded before termination of the Offer remain in force."
+        },
+        "other": {
+          "title": "Other provisions",
+          "p1": "The Foundation may enter into individual donation agreements on terms different from those set out in the Offer.",
+          "p2": "If certain provisions of the Offer are deemed invalid, the remaining provisions remain in force."
+        }
+      }
+    },
+    "requisites": {
+      "title": "Foundation requisites",
+      "labels": {
+        "fullName": "Full legal name:",
+        "edrpou": "EDRPOU:",
+        "address": "Legal address:",
+        "email": "Contact email:"
+      },
+      "values": {
         "fullName": "PERIPHERY CHARITABLE FOUNDATION",
         "edrpou": "45962629",
-        "location": "Lviv, Ukraine, 79048"
+        "address": "27 Pavla Dumanskogo St., Lviv, Ukraine, 79048",
+        "email": "info@perilines.com.ua"
       }
     },
-    "donation": {
-      "title": "What a donation is and its voluntariness",
-      "p1": "A donation is a voluntary, non-refundable transfer of funds or other property to the foundation to achieve charitable goals.",
-      "p2": "The decision to donate is entirely voluntary and does not create any obligation for future contributions."
-    },
-    "use": {
-      "title": "Targeted and non-targeted use",
-      "p1": "Donations may be targeted or non-targeted. If a donor specifies a purpose, the foundation will make reasonable efforts to use the funds for that purpose.",
-      "p2": "Non-targeted donations are used for the foundation’s statutory activities, including administrative and operational costs necessary to implement charitable programs."
-    },
-    "redistribution": {
-      "title": "Foundation’s right to redistribute funds",
-      "p1": "If a donor-defined purpose becomes impossible or no longer relevant, the foundation may redirect the donation to other charitable purposes.",
-      "p2": "Such redistribution is carried out in line with integrity, transparency, and maximum benefit for animals."
-    },
-    "nonRefundable": {
-      "title": "Non-refundable donations",
-      "p1": "Donations are non-refundable and are not returned, except in cases directly required by Ukrainian law.",
-      "p2": "The foundation does not reimburse costs related to making a donation, including payment system fees."
-    },
-    "noGuarantees": {
-      "title": "No guarantee of outcome",
-      "p1": "The foundation makes reasonable efforts to achieve charitable goals but does not guarantee a specific outcome within a given timeframe.",
-      "p2": "Results depend on multiple factors, including animal condition, resource availability, and partner responsiveness."
-    },
-    "contacts": {
-      "title": "Foundation contacts",
-      "description": "If you have questions about this offer or donations, please contact us.",
-      "labels": {
-        "email": "Email",
-        "phone": "Phone",
-        "telegram": "Telegram",
-        "instagram": "Instagram"
-      }
-    },
-    "law": {
-      "title": "Ukrainian legislation references",
-      "description": "Relationships related to charitable activities and donations are governed by Ukrainian law, including:",
+    "faq": {
+      "title": "Frequently asked questions (FAQ)",
       "items": {
-        "charity": "<link>Law of Ukraine «On Charitable Activities and Charitable Organizations»</link>",
-        "payment": "<link>Law of Ukraine «On Payment Services»</link>",
-        "civil": "<link>Civil Code of Ukraine</link>"
+        "report": {
+          "question": "Can I receive a report about my donation?",
+          "answer": "Yes, we publish monthly financial reports on the website. You can also email us to clarify the status of your contribution."
+        },
+        "excess": {
+          "question": "Where do funds go if a campaign goal has already been met?",
+          "answer": "According to Clause 4.1 of the Offer, excess funds are redirected to other current statutory needs of the Foundation."
+        },
+        "facilities_support": {
+          "question": "Can I support by providing facilities instead of money?",
+          "answer": "Yes, non-monetary support such as temporary rooms, garages, or adapted spaces for recovery or short-term shelter is very valuable. Please contact us to coordinate."
+        }
       }
-    },
-    "footer": "Detailed legal information about the foundation is available on the <link>Legal information</link> page."
+    }
   },
   "reportspage": {
     "title": "Reports",
