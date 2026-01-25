@@ -4,12 +4,14 @@ export interface OfferNavigationProps {
   title: string;
   subtitle: string;
   items: NavigationItem[];
+  children?: React.ReactNode;
 }
 
 export default function OfferNavigation({
   title,
   subtitle,
   items,
+  children,
 }: OfferNavigationProps) {
   return (
     <div className="flex flex-col gap-4 bg-white dark:bg-[#1c2636] p-6 rounded-xl border border-[#e7ebf4] dark:border-[#2d3a52]">
@@ -35,6 +37,12 @@ export default function OfferNavigation({
           </a>
         ))}
       </nav>
+
+      {children && (
+        <div className="border-t border-gray-200 dark:border-zinc-500 pt-4">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

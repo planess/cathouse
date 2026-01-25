@@ -744,6 +744,168 @@
     "title": "Location",
     "body": "We are preparing an interactive map with our active zones. Stay tuned."
   },
+  "fundworkpage": {
+    "title": "Fund work",
+    "hero": {
+      "eyebrow": "How the fund operates",
+      "title": "Where every contribution goes",
+      "description": "We convert help into structured field work: targeted care, transparent logistics, and measurable outcomes for stray animals and their caretakers.",
+      "ctaPrimary": "Join the support network",
+      "ctaSecondary": "Contact the team"
+    },
+    "tags": {
+      "destination": "Destination",
+      "methods": "Methods",
+      "operations": "Operations",
+      "results": "Results"
+    },
+    "sections": {
+      "destination": {
+        "title": "Destination of funds",
+        "description": "We distribute resources across the full rescue cycle — from emergency response to long-term community support.",
+        "items": {
+          "emergency": {
+            "title": "Emergency response",
+            "description": "Rapid transport, diagnostics, and stabilization for animals in urgent condition."
+          },
+          "sterilization": {
+            "title": "Sterilization & prevention",
+            "description": "Planned surgeries that reduce suffering and prevent uncontrolled population growth."
+          },
+          "rehabilitation": {
+            "title": "Rehabilitation",
+            "description": "Recovery care, medications, and follow-up for animals returning to their habitats."
+          },
+          "community": {
+            "title": "Community support",
+            "description": "Food, supplies, and guidance for caretakers who monitor local colonies."
+          },
+          "platform": {
+            "title": "Operational platform",
+            "description": "Case tracking, reporting, and coordination tools that keep volunteers aligned."
+          }
+        }
+      },
+      "methods": {
+        "title": "Methods and safeguards",
+        "description": "We combine partner clinics, verified supply chains, and volunteer networks to stretch every donation.",
+        "items": {
+          "cofunding": {
+            "title": "Co-funding model",
+            "description": "We share costs with partners and donors to support more animals per case."
+          },
+          "partners": {
+            "title": "Clinic partnerships",
+            "description": "We work with trusted veterinarians for diagnostics, treatment, and surgeries."
+          },
+          "procurement": {
+            "title": "Verified procurement",
+            "description": "Supplies are purchased through transparent requests and documented deliveries."
+          },
+          "volunteer": {
+            "title": "Volunteer coordination",
+            "description": "Task routing keeps response teams, transport, and caretakers synchronized."
+          },
+          "education": {
+            "title": "Training & guidance",
+            "description": "We share protocols so volunteers act safely and consistently in the field."
+          },
+          "data": {
+            "title": "Data-driven oversight",
+            "description": "We track cases, outcomes, and partner workloads to spot gaps early."
+          }
+        }
+      },
+      "operations": {
+        "title": "Operational workflow",
+        "description": "A consistent sequence keeps our teams aligned, cases documented, and outcomes traceable.",
+        "steps": {
+          "intake": {
+            "title": "Intake & validation",
+            "description": "Reports are verified, triaged, and logged into a shared case tracker."
+          },
+          "triage": {
+            "title": "Triage & planning",
+            "description": "We assess urgency, confirm resources, and assign the field response."
+          },
+          "care": {
+            "title": "Care delivery",
+            "description": "Animals receive treatment, vaccinations, or sterilization with partner clinics."
+          },
+          "rehab": {
+            "title": "Rehabilitation",
+            "description": "Post-care monitoring, medication schedules, and safe recovery spaces."
+          },
+          "return": {
+            "title": "Return or rehoming",
+            "description": "We release animals to safe habitats or support adoption campaigns."
+          },
+          "reporting": {
+            "title": "Reporting & learning",
+            "description": "Each case is documented to improve future response and planning."
+          }
+        }
+      },
+      "results": {
+        "title": "Results we track",
+        "description": "Instead of isolated wins, we measure systems that keep helping animals month after month.",
+        "metrics": {
+          "coverage": {
+            "label": "Coverage of active locations",
+            "value": "Mapped & monitored"
+          },
+          "cases": {
+            "label": "Case throughput",
+            "value": "Tracked end-to-end"
+          },
+          "partners": {
+            "label": "Clinic partnerships",
+            "value": "Active coordination"
+          },
+          "education": {
+            "label": "Volunteer training",
+            "value": "Ongoing sessions"
+          },
+          "transparency": {
+            "label": "Public updates",
+            "value": "Regular reports"
+          },
+          "readiness": {
+            "label": "Emergency readiness",
+            "value": "On-call rotation"
+          }
+        }
+      },
+      "transparency": {
+        "title": "Operational transparency",
+        "description": "We keep our work open to inspection so donors and volunteers always know what is happening.",
+        "items": {
+          "budget": {
+            "title": "Budget clarity",
+            "description": "Line-item planning with visible allocations by direction."
+          },
+          "policies": {
+            "title": "Policies & procedures",
+            "description": "Standard operating guides for rescue, treatment, and aftercare."
+          },
+          "audit": {
+            "title": "Case documentation",
+            "description": "Every step logged with dates, partners, and outcomes."
+          },
+          "feedback": {
+            "title": "Feedback loop",
+            "description": "We collect community input to refine priorities."
+          }
+        }
+      }
+    },
+    "callout": {
+      "title": "Support the work behind every rescue",
+      "description": "Your participation keeps the field team moving and the care network reliable.",
+      "ctaHelp": "See ways to help",
+      "ctaContact": "Ask a question"
+    }
+  },
   "legalinfopage": {
     "title": "Legal information",
     "checkLink": "Check the details <link>here</link>",
@@ -784,12 +946,179 @@
       }
     }
   },
+  "paymentspage": {
+    "title": "Support the fund",
+    "intro": "Your support keeps rescues, treatment, and everyday care moving forward.",
+    "financial": {
+      "title": "Financial support",
+      "paragraphs": {
+        "p1": "Every transfer helps cover urgent veterinary care, sterilization, vaccination, and the equipment we need to respond quickly.",
+        "p2": "We pay for diagnostics, surgeries, medicines, post-treatment recovery, and the supplies that make field and clinic work possible.",
+        "p3": "IBAN transfers go directly to the foundation with no commission, unlike card acquiring, so more of your support reaches animals."
+      },
+      "usesTitle": "Where the money goes",
+      "uses": {
+        "treatment": {
+          "title": "Treatment and rehabilitation",
+          "description": "Clinic visits, diagnostics, surgery, and recovery care."
+        },
+        "sterilization": {
+          "title": "Sterilization programs",
+          "description": "Planned sterilization to reduce the number of stray animals humanely."
+        },
+        "vaccination": {
+          "title": "Vaccination and prevention",
+          "description": "Routine vaccinations, parasite control, and preventive checks."
+        },
+        "equipment": {
+          "title": "Equipment and supplies",
+          "description": "Carriers, traps, protective gear, medical consumables, and logistics."
+        }
+      },
+      "ibanTitle": "IBAN requisites",
+      "ibanNote": "Two accounts in different banks are available for convenient transfers.",
+      "iban": {
+        "labels": {
+          "recipient": "Recipient",
+          "purpose": "Payment purpose"
+        },
+        "primary": {
+          "bank": "Bank 1: Example Bank",
+          "iban": "IBAN: UA00 0000 0000 0000 0000 0000 000",
+          "recipient": "Periphery Charitable Foundation",
+          "purpose": "Charitable donation"
+        },
+        "secondary": {
+          "bank": "Bank 2: Example Bank",
+          "iban": "IBAN: UA11 1111 1111 1111 1111 1111 111",
+          "recipient": "Periphery Charitable Foundation",
+          "purpose": "Charitable donation"
+        }
+      }
+    },
+    "nonMoney": {
+      "title": "Help without money",
+      "description": "Support is not only financial. Sharing resources and time keeps animals safe and the program sustainable.",
+      "waysTitle": "How you can help",
+      "ways": {
+        "space": {
+          "title": "Share facilities",
+          "description": "Temporary rooms, garages, or adapted spaces for recovery or short-term shelter."
+        },
+        "items": {
+          "title": "Donate things",
+          "description": "Food, carriers, bedding, medicines, hygiene supplies, and equipment."
+        },
+        "process": {
+          "title": "Help with processes",
+          "description": "Transportation, coordination, paperwork, communications, and other operational tasks."
+        }
+      },
+      "cta": "Write to us if you can help in any of these ways — we will coordinate the next steps."
+    }
+  },
+  "offerpage": {
+    "title": "Public offer",
+    "intro": "This document sets the terms for accepting charitable donations to the foundation. By making a donation, you confirm that you have read and agree to these terms.",
+    "issuer": {
+      "title": "Offer issuer",
+      "description": "The offer is made by the charitable organization that accepts donations for its statutory activities.",
+      "requisites": {
+        "labels": {
+          "fullName": "Full legal name",
+          "edrpou": "EDRPOU",
+          "location": "Location"
+        },
+        "fullName": "PERIPHERY CHARITABLE FOUNDATION",
+        "edrpou": "45962629",
+        "location": "Lviv, Ukraine, 79048"
+      }
+    },
+    "donation": {
+      "title": "What a donation is and its voluntariness",
+      "p1": "A donation is a voluntary, non-refundable transfer of funds or other property to the foundation to achieve charitable goals.",
+      "p2": "The decision to donate is entirely voluntary and does not create any obligation for future contributions."
+    },
+    "use": {
+      "title": "Targeted and non-targeted use",
+      "p1": "Donations may be targeted or non-targeted. If a donor specifies a purpose, the foundation will make reasonable efforts to use the funds for that purpose.",
+      "p2": "Non-targeted donations are used for the foundation’s statutory activities, including administrative and operational costs necessary to implement charitable programs."
+    },
+    "redistribution": {
+      "title": "Foundation’s right to redistribute funds",
+      "p1": "If a donor-defined purpose becomes impossible or no longer relevant, the foundation may redirect the donation to other charitable purposes.",
+      "p2": "Such redistribution is carried out in line with integrity, transparency, and maximum benefit for animals."
+    },
+    "nonRefundable": {
+      "title": "Non-refundable donations",
+      "p1": "Donations are non-refundable and are not returned, except in cases directly required by Ukrainian law.",
+      "p2": "The foundation does not reimburse costs related to making a donation, including payment system fees."
+    },
+    "noGuarantees": {
+      "title": "No guarantee of outcome",
+      "p1": "The foundation makes reasonable efforts to achieve charitable goals but does not guarantee a specific outcome within a given timeframe.",
+      "p2": "Results depend on multiple factors, including animal condition, resource availability, and partner responsiveness."
+    },
+    "contacts": {
+      "title": "Foundation contacts",
+      "description": "If you have questions about this offer or donations, please contact us.",
+      "labels": {
+        "email": "Email",
+        "phone": "Phone",
+        "telegram": "Telegram",
+        "instagram": "Instagram"
+      }
+    },
+    "law": {
+      "title": "Ukrainian legislation references",
+      "description": "Relationships related to charitable activities and donations are governed by Ukrainian law, including:",
+      "items": {
+        "charity": "<link>Law of Ukraine «On Charitable Activities and Charitable Organizations»</link>",
+        "payment": "<link>Law of Ukraine «On Payment Services»</link>",
+        "civil": "<link>Civil Code of Ukraine</link>"
+      }
+    },
+    "footer": "Detailed legal information about the foundation is available on the <link>Legal information</link> page."
+  },
+  "reportspage": {
+    "title": "Reports",
+    "intro": "We publish reports to keep our work transparent. Annual reports summarize finances, activities, and impact.",
+    "nav": {
+      "title": "Reports navigation",
+      "subtitle": "Updated monthly",
+      "question": "Have questions about reporting?",
+      "contactCta": "Contact us"
+    },
+    "newSeason": {
+      "title": "We are preparing for a new season",
+      "description": "This is the beginning of our activities and we are working to create a handy format for reports. New sterilization reports and financial results will appear on this page soon. Thank you for your patience!"
+    },
+    "labels": {
+      "period": "Reporting period",
+      "status": "Status"
+    },
+    "reports": {
+      "annual": {
+        "title": "Annual report",
+        "subtitle": "Overview of the foundation’s year",
+        "period": "2025",
+        "status": "In preparation",
+        "summary": "Includes financial statements, program outcomes, and key impact metrics.",
+        "request": "Need the latest signed version? Request it via <email>info@perilines.com.ua</email>."
+      }
+    }
+  },
   "footer": {
     "tagline": "Since {year} with care for our little friends",
     "attribution": "by {org}",
+    "slogan": "Every life matters. The value of life is immeasurable.",
     "links": {
       "privacy": "Privacy Policy",
-      "legal": "Legal information"
+      "legal": "Legal information",
+      "fundWork": "Fund work",
+      "payments": "Support the fund",
+      "offer": "Public offer",
+      "reports": "Reports"
     }
   },
   "contactForm": {

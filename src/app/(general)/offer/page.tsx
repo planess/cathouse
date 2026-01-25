@@ -75,13 +75,13 @@ export default function OfferPage() {
   ];
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 lg:px-12 py-8 transition-[padding]">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10 pb-6 border-b border-[#e7ebf4] dark:border-[#2d3a52]">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-[#0d121c] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+    <div className="max-w-7xl mx-auto w-full px-4 md:px-8 lg:px-12 py-8 transition-[padding]">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 pb-6 border-b border-gray-200 dark:border-zinc-800">
+        <div className="space-y-3">
+          <h1 className="text-slate-900 dark:text-slate-100 text-3xl md:text-4xl font-bold tracking-tight transition-colors">
             Публічна оферта
           </h1>
-          <p className="text-[#49659c] dark:text-[#a1b2d3] text-base font-normal">
+          <p className="text-slate-600 dark:text-slate-200 text-base transition-colors">
             Благодійний фонд «Периферія» — системна допомога безпритульним
             тваринам (TNR).
           </p>
@@ -103,7 +103,7 @@ export default function OfferPage() {
           </div>
         </aside>
 
-        <article className="lg:w-2/3 order-1 lg:order-2 space-y-12 pb-20">
+        <article className="lg:w-2/3 space-y-12 pb-20">
           <section className="scroll-mt-28" id="section1">
             <h2 className="text-2xl font-bold mb-4 text-[#0d121c] dark:text-white">
               1. Загальні положення
