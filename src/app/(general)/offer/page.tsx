@@ -94,7 +94,7 @@ export default function OfferPage() {
 
       <div className="flex flex-col lg:flex-row gap-12">
         <aside className="hidden lg:block lg:w-1/3 ">
-          <div className=" sticky top-8 ">
+          <div className="sticky top-18">
             <OfferNavigation
               title="Зміст документа"
               subtitle="Останнє оновлення: 01 листопада 2024"

@@ -8,7 +8,7 @@ export default function GeneralLayout({
 }) {
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex-none">
+      <div className="flex-none sticky top-0 z-1">
         <Header />
       </div>
 

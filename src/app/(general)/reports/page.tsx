@@ -29,7 +29,7 @@ export default function ReportsPage() {
 
       <div className="flex flex-col lg:flex-row gap-12">
         <aside className="hidden lg:block lg:w-1/3">
-          <div className="sticky top-8">
+          <div className="sticky top-18">
             <OfferNavigation
               title={t('nav.title')}
               subtitle={t('nav.subtitle')}
