@@ -147,7 +147,7 @@ export default function PaymentsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {/* Перетримка, 
             польова робота (вилов тварин, перевезення)
             (допомога юристів, бухгалтерів, smm тощо)
@@ -187,7 +187,7 @@ export default function PaymentsPage() {
         </section>
 
         <section className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center shadow-sm md:flex-row md:text-left">
-          <div className="flex max-w-xl flex-col gap-1">
+          <div className="flex flex-col gap-3">
             <h3 className="text-xl font-extrabold text-slate-900">
               {t('transparency.title')}
             </h3>
@@ -195,7 +195,7 @@ export default function PaymentsPage() {
               {t('transparency.description')}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-blue-600 hover:bg-slate-50"
               href="/reports"

@@ -993,33 +993,33 @@
       "cards": {
         "foster": {
           "title": "Перетримка",
-          "description": "Тимчасовий дім та польова робота (обстеження локацій).",
+          "description": "Тимчасовий дім для пухнастих пацієнтів на час лікування чи реабілітації.",
           "cta": "Долучитись",
-          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBCipenXzf2G4BMBLrrjxewPXpm8bXlfeCVU1JpLAB9GPx3tR1TJ0XFrlYGsKeKfvnOxwIn2k0ualIgtM8dqUBFMwqdiN0wr0bTTKvZEK6Pq59iQqvjvlUKTjxS0n5h-FGoVAr3_rI7RYsbEAICB4YZ3KK1TSi0BBNXyMQroIFatd8hbNrVOW8H-_LwSPTsVhoH9Wft0jszRMaLTOhnpCVVbqxWG9VScxbvdDpd3419wG_FPTEQhDThrzasv1NrgxWfh42IabZaNcU"
+          "image": "https://www.smartpetshome.com/wp-content/uploads/2024/07/y1ng0.o_httpss.mj_.runaRJNb24l3vs_a_dog_and_a_cat_are_happily__784defaf-32ed-49b3-a163-14b063211c33_2-11-jpg.webp"
         },
         "walking": {
-          "title": "Вигул",
-          "description": "Прогулянки та соціалізація підопічних у притулках.",
+          "title": "Польова діяльність",
+          "description": "Спостереження за тваринами, обстеження локацій, збір інформації та допомога у відлові.",
           "cta": "Стати волонтером",
-          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAerRPO5PpttgsyL7NPgtZ9zM94S91dwBVDhoiTXT7xl9qNNjT0N1NOERb344kykvMiTe-R1u4SqsWx-CXglgWQaEcpiEIIrKY2MCjCaoI37FprREoKbJXNKFbEcOlc_jUfjkwPlySl5ULEktsLS0XZoDwVCSCkd_AMHPXgKuWzVYGLZb9QnN-fl0UUyw924f9D8wDA1dnrQc9FcIggQk3kx9WJe50Csh4TjJ-WonsJeUKe9N53k-kKoU87p55IAdg86rHdwmA4urk"
+          "image": "https://images.squarespace-cdn.com/content/v1/55c945e0e4b04386fb9f8162/1459809705382-MLQ2RPVAI3DIDS4M6RTZ/trapping-0446.jpg?format=2500w"
         },
         "experts": {
           "title": "Фахівці",
-          "description": "Медична допомога, юристи, SMM, юристи та бухгалтери.",
+          "description": "Усі спеціальності доречні: ветеринари, логісти, ІТ-спеціалісти, юристи. Ваш досвід цінний!",
           "cta": "Я професіонал",
-          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCA_6289GmamEgMWgpByKcjGLe9ha6j0dHruYFEU_lrGTwMzrg3jFmsOAmHFmhfiKmAR3hTrcOnFGBm0AFwrDPvQchjoi_2BbwlJ3BtBvTQaD9ZviFQAzo5fklDnPwVsFa7orhdGMpkQWC1Mc1F0oUgRNplx7qVF9YLbxGMJiKO7Z7_ANXL4Ajem-5QGYA-HLLbtRcx4fk-2UoFXqSZ7DRULT_0dZ04ESSCJftZJFvXXlLNCsymB3JyTkawcGYxXiyX4xLSyRT_eOc"
+          "image": "https://engageduniversity.blogs.wesleyan.edu/files/2014/11/Personal-Brand.jpg"
         },
         "items": {
           "title": "Речі та корми",
-          "description": "Передача ліків, пелюшок та якісних кормів.",
+          "description": "Завжди потрібні ліки, ветеринарні матеріали, корми та інші ресурси для догляду за тваринами.",
           "cta": "Передати речі",
-          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBk8t23G08bxy-yJgGO6twRhNCVAjN05WUHNOkbyWnQv33UHg1NLHNAa7VpIHOGTcujKTx6Ocnh-PGpuZFS5r_8ZSANvlBRflU5p4nlQ8TUuCUq37SkrmdcUAAyCAAMr5PMJOYVNJ_BbQz0xGmdLlVy_zV_ecMyJVnKNIhakqLSWZMThhHUhF-PvWLVY7YqT-jtVUNNuQI6Cx1-g-igCyPBXIOtgzEvH6GaqoRLSiuq1QRV562OlY-FB2DfiIuE-Ue8bCbgewIlGGs"
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCA_6289GmamEgMWgpByKcjGLe9ha6j0dHruYFEU_lrGTwMzrg3jFmsOAmHFmhfiKmAR3hTrcOnFGBm0AFwrDPvQchjoi_2BbwlJ3BtBvTQaD9ZviFQAzo5fklDnPwVsFa7orhdGMpkQWC1Mc1F0oUgRNplx7qVF9YLbxGMJiKO7Z7_ANXL4Ajem-5QGYA-HLLbtRcx4fk-2UoFXqSZ7DRULT_0dZ04ESSCJftZJFvXXlLNCsymB3JyTkawcGYxXiyX4xLSyRT_eOc"
         }
       }
     },
     "transparency": {
-      "title": "Ми гарантуємо прозорість",
-      "description": "Щомісяця ми публікуємо детальні фінансові звіти про використані кошти.",
+      "title": "Усі витрати під контролем і відображаються у звітах",
+      "description": "Підтримуємо прозорість витрат. Постійно публікуємо фінансові звіти про використання коштів, щоб кожний міг слідкувати за своїм внеском у справу.",
       "reports": "Звіти",
       "contact": "Контакт"
     }
