@@ -3,7 +3,7 @@
 import { MongoServerError, ObjectId } from 'mongodb';
 
 import { DbTables } from '@app/enum/db-tables';
-import { getUser } from '@app/hooks';
+import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument } from '@app/models/animal';
 
