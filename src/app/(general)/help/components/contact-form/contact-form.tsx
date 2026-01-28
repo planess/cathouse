@@ -44,7 +44,7 @@ export default function ContactForm({
   };
 
   return (
-    <form onSubmit={a} className="flex flex-col gap-1">
+    <form onSubmit={a} className="flex flex-col gap-1" id="contact-form">
       <div className="flex flex-col">
         <Field
           label={t('fields.name.label')}

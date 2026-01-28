@@ -947,74 +947,81 @@
     }
   },
   "paymentspage": {
-    "title": "Support the fund",
-    "intro": "Your support keeps rescues, treatment, and everyday care moving forward.",
+    "title": "Support & Donations",
+    "intro": "Your help gives stray animals a chance at a dignified life. Every contribution, big or small, directly funds medical care, sterilization, nutrition, and community support matters.",
+    "heroNote": "Please note: at the moment our foundation cannot accept automated payments through the website. Please use the bank details below to transfer to the foundation’s general account.",
     "financial": {
       "title": "Financial support",
-      "paragraphs": {
-        "p1": "Every transfer helps cover urgent veterinary care, sterilization, vaccination, and the equipment we need to respond quickly.",
-        "p2": "We pay for diagnostics, surgeries, medicines, post-treatment recovery, and the supplies that make field and clinic work possible.",
-        "p3": "IBAN transfers go directly to the foundation with no commission, unlike card acquiring, so more of your support reaches animals."
-      },
-      "usesTitle": "Where the money goes",
+      "subtitle": "How contribution saves lives",
       "uses": {
-        "treatment": {
-          "title": "Treatment and rehabilitation",
-          "description": "Clinic visits, diagnostics, surgery, and recovery care."
-        },
         "sterilization": {
-          "title": "Sterilization programs",
-          "description": "Planned sterilization to reduce the number of stray animals humanely."
+          "title": "Sterilization",
+          "description": "Humane population control and preventing the birth of new stray animals."
         },
-        "vaccination": {
-          "title": "Vaccination and prevention",
-          "description": "Routine vaccinations, parasite control, and preventive checks."
+        "treatment": {
+          "title": "Treatment",
+          "description": "Medicines, complex surgeries for injured animals, and post-op recovery."
         },
-        "equipment": {
-          "title": "Equipment and supplies",
-          "description": "Carriers, traps, protective gear, medical consumables, and logistics."
+        "food": {
+          "title": "Nutrition",
+          "description": "Quality dry and wet food for animals in shelters and on the street."
         }
       },
-      "ibanTitle": "IBAN requisites",
-      "ibanNote": "Two accounts in different banks are available for convenient transfers.",
+      "ibanTitle": "IBAN bank details",
+      "ibanNote": "Charitable support",
       "iban": {
-        "labels": {
-          "recipient": "Recipient",
-          "purpose": "Payment purpose"
+        "copyTitle": "Copy",
+        "edrpou": "EDRPOU",
+        "mfo": "MFO",
+        "paymentDestination": "Payment destination",
+        "account1": {
+          "description": "Often used for purchasing food and medicines."
         },
-        "primary": {
-          "bank": "Bank 1: Example Bank",
-          "iban": "IBAN: UA00 0000 0000 0000 0000 0000 000",
-          "recipient": "Periphery Charitable Foundation",
-          "purpose": "Charitable donation"
+        "account2": {
+          "description": "This account is also in UAH but usually used to cover expenses in clinics."
         },
-        "secondary": {
-          "bank": "Bank 2: Example Bank",
-          "iban": "IBAN: UA11 1111 1111 1111 1111 1111 111",
-          "recipient": "Periphery Charitable Foundation",
-          "purpose": "Charitable donation"
+        "ibanQuestions": {
+          "answer1": "Both accounts are in UAH (Ukrainian Hryvnia). You can use either for donations.",
+          "question2": "What 2 similar accounts are for?",
+          "answer2": "The different conditions of service and control, different group of expenses and reports."
         }
       }
     },
     "nonMoney": {
-      "title": "Help without money",
-      "description": "Support is not only financial. Sharing resources and time keeps animals safe and the program sustainable.",
-      "waysTitle": "How you can help",
-      "ways": {
-        "space": {
-          "title": "Share facilities",
-          "description": "Temporary rooms, garages, or adapted spaces for recovery or short-term shelter."
+      "title": "Help in action",
+      "subtitle": "Ways to contribute beyond money",
+      "cards": {
+        "foster": {
+          "title": "Foster care",
+          "description": "Temporary homes and field work (location surveys).",
+          "cta": "Join in",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBCipenXzf2G4BMBLrrjxewPXpm8bXlfeCVU1JpLAB9GPx3tR1TJ0XFrlYGsKeKfvnOxwIn2k0ualIgtM8dqUBFMwqdiN0wr0bTTKvZEK6Pq59iQqvjvlUKTjxS0n5h-FGoVAr3_rI7RYsbEAICB4YZ3KK1TSi0BBNXyMQroIFatd8hbNrVOW8H-_LwSPTsVhoH9Wft0jszRMaLTOhnpCVVbqxWG9VScxbvdDpd3419wG_FPTEQhDThrzasv1NrgxWfh42IabZaNcU"
+        },
+        "walking": {
+          "title": "Walking",
+          "description": "Walks and socialization for animals in shelters.",
+          "cta": "Become a volunteer",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAerRPO5PpttgsyL7NPgtZ9zM94S91dwBVDhoiTXT7xl9qNNjT0N1NOERb344kykvMiTe-R1u4SqsWx-CXglgWQaEcpiEIIrKY2MCjCaoI37FprREoKbJXNKFbEcOlc_jUfjkwPlySl5ULEktsLS0XZoDwVCSCkd_AMHPXgKuWzVYGLZb9QnN-fl0UUyw924f9D8wDA1dnrQc9FcIggQk3kx9WJe50Csh4TjJ-WonsJeUKe9N53k-kKoU87p55IAdg86rHdwmA4urk"
+        },
+        "experts": {
+          "title": "Experts",
+          "description": "Medical help, lawyers, SMM, lawyers, and accountants.",
+          "cta": "I’m a professional",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCA_6289GmamEgMWgpByKcjGLe9ha6j0dHruYFEU_lrGTwMzrg3jFmsOAmHFmhfiKmAR3hTrcOnFGBm0AFwrDPvQchjoi_2BbwlJ3BtBvTQaD9ZviFQAzo5fklDnPwVsFa7orhdGMpkQWC1Mc1F0oUgRNplx7qVF9YLbxGMJiKO7Z7_ANXL4Ajem-5QGYA-HLLbtRcx4fk-2UoFXqSZ7DRULT_0dZ04ESSCJftZJFvXXlLNCsymB3JyTkawcGYxXiyX4xLSyRT_eOc"
         },
         "items": {
-          "title": "Donate things",
-          "description": "Food, carriers, bedding, medicines, hygiene supplies, and equipment."
-        },
-        "process": {
-          "title": "Help with processes",
-          "description": "Transportation, coordination, paperwork, communications, and other operational tasks."
+          "title": "Supplies & food",
+          "description": "Donations of medicines, pads, and quality food.",
+          "cta": "Donate items",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBk8t23G08bxy-yJgGO6twRhNCVAjN05WUHNOkbyWnQv33UHg1NLHNAa7VpIHOGTcujKTx6Ocnh-PGpuZFS5r_8ZSANvlBRflU5p4nlQ8TUuCUq37SkrmdcUAAyCAAMr5PMJOYVNJ_BbQz0xGmdLlVy_zV_ecMyJVnKNIhakqLSWZMThhHUhF-PvWLVY7YqT-jtVUNNuQI6Cx1-g-igCyPBXIOtgzEvH6GaqoRLSiuq1QRV562OlY-FB2DfiIuE-Ue8bCbgewIlGGs"
         }
-      },
-      "cta": "Write to us if you can help in any of these ways — we will coordinate the next steps."
+      }
+    },
+    "transparency": {
+      "title": "We guarantee transparency",
+      "description": "Every month we publish detailed financial reports on how funds are used.",
+      "reports": "Reports",
+      "contact": "Contact"
     }
   },
   "offerpage": {

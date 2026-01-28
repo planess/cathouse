@@ -947,74 +947,81 @@
     }
   },
   "paymentspage": {
-    "title": "Підтримати фонд",
-    "intro": "Ваша підтримка дає змогу рятувати, лікувати та щодня дбати про тварин.",
+    "title": "Підтримка та Донати",
+    "intro": "Ваша допомога — це шанс на гідне життя для безпритульних тварин. Кожний внесок напрямлений на порятунок, лікування та підтримку робить реальну різницю.",
+    "heroNote": "Зверніть увагу: наразі наш фонд не має можливості приймати автоматичні платежі через сайт. Будь ласка, скористайтеся наведеними нижче реквізитами для переказу на загальний рахунок організації.",
     "financial": {
       "title": "Фінансова підтримка",
-      "paragraphs": {
-        "p1": "Кожен переказ допомагає покривати термінове лікування, стерилізацію, вакцинацію та закупівлю необхідного обладнання.",
-        "p2": "Ми оплачуємо діагностику, операції, медикаменти, післялікувальну реабілітацію та витратні матеріали для роботи в полі й клініках.",
-        "p3": "Перекази на IBAN надходять без комісії, на відміну від еквайрингу, тому більше коштів йде на допомогу тваринам."
-      },
-      "usesTitle": "На що спрямовуються кошти",
+      "subtitle": "Як внески рятують життя",
       "uses": {
-        "treatment": {
-          "title": "Лікування та реабілітація",
-          "description": "Візити до клінік, діагностика, операції та відновлення."
-        },
         "sterilization": {
-          "title": "Стерилізаційні програми",
-          "description": "Планова стерилізація для гуманного зменшення кількості безпритульних тварин."
+          "title": "Стерилізація",
+          "description": "Контроль чисельності гуманним шляхом та запобігання народженню нових безпритульних."
         },
-        "vaccination": {
-          "title": "Вакцинація та профілактика",
-          "description": "Рутинні щеплення, обробка від паразитів і профілактичні огляди."
+        "treatment": {
+          "title": "Лікування",
+          "description": "Медикаменти, складні операції для поранених тварин та післяопераційна реабілітація."
         },
-        "equipment": {
-          "title": "Обладнання та матеріали",
-          "description": "Переноски, сітки, захисне спорядження, медичні витратні матеріали та логістика."
+        "food": {
+          "title": "Харчування",
+          "description": "Закупівля якісного сухого та вологого корму для підопічних у притулках та на вулиці."
         }
       },
-      "ibanTitle": "Реквізити IBAN",
-      "ibanNote": "Доступні два рахунки в різних банках для зручних переказів.",
+      "ibanTitle": "Банківські реквізити IBAN",
+      "ibanNote": "Благодійна допомога",
       "iban": {
-        "labels": {
-          "recipient": "Отримувач",
-          "purpose": "Призначення платежу"
+        "copyTitle": "Копіювати",
+        "edrpou": "ЄДРПОУ",
+        "mfo": "МФО",
+        "paymentDestination": "Призначення платежу",
+        "account1": {
+          "description": "Часто цей рахунок використовується для закупівлі кормів та медикаментів."
         },
-        "primary": {
-          "bank": "Банк 1: Приклад Банк",
-          "iban": "IBAN: UA00 0000 0000 0000 0000 0000 000",
-          "recipient": "Благодійний фонд «Периферія»",
-          "purpose": "Благодійна пожертва"
-        },
-        "secondary": {
-          "bank": "Банк 2: Приклад Банк",
-          "iban": "IBAN: UA11 1111 1111 1111 1111 1111 111",
-          "recipient": "Благодійний фонд «Периферія»",
-          "purpose": "Благодійна пожертва"
+        "account2": {
+          "description": "Цей рахунок також у UAH але зазвичай використовується для покриття витрат у клініках."
         }
+      },
+      "ibanQuestions": {
+        "answer1": "Обидва рахунки призначені для загальних витрат.",
+        "question2": "Навіщо 2 схожі рахунки?",
+        "answer2": "Все просто - різні умови обслуговування та контролю, різні групи витрат і звіти до них."
       }
     },
     "nonMoney": {
-      "title": "Допомога без грошей",
-      "description": "Підтримка буває не лише фінансовою. Ресурси та час часто вирішують критичні питання.",
-      "waysTitle": "Чим можна допомогти",
-      "ways": {
-        "space": {
-          "title": "Надати приміщення",
-          "description": "Тимчасові кімнати, гаражі або облаштовані простори для реабілітації чи перетримки."
+      "title": "Допомога справами",
+      "subtitle": "Серед інших способів підтримки ",
+      "cards": {
+        "foster": {
+          "title": "Перетримка",
+          "description": "Тимчасовий дім та польова робота (обстеження локацій).",
+          "cta": "Долучитись",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBCipenXzf2G4BMBLrrjxewPXpm8bXlfeCVU1JpLAB9GPx3tR1TJ0XFrlYGsKeKfvnOxwIn2k0ualIgtM8dqUBFMwqdiN0wr0bTTKvZEK6Pq59iQqvjvlUKTjxS0n5h-FGoVAr3_rI7RYsbEAICB4YZ3KK1TSi0BBNXyMQroIFatd8hbNrVOW8H-_LwSPTsVhoH9Wft0jszRMaLTOhnpCVVbqxWG9VScxbvdDpd3419wG_FPTEQhDThrzasv1NrgxWfh42IabZaNcU"
+        },
+        "walking": {
+          "title": "Вигул",
+          "description": "Прогулянки та соціалізація підопічних у притулках.",
+          "cta": "Стати волонтером",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAerRPO5PpttgsyL7NPgtZ9zM94S91dwBVDhoiTXT7xl9qNNjT0N1NOERb344kykvMiTe-R1u4SqsWx-CXglgWQaEcpiEIIrKY2MCjCaoI37FprREoKbJXNKFbEcOlc_jUfjkwPlySl5ULEktsLS0XZoDwVCSCkd_AMHPXgKuWzVYGLZb9QnN-fl0UUyw924f9D8wDA1dnrQc9FcIggQk3kx9WJe50Csh4TjJ-WonsJeUKe9N53k-kKoU87p55IAdg86rHdwmA4urk"
+        },
+        "experts": {
+          "title": "Фахівці",
+          "description": "Медична допомога, юристи, SMM, юристи та бухгалтери.",
+          "cta": "Я професіонал",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCA_6289GmamEgMWgpByKcjGLe9ha6j0dHruYFEU_lrGTwMzrg3jFmsOAmHFmhfiKmAR3hTrcOnFGBm0AFwrDPvQchjoi_2BbwlJ3BtBvTQaD9ZviFQAzo5fklDnPwVsFa7orhdGMpkQWC1Mc1F0oUgRNplx7qVF9YLbxGMJiKO7Z7_ANXL4Ajem-5QGYA-HLLbtRcx4fk-2UoFXqSZ7DRULT_0dZ04ESSCJftZJFvXXlLNCsymB3JyTkawcGYxXiyX4xLSyRT_eOc"
         },
         "items": {
-          "title": "Передати речі",
-          "description": "Корм, переноски, підстилки, ліки, засоби гігієни та обладнання."
-        },
-        "process": {
-          "title": "Допомогти з процесами",
-          "description": "Транспортування, координація, документи, комунікації та інші операційні задачі."
+          "title": "Речі та корми",
+          "description": "Передача ліків, пелюшок та якісних кормів.",
+          "cta": "Передати речі",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBk8t23G08bxy-yJgGO6twRhNCVAjN05WUHNOkbyWnQv33UHg1NLHNAa7VpIHOGTcujKTx6Ocnh-PGpuZFS5r_8ZSANvlBRflU5p4nlQ8TUuCUq37SkrmdcUAAyCAAMr5PMJOYVNJ_BbQz0xGmdLlVy_zV_ecMyJVnKNIhakqLSWZMThhHUhF-PvWLVY7YqT-jtVUNNuQI6Cx1-g-igCyPBXIOtgzEvH6GaqoRLSiuq1QRV562OlY-FB2DfiIuE-Ue8bCbgewIlGGs"
         }
-      },
-      "cta": "Напишіть нам, якщо можете допомогти — узгодимо наступні кроки."
+      }
+    },
+    "transparency": {
+      "title": "Ми гарантуємо прозорість",
+      "description": "Щомісяця ми публікуємо детальні фінансові звіти про використані кошти.",
+      "reports": "Звіти",
+      "contact": "Контакт"
     }
   },
   "offerpage": {
