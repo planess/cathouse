@@ -40,7 +40,7 @@ export default function ReportsPage() {
               </div>
               <Link
                 href="/contacts"
-                className="inline-block text-center w-full py-2 px-4 border border-blue-600 text-blue-600 text-xs font-bold rounded-full hover:bg-blue-600 hover:text-blue-100 transition-colors"
+                className="inline-block text-center w-full py-2 px-4 border border-blue-600 text-blue-600 text-xs font-bold rounded-full hover:bg-blue-600 hover:text-blue-100 dark:text-blue-200 dark:border-blue-200 dark:hover:text-blue-300 dark:hover:bg-blue-800 transition-colors"
               >
                 {t('nav.contactCta')}
               </Link>
