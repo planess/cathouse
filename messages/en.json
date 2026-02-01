@@ -336,7 +336,7 @@
     }
   },
   "historypage": {
-    "title": "History of our animals",
+    "title": "Registry of our animals",
     "panel1": "We register animals that we monitor, care for, and treat. Each history is our inspiration and helps coordinate the efforts of volunteers and clinics to provide the best care. Each record has a unique story, characteristics, and conditions.",
     "createHistory": "Create new history",
     "pagination": {
@@ -980,6 +980,8 @@
         "copyTitle": "Copy",
         "edrpou": "EDRPOU",
         "mfo": "MFO",
+        "bank": "Bank name",
+        "recipient": "Recipient",
         "paymentDestination": "Payment destination",
         "account1": {
           "description": "Often used for purchasing food and medicines."
@@ -992,6 +994,14 @@
           "question2": "What 2 similar accounts are for?",
           "answer2": "The different conditions of service and control, different group of expenses and reports."
         }
+      },
+      "quickDonate": {
+        "title": "Quick donation",
+        "subtitle": "Choose a support amount or enter your own to create a one-time donation.",
+        "inputPlaceholder": "Enter another amount",
+        "qrTitle": "Transfer via QR",
+        "qrDescription": "Scan the code with your banking app for a fast transfer.",
+        "button": "Open application"
       }
     },
     "nonMoney": {

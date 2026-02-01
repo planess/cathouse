@@ -7,6 +7,7 @@ export type IbanCardItem = {
   edrpou: string;
   mfo: string;
   iban: string;
+  bank: string;
   recipient: string;
 };
 
@@ -42,7 +43,10 @@ export default function IbanCards({ ibanKeys }: IbanCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-y-8 gap-x-6 lg:grid-cols-2">
       {ibanKeys.map((key, index) => (
-        <div key={key.iban} className="bg-sky-400/20 rounded-b-xl dark:bg-cyan-500/20 transition-colors">
+        <div
+          key={key.iban}
+          className="bg-sky-400/20 rounded-b-xl dark:bg-cyan-500/20 transition-colors"
+        >
           <div className="-mt-1 group rounded-xl border border-slate-200 bg-slate-50 p-5 transition-colors dark:bg-zinc-600 dark:border-slate-500 dark:hover:border-neutral-400 hover:border-blue-600">
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
@@ -69,9 +73,20 @@ export default function IbanCards({ ibanKeys }: IbanCardsProps) {
                 </button>
               </div>
 
-              <p className="text-[10px] font-medium italic text-slate-500 dark:text-slate-300 transition-colors">
-                {key.recipient}
-              </p>
+              <div className="text-[10px] font-medium italic text-slate-500 dark:text-slate-300 transition-colors space-y-1">
+                <p>
+                  <span className="text-slate-400 dark:text-slate-400 transition-colors">
+                    {t('financial.iban.recipient')}:
+                  </span>{' '}
+                  {key.recipient}
+                </p>
+                <p>
+                  <span className="text-slate-400 dark:text-slate-400 transition-colors">
+                    {t('financial.iban.bank')}:
+                  </span>{' '}
+                  {key.bank}
+                </p>
+              </div>
               <p className="py-1 text-xs  italic">
                 <span className="text-slate-600 dark:text-slate-300 transition-colors">
                   {t('financial.iban.paymentDestination')}:

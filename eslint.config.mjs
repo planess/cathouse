@@ -243,6 +243,16 @@ const eslintConfig = [
               group: 'internal',
               position: 'after',
             },
+            {
+              pattern: '@email/**',
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@helpers/**',
+              group: 'internal',
+              position: 'after',
+            },
           ],
           'newlines-between': 'always',
           alphabetize: {

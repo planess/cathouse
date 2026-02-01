@@ -11,7 +11,8 @@ import {
   MedicalKitIcon,
 } from '../history/[animalId]/components/icons';
 
-import IbanCards from './components/iban-cards';
+import { AutoPayment } from './components/auto-payment';
+import IbanCards, { IbanCardItem } from './components/iban-cards';
 
 import type { Metadata } from 'next';
 
@@ -32,19 +33,21 @@ const useTiles = [
 const ibanKeys = [
   {
     currency: 'UAH',
-    edrpou: '00000000',
-    mfo: '300000',
-    iban: 'UA12 0000 0000 0000 00000 0000 0000',
-    recipient: 'БО Периферія, Monobank',
+    edrpou: '45962629',
+    mfo: process.env.MONOBANK_MFO,
+    iban: process.env.MONOBANK_IBAN,
+    bank: process.env.MONOBANK_NAME,
+    recipient: process.env.MONOBANK_RECIPIENT,
   },
   {
     currency: 'UAH',
-    edrpou: '00000000',
-    mfo: '300000',
-    iban: 'UA98 0000 0000 0000 00000 0000 0000',
-    recipient: 'БФ "БО Периферія", А-Банк',
+    edrpou: '45962629',
+    mfo: process.env.ABANK_MFO,
+    iban: process.env.ABANK_IBAN,
+    bank: process.env.ABANK_NAME,
+    recipient: process.env.ABANK_RECIPIENT,
   },
-];
+] as IbanCardItem[];
 const ibanQuestions = [
   { answer: 'answer1' },
   { question: 'question2', answer: 'answer2' },
@@ -111,7 +114,10 @@ export default function PaymentsPage() {
           ))}
         </ul>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm space-y-4 dark:bg-zinc-700 dark:border-zinc-500 transition-colors">
+        <div
+          id="donate"
+          className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm space-y-4 dark:bg-zinc-700 dark:border-zinc-500 transition-colors"
+        >
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <h3 className="flex items-center gap-2 text-xl font-extrabold ">
@@ -127,7 +133,7 @@ export default function PaymentsPage() {
 
           <div className="text-sky-700 text-sm space-y-2 dark:text-zinc-300 transition-colors">
             {ibanQuestions.map(({ question, answer }) => (
-              <div key={question}>
+              <div key={answer}>
                 {question && (
                   <div className="font-bold">
                     {t(`financial.ibanQuestions.${question}`)}
@@ -136,6 +142,10 @@ export default function PaymentsPage() {
                 <div>{t(`financial.ibanQuestions.${answer}`)}</div>
               </div>
             ))}
+          </div>
+
+          <div>
+            <AutoPayment bank={ibanKeys[0]} />
           </div>
         </div>
       </section>
