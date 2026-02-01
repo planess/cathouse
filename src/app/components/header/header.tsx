@@ -12,7 +12,7 @@ export default function Header() {
   const links = [
     { key: 'home', href: '/' },
     { key: 'contacts', href: '/contacts' },
-    { key: 'history', href: '/history' },
+    { key: 'registry', href: '/history' },
     { key: 'help', href: '/help' },
   ];
 

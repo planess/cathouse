@@ -22,6 +22,7 @@
     "home": "Home",
     "contacts": "Contacts",
     "history": "History",
+    "registry": "Registry",
     "help": "Help",
     "logoSecret": "Tap five times quickly to open the sign-in page",
     "logoAltSmall": "Foundation compact logo",
@@ -747,163 +748,169 @@
   "fundworkpage": {
     "title": "Fund work",
     "hero": {
-      "eyebrow": "How the fund operates",
+      "eyebrow": "Strategy & impact",
       "title": "Where every contribution goes",
-      "description": "We convert help into structured field work: targeted care, transparent logistics, and measurable outcomes for stray animals and their caretakers.",
-      "ctaPrimary": "Join the support network",
+      "description": "We build a system of safe zones where every action is directed at sterilization, vaccination, and controlled care for stray animals.",
+      "ctaPrimary": "Join the support",
       "ctaSecondary": "Contact the team"
     },
-    "tags": {
-      "destination": "Destination",
-      "methods": "Methods",
-      "operations": "Operations",
-      "results": "Results"
+    "story": {
+      "title": "About the fund and our story",
+      "paragraphs": {
+        "first": "Fund began as a volunteer initiative helping stray animals with personal resources. But local assistance cannot solve the underlying problem of homelessness and every year the story repeats itself over and over.",
+        "second": "In 2025 we became a registered foundation to move from situational help to building a network of safe zones and systematic sterilization. However, at the beginning, legal and ogranizational challenges slowed us down so that full-fledged operations could start in 2026.",
+        "third": "Today we focus on mass sterilization in controlled areas. We do not possess shelters to place animals permanently. We collaborate with veterinary clinics for treatment and rehabilitation to create acceptable living conditions in their natural environment."
+      },
+      "highlights": {
+        "before": {
+          "badge": "≈",
+          "title": "Before 2025",
+          "description": "Volunteer practice and local experience"
+        },
+        "preparation": {
+          "badge": "⏳",
+          "title": "2025",
+          "description": "Foundation registration and organizational setup"
+        },
+        "now": {
+          "badge": "✓",
+          "title": "Since 2025",
+          "description": "Official status and safe-zone program"
+        },
+        "goal": {
+          "badge": "★",
+          "title": "Strategic goal for 2026",
+          "description": "Sterilize 80% of the population in controlled areas"
+        }
+      }
     },
-    "sections": {
-      "destination": {
-        "title": "Destination of funds",
-        "description": "We distribute resources across the full rescue cycle — from emergency response to long-term community support.",
-        "items": {
-          "emergency": {
-            "title": "Emergency response",
-            "description": "Rapid transport, diagnostics, and stabilization for animals in urgent condition."
-          },
-          "sterilization": {
-            "title": "Sterilization & prevention",
-            "description": "Planned surgeries that reduce suffering and prevent uncontrolled population growth."
-          },
-          "rehabilitation": {
-            "title": "Rehabilitation",
-            "description": "Recovery care, medications, and follow-up for animals returning to their habitats."
-          },
-          "community": {
-            "title": "Community support",
-            "description": "Food, supplies, and guidance for caretakers who monitor local colonies."
-          },
-          "platform": {
-            "title": "Operational platform",
-            "description": "Case tracking, reporting, and coordination tools that keep volunteers aligned."
-          }
+    "help": {
+      "title": "Who we help",
+      "subtitle": "Our mission is humane population control through sterilization and safe living zones. It is compromise for residents and animals to ensure safe coexistence without cruelty.",
+      "cards": {
+        "animals": {
+          "icon": "🐾",
+          "title": "Stray animals",
+          "description": "Mass sterilization, vaccination, and return to supervised zones."
+        },
+        "training": {
+          "icon": "🎓",
+          "title": "Colony caretakers",
+          "description": "Colony control, monitoring animal contact with local residents."
+        },
+        "wildlife": {
+          "icon": "🌿",
+          "title": "Wild animals",
+          "description": "Emergency aid and transport to rehabilitation centers."
+        },
+        "cruelty": {
+          "icon": "⚖️",
+          "title": "Cruelty cases",
+          "description": "Legal support, rescue, and urgent veterinary care."
         }
-      },
-      "methods": {
-        "title": "Methods and safeguards",
-        "description": "We combine partner clinics, verified supply chains, and volunteer networks to stretch every donation.",
-        "items": {
-          "cofunding": {
-            "title": "Co-funding model",
-            "description": "We share costs with partners and donors to support more animals per case."
-          },
-          "partners": {
-            "title": "Clinic partnerships",
-            "description": "We work with trusted veterinarians for diagnostics, treatment, and surgeries."
-          },
-          "procurement": {
-            "title": "Verified procurement",
-            "description": "Supplies are purchased through transparent requests and documented deliveries."
-          },
-          "volunteer": {
-            "title": "Volunteer coordination",
-            "description": "Task routing keeps response teams, transport, and caretakers synchronized."
-          },
-          "education": {
-            "title": "Training & guidance",
-            "description": "We share protocols so volunteers act safely and consistently in the field."
-          },
-          "data": {
-            "title": "Data-driven oversight",
-            "description": "We track cases, outcomes, and partner workloads to spot gaps early."
-          }
+      }
+    },
+    "principles": {
+      "title": "Our principles",
+      "subtitle": "We moved away from outdated shelter-first practices. Our priority is safe coexistence in managed environments.",
+      "badge": "Periphery ethics protocol",
+      "items": {
+        "humanity": {
+          "title": "Humanity",
+          "description": "Stress-minimizing capture and painless procedures."
+        },
+        "law": {
+          "title": "Legality",
+          "description": "Every action follows current regulations."
+        },
+        "responsibility": {
+          "title": "Responsibility",
+          "description": "Transparent accounting for every intervention."
+        },
+        "animal": {
+          "title": "Animal first",
+          "description": "The animal's welfare is always the priority."
+        },
+        "system": {
+          "title": "System thinking",
+          "description": "We address the causes of homelessness through mass sterilization."
         }
-      },
-      "operations": {
-        "title": "Operational workflow",
-        "description": "A consistent sequence keeps our teams aligned, cases documented, and outcomes traceable.",
-        "steps": {
-          "intake": {
-            "title": "Intake & validation",
-            "description": "Reports are verified, triaged, and logged into a shared case tracker."
-          },
-          "triage": {
-            "title": "Triage & planning",
-            "description": "We assess urgency, confirm resources, and assign the field response."
-          },
-          "care": {
-            "title": "Care delivery",
-            "description": "Animals receive treatment, vaccinations, or sterilization with partner clinics."
-          },
-          "rehab": {
-            "title": "Rehabilitation",
-            "description": "Post-care monitoring, medication schedules, and safe recovery spaces."
-          },
-          "return": {
-            "title": "Return or rehoming",
-            "description": "We release animals to safe habitats or support adoption campaigns."
-          },
-          "reporting": {
-            "title": "Reporting & learning",
-            "description": "Each case is documented to improve future response and planning."
-          }
+      }
+    },
+    "cycle": {
+      "title": "Operational cycle",
+      "subtitle": "Every animal follows a structured path from the street to safe, healthy life in its environment.",
+      "steps": {
+        "monitoring": {
+          "title": "Monitoring & zones",
+          "description": "We track safe zones and respond to community reports."
+        },
+        "capture": {
+          "title": "Humane capture",
+          "description": "Professional equipment and protocols minimize stress."
+        },
+        "prep": {
+          "title": "Veterinary preparation",
+          "description": "Exams, vaccinations, and mandatory microchipping."
+        },
+        "sterilization": {
+          "title": "Sterilization",
+          "description": "Partner clinics stop the cycle of suffering and overpopulation."
+        },
+        "rehab": {
+          "title": "Rehabilitation",
+          "description": "Post-op recovery in controlled conditions until stable."
+        },
+        "return": {
+          "title": "Return to zone",
+          "description": "Release to safe areas with continued remote monitoring."
         }
-      },
-      "results": {
-        "title": "Results we track",
-        "description": "Instead of isolated wins, we measure systems that keep helping animals month after month.",
-        "metrics": {
-          "coverage": {
-            "label": "Coverage of active locations",
-            "value": "Mapped & monitored"
-          },
-          "cases": {
-            "label": "Case throughput",
-            "value": "Tracked end-to-end"
-          },
-          "partners": {
-            "label": "Clinic partnerships",
-            "value": "Active coordination"
-          },
-          "education": {
-            "label": "Volunteer training",
-            "value": "Ongoing sessions"
-          },
-          "transparency": {
-            "label": "Public updates",
-            "value": "Regular reports"
-          },
-          "readiness": {
-            "label": "Emergency readiness",
-            "value": "On-call rotation"
-          }
+      }
+    },
+    "notes": {
+      "title": "Important notes",
+      "items": {
+        "rodents": {
+          "title": "Rodent control:",
+          "description": "Sterilization does not change hunting instincts; returning animals helps natural control."
+        },
+        "intervention": {
+          "title": "Right to intervene:",
+          "description": "The foundation will initiate removal of animals when cruelty or life-threatening conditions are confirmed by vets."
+        },
+        "adoption": {
+          "title": "Adoption is an exception:",
+          "description": "We seek homes only for animals who cannot survive outside due to age or health."
         }
-      },
-      "transparency": {
-        "title": "Operational transparency",
-        "description": "We keep our work open to inspection so donors and volunteers always know what is happening.",
-        "items": {
-          "budget": {
-            "title": "Budget clarity",
-            "description": "Line-item planning with visible allocations by direction."
-          },
-          "policies": {
-            "title": "Policies & procedures",
-            "description": "Standard operating guides for rescue, treatment, and aftercare."
-          },
-          "audit": {
-            "title": "Case documentation",
-            "description": "Every step logged with dates, partners, and outcomes."
-          },
-          "feedback": {
-            "title": "Feedback loop",
-            "description": "We collect community input to refine priorities."
-          }
+      }
+    },
+    "transparency": {
+      "title": "Transparency & reporting",
+      "description": "We report 100% of financial income in monthly updates. Physical aid is documented on request with photos or receipts.",
+      "cta": "View reports"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "shelters": {
+          "question": "Why don't you place all animals in shelters?",
+          "answer": "Shelters are overcrowded, and permanent housing does not solve population growth. Sterilization and return (TNR) is the most humane, effective method."
+        },
+        "pets": {
+          "question": "Why don't you help owned pets?",
+          "answer": "Our mission addresses homelessness. Responsible ownership is a personal duty, and our limited resources focus on animals without protection."
+        },
+        "report": {
+          "question": "How can I report an animal in need?",
+          "answer": "Use the “Report an animal” button in the menu or message us with photos and a location. We prioritize based on urgency and capacity."
         }
       }
     },
     "callout": {
-      "title": "Support the work behind every rescue",
-      "description": "Your participation keeps the field team moving and the care network reliable.",
-      "ctaHelp": "See ways to help",
-      "ctaContact": "Ask a question"
+      "title": "Become part of systemic change",
+      "description": "Your contribution today builds a professional solution for homelessness tomorrow.",
+      "ctaHelp": "Make a contribution",
+      "ctaContact": "Become a volunteer"
     }
   },
   "legalinfopage": {

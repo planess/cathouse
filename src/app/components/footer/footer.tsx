@@ -11,7 +11,7 @@ const linkBlock = [
   [
     { href: '/privacy-policy', labelKey: 'links.privacy' },
     { href: '/legal-info', labelKey: 'links.legal' },
-    { href: '/fund-work', labelKey: 'links.fundWork' },
+    { href: '/work', labelKey: 'links.fundWork' },
   ],
   [
     { href: '/payments', labelKey: 'links.payments' },
