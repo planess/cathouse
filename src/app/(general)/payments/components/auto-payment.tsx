@@ -76,7 +76,7 @@ export function AutoPayment({ bank }: AutoPaymentProps) {
       <div className="absolute -top-16 -right-16 h-32 w-32 rounded-full bg-blue-500/5 blur-3xl pointer-events-none dark:bg-blue-400/10" />
 
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-1 flex flex-col gap-4 relative z-10">
+        <div className="flex-1 flex flex-col gap-4 relative">
           <div className="flex flex-col gap-1">
             <h4 className="text-base font-extrabold text-slate-900 dark:text-slate-100">
               {t('financial.quickDonate.title')}
@@ -122,7 +122,7 @@ export function AutoPayment({ bank }: AutoPaymentProps) {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col sm:flex-row items-center gap-5 md:pl-6 md:border-l border-slate-200 pt-4 md:pt-0 border-t md:border-t-0 relative z-10 dark:border-slate-700">
+        <div className="flex-1 flex flex-col sm:flex-row items-center gap-5 md:pl-6 md:border-l border-slate-200 pt-4 md:pt-0 border-t md:border-t-0 relative dark:border-slate-700">
           <div className="shrink-0 rounded-xl border border-slate-100 bg-white p-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <div className="relative flex items-center justify-center overflow-hidden rounded-lg bg-white dark:bg-slate-100">
               <QRCodeSVG
