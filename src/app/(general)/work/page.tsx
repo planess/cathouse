@@ -288,13 +288,13 @@ export default function FundWorkPage() {
               </div>
               <div className="flex flex-col gap-3 lg:flex-row">
                 <Link
-                  href="/help"
+                  href="/payments#donate"
                   className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-sky-700 whitespace-nowrap"
                 >
                   {t('callout.ctaHelp')}
                 </Link>
                 <Link
-                  href="/contacts"
+                  href="/help#contact-form"
                   className="inline-flex items-center justify-center rounded-2xl border border-white/40 px-6 py-3 text-sm font-semibold text-white whitespace-nowrap"
                 >
                   {t('callout.ctaContact')}
