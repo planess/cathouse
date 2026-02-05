@@ -2,6 +2,14 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 import type { NextConfig } from 'next';
 
+let imageHostname = process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL;
+
+if (imageHostname === undefined) {
+  throw new Error('CLOUDFLARE_R2_ANIMAL_IMAGE_URL is not defined');
+}
+
+imageHostname = imageHostname.replace('https://', '');
+
 const nextConfig: NextConfig = {
   /* config options here */
   // devIndicators: false,
@@ -11,7 +19,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: 'pub-b01557542cb14ab3a2c20e32a7373072.r2.dev',
+        hostname: imageHostname,
         protocol: 'https',
         pathname: '/**',
         search: '',

@@ -988,12 +988,12 @@
         },
         "account2": {
           "description": "This account is also in UAH but usually used to cover expenses in clinics."
-        },
-        "ibanQuestions": {
-          "answer1": "Both accounts are in UAH (Ukrainian Hryvnia). You can use either for donations.",
-          "question2": "What 2 similar accounts are for?",
-          "answer2": "The different conditions of service and control, different group of expenses and reports."
         }
+      },
+      "ibanQuestions": {
+        "answer1": "Both accounts are in UAH (Ukrainian Hryvnia). You can use either for donations.",
+        "question2": "What 2 similar accounts are for?",
+        "answer2": "The different conditions of service and control, different group of expenses and reports."
       },
       "quickDonate": {
         "title": "Quick donation",
