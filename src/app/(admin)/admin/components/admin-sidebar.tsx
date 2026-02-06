@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { useCurrentUser } from '@app/hooks/use-user';
+
 const navItems = [
   {
     href: '/admin',
@@ -131,6 +133,7 @@ const navItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const user = useCurrentUser();
 
   return (
     <aside className="hidden lg:flex w-72 flex-shrink-0 flex-col border-r border-slate-200/80 bg-white/90 text-slate-700 shadow-sm shadow-slate-200/30 dark:border-slate-800 dark:bg-[#11161c] dark:text-slate-200">
@@ -180,12 +183,15 @@ export function AdminSidebar() {
             <p className="truncate text-xs font-bold text-slate-900 dark:text-white">
               Mock: Alex Rivera
             </p>
-            <p className="truncate text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
-              Mock: Super Admin
+            <p className="truncate text-[11px] text-slate-500 dark:text-slate-400">
+              {user?.email ?? 'No email'}
             </p>
           </div>
         </div>
-        <button className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-sky-400/40 dark:hover:text-sky-200">
+        <button
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-sky-400/40 dark:hover:text-sky-200"
+          disabled={true}
+        >
           <span>Sign out</span>
           <span aria-hidden="true">{'->'}</span>
         </button>
