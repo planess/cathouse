@@ -1,14 +1,19 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { serverMigrationRunner } from '../services/migration-runner.server';
 
 /**
- * Server action to run migrations
- * This can be called during app initialization or from other server-side code
+ * Server action to run pending migrations and refresh the admin page
  */
-export async function runMigrations() {
+export async function runPendingMigrations() {
   try {
-    return serverMigrationRunner.runMigrations();
+    const result = await serverMigrationRunner.runMigrations();
+
+    revalidatePath('/admin/migrations');
+
+    return result;
   } catch (error) {
     return {
       success: false,
@@ -27,6 +32,24 @@ export async function getMigrationStatus() {
     return {
       success: false,
       status: `Failed to check migration status: ${error}`,
+    };
+  }
+}
+
+/**
+ * Server action to revert the last migration and refresh the admin page
+ */
+export async function revertLastMigration() {
+  try {
+    const result = await serverMigrationRunner.revertLastMigration();
+
+    revalidatePath('/admin/migrations');
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to revert migration: ${error}`,
     };
   }
 }

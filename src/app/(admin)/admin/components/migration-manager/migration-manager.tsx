@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 
-import { runMigrations, getMigrationStatus, forceRunMigrations, createMigration } from '../../../../actions/migrations.server';
+import {
+  createMigration,
+  forceRunMigrations,
+  getMigrationStatus,
+  runPendingMigrations,
+} from '../../../../actions/migrations.server';
 
 export function MigrationManager() {
   const [status, setStatus] = useState<string>('');
@@ -31,7 +36,7 @@ export function MigrationManager() {
     setLoading(true);
 
     try {
-      const result = await runMigrations();
+      const result = await runPendingMigrations();
 
       setStatus(result.message);
     } catch (error) {
@@ -142,7 +147,10 @@ export function MigrationManager() {
       </div>
 
       <div className="mt-6 text-sm text-gray-600">
-        <p><strong>Note:</strong> Use this interface for manual migration management and development.</p>
+        <p>
+          <strong>Note:</strong> Use this interface for manual migration
+          management and development.
+        </p>
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export class ServerMigrationRunner extends Singleton {
       const projectRoot = process.cwd();
 
       // Run migrations using migrate-mongo
-      execSync('npx migrate-mongo up', {
+      execSync('npm run migrate:up', {
         cwd: projectRoot,
         stdio: 'pipe', // Capture output instead of inheriting
         env: { ...process.env },
@@ -81,6 +81,53 @@ export class ServerMigrationRunner extends Singleton {
   }
 
   /**
+   * Revert the last applied migration
+   */
+  public async revertLastMigration(): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    if (!this.shouldRunMigrations()) {
+      return {
+        success: true,
+        message:
+          'Skipping migration rollback in development mode. Set FORCE_MIGRATIONS=true to enable.',
+      };
+    }
+
+    try {
+      const projectRoot = process.cwd();
+
+      execSync('npm run migrate:down', {
+        cwd: projectRoot,
+        stdio: 'pipe',
+        env: { ...process.env },
+      });
+
+      this.migrationsRun = false;
+
+      return {
+        success: true,
+        message: 'Last migration reverted successfully',
+      };
+    } catch (error) {
+      const errorMessage = `Error reverting migration: ${error instanceof Error ? error.message : String(error)}`;
+
+      // eslint-disable-next-line no-console
+      console.error(errorMessage);
+
+      if (process.env.NODE_ENV === 'production') {
+        // eslint-disable-next-line no-console
+        console.error(
+          'Migration rollback failed in production. Database may be in an inconsistent state.',
+        );
+      }
+
+      return { success: false, message: errorMessage };
+    }
+  }
+
+  /**
    * Check migration status
    */
   public async getMigrationStatus(): Promise<{
@@ -89,7 +136,7 @@ export class ServerMigrationRunner extends Singleton {
   }> {
     try {
       const projectRoot = process.cwd();
-      const output = execSync('npx migrate-mongo status', {
+      const output = execSync('npm run migrate:status', {
         cwd: projectRoot,
         encoding: 'utf8',
         env: { ...process.env },
@@ -112,7 +159,7 @@ export class ServerMigrationRunner extends Singleton {
   ): Promise<{ success: boolean; message: string }> {
     try {
       const projectRoot = process.cwd();
-      const output = execSync(`npx migrate-mongo create "${name}"`, {
+      const output = execSync(`npm run migrate:create "${name}"`, {
         cwd: projectRoot,
         encoding: 'utf8',
         env: { ...process.env },

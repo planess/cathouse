@@ -99,6 +99,26 @@ body {
   }
 }
 
+@keyframes admin-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-fade-up {
+  animation: admin-fade-up 0.6s ease both;
+}
+
+.admin-fade-up-delay {
+  animation-delay: 0.12s;
+}
+
 .modal-overlay {
   animation: cathouse-overlay-fade-in 0.5s ease forwards;
 }
@@ -126,5 +146,10 @@ body {
   .modal-panel[data-state='closing'] {
     animation-duration: 0ms;
     animation-fill-mode: forwards;
+  }
+
+  .admin-fade-up,
+  .admin-fade-up-delay {
+    animation: none;
   }
 }
