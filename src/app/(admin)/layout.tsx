@@ -1,12 +1,17 @@
 import Link from 'next/link';
 
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { requireAnyPermission } from '@app/services/access-verification.service';
+
 import { AdminSidebar } from './admin/components/admin-sidebar';
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireAnyPermission([SYSTEM_PERMISSIONS.ROLE_ASSIGN]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="flex min-h-screen">

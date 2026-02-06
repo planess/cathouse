@@ -102,9 +102,15 @@ class AccessVerificationService extends Singleton {
    * Verify access and redirect if unauthorized (for Server Components)
    */
   async verifyPageAccess(
-    userId: ObjectId,
+    userId: ObjectId | null,
     config: PageAccessConfig,
   ): Promise<AccessCheckResult> {
+    if (!userId) {
+      const redirectPath = config.unauthorizedRedirect ?? '/signin';
+
+      redirect(redirectPath);
+    }
+
     const accessResult = await this.checkAccess(userId, config);
 
     if (!accessResult.hasAccess) {
@@ -165,11 +171,7 @@ export async function requirePermission(
   context?: string,
   userId?: ObjectId,
 ): Promise<void> {
-  const a = userId ?? (await getUser())?.id;
-
-  if (!a) {
-    throw new Error('User not defined');
-  }
+  const a = userId ?? (await getUser())?.id ?? null;
 
   await accessServiceInstance.verifyPageAccess(a, {
     requiredPermissions: [permission],
@@ -185,11 +187,7 @@ export async function requireAnyPermission(
   context?: string,
   userId?: ObjectId,
 ): Promise<void> {
-  const a = userId ?? (await getUser())?.id;
-
-  if (!a) {
-    throw new Error('User not defined');
-  }
+  const a = userId ?? (await getUser())?.id ?? null;
 
   await accessServiceInstance.verifyPageAccess(a, {
     anyOfPermissions: permissions,
@@ -205,11 +203,7 @@ export async function requireAllPermissions(
   context?: string,
   userId?: ObjectId,
 ): Promise<void> {
-  const a = userId ?? (await getUser())?.id;
-
-  if (!a) {
-    throw new Error('User not defined');
-  }
+  const a = userId ?? (await getUser())?.id ?? null;
 
   await accessServiceInstance.verifyPageAccess(a, {
     requiredPermissions: permissions,
@@ -225,7 +219,7 @@ export async function hasPermission(
   context?: string,
   userId?: ObjectId,
 ): Promise<boolean> {
-  const a = userId ?? (await getUser())?.id;
+  const a = userId ?? (await getUser())?.id ?? null;
 
   if (!a) {
     return false;
