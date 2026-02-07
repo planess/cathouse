@@ -73,7 +73,7 @@ export default async function VaccinationSection({
                       group.accent,
                     )}
                   >
-                    <span className="text-blue-500">{group.icon}</span>{' '}
+                    <span className="text-blue-500 size-6">{group.icon}</span>{' '}
                     {group.title}
                   </h4>
                 </div>
