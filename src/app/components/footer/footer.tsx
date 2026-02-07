@@ -6,6 +6,7 @@ import logodark from '@public/assets/logo3-dark.svg';
 
 import LanguageSwitcher from '@app/components/language-switcher/language-switcher';
 import { getUser } from '@app/hooks/get-user';
+import { Tooltip } from '../tooltip';
 
 const linkBlock = [
   [
@@ -72,7 +73,14 @@ export default async function Footer() {
 
         <div className="flex flex-wrap justify-end gap-x-2 text-end">
           <span className="sm:whitespace-nowrap">
-            {t('tagline', { year: `${foundationYear}*` })}
+            {t.rich('tagline', {
+              year: `${foundationYear}*`,
+              tooltip: (chunks) => {
+                const sp = String(chunks).split('|');
+
+                return <Tooltip text={sp[1]}>{sp[0]}</Tooltip>;
+              },
+            })}
           </span>
           <span className="text-stone-400 whitespace-nowrap">
             {t('attribution', { org })}

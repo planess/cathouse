@@ -1256,7 +1256,7 @@
     }
   },
   "footer": {
-    "tagline": "Since {year} with care for our little friends",
+    "tagline": "Since <tooltip>{year}|Officially since 2025 but we started much earlier. We took the minimum time involved, this is also experience</tooltip> with care for our little friends",
     "attribution": "by {org}",
     "slogan": "Every life matters. The value of life is immeasurable.",
     "links": {
