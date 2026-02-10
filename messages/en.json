@@ -1229,12 +1229,18 @@
   },
   "reportspage": {
     "title": "Reports",
+    "pageTitle": "Foundation reports",
+    "pageDescription": "We believe in full transparency. Here you can review the results of our work and financial reports.",
     "intro": "We publish reports to keep our work transparent. Annual reports summarize finances, activities, and impact.",
     "nav": {
       "title": "Reports navigation",
       "subtitle": "Updated monthly",
       "question": "Have questions about reporting?",
-      "contactCta": "Contact us"
+      "contactCta": "Contact us",
+      "items": {
+        "impact": "Impact & statistics",
+        "financials": "Financial reports"
+      }
     },
     "newSeason": {
       "title": "We are preparing for a new season",
@@ -1253,6 +1259,137 @@
         "summary": "Includes financial statements, program outcomes, and key impact metrics.",
         "request": "Need the latest signed version? Request it via <email>info@perilines.com.ua</email>."
       }
+    }
+  },
+  "reportsContent": {
+    "impact": {
+      "title": "Impact & statistics (TNR)",
+      "summary": "Year summary for {year}",
+      "sterilized": "Sterilized",
+      "locations": "{count, plural, one {Locations} other {Locations}} checked",
+      "monthsTitle": "Monthly activity · {year}",
+      "locationsChecked": "Locations checked"
+    },
+    "finance": {
+      "title": "Financial reports",
+      "yearLabel": "{year}",
+      "monthLabel": "Monthly report",
+      "breakdownToggle": "Expense breakdown",
+      "yearTotal": "Total for {year}"
+    },
+    "actions": {
+      "loading": "Loading...",
+      "loadPrevious": "Load previous year"
+    }
+  },
+  "adminFinance": {
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "create": "Create",
+      "saveChanges": "Save changes",
+      "delete": "Delete",
+      "disable": "Disable",
+      "remove": "Remove"
+    },
+    "account": {
+      "overviewTitle": "Account overview",
+      "overviewSubtitle": "{count} active accounts · This month: {month}",
+      "noAccounts": "No active accounts yet. Add your first bank account to start tracking balances.",
+      "activeBadge": "Active",
+      "thisMonth": "This month",
+      "currentBalance": "Current balance",
+      "debt": "Debt",
+      "addAccount": "Add new account",
+      "addTitle": "Add new account",
+      "editTitle": "Edit {name}",
+      "createButton": "Create account",
+      "disableTitle": "Disable account?",
+      "disableBody": "This will set <strong>{name}</strong> as inactive.",
+      "editAria": "Edit {name}",
+      "disableAria": "Disable {name}"
+    },
+    "summary": {
+      "totalBalance": "Total fund balance",
+      "monthly": "Monthly statistics",
+      "yearly": "Yearly statistics",
+      "incoming": "Incoming",
+      "expenses": "Expenses"
+    },
+    "reports": {
+      "recentTitle": "Recent transactions",
+      "addRecord": "Add new record",
+      "addTitle": "Add report item",
+      "createButton": "Create report",
+      "editTitle": "Edit report item",
+      "deleteTitle": "Delete report item?",
+      "deleteBody": "This will permanently remove the report.",
+      "categories": "Categories",
+      "table": {
+        "description": "Description",
+        "category": "Category",
+        "account": "Account",
+        "amount": "Amount",
+        "balance": "Balance",
+        "actions": "Actions"
+      },
+      "empty": "No reports for this month yet.",
+      "editAria": "Edit report",
+      "deleteAria": "Delete report"
+    },
+    "pagination": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month"
+    },
+    "forms": {
+      "account": {
+        "nameLabel": "Name",
+        "namePlaceholder": "Main shelter account",
+        "ibanLabel": "IBAN",
+        "requiredHint": "Please complete required fields before saving.",
+        "nameRequired": "Name is required.",
+        "ibanRequired": "IBAN is required.",
+        "ibanInvalid": "IBAN must match the required format."
+      },
+      "report": {
+        "typeLabel": "Type",
+        "typeIncoming": "Incoming",
+        "typeOutgoing": "Outgoing",
+        "typeDebt": "Debt",
+        "amountLabel": "Amount",
+        "amountPlaceholder": "0",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Monthly shelter expenses",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select category",
+        "accountLabel": "Account",
+        "accountPlaceholder": "Select account",
+        "detailsTitle": "Details",
+        "addDetail": "Add detail",
+        "detailsEmpty": "Add detail rows to break down the report amount.",
+        "detailLabel": "Detail {index}",
+        "detailDescriptionPlaceholder": "Extra note",
+        "detailAmountPlaceholder": "0",
+        "detailCategoryPlaceholder": "Optional subcategory",
+        "descriptionRequired": "Description is required.",
+        "amountRequired": "Amount must be greater than zero.",
+        "categoryRequired": "Category is required.",
+        "accountRequired": "Account is required."
+      }
+    },
+    "categories": {
+      "modalTitle": "Categories",
+      "incomingTitle": "Incoming",
+      "outgoingTitle": "Outgoing",
+      "panelTitle": "{title} categories",
+      "addCategory": "Add category",
+      "noCategories": "No categories yet.",
+      "addTitle": "Add {title} category",
+      "nameLabel": "Name",
+      "namePlaceholder": "Donations",
+      "parentLabel": "Parent",
+      "parentPlaceholder": "No parent",
+      "deleteErrorTitle": "Unable to delete category"
     }
   },
   "footer": {

@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import {
@@ -101,6 +102,8 @@ type ReportDetailFormState = {
   categoryId?: string;
 };
 
+type TranslationFn = (key: string, values?: Record<string, unknown>) => string;
+
 const defaultAccountForm: AccountFormState = {
   name: '',
   iban: '',
@@ -130,6 +133,7 @@ export function FinanceAdminView({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showModal } = useModal();
+  const t = useTranslations('adminFinance');
 
   const currency = useMemo(
     () =>
@@ -168,7 +172,7 @@ export function FinanceAdminView({
   }) => {
     const formStateRef = { current: options.initialState };
     const formValidityRef = {
-      current: isAccountFormValid(options.initialState),
+      current: isAccountFormValid(options.initialState, t),
     };
 
     const modalHandle = showModal({
@@ -187,7 +191,7 @@ export function FinanceAdminView({
       ),
       actions: [
         {
-          label: 'Cancel',
+          label: t('common.cancel'),
           tone: 'ghost',
         },
         {
@@ -210,9 +214,9 @@ export function FinanceAdminView({
 
   const handleAddAccount = () => {
     openAccountModal({
-      title: 'Add new account',
+      title: t('account.addTitle'),
       initialState: defaultAccountForm,
-      submitLabel: 'Create account',
+      submitLabel: t('account.createButton'),
       onSubmit: async (state) => {
         await createAccount(state);
       },
@@ -221,12 +225,12 @@ export function FinanceAdminView({
 
   const handleEditAccount = (account: AccountRow) => {
     openAccountModal({
-      title: `Edit ${account.name}`,
+      title: t('account.editTitle', { name: account.name }),
       initialState: {
         name: account.name,
         iban: account.iban,
       },
-      submitLabel: 'Save changes',
+      submitLabel: t('common.saveChanges'),
       onSubmit: async (state) => {
         await updateAccount({ id: account.id, ...state });
       },
@@ -235,20 +239,24 @@ export function FinanceAdminView({
 
   const handleDeleteAccount = (account: AccountRow) => {
     void showModal({
-      title: 'Disable account?',
+      title: t('account.disableTitle'),
       content: (
         <p className="text-sm text-slate-600">
-          This will set <span className="font-semibold">{account.name}</span> as
-          inactive.
+          {t.rich('account.disableBody', {
+            name: account.name,
+            strong: (children) => (
+              <span className="font-semibold">{children}</span>
+            ),
+          })}
         </p>
       ),
       actions: [
         {
-          label: 'Cancel',
+          label: t('common.cancel'),
           tone: 'ghost',
         },
         {
-          label: 'Disable',
+          label: t('common.disable'),
           tone: 'danger',
           onSelect: async () => {
             await deactivateAccount(account.id);
@@ -262,7 +270,7 @@ export function FinanceAdminView({
 
   const handleOpenCategories = () => {
     void showModal({
-      title: 'Categories',
+      title: t('categories.modalTitle'),
       content: (
         <CategoriesModal
           incoming={incomingCategories}
@@ -274,7 +282,7 @@ export function FinanceAdminView({
       ),
       actions: [
         {
-          label: 'Close',
+          label: t('common.close'),
           tone: 'primary',
         },
       ],
@@ -290,7 +298,7 @@ export function FinanceAdminView({
   }) => {
     const formStateRef = { current: options.initialState };
     const formValidityRef = {
-      current: isReportFormValid(options.initialState),
+      current: isReportFormValid(options.initialState, t),
     };
 
     const modalHandle = showModal({
@@ -312,7 +320,7 @@ export function FinanceAdminView({
       ),
       actions: [
         {
-          label: 'Cancel',
+          label: t('common.cancel'),
           tone: 'ghost',
         },
         {
@@ -335,9 +343,9 @@ export function FinanceAdminView({
 
   const handleAddReport = () => {
     openReportModal({
-      title: 'Add report item',
+      title: t('reports.addTitle'),
       initialState: defaultReportForm,
-      submitLabel: 'Create report',
+      submitLabel: t('reports.createButton'),
       onSubmit: async (state) => {
         await createReport({
           type: state.type,
@@ -357,7 +365,7 @@ export function FinanceAdminView({
 
   const handleEditReport = (report: ReportRow) => {
     openReportModal({
-      title: 'Edit report item',
+      title: t('reports.editTitle'),
       initialState: {
         type: report.type,
         description: report.description,
@@ -370,7 +378,7 @@ export function FinanceAdminView({
           categoryId: detail.categoryId,
         })),
       },
-      submitLabel: 'Save changes',
+      submitLabel: t('common.saveChanges'),
       onSubmit: async (state) => {
         await updateReport({
           id: report.id,
@@ -391,19 +399,17 @@ export function FinanceAdminView({
 
   const handleDeleteReport = (report: ReportRow) => {
     void showModal({
-      title: 'Delete report item?',
+      title: t('reports.deleteTitle'),
       content: (
-        <p className="text-sm text-slate-600">
-          This will permanently remove the report.
-        </p>
+        <p className="text-sm text-slate-600">{t('reports.deleteBody')}</p>
       ),
       actions: [
         {
-          label: 'Cancel',
+          label: t('common.cancel'),
           tone: 'ghost',
         },
         {
-          label: 'Delete',
+          label: t('common.delete'),
           tone: 'danger',
           onSelect: async () => {
             await deleteReport(report.id);
@@ -421,11 +427,13 @@ export function FinanceAdminView({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              Account Overview
+              {t('account.overviewTitle')}
             </h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {accounts.length} active accounts · This month:{' '}
-              {currentMonthLabel}
+              {t('account.overviewSubtitle', {
+                count: accounts.length,
+                month: currentMonthLabel,
+              })}
             </p>
           </div>
         </div>
@@ -433,8 +441,7 @@ export function FinanceAdminView({
         <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950/70">
           {accounts.length === 0 ? (
             <div className="p-6 text-sm text-slate-500">
-              No active accounts yet. Add your first bank account to start
-              tracking balances.
+              {t('account.noAccounts')}
             </div>
           ) : (
             <div className="divide-y divide-slate-200/70 dark:divide-slate-800">
@@ -453,7 +460,7 @@ export function FinanceAdminView({
                           {account.name}
                         </h4>
                         <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
-                          Active
+                          {t('account.activeBadge')}
                         </span>
                       </div>
                       <p className="mt-1 text-[10px] font-mono text-slate-500">
@@ -464,7 +471,7 @@ export function FinanceAdminView({
                   <div className="flex flex-1 flex-wrap items-center justify-between gap-6 lg:justify-end">
                     <div className="min-w-30 text-right">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                        This Month
+                        {t('account.thisMonth')}
                       </p>
                       <p
                         className={`text-sm font-bold ${
@@ -479,7 +486,7 @@ export function FinanceAdminView({
                     </div>
                     <div className="min-w-35 text-right">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                        Current Balance
+                        {t('account.currentBalance')}
                       </p>
                       <p className="text-sm font-bold text-slate-900 dark:text-white">
                         {currency.format(account.balance)}
@@ -487,7 +494,7 @@ export function FinanceAdminView({
                       {account.debtTotal > 0 && (
                         <div className="mt-1">
                           <p className="text-[10px] font-bold uppercase tracking-widest text-amber-500">
-                            Debt
+                            {t('account.debt')}
                           </p>
                           <p className="text-xs font-bold text-amber-600">
                             -{currency.format(account.debtTotal)}
@@ -500,7 +507,9 @@ export function FinanceAdminView({
                         className="rounded-lg p-2 text-slate-400 transition hover:text-sky-500"
                         type="button"
                         onClick={() => handleEditAccount(account)}
-                        aria-label={`Edit ${account.name}`}
+                        aria-label={t('account.editAria', {
+                          name: account.name,
+                        })}
                       >
                         ✎
                       </button>
@@ -508,7 +517,9 @@ export function FinanceAdminView({
                         className="rounded-lg p-2 text-slate-400 transition hover:text-rose-500"
                         type="button"
                         onClick={() => handleDeleteAccount(account)}
-                        aria-label={`Disable ${account.name}`}
+                        aria-label={t('account.disableAria', {
+                          name: account.name,
+                        })}
                       >
                         ✕
                       </button>
@@ -526,7 +537,7 @@ export function FinanceAdminView({
           onClick={handleAddAccount}
         >
           <span className="text-base">＋</span>
-          Add New Account
+          {t('account.addAccount')}
         </button>
 
         <div className="rounded-3xl bg-sky-500 p-6 text-white shadow-lg shadow-sky-500/30">
@@ -536,7 +547,9 @@ export function FinanceAdminView({
                 <span className="text-xl font-bold">$</span>
               </div>
               <div>
-                <p className="text-sm text-sky-100">Total Fund Balance</p>
+                <p className="text-sm text-sky-100">
+                  {t('summary.totalBalance')}
+                </p>
                 <p className="text-3xl font-bold">
                   {currency.format(summary.totalBalance)}
                 </p>
@@ -545,17 +558,21 @@ export function FinanceAdminView({
             <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:items-start sm:justify-around">
               <div className="space-y-2">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-100">
-                  Monthly Statistics
+                  {t('summary.monthly')}
                 </p>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center justify-between gap-6">
-                    <span className="text-sky-100/80">Incoming</span>
+                    <span className="text-sky-100/80">
+                      {t('summary.incoming')}
+                    </span>
                     <span className="font-bold text-emerald-200">
                       +{currency.format(summary.monthIncoming)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-6">
-                    <span className="text-sky-100/80">Expenses</span>
+                    <span className="text-sky-100/80">
+                      {t('summary.expenses')}
+                    </span>
                     <span className="font-bold text-rose-200">
                       -{currency.format(summary.monthOutgoing)}
                     </span>
@@ -564,17 +581,21 @@ export function FinanceAdminView({
               </div>
               <div className="space-y-2">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-100">
-                  Yearly Statistics
+                  {t('summary.yearly')}
                 </p>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center justify-between gap-6">
-                    <span className="text-sky-100/80">Incoming</span>
+                    <span className="text-sky-100/80">
+                      {t('summary.incoming')}
+                    </span>
                     <span className="font-bold text-emerald-200">
                       +{currency.format(summary.yearIncoming)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-6">
-                    <span className="text-sky-100/80">Expenses</span>
+                    <span className="text-sky-100/80">
+                      {t('summary.expenses')}
+                    </span>
                     <span className="font-bold text-rose-200">
                       -{currency.format(summary.yearOutgoing)}
                     </span>
@@ -590,7 +611,7 @@ export function FinanceAdminView({
         <div className="flex flex-col gap-4 border-b border-slate-200/70 p-6 dark:border-slate-800 md:flex-row md:items-center md:justify-between">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              Recent Transactions
+              {t('reports.recentTitle')}
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               {monthLabel}
@@ -602,14 +623,14 @@ export function FinanceAdminView({
               type="button"
               onClick={handleOpenCategories}
             >
-              Categories
+              {t('reports.categories')}
             </button>
             <button
               className="rounded-xl bg-sky-500 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-sky-500/30 transition hover:bg-sky-600"
               type="button"
               onClick={handleAddReport}
             >
-              Add New Record
+              {t('reports.addRecord')}
             </button>
           </div>
         </div>
@@ -617,12 +638,18 @@ export function FinanceAdminView({
           <table className="min-w-full text-left text-sm">
             <thead className="bg-slate-50/70 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:bg-slate-900/80 dark:text-slate-400">
               <tr>
-                <th className="px-6 py-4">Description</th>
-                <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4">Account</th>
-                <th className="px-6 py-4 text-right">Amount</th>
-                <th className="px-6 py-4 text-right">Balance</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4">{t('reports.table.description')}</th>
+                <th className="px-6 py-4">{t('reports.table.category')}</th>
+                <th className="px-6 py-4">{t('reports.table.account')}</th>
+                <th className="px-6 py-4 text-right">
+                  {t('reports.table.amount')}
+                </th>
+                <th className="px-6 py-4 text-right">
+                  {t('reports.table.balance')}
+                </th>
+                <th className="px-6 py-4 text-right">
+                  {t('reports.table.actions')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800">
@@ -632,7 +659,7 @@ export function FinanceAdminView({
                     colSpan={6}
                     className="px-6 py-6 text-center text-sm text-slate-500"
                   >
-                    No reports for this month yet.
+                    {t('reports.empty')}
                   </td>
                 </tr>
               ) : (
@@ -689,7 +716,7 @@ export function FinanceAdminView({
                             className="rounded-lg p-1.5 text-slate-400 transition hover:text-sky-500"
                             type="button"
                             onClick={() => handleEditReport(report)}
-                            aria-label="Edit report"
+                            aria-label={t('reports.editAria')}
                           >
                             ✎
                           </button>
@@ -697,7 +724,7 @@ export function FinanceAdminView({
                             className="rounded-lg p-1.5 text-slate-400 transition hover:text-rose-500"
                             type="button"
                             onClick={() => handleDeleteReport(report)}
-                            aria-label="Delete report"
+                            aria-label={t('reports.deleteAria')}
                           >
                             ✕
                           </button>
@@ -750,7 +777,7 @@ export function FinanceAdminView({
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-400 transition hover:text-sky-500"
               type="button"
               onClick={() => handleMonthChange(-1)}
-              aria-label="Previous month"
+              aria-label={t('pagination.previousMonth')}
             >
               ‹
             </button>
@@ -758,7 +785,7 @@ export function FinanceAdminView({
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-400 transition hover:text-sky-500"
               type="button"
               onClick={() => handleMonthChange(1)}
-              aria-label="Next month"
+              aria-label={t('pagination.nextMonth')}
             >
               ›
             </button>
@@ -778,10 +805,11 @@ function AccountForm({
   onChange: (state: AccountFormState) => void;
   onValidityChange: (isValid: boolean) => void;
 }) {
+  const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState<AccountFormState>(initialState);
   const [touched, setTouched] = useState({ name: false, iban: false });
 
-  const errors = validateAccountForm(formState);
+  const errors = validateAccountForm(formState, t);
   const isValid = Object.keys(errors).length === 0;
   const nameError = touched.name ? (errors.name ?? '') : '';
   const ibanError = touched.iban ? (errors.iban ?? '') : '';
@@ -789,7 +817,9 @@ function AccountForm({
   const updateState = (nextState: AccountFormState) => {
     setFormState(nextState);
     onChange(nextState);
-    onValidityChange(Object.keys(validateAccountForm(nextState)).length === 0);
+    onValidityChange(
+      Object.keys(validateAccountForm(nextState, t)).length === 0,
+    );
   };
 
   useEffect(() => {
@@ -799,7 +829,9 @@ function AccountForm({
   return (
     <form className="space-y-4">
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-slate-600">Name</label>
+        <label className="text-xs font-semibold text-slate-600">
+          {t('forms.account.nameLabel')}
+        </label>
         <input
           className={`w-full rounded-xl border px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400 ${
             nameError ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200'
@@ -810,7 +842,7 @@ function AccountForm({
           }
           onBlur={() => setTouched((current) => ({ ...current, name: true }))}
           type="text"
-          placeholder="Main shelter account"
+          placeholder={t('forms.account.namePlaceholder')}
         />
         {nameError ? (
           <p className="text-xs text-rose-500">{nameError}</p>
@@ -818,7 +850,7 @@ function AccountForm({
       </div>
       <div className="space-y-2">
         <IbanInput
-          label="IBAN"
+          label={t('forms.account.ibanLabel')}
           value={formState.iban}
           onChange={(value) => updateState({ ...formState, iban: value })}
           onBlur={() => setTouched((current) => ({ ...current, iban: true }))}
@@ -830,7 +862,7 @@ function AccountForm({
       </div>
       {!isValid && (touched.name || touched.iban) ? (
         <p className="text-xs text-slate-500">
-          Please complete required fields before saving.
+          {t('forms.account.requiredHint')}
         </p>
       ) : null}
     </form>
@@ -852,6 +884,7 @@ function ReportForm({
   onChange: (state: ReportFormState) => void;
   onValidityChange: (isValid: boolean) => void;
 }) {
+  const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState<ReportFormState>(initialState);
   const [touched, setTouched] = useState({
     description: false,
@@ -865,7 +898,7 @@ function ReportForm({
       ? incomingCategoryOptions
       : outgoingCategoryOptions;
 
-  const errors = validateReportForm(formState);
+  const errors = validateReportForm(formState, t);
   const descriptionError = touched.description
     ? (errors.description ?? '')
     : '';
@@ -876,7 +909,9 @@ function ReportForm({
   const updateState = (nextState: ReportFormState) => {
     setFormState(nextState);
     onChange(nextState);
-    onValidityChange(Object.keys(validateReportForm(nextState)).length === 0);
+    onValidityChange(
+      Object.keys(validateReportForm(nextState, t)).length === 0,
+    );
   };
 
   useEffect(() => {
@@ -905,7 +940,9 @@ function ReportForm({
     <form className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-600">Type</label>
+          <label className="text-xs font-semibold text-slate-600">
+            {t('forms.report.typeLabel')}
+          </label>
           <select
             className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
             value={formState.type}
@@ -917,13 +954,15 @@ function ReportForm({
               })
             }
           >
-            <option value="incoming">Incoming</option>
-            <option value="outgoing">Outgoing</option>
-            <option value="debt">Debt</option>
+            <option value="incoming">{t('forms.report.typeIncoming')}</option>
+            <option value="outgoing">{t('forms.report.typeOutgoing')}</option>
+            <option value="debt">{t('forms.report.typeDebt')}</option>
           </select>
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-600">Amount</label>
+          <label className="text-xs font-semibold text-slate-600">
+            {t('forms.report.amountLabel')}
+          </label>
           <input
             className={`w-full rounded-xl border px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400 ${
               amountError ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200'
@@ -938,7 +977,7 @@ function ReportForm({
             type="number"
             min={0}
             step="0.01"
-            placeholder="0"
+            placeholder={t('forms.report.amountPlaceholder')}
           />
           {amountError ? (
             <p className="text-xs text-rose-500">{amountError}</p>
@@ -947,7 +986,7 @@ function ReportForm({
       </div>
       <div className="space-y-2">
         <label className="text-xs font-semibold text-slate-600">
-          Description
+          {t('forms.report.descriptionLabel')}
         </label>
         <input
           className={`w-full rounded-xl border px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400 ${
@@ -963,7 +1002,7 @@ function ReportForm({
             setTouched((current) => ({ ...current, description: true }))
           }
           type="text"
-          placeholder="Monthly shelter expenses"
+          placeholder={t('forms.report.descriptionPlaceholder')}
         />
         {descriptionError ? (
           <p className="text-xs text-rose-500">{descriptionError}</p>
@@ -972,7 +1011,7 @@ function ReportForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-2">
           <label className="text-xs font-semibold text-slate-600">
-            Category
+            {t('forms.report.categoryLabel')}
           </label>
           <select
             className={`w-full rounded-xl border px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400 ${
@@ -988,7 +1027,7 @@ function ReportForm({
               setTouched((current) => ({ ...current, categoryId: true }))
             }
           >
-            <option value="">Select category</option>
+            <option value="">{t('forms.report.categoryPlaceholder')}</option>
             {categoryOptions.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -1001,7 +1040,7 @@ function ReportForm({
         </div>
         <div className="space-y-2">
           <label className="text-xs font-semibold text-slate-600">
-            Account
+            {t('forms.report.accountLabel')}
           </label>
           <select
             className={`w-full rounded-xl border px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400 ${
@@ -1017,7 +1056,7 @@ function ReportForm({
               setTouched((current) => ({ ...current, accountId: true }))
             }
           >
-            <option value="">Select account</option>
+            <option value="">{t('forms.report.accountPlaceholder')}</option>
             {accounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
@@ -1033,19 +1072,19 @@ function ReportForm({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-            Details
+            {t('forms.report.detailsTitle')}
           </p>
           <button
             className="rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold text-slate-500 transition hover:border-sky-200 hover:text-sky-600"
             type="button"
             onClick={addDetail}
           >
-            Add detail
+            {t('forms.report.addDetail')}
           </button>
         </div>
         {formState.details.length === 0 ? (
           <p className="text-xs text-slate-400">
-            Add detail rows to break down the report amount.
+            {t('forms.report.detailsEmpty')}
           </p>
         ) : (
           <div className="space-y-3">
@@ -1056,14 +1095,14 @@ function ReportForm({
               >
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-semibold text-slate-500">
-                    Detail {index + 1}
+                    {t('forms.report.detailLabel', { index: index + 1 })}
                   </p>
                   <button
                     className="text-xs font-semibold text-rose-500"
                     type="button"
                     onClick={() => removeDetail(index)}
                   >
-                    Remove
+                    {t('common.remove')}
                   </button>
                 </div>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -1077,7 +1116,7 @@ function ReportForm({
                       })
                     }
                     type="text"
-                    placeholder="Extra note"
+                    placeholder={t('forms.report.detailDescriptionPlaceholder')}
                   />
                   <input
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
@@ -1091,7 +1130,7 @@ function ReportForm({
                     type="number"
                     min={0}
                     step="0.01"
-                    placeholder="0"
+                    placeholder={t('forms.report.detailAmountPlaceholder')}
                   />
                 </div>
                 <div className="mt-3">
@@ -1105,7 +1144,9 @@ function ReportForm({
                       })
                     }
                   >
-                    <option value="">Optional subcategory</option>
+                    <option value="">
+                      {t('forms.report.detailCategoryPlaceholder')}
+                    </option>
                     {categoryOptions.map((category) => (
                       <option key={category.id} value={category.id}>
                         {category.name}
@@ -1135,17 +1176,19 @@ function CategoriesModal({
   outgoingOptions: CategoryOption[];
   onRefresh: () => void;
 }) {
+  const t = useTranslations('adminFinance');
+
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <CategoryPanel
-        title="Incoming"
+        title={t('categories.incomingTitle')}
         categories={incoming}
         options={incomingOptions}
         type="incoming"
         onRefresh={onRefresh}
       />
       <CategoryPanel
-        title="Outgoing"
+        title={t('categories.outgoingTitle')}
         categories={outgoing}
         options={outgoingOptions}
         type="outgoing"
@@ -1168,13 +1211,14 @@ function CategoryPanel({
   type: 'incoming' | 'outgoing';
   onRefresh: () => void;
 }) {
+  const t = useTranslations('adminFinance');
   const { showModal } = useModal();
 
   const handleAddCategory = () => {
     const formStateRef = { current: { name: '', inheritsId: '' } };
 
     void showModal({
-      title: `Add ${title} category`,
+      title: t('categories.addTitle', { title }),
       content: (
         <CategoryForm
           options={options}
@@ -1184,9 +1228,9 @@ function CategoryPanel({
         />
       ),
       actions: [
-        { label: 'Cancel', tone: 'ghost' },
+        { label: t('common.cancel'), tone: 'ghost' },
         {
-          label: 'Create',
+          label: t('common.create'),
           tone: 'primary',
           onSelect: async () => {
             await createCategory({
@@ -1206,19 +1250,21 @@ function CategoryPanel({
     <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950/70">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
-          {title} categories
+          {t('categories.panelTitle', { title })}
         </h3>
         <button
           className="rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold text-slate-500 transition hover:border-sky-200 hover:text-sky-600"
           type="button"
           onClick={handleAddCategory}
         >
-          Add category
+          {t('categories.addCategory')}
         </button>
       </div>
       <div className="mt-4">
         {categories.length === 0 ? (
-          <p className="text-xs text-slate-400">No categories yet.</p>
+          <p className="text-xs text-slate-400">
+            {t('categories.noCategories')}
+          </p>
         ) : (
           <CategoryTree
             nodes={categories}
@@ -1228,6 +1274,7 @@ function CategoryPanel({
                 type,
                 onRefresh,
                 showModal,
+                t,
               })
             }
           />
@@ -1244,6 +1291,7 @@ function CategoryForm({
   options: CategoryOption[];
   onChange: (state: { name: string; inheritsId: string }) => void;
 }) {
+  const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState({ name: '', inheritsId: '' });
 
   const updateState = (nextState: { name: string; inheritsId: string }) => {
@@ -1254,7 +1302,9 @@ function CategoryForm({
   return (
     <form className="space-y-4">
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-slate-600">Name</label>
+        <label className="text-xs font-semibold text-slate-600">
+          {t('categories.nameLabel')}
+        </label>
         <input
           className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
           value={formState.name}
@@ -1262,11 +1312,13 @@ function CategoryForm({
             updateState({ ...formState, name: event.target.value })
           }
           type="text"
-          placeholder="Donations"
+          placeholder={t('categories.namePlaceholder')}
         />
       </div>
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-slate-600">Parent</label>
+        <label className="text-xs font-semibold text-slate-600">
+          {t('categories.parentLabel')}
+        </label>
         <select
           className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
           value={formState.inheritsId}
@@ -1274,7 +1326,7 @@ function CategoryForm({
             updateState({ ...formState, inheritsId: event.target.value })
           }
         >
-          <option value="">No parent</option>
+          <option value="">{t('categories.parentPlaceholder')}</option>
           {options.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -1309,6 +1361,7 @@ function CategoryTreeNode({
   node: CategoryNode;
   onDelete: (categoryId: string) => void;
 }) {
+  const t = useTranslations('adminFinance');
   const [expanded, setExpanded] = useState(true);
 
   return (
@@ -1329,7 +1382,7 @@ function CategoryTreeNode({
           type="button"
           onClick={() => onDelete(node.id)}
         >
-          Delete
+          {t('common.delete')}
         </button>
       </div>
       {expanded && node.children.length > 0 && (
@@ -1348,21 +1401,23 @@ async function handleDeleteCategory({
   type,
   onRefresh,
   showModal,
+  t,
 }: {
   categoryId: string;
   type: 'incoming' | 'outgoing';
   onRefresh: () => void;
   showModal: ReturnType<typeof useModal>['showModal'];
+  t: TranslationFn;
 }) {
   const result = await deleteCategory({ id: categoryId, name: '', type });
 
   if (!result.success) {
     void showModal({
-      title: 'Unable to delete category',
+      title: t('categories.deleteErrorTitle'),
       description: result.message,
       actions: [
         {
-          label: 'Close',
+          label: t('common.close'),
           tone: 'primary',
         },
       ],
@@ -1374,29 +1429,29 @@ async function handleDeleteCategory({
   onRefresh();
 }
 
-function validateAccountForm(state: AccountFormState) {
+function validateAccountForm(state: AccountFormState, t: TranslationFn) {
   const errors: { name?: string; iban?: string } = {};
   const name = state.name.trim();
   const iban = state.iban.trim();
 
   if (!name) {
-    errors.name = 'Name is required.';
+    errors.name = t('forms.account.nameRequired');
   }
 
   if (!iban) {
-    errors.iban = 'IBAN is required.';
+    errors.iban = t('forms.account.ibanRequired');
   } else if (!isValidIban(iban)) {
-    errors.iban = 'IBAN must match the required format.';
+    errors.iban = t('forms.account.ibanInvalid');
   }
 
   return errors;
 }
 
-function isAccountFormValid(state: AccountFormState) {
-  return Object.keys(validateAccountForm(state)).length === 0;
+function isAccountFormValid(state: AccountFormState, t: TranslationFn) {
+  return Object.keys(validateAccountForm(state, t)).length === 0;
 }
 
-function validateReportForm(state: ReportFormState) {
+function validateReportForm(state: ReportFormState, t: TranslationFn) {
   const errors: {
     description?: string;
     amount?: string;
@@ -1408,27 +1463,27 @@ function validateReportForm(state: ReportFormState) {
   const amount = Number(state.amount);
 
   if (!description) {
-    errors.description = 'Description is required.';
+    errors.description = t('forms.report.descriptionRequired');
   }
 
   if (!Number.isFinite(amount) || amount <= 0) {
-    errors.amount = 'Amount must be greater than zero.';
+    errors.amount = t('forms.report.amountRequired');
   }
 
   if (!state.categoryId) {
-    errors.categoryId = 'Category is required.';
+    errors.categoryId = t('forms.report.categoryRequired');
   }
 
   if (
     (state.type === 'incoming' || state.type === 'outgoing') &&
     !state.accountId
   ) {
-    errors.accountId = 'Account is required.';
+    errors.accountId = t('forms.report.accountRequired');
   }
 
   return errors;
 }
 
-function isReportFormValid(state: ReportFormState) {
-  return Object.keys(validateReportForm(state)).length === 0;
+function isReportFormValid(state: ReportFormState, t: TranslationFn) {
+  return Object.keys(validateReportForm(state, t)).length === 0;
 }

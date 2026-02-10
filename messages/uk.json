@@ -1229,12 +1229,18 @@
   },
   "reportspage": {
     "title": "Звіти",
+    "pageTitle": "Звітність фонду",
+    "pageDescription": "Ми віримо у повну прозорість. Тут ви можете ознайомитись із результатами нашої роботи та фінансовими звітами.",
     "intro": "Ми публікуємо звіти для прозорості роботи фонду. Річні звіти узагальнюють фінанси, діяльність і вплив.",
     "nav": {
       "title": "Навігація по звітах",
       "subtitle": "Оновлюється щомісяця",
       "question": "Виникли питання щодо звітності?",
-      "contactCta": "Написати нам"
+      "contactCta": "Написати нам",
+      "items": {
+        "impact": "Вплив та статистика",
+        "financials": "Фінансові звіти"
+      }
     },
     "newSeason": {
       "title": "Ми готуємося до нового сезону",
@@ -1253,6 +1259,137 @@
         "summary": "Містить фінансову звітність, результати програм та ключові показники впливу.",
         "request": "Потрібна актуальна підписана версія? Напишіть на <email>info@perilines.com.ua</email>."
       }
+    }
+  },
+  "reportsContent": {
+    "impact": {
+      "title": "Вплив та статистика (TNR)",
+      "summary": "Підсумок діяльності за {year} рік",
+      "sterilized": "{count, plural, one {Стерилізовано} few {Стерилізовано} many {Стерилізованих} other {Стерилізованих}}",
+      "locations": "{count, plural, one {Обстежено локацію} few {Обстежено локації} many {Обстежено локацій} other {Обстежено локацій}}",
+      "monthsTitle": "Активність по місяцях · {year}",
+      "locationsChecked": "Перевірених локацій"
+    },
+    "finance": {
+      "title": "Фінансові звіти",
+      "yearLabel": "{year} рік",
+      "monthLabel": "Звіт за місяць",
+      "breakdownToggle": "Розподіл витрат",
+      "yearTotal": "Всього за {year} рік"
+    },
+    "actions": {
+      "loading": "Завантаження...",
+      "loadPrevious": "Завантажити попередній рік"
+    }
+  },
+  "adminFinance": {
+    "common": {
+      "cancel": "Скасувати",
+      "close": "Закрити",
+      "create": "Створити",
+      "saveChanges": "Зберегти зміни",
+      "delete": "Видалити",
+      "disable": "Деактивувати",
+      "remove": "Прибрати"
+    },
+    "account": {
+      "overviewTitle": "Огляд рахунків",
+      "overviewSubtitle": "{count} активних рахунків · Цього місяця: {month}",
+      "noAccounts": "Немає активних рахунків. Додайте перший рахунок, щоб відстежувати баланс.",
+      "activeBadge": "Активний",
+      "thisMonth": "Цього місяця",
+      "currentBalance": "Поточний баланс",
+      "debt": "Борг",
+      "addAccount": "Додати новий рахунок",
+      "addTitle": "Додати новий рахунок",
+      "editTitle": "Редагувати {name}",
+      "createButton": "Створити рахунок",
+      "disableTitle": "Деактивувати рахунок?",
+      "disableBody": "Це позначить <strong>{name}</strong> як неактивний.",
+      "editAria": "Редагувати {name}",
+      "disableAria": "Деактивувати {name}"
+    },
+    "summary": {
+      "totalBalance": "Загальний баланс фонду",
+      "monthly": "Статистика за місяць",
+      "yearly": "Статистика за рік",
+      "incoming": "Надходження",
+      "expenses": "Витрати"
+    },
+    "reports": {
+      "recentTitle": "Останні транзакції",
+      "addRecord": "Додати запис",
+      "addTitle": "Додати запис звіту",
+      "createButton": "Створити звіт",
+      "editTitle": "Редагувати запис звіту",
+      "deleteTitle": "Видалити запис звіту?",
+      "deleteBody": "Це остаточно видалить запис.",
+      "categories": "Категорії",
+      "table": {
+        "description": "Опис",
+        "category": "Категорія",
+        "account": "Рахунок",
+        "amount": "Сума",
+        "balance": "Баланс",
+        "actions": "Дії"
+      },
+      "empty": "За цей місяць звітів ще немає.",
+      "editAria": "Редагувати звіт",
+      "deleteAria": "Видалити звіт"
+    },
+    "pagination": {
+      "previousMonth": "Попередній місяць",
+      "nextMonth": "Наступний місяць"
+    },
+    "forms": {
+      "account": {
+        "nameLabel": "Назва",
+        "namePlaceholder": "Основний рахунок притулку",
+        "ibanLabel": "IBAN",
+        "requiredHint": "Заповніть обов'язкові поля перед збереженням.",
+        "nameRequired": "Вкажіть назву.",
+        "ibanRequired": "IBAN обов'язковий.",
+        "ibanInvalid": "IBAN має відповідати потрібному формату."
+      },
+      "report": {
+        "typeLabel": "Тип",
+        "typeIncoming": "Надходження",
+        "typeOutgoing": "Витрати",
+        "typeDebt": "Борг",
+        "amountLabel": "Сума",
+        "amountPlaceholder": "0",
+        "descriptionLabel": "Опис",
+        "descriptionPlaceholder": "Щомісячні витрати притулку",
+        "categoryLabel": "Категорія",
+        "categoryPlaceholder": "Оберіть категорію",
+        "accountLabel": "Рахунок",
+        "accountPlaceholder": "Оберіть рахунок",
+        "detailsTitle": "Деталі",
+        "addDetail": "Додати деталь",
+        "detailsEmpty": "Додайте деталі, щоб розподілити суму звіту.",
+        "detailLabel": "Деталь {index}",
+        "detailDescriptionPlaceholder": "Додаткова примітка",
+        "detailAmountPlaceholder": "0",
+        "detailCategoryPlaceholder": "Необов'язкова підкатегорія",
+        "descriptionRequired": "Опис обов'язковий.",
+        "amountRequired": "Сума має бути більшою за нуль.",
+        "categoryRequired": "Категорія обов'язкова.",
+        "accountRequired": "Рахунок обов'язковий."
+      }
+    },
+    "categories": {
+      "modalTitle": "Категорії",
+      "incomingTitle": "Надходження",
+      "outgoingTitle": "Витрати",
+      "panelTitle": "{title} категорії",
+      "addCategory": "Додати категорію",
+      "noCategories": "Категорій ще немає.",
+      "addTitle": "Додати категорію: {title}",
+      "nameLabel": "Назва",
+      "namePlaceholder": "Пожертви",
+      "parentLabel": "Батьківська",
+      "parentPlaceholder": "Без батьківської",
+      "deleteErrorTitle": "Неможливо видалити категорію"
     }
   },
   "footer": {

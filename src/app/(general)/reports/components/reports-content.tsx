@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
@@ -74,6 +75,7 @@ function getVisibleMonths<T extends { month: number }>(
 }
 
 export function ReportsContent({ initialYear }: { initialYear: number }) {
+  const t = useTranslations('reportsContent');
   const [impactYears, setImpactYears] = useState<ImpactYearReport[]>([]);
   const [financeYears, setFinanceYears] = useState<FinanceYearReport[]>([]);
   const [impactLoading, setImpactLoading] = useState(true);
@@ -240,7 +242,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
           <span className="size-6 text-[#256af4]">
             <BarChartIcon />
           </span>
-          Вплив та статистика (TNR)
+          {t('impact.title')}
         </h2>
 
         {impactLoading ? (
@@ -260,13 +262,13 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                     )}
                   >
                     <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-white/80">
-                      Підсумок діяльності за {yearData.year} рік
+                      {t('impact.summary', { year: yearData.year })}
                     </div>
                     <div className="flex flex-col gap-4 md:flex-row">
                       <div className="flex-1 rounded-xl border border-white/20 to-white/10 bg-linear-to-b from-white/5 px-4 py-1">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] font-bold uppercase text-white/70">
-                            Стерилізовано
+                            {t('impact.sterilized', { count: yearData.stats.yearSterilized })}
                           </span>
                           <span className="text-2xl font-black text-white">
                             {yearData.stats.yearSterilized}
@@ -276,7 +278,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                       <div className="flex-1 rounded-xl border border-white/20 to-white/10 bg-linear-to-b from-white/5 px-4 py-1">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] font-bold uppercase text-white/70">
-                            Обстежено локацій
+                            {t('impact.locations', { count: yearData.stats.yearLocations })}
                           </span>
                           <span className="text-2xl font-black text-white">
                             {yearData.stats.yearLocations}
@@ -288,7 +290,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
 
                   <div className="p-6">
                     <h3 className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a8bb1]">
-                      Активність по місяцях · {yearData.year}
+                      {t('impact.monthsTitle', { year: yearData.year })}
                     </h3>
                     <div className="space-y-4">
                       {getVisibleMonths(
@@ -315,7 +317,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                                 </span>
                               </div>
                               <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
-                                Стерилізовано
+                                {t('impact.sterilized')}
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -328,7 +330,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                                 </span>
                               </div>
                               <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
-                                Перевірених локацій
+                                {t('impact.locationsChecked')}
                               </div>
                             </div>
                           </div>
@@ -347,8 +349,8 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                 disabled={impactLoadingMore}
               >
                 {impactLoadingMore
-                  ? 'Завантаження...'
-                  : 'Завантажити попередній рік'}
+                  ? t('actions.loading')
+                  : t('actions.loadPrevious')}
               </button>
             ) : null}
           </div>
@@ -360,7 +362,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
           <span className="size-6 text-[#256af4]">
             <ReceiptIcon />
           </span>
-          Фінансові звіти
+          {t('finance.title')}
         </h2>
 
         {financeLoading ? (
@@ -370,7 +372,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
             {financeYears.map((yearData) => (
               <div key={`finance-${yearData.year}`} className="space-y-4">
                 <h3 className="border-l-4 border-[#256af4] px-2 text-lg font-bold text-[#0d121c] dark:text-zinc-200">
-                  {yearData.year} рік
+                  {t('finance.yearLabel', { year: yearData.year })}
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
                   {getVisibleMonths(yearData.finance.months, yearData.year).map(
@@ -415,7 +417,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                                   </div>
                                 </div>
                                 <p className="text-[10px] text-[#49659c]">
-                                  Звіт за місяць
+                                  {t('finance.monthLabel')}
                                 </p>
                               </div>
                             </div>
@@ -427,7 +429,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                                 onClick={() => toggleMonthDetails(monthKey)}
                                 className="group inline-flex items-center gap-2 rounded-full border border-[#e7ebf4] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#49659c] transition hover:border-[#256af4] hover:text-[#256af4] dark:border-[#2d3a52]"
                               >
-                                Розподіл витрат
+                                {t('finance.breakdownToggle')}
                                 <span
                                   className={clsx(
                                     'flex size-6 items-center justify-center rounded-full bg-[#f1f5f9] text-[#256af4] transition-transform dark:bg-[#253247]',
@@ -466,7 +468,9 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                     },
                   )}
                   <div className="flex items-center justify-between rounded-xl border border-[#e7ebf4] bg-white px-4 py-2 text-sm font-bold shadow-sm dark:border-[#2d3a52] dark:bg-[#1c2636]">
-                    <span>Всього за {yearData.year} рік</span>
+                    <span>
+                      {t('finance.yearTotal', { year: yearData.year })}
+                    </span>
 
                     <div className="flex flex-wrap gap-2">
                       <div className="flex items-center gap-1 rounded bg-green-100 px-3 py-1 text-xs font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">
@@ -494,8 +498,8 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                 disabled={financeLoadingMore}
               >
                 {financeLoadingMore
-                  ? 'Завантаження...'
-                  : 'Завантажити попередній рік'}
+                  ? t('actions.loading')
+                  : t('actions.loadPrevious')}
               </button>
             ) : null}
           </div>
