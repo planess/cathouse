@@ -10,4 +10,9 @@ export enum DbTables {
   people = 'people',
   clinics = 'clinics',
   connections = 'connections',
+  bankAccounts = 'bank_accounts',
+  financeIncomingCategories = 'finance_incoming_categories',
+  financeOutgoingCategories = 'finance_outgoing_categories',
+  reportsFinance = 'reports_finance',
+  reportsStuff = 'reports_stuff',
 }

@@ -33,17 +33,16 @@ module.exports = {
             },
             ip: {
               bsonType: 'string',
-              description: 'IP address of the user'
+              description: 'IP address of the user',
             },
             createdAt: {
               bsonType: 'date',
               description: 'Date of creation',
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     });
-    // await db.collection('albums').updateOne({artist: 'The Beatles'}, {$set: {blacklisted: true}});
   },
 
   /**
@@ -52,8 +51,6 @@ module.exports = {
    * @returns {Promise<void>}
    */
   async down(db, client) {
-    // TODO write the statements to rollback your migration (if possible)
-    // Example:
-    // await db.collection('albums').updateOne({artist: 'The Beatles'}, {$set: {blacklisted: false}});
-  }
+    await db.collection('connections').drop();
+  },
 };

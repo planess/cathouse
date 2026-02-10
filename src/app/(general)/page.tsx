@@ -13,11 +13,11 @@ import {
   CheckRoundIcon,
   CommunityLove,
   HomeCareIcon,
-  MedicalAssistance,
+  MedicalAssistanceIcon,
   MedicalBoxIcon,
   PetsIcon,
   SearchIcon,
-  TrendingDown,
+  TrendingDownIcon,
   VaccinesIcon,
   VisibilityIcon,
 } from './history/[animalId]/components/icons';
@@ -184,13 +184,13 @@ export default function Home() {
               >
                 {feature.key === 'population' && (
                   <RoundIcon
-                    icon={<TrendingDown />}
+                    icon={<TrendingDownIcon />}
                     className="bg-[#00a6f4]/20 text-[#0a2e0a]"
                   />
                 )}
                 {feature.key === 'medical' && (
                   <RoundIcon
-                    icon={<MedicalAssistance />}
+                    icon={<MedicalAssistanceIcon />}
                     className="bg-sky-100 text-sky-700"
                   />
                 )}
