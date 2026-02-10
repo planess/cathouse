@@ -383,7 +383,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
                       return (
                         <div
                           key={`finance-${yearData.year}-${month.month}`}
-                          className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#e7ebf4] bg-white p-4 transition-shadow hover:shadow-md dark:border-[#2d3a52] dark:bg-[#1c2636]"
+                          className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#e7ebf4] bg-white p-4 transition-shadow hover:shadow-sm dark:border-[#2d3a52] dark:bg-[#1c2636]"
                         >
                           <div className="flex w-full flex-wrap items-center justify-between gap-4">
                             <div className="flex items-center gap-4">

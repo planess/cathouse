@@ -1,7 +1,7 @@
 'use server';
 
 import { ObjectId } from 'mongodb';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
@@ -279,6 +279,9 @@ export async function createReport(payload: ReportPayload) {
   });
 
   revalidatePath('/admin/finance');
+  if (payload.type === 'debt') {
+    revalidateTag('admin-finance-debts');
+  }
 
   return { success: true, message: 'Report created.' };
 }
@@ -372,6 +375,9 @@ export async function updateReport(payload: ReportPayload) {
     .updateOne({ _id: new ObjectId(payload.id) }, update);
 
   revalidatePath('/admin/finance');
+  if (previousType === 'debt' || payload.type === 'debt') {
+    revalidateTag('admin-finance-debts');
+  }
 
   return { success: true, message: 'Report updated.' };
 }
@@ -411,6 +417,9 @@ export async function deleteReport(reportId: string) {
   });
 
   revalidatePath('/admin/finance');
+  if (type === 'debt') {
+    revalidateTag('admin-finance-debts');
+  }
 
   return { success: true, message: 'Report deleted.' };
 }

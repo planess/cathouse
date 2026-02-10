@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { unstable_cache } from 'next/cache';
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
@@ -52,6 +53,21 @@ type CategoryNode = {
 };
 
 const DEFAULT_LOCALE = 'en-US';
+
+const getDebtReports = unstable_cache(
+  async () => {
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+
+    return db
+      .collection<ReportDocument>(DbTables.reportsFinance)
+      .find({ type: 'debt' })
+      .sort({ createdAt: -1 })
+      .toArray();
+  },
+  ['admin-finance-debts'],
+  { tags: ['admin-finance-debts'] },
+);
 
 function parseMonthParam(param?: string): Date {
   if (!param || !/^\d{4}-\d{2}$/.test(param)) {
@@ -135,6 +151,7 @@ export default async function FinancePage({
     incomingCategories,
     outgoingCategories,
     reports,
+    debtReports,
     monthTotals,
     yearTotals,
     monthAccountTotals,
@@ -158,6 +175,7 @@ export default async function FinancePage({
       .find({ createdAt: { $gte: monthStart, $lt: monthEnd } })
       .sort({ createdAt: -1 })
       .toArray(),
+    getDebtReports(),
     db
       .collection<ReportDocument>(DbTables.reportsFinance)
       .aggregate<{ _id: string; total: number }>([
@@ -361,6 +379,48 @@ export default async function FinancePage({
     },
   );
 
+  const normalizedDebtReports: FinanceAdminViewProps['reports'] =
+    debtReports.map((report) => {
+      const categoryId = report.category?.toString();
+      const accountId = report.account?.toString();
+      const categoryName =
+        (report.type === 'incoming'
+          ? incomingCategoryMap.get(categoryId ?? '')
+          : outgoingCategoryMap.get(categoryId ?? '')) ??
+        allCategoryMap.get(categoryId ?? '') ??
+        '';
+
+      return {
+        id: report._id.toString(),
+        type: report.type,
+        description: report.description ?? '',
+        categoryName,
+        categoryId,
+        accountName: accountId ? (accountMap.get(accountId) ?? '') : '',
+        accountId,
+        amount: report.amount ?? 0,
+        balance: report.balance ?? 0,
+        createdAt: report.createdAt ? report.createdAt.toISOString() : '',
+        details:
+          report.details?.map((detail) => ({
+            description: detail.description,
+            amount: detail.amount ?? 0,
+            categoryName: detail.category
+              ? allCategoryMap.get(detail.category.toString())
+              : undefined,
+            categoryId: detail.category?.toString(),
+          })) ?? [],
+      };
+    });
+
+  const monthReports = normalizedReports.filter(
+    (report) => report.type !== 'debt',
+  );
+  const combinedReports: FinanceAdminViewProps['reports'] = [
+    ...normalizedDebtReports,
+    ...monthReports,
+  ];
+
   const totalBalance = normalizedAccounts.reduce(
     (sum, account) => sum + account.balance,
     0,
@@ -380,7 +440,7 @@ export default async function FinancePage({
       name: category.name,
       inheritsFrom: category.inherits?.toString() ?? null,
     })),
-    reports: normalizedReports,
+    reports: combinedReports,
     summary: {
       totalBalance,
       monthIncoming: summaryTotals.monthIncoming,

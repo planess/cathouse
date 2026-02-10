@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
@@ -541,7 +542,7 @@ export function FinanceAdminView({
                 </p>
               </div>
             </div>
-            <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:items-start sm:justify-around">
               <div className="space-y-2">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-100">
                   Monthly Statistics
@@ -638,13 +639,15 @@ export function FinanceAdminView({
                 reports.map((report) => (
                   <Fragment key={report.id}>
                     <tr
-                      className={`transition hover:bg-slate-50/70 dark:hover:bg-slate-900/60 ${
-                        report.type === 'incoming'
-                          ? 'bg-emerald-50/30'
-                          : report.type === 'outgoing'
-                            ? 'bg-rose-50/30'
-                            : 'bg-amber-50/30'
-                      }`}
+                      className={clsx(
+                        'transition hover:bg-slate-50/70 dark:hover:bg-slate-900/60',
+                        {
+                          'bg-emerald-100/50': report.type === 'incoming',
+                          'bg-rose-100/50': report.type === 'outgoing',
+                          'bg-amber-100/50 border-x border-x-amber-400':
+                            report.type === 'debt',
+                        },
+                      )}
                     >
                       <td className="px-6 py-4">
                         <p className="text-sm font-semibold text-slate-900 dark:text-white">
@@ -702,7 +705,7 @@ export function FinanceAdminView({
                       </td>
                     </tr>
                     {report.details.length > 0 && (
-                      <tr className="bg-slate-50/60">
+                      <tr className="bg-zinc-200/20 border-x border-x-slate-400">
                         <td colSpan={6} className="px-6 py-3">
                           <div className="space-y-2">
                             {report.details.map((detail, index) => {

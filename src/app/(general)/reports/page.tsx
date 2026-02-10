@@ -38,18 +38,7 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className={`mx-auto w-full max-w-300 px-4 py-8 md:px-20 lg:px-40`}>
-      <div className="mb-6 flex flex-wrap gap-2 text-sm">
-        <Link
-          className="text-[#49659c] transition-colors hover:text-[#256af4]"
-          href="/"
-        >
-          Головна
-        </Link>
-        <span className="text-[#49659c]">/</span>
-        <span className="font-medium">Звітність фонду</span>
-      </div>
-
+    <div className={`mx-auto w-full max-w-7xl px-4 py-8 md:px-20 lg:px-40`}>
       <div className="mb-10 flex flex-col gap-4 border-b border-[#e7ebf4] pb-6 dark:border-[#2d3a52] md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-black tracking-[-0.033em] text-[#0d121c] dark:text-white">
@@ -62,8 +51,8 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-12 lg:flex-row">
-        <aside className="order-2 lg:order-1 lg:w-1/3">
+      <div className="flex gap-12">
+        <aside className="flex-none basis-1/3 hidden lg:block">
           <div className="sticky top-24">
             <OfferNavigation
               title="Навігація по звітах"
@@ -83,7 +72,7 @@ export default function ReportsPage() {
           </div>
         </aside>
 
-        <main className="order-1 lg:order-2 lg:w-2/3">
+        <main className="flex-1">
           <ReportsContent initialYear={currentYear} />
         </main>
       </div>
