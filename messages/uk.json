@@ -1275,7 +1275,8 @@
       "yearLabel": "{year} рік",
       "monthLabel": "Звіт за місяць",
       "breakdownToggle": "Розподіл витрат",
-      "yearTotal": "Всього за {year} рік"
+      "yearTotal": "Всього за {year} рік",
+      "yearCategories": "Категорії за рік"
     },
     "actions": {
       "loading": "Завантаження...",

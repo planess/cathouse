@@ -1275,7 +1275,8 @@
       "yearLabel": "{year}",
       "monthLabel": "Monthly report",
       "breakdownToggle": "Expense breakdown",
-      "yearTotal": "Total for {year}"
+      "yearTotal": "Total for {year}",
+      "yearCategories": "Yearly categories"
     },
     "actions": {
       "loading": "Loading...",
