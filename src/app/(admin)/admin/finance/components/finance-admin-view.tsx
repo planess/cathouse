@@ -733,7 +733,7 @@ export function FinanceAdminView({
                     </tr>
                     {report.details.length > 0 && (
                       <tr className="bg-zinc-200/20 border-x border-x-slate-400">
-                        <td colSpan={6} className="px-6 py-3">
+                        <td colSpan={3} className="px-6 py-3">
                           <div className="space-y-2">
                             {report.details.map((detail, index) => {
                               const categoryLabel =
@@ -741,27 +741,43 @@ export function FinanceAdminView({
 
                               return (
                                 <div
-                                  key={`${report.id}-detail-${index}`}
-                                  className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500"
+                                  key={`${report.id}-detail-label-${index}`}
+                                  className="text-xs text-slate-500"
                                 >
-                                  <div>
-                                    <p className="font-semibold text-slate-700">
-                                      {detail.description}
+                                  <p className="font-semibold text-slate-700">
+                                    {detail.description}
+                                  </p>
+                                  {categoryLabel ? (
+                                    <p className="text-[10px] uppercase text-slate-400">
+                                      {categoryLabel}
                                     </p>
-                                    {categoryLabel ? (
-                                      <p className="text-[10px] uppercase text-slate-400">
-                                        {categoryLabel}
-                                      </p>
-                                    ) : null}
-                                  </div>
-                                  <span className="font-bold text-rose-500">
-                                    -{currency.format(detail.amount)}
-                                  </span>
+                                  ) : null}
                                 </div>
                               );
                             })}
                           </div>
                         </td>
+                        <td className="px-6 py-3 text-right">
+                          <div className="space-y-2">
+                            {report.details.map((detail, index) => {
+                              const categoryLabel =
+                                detail.categoryName?.trim() ?? '';
+
+                              return (
+                                <div key={`${report.id}-detail-value-${index}`}>
+                                  <p
+                                    className={clsx('font-bold text-rose-500', {
+                                      'mb-[calc(10px/.75)]': categoryLabel,
+                                    })}
+                                  >
+                                    -{currency.format(detail.amount)}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </td>
+                        <td colSpan={2} />
                       </tr>
                     )}
                   </Fragment>

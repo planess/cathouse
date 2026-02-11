@@ -96,6 +96,23 @@ function formatMonthLabel(date: Date) {
   }).format(date);
 }
 
+function formatCreatedAt(value: unknown): string {
+  if (!value) {
+    return '';
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (typeof value === 'string' || typeof value === 'number') {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString();
+  }
+
+  return '';
+}
+
 function buildCategoryTree(categories: CategoryDocument[]): CategoryNode[] {
   const nodes = new Map<string, CategoryNode & { parentId?: string }>();
 
@@ -365,7 +382,7 @@ export default async function FinancePage({
         accountId,
         amount: report.amount ?? 0,
         balance: report.balance ?? 0,
-        createdAt: report.createdAt ? report.createdAt.toISOString() : '',
+        createdAt: formatCreatedAt(report.createdAt),
         details:
           report.details?.map((detail) => ({
             description: detail.description,
@@ -400,7 +417,7 @@ export default async function FinancePage({
         accountId,
         amount: report.amount ?? 0,
         balance: report.balance ?? 0,
-        createdAt: report.createdAt ? report.createdAt.toISOString() : '',
+        createdAt: formatCreatedAt(report.createdAt),
         details:
           report.details?.map((detail) => ({
             description: detail.description,
