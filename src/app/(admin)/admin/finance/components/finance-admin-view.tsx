@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import {
   createAccount,
@@ -72,6 +72,9 @@ export function FinanceAdminView({
   const searchParams = useSearchParams();
   const { showModal } = useModal();
   const t = useTranslations('adminFinance');
+  const [expandedReportIds, setExpandedReportIds] = useState<
+    Record<string, boolean>
+  >({});
 
   const currency = useMemo(
     () =>
@@ -359,6 +362,13 @@ export function FinanceAdminView({
     });
   };
 
+  const toggleReportDetails = (reportId: string) => {
+    setExpandedReportIds((prev) => ({
+      ...prev,
+      [reportId]: !prev[reportId],
+    }));
+  };
+
   return (
     <div className="space-y-8">
       <section className="space-y-4">
@@ -615,9 +625,34 @@ export function FinanceAdminView({
                       )}
                     >
                       <td className="px-6 py-4">
-                        <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                          {report.description || '—'}
-                        </p>
+                        {report.details.length > 0 ? (
+                          <button
+                            className="flex items-center gap-2 text-left"
+                            type="button"
+                            onClick={() => toggleReportDetails(report.id)}
+                            aria-expanded={Boolean(
+                              expandedReportIds[report.id],
+                            )}
+                          >
+                            <span
+                              className={clsx(
+                                'text-sm text-slate-500 transition-transform',
+                                {
+                                  'rotate-90': expandedReportIds[report.id],
+                                },
+                              )}
+                            >
+                              ›
+                            </span>
+                            <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                              {report.description || '—'}
+                            </span>
+                          </button>
+                        ) : (
+                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                            {report.description || '—'}
+                          </p>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-slate-500">
@@ -669,55 +704,61 @@ export function FinanceAdminView({
                         </div>
                       </td>
                     </tr>
-                    {report.details.length > 0 && (
-                      <tr className="bg-zinc-200/20 border-x border-x-slate-400">
-                        <td colSpan={3} className="px-6 py-3">
-                          <div className="space-y-2">
-                            {report.details.map((detail, index) => {
-                              const categoryLabel =
-                                detail.categoryName?.trim() ?? '';
+                    {report.details.length > 0 &&
+                      expandedReportIds[report.id] && (
+                        <tr className="bg-zinc-200/20 border-x border-x-slate-400">
+                          <td colSpan={3} className="px-6 py-3">
+                            <div className="space-y-2">
+                              {report.details.map((detail, index) => {
+                                const categoryLabel =
+                                  detail.categoryName?.trim() ?? '';
 
-                              return (
-                                <div
-                                  key={`${report.id}-detail-label-${index}`}
-                                  className="text-xs text-slate-500"
-                                >
-                                  <p className="font-semibold text-slate-700">
-                                    {detail.description}
-                                  </p>
-                                  {categoryLabel ? (
-                                    <p className="text-[10px] uppercase text-slate-400">
-                                      {categoryLabel}
-                                    </p>
-                                  ) : null}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </td>
-                        <td className="px-6 py-3 text-right">
-                          <div className="space-y-2">
-                            {report.details.map((detail, index) => {
-                              const categoryLabel =
-                                detail.categoryName?.trim() ?? '';
-
-                              return (
-                                <div key={`${report.id}-detail-value-${index}`}>
-                                  <p
-                                    className={clsx('font-bold text-rose-500', {
-                                      'mb-[calc(10px/.75)]': categoryLabel,
-                                    })}
+                                return (
+                                  <div
+                                    key={`${report.id}-detail-label-${index}`}
+                                    className="text-xs text-slate-500"
                                   >
-                                    -{currency.format(detail.amount)}
-                                  </p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </td>
-                        <td colSpan={2} />
-                      </tr>
-                    )}
+                                    <p className="font-semibold text-slate-700">
+                                      {detail.description}
+                                    </p>
+                                    {categoryLabel ? (
+                                      <p className="text-[10px] uppercase text-slate-400">
+                                        {categoryLabel}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </td>
+                          <td className="px-6 py-3 text-right">
+                            <div className="space-y-2">
+                              {report.details.map((detail, index) => {
+                                const categoryLabel =
+                                  detail.categoryName?.trim() ?? '';
+
+                                return (
+                                  <div
+                                    key={`${report.id}-detail-value-${index}`}
+                                  >
+                                    <p
+                                      className={clsx(
+                                        'font-bold text-rose-500',
+                                        {
+                                          'mb-[calc(10px/.75)]': categoryLabel,
+                                        },
+                                      )}
+                                    >
+                                      -{currency.format(detail.amount)}
+                                    </p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </td>
+                          <td colSpan={2} />
+                        </tr>
+                      )}
                   </Fragment>
                 ))
               )}
