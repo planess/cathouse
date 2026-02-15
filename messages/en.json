@@ -1393,6 +1393,131 @@
       "deleteErrorTitle": "Unable to delete category"
     }
   },
+  "adminInventory": {
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "create": "Create",
+      "saveChanges": "Save changes",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "title": "Inventory management",
+    "subtitle": "Unified control for inventory, categories, and storage locations.",
+    "actions": {
+      "manageStorages": "Manage storages",
+      "manageCategories": "Manage categories",
+      "addItem": "Add new item"
+    },
+    "table": {
+      "title": "Inventory stock",
+      "subtitle": "Grouped by category and linked to storage locations.",
+      "columns": {
+        "name": "Product hierarchy / name",
+        "sku": "SKU",
+        "quantity": "Quantity",
+        "storage": "Storage location",
+        "expiration": "Exp. date",
+        "received": "Received",
+        "source": "Source",
+        "actions": "Actions"
+      },
+      "categoryCount": "{count} items",
+      "unitsLabel": "units",
+      "empty": "No inventory records yet.",
+      "noItems": "No items in this category.",
+      "uncategorized": "Uncategorized",
+      "actionsLabel": "Open actions",
+      "editAria": "Edit {name}"
+    },
+    "reports": {
+      "addTitle": "Add inventory item",
+      "editTitle": "Edit {name}",
+      "submitErrorTitle": "Unable to save inventory item",
+      "form": {
+        "skuLabel": "SKU",
+        "skuPlaceholder": "Optional SKU",
+        "nameLabel": "Item name",
+        "namePlaceholder": "Disposable gloves",
+        "nameRequired": "Item name is required.",
+        "typeLabel": "Type",
+        "typePlaceholder": "Select type",
+        "typeEquipment": "Equipment",
+        "typeConsumable": "Consumable",
+        "typeRequired": "Type is required.",
+        "quantityLabel": "Quantity",
+        "quantityPlaceholder": "0",
+        "quantityRequired": "Quantity must be greater than zero.",
+        "expirationDateLabel": "Expiration date",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select category",
+        "categoryRequired": "Category is required.",
+        "storageLabel": "Storage",
+        "storagePlaceholder": "Select storage",
+        "storageRequired": "Storage is required.",
+        "imagesLabel": "Images",
+        "imagesHint": "Optional: upload PNG, JPG, or WEBP files.",
+        "removeImage": "Remove"
+      }
+    },
+    "storages": {
+      "modalTitle": "Storages",
+      "description": "Manage storage locations and map coordinates.",
+      "addStorage": "Add storage",
+      "addTitle": "Add storage location",
+      "editTitle": "Edit {name}",
+      "deleteTitle": "Delete storage {name}?",
+      "deleteBody": "This will permanently remove the storage location.",
+      "deleteErrorTitle": "Unable to delete storage",
+      "editAria": "Edit {name}",
+      "deleteAria": "Delete {name}",
+      "table": {
+        "name": "Name",
+        "location": "Location",
+        "createdAt": "Created",
+        "actions": "Actions",
+        "empty": "No storages added yet.",
+        "noLocation": "No location"
+      },
+      "form": {
+        "nameLabel": "Storage name",
+        "namePlaceholder": "Main warehouse",
+        "nameRequired": "Storage name is required.",
+        "locationLabel": "Location",
+        "locationHint": "Select a point on the map to set coordinates.",
+        "locationRequired": "Location is required.",
+        "clearLocation": "Clear location",
+        "latitudeLabel": "Latitude",
+        "longitudeLabel": "Longitude",
+        "mapHint": "Click to set a location",
+        "mapAria": "Storage location map"
+      }
+    },
+    "categories": {
+      "modalTitle": "Categories",
+      "description": "Create nested categories and keep hierarchy clean.",
+      "addCategory": "Add category",
+      "addTitle": "Add category",
+      "editTitle": "Edit {name}",
+      "deleteTitle": "Delete category {name}?",
+      "deleteBody": "This will permanently remove the category.",
+      "deleteErrorTitle": "Unable to delete category",
+      "empty": "No categories added yet.",
+      "table": {
+        "name": "Name",
+        "inherits": "Inherits",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "form": {
+        "nameLabel": "Category name",
+        "namePlaceholder": "Medical supplies",
+        "nameRequired": "Category name is required.",
+        "parentLabel": "Parent category",
+        "parentPlaceholder": "No parent"
+      }
+    }
+  },
   "footer": {
     "tagline": "Since <tooltip>{year}|Officially since 2025 but we started much earlier. We took the minimum time involved, this is also experience</tooltip> with care for our little friends",
     "attribution": "by {org}",

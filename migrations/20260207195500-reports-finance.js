@@ -11,7 +11,7 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['name', 'iban', 'createdAt'],
+          required: ['name', 'iban', 'balance', 'isActive', 'createdAt'],
           properties: {
             name: {
               bsonType: 'string',
@@ -90,7 +90,15 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['createdAt', 'createdBy', 'type', 'amount', 'category'],
+          required: [
+            'createdAt',
+            'createdBy',
+            'type',
+            'amount',
+            'category',
+            'account',
+            'balance',
+          ],
           properties: {
             type: {
               bsonType: 'string',

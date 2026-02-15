@@ -13,3 +13,7 @@ Main paths:
 - Helpers: `src/app/helpers/`
 - Services: `src/app/services/`
 - Models/hooks/providers: `src/app/models/`, `src/app/hooks/`, `src/app/providers/`
+
+components should be in dedicated files. For complex components, use subfolders.
+interfaces, type, enums should be in dedicated relative folders.
+helpers should be in dedicated files relative to their usage.

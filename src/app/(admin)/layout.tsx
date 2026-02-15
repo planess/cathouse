@@ -70,6 +70,12 @@ export default async function AdminLayout({
                 >
                   Finance
                 </Link>
+                <Link
+                  href="/admin/inventory"
+                  className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                >
+                  Inventory
+                </Link>
               </nav>
             </div>
             <div className="min-h-screen px-5 pb-10 pt-6 lg:px-10 lg:pt-8">

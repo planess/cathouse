@@ -1393,6 +1393,131 @@
       "deleteErrorTitle": "Неможливо видалити категорію"
     }
   },
+  "adminInventory": {
+    "common": {
+      "cancel": "Скасувати",
+      "close": "Закрити",
+      "create": "Створити",
+      "saveChanges": "Зберегти зміни",
+      "delete": "Видалити",
+      "edit": "Редагувати"
+    },
+    "title": "Управління інвентарем",
+    "subtitle": "Єдиний контроль інвентарю, категорій та складів.",
+    "actions": {
+      "manageStorages": "Керувати складами",
+      "manageCategories": "Керувати категоріями",
+      "addItem": "Додати позицію"
+    },
+    "table": {
+      "title": "Інвентар на складі",
+      "subtitle": "Групування за категоріями та прив'язка до складів.",
+      "columns": {
+        "name": "Ієрархія / назва",
+        "sku": "SKU",
+        "quantity": "Кількість",
+        "storage": "Склад",
+        "expiration": "Термін",
+        "received": "Отримано",
+        "source": "Джерело",
+        "actions": "Дії"
+      },
+      "categoryCount": "{count} позицій",
+      "unitsLabel": "од.",
+      "empty": "Записів інвентарю ще немає.",
+      "noItems": "У цій категорії немає позицій.",
+      "uncategorized": "Без категорії",
+      "actionsLabel": "Відкрити дії",
+      "editAria": "Редагувати {name}"
+    },
+    "reports": {
+      "addTitle": "Додати позицію інвентарю",
+      "editTitle": "Редагувати {name}",
+      "submitErrorTitle": "Не вдалося зберегти позицію",
+      "form": {
+        "skuLabel": "SKU",
+        "skuPlaceholder": "Необов'язковий SKU",
+        "nameLabel": "Назва позиції",
+        "namePlaceholder": "Одноразові рукавички",
+        "nameRequired": "Потрібна назва позиції.",
+        "typeLabel": "Тип",
+        "typePlaceholder": "Оберіть тип",
+        "typeEquipment": "Обладнання",
+        "typeConsumable": "Витратний матеріал",
+        "typeRequired": "Потрібно обрати тип.",
+        "quantityLabel": "Кількість",
+        "quantityPlaceholder": "0",
+        "quantityRequired": "Кількість має бути більшою за нуль.",
+        "expirationDateLabel": "Термін придатності",
+        "categoryLabel": "Категорія",
+        "categoryPlaceholder": "Оберіть категорію",
+        "categoryRequired": "Потрібно обрати категорію.",
+        "storageLabel": "Склад",
+        "storagePlaceholder": "Оберіть склад",
+        "storageRequired": "Потрібно обрати склад.",
+        "imagesLabel": "Зображення",
+        "imagesHint": "Необов'язково: завантажте PNG, JPG або WEBP файли.",
+        "removeImage": "Видалити"
+      }
+    },
+    "storages": {
+      "modalTitle": "Склади",
+      "description": "Керуйте складами та координатами на мапі.",
+      "addStorage": "Додати склад",
+      "addTitle": "Додати склад",
+      "editTitle": "Редагувати {name}",
+      "deleteTitle": "Видалити склад {name}?",
+      "deleteBody": "Склад буде видалено назавжди.",
+      "deleteErrorTitle": "Не вдалося видалити склад",
+      "editAria": "Редагувати {name}",
+      "deleteAria": "Видалити {name}",
+      "table": {
+        "name": "Назва",
+        "location": "Локація",
+        "createdAt": "Створено",
+        "actions": "Дії",
+        "empty": "Складів ще немає.",
+        "noLocation": "Без локації"
+      },
+      "form": {
+        "nameLabel": "Назва складу",
+        "namePlaceholder": "Головний склад",
+        "nameRequired": "Потрібна назва складу.",
+        "locationLabel": "Локація",
+        "locationHint": "Оберіть точку на мапі, щоб встановити координати.",
+        "locationRequired": "Потрібна локація.",
+        "clearLocation": "Очистити локацію",
+        "latitudeLabel": "Широта",
+        "longitudeLabel": "Довгота",
+        "mapHint": "Натисніть, щоб встановити точку",
+        "mapAria": "Мапа локації складу"
+      }
+    },
+    "categories": {
+      "modalTitle": "Категорії",
+      "description": "Створюйте вкладені категорії та зберігайте ієрархію.",
+      "addCategory": "Додати категорію",
+      "addTitle": "Додати категорію",
+      "editTitle": "Редагувати {name}",
+      "deleteTitle": "Видалити категорію {name}?",
+      "deleteBody": "Категорію буде видалено назавжди.",
+      "deleteErrorTitle": "Не вдалося видалити категорію",
+      "empty": "Категорій ще немає.",
+      "table": {
+        "name": "Назва",
+        "inherits": "Батьківська",
+        "createdAt": "Створено",
+        "actions": "Дії"
+      },
+      "form": {
+        "nameLabel": "Назва категорії",
+        "namePlaceholder": "Медичні матеріали",
+        "nameRequired": "Потрібна назва категорії.",
+        "parentLabel": "Батьківська категорія",
+        "parentPlaceholder": "Без батьківської"
+      }
+    }
+  },
   "footer": {
     "tagline": "З <tooltip>{year}|Офіційно з 2025 але починали набагато раніше. Взяли мінімальний час залучених, це також досвід</tooltip> року з турботою про наших хвостатих друзів",
     "attribution": "від {org}",
