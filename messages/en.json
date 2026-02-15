@@ -1320,6 +1320,8 @@
     "reports": {
       "recentTitle": "Recent transactions",
       "addRecord": "Add new record",
+      "rangeMonth": "Month",
+      "rangeYear": "Year",
       "addTitle": "Add report item",
       "createButton": "Create report",
       "editTitle": "Edit report item",
@@ -1330,17 +1332,20 @@
         "description": "Description",
         "category": "Category",
         "account": "Account",
+        "date": "Date",
         "amount": "Amount",
         "balance": "Balance",
         "actions": "Actions"
       },
-      "empty": "No reports for this month yet.",
+      "empty": "No reports for this period yet.",
       "editAria": "Edit report",
       "deleteAria": "Delete report"
     },
     "pagination": {
       "previousMonth": "Previous month",
-      "nextMonth": "Next month"
+      "nextMonth": "Next month",
+      "previousYear": "Previous year",
+      "nextYear": "Next year"
     },
     "forms": {
       "account": {

@@ -44,7 +44,10 @@ type ReportDocument = {
 
 type SearchParams = {
   month?: string;
+  range?: string;
 };
+
+type ReportRange = 'month' | 'year';
 
 type CategoryNode = {
   id: string;
@@ -94,6 +97,20 @@ function formatMonthLabel(date: Date) {
     month: 'long',
     year: 'numeric',
   }).format(date);
+}
+
+function formatYearLabel(date: Date) {
+  return new Intl.DateTimeFormat(DEFAULT_LOCALE, {
+    year: 'numeric',
+  }).format(date);
+}
+
+function parseReportRange(param?: string): ReportRange {
+  if (param === 'year') {
+    return 'year';
+  }
+
+  return 'month';
 }
 
 function formatCreatedAt(value: unknown): string {
@@ -146,6 +163,7 @@ export default async function FinancePage({
 }) {
   const resolvedSearchParams = await searchParams;
   const selectedMonth = parseMonthParam(resolvedSearchParams?.month);
+  const reportRange = parseReportRange(resolvedSearchParams?.range);
   const monthParam = formatMonthParam(selectedMonth);
   const monthStart = new Date(
     selectedMonth.getFullYear(),
@@ -159,6 +177,8 @@ export default async function FinancePage({
   );
   const yearStart = new Date(selectedMonth.getFullYear(), 0, 1);
   const yearEnd = new Date(selectedMonth.getFullYear() + 1, 0, 1);
+  const rangeStart = reportRange === 'year' ? yearStart : monthStart;
+  const rangeEnd = reportRange === 'year' ? yearEnd : monthEnd;
 
   const dbClient = await clientPromise;
   const db = dbClient.db();
@@ -189,7 +209,7 @@ export default async function FinancePage({
       .toArray(),
     db
       .collection<ReportDocument>(DbTables.reportsFinance)
-      .find({ createdAt: { $gte: monthStart, $lt: monthEnd } })
+      .find({ createdAt: { $gte: rangeStart, $lt: rangeEnd } })
       .sort({ createdAt: -1 })
       .toArray(),
     getDebtReports(),
@@ -465,8 +485,12 @@ export default async function FinancePage({
       yearIncoming: summaryTotals.yearIncoming,
       yearOutgoing: summaryTotals.yearOutgoing,
     },
-    monthLabel: formatMonthLabel(monthStart),
     monthParam,
+    reportRange,
+    periodLabel:
+      reportRange === 'year'
+        ? formatYearLabel(selectedMonth)
+        : formatMonthLabel(monthStart),
     currentMonthLabel: formatMonthLabel(new Date()),
   };
 

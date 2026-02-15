@@ -1,8 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useMemo, useState } from 'react';
 
 import {
@@ -37,8 +37,9 @@ export type FinanceAdminViewProps = {
   outgoingCategoryOptions: CategoryOption[];
   reports: ReportRow[];
   summary: FinanceSummary;
-  monthLabel: string;
+  periodLabel: string;
   monthParam: string;
+  reportRange: 'month' | 'year';
   currentMonthLabel: string;
 };
 
@@ -64,8 +65,9 @@ export function FinanceAdminView({
   outgoingCategoryOptions,
   reports,
   summary,
-  monthLabel,
+  periodLabel,
   monthParam,
+  reportRange,
   currentMonthLabel,
 }: FinanceAdminViewProps) {
   const router = useRouter();
@@ -87,13 +89,29 @@ export function FinanceAdminView({
     [],
   );
 
+  const dateTime = useMemo(
+    () =>
+      new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    [],
+  );
+
   const handleMonthChange = (direction: -1 | 1) => {
     const [yearText, monthText] = monthParam.split('-');
     const year = Number(yearText);
     const month = Number(monthText) - 1;
     const current = new Date(year, month, 1);
     const next = new Date(current);
-    next.setMonth(current.getMonth() + direction);
+    if (reportRange === 'year') {
+      next.setFullYear(current.getFullYear() + direction);
+    } else {
+      next.setMonth(current.getMonth() + direction);
+    }
 
     const nextParam = `${next.getFullYear()}-${String(
       next.getMonth() + 1,
@@ -102,6 +120,12 @@ export function FinanceAdminView({
     const params = new URLSearchParams(searchParams.toString());
     params.set('month', nextParam);
 
+    router.push(`/admin/finance?${params.toString()}`);
+  };
+
+  const handleRangeChange = (range: 'month' | 'year') => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('range', range);
     router.push(`/admin/finance?${params.toString()}`);
   };
 
@@ -558,11 +582,43 @@ export function FinanceAdminView({
       <section className="rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950/70">
         <div className="flex flex-col gap-4 border-b border-slate-200/70 p-6 dark:border-slate-800 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              {t('reports.recentTitle')}
-            </h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {t('reports.recentTitle')}
+              </h3>
+
+              <div className="flex items-center">
+                <button
+                  className={clsx(
+                    'rounded-xl px-4 py-2 text-xs font-semibold transition border-none bg-transparent',
+                    reportRange === 'month'
+                      ? 'underline'
+                      : 'text-slate-600 hover:text-sky-600 dark:text-slate-200',
+                  )}
+                  type="button"
+                  onClick={() => handleRangeChange('month')}
+                  aria-pressed={reportRange === 'month'}
+                >
+                  {t('reports.rangeMonth')}
+                </button>
+                <button
+                  className={clsx(
+                    'rounded-xl px-4 py-2 text-xs font-semibold transition border-none bg-transparent',
+                    reportRange === 'year'
+                      ? 'underline'
+                      : 'text-slate-600 hover:text-sky-600 dark:text-slate-200',
+                  )}
+                  type="button"
+                  onClick={() => handleRangeChange('year')}
+                  aria-pressed={reportRange === 'year'}
+                >
+                  {t('reports.rangeYear')}
+                </button>
+              </div>
+            </div>
+
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              {monthLabel}
+              {periodLabel}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -589,6 +645,7 @@ export function FinanceAdminView({
                 <th className="px-6 py-4">{t('reports.table.description')}</th>
                 <th className="px-6 py-4">{t('reports.table.category')}</th>
                 <th className="px-6 py-4">{t('reports.table.account')}</th>
+                <th className="px-6 py-4">{t('reports.table.date')}</th>
                 <th className="px-6 py-4 text-right">
                   {t('reports.table.amount')}
                 </th>
@@ -604,7 +661,7 @@ export function FinanceAdminView({
               {reports.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-6 text-center text-sm text-slate-500"
                   >
                     {t('reports.empty')}
@@ -614,15 +671,14 @@ export function FinanceAdminView({
                 reports.map((report) => (
                   <Fragment key={report.id}>
                     <tr
-                      className={clsx(
-                        'transition hover:bg-slate-50/70 dark:hover:bg-slate-900/60',
-                        {
-                          'bg-emerald-100/50': report.type === 'incoming',
-                          'bg-rose-100/50': report.type === 'outgoing',
-                          'bg-amber-100/50 border-x border-x-amber-400':
-                            report.type === 'debt',
-                        },
-                      )}
+                      className={clsx('transition-colors', {
+                        'bg-emerald-100/50 hover:bg-emerald-100':
+                          report.type === 'incoming',
+                        'bg-rose-100/50 hover:bg-rose-100':
+                          report.type === 'outgoing',
+                        'bg-amber-100/50 border-x border-x-amber-400 hover:bg-amber-100':
+                          report.type === 'debt',
+                      })}
                     >
                       <td className="px-6 py-4">
                         {report.details.length > 0 ? (
@@ -661,6 +717,11 @@ export function FinanceAdminView({
                       </td>
                       <td className="px-6 py-4 text-[10px] font-mono uppercase text-slate-400">
                         {report.accountName || '—'}
+                      </td>
+                      <td className="px-6 py-4 text-xs font-medium text-slate-500">
+                        {report.type === 'debt' || !report.createdAt
+                          ? '—'
+                          : dateTime.format(new Date(report.createdAt))}
                       </td>
                       <td className="px-6 py-4 text-right text-sm font-bold">
                         <span
@@ -731,6 +792,7 @@ export function FinanceAdminView({
                               })}
                             </div>
                           </td>
+                          <td className="px-6 py-3" />
                           <td className="px-6 py-3 text-right">
                             <div className="space-y-2">
                               {report.details.map((detail, index) => {
@@ -766,13 +828,19 @@ export function FinanceAdminView({
           </table>
         </div>
         <div className="flex items-center justify-between border-t border-slate-200/70 px-6 py-4 text-xs text-slate-500 dark:border-slate-800">
-          <span className="uppercase tracking-widest">{monthLabel}</span>
+          <div>
+            <span className="uppercase tracking-widest">{periodLabel}</span>
+          </div>
           <div className="flex items-center gap-2">
             <button
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-400 transition hover:text-sky-500"
               type="button"
               onClick={() => handleMonthChange(-1)}
-              aria-label={t('pagination.previousMonth')}
+              aria-label={
+                reportRange === 'year'
+                  ? t('pagination.previousYear')
+                  : t('pagination.previousMonth')
+              }
             >
               ‹
             </button>
@@ -780,7 +848,11 @@ export function FinanceAdminView({
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-400 transition hover:text-sky-500"
               type="button"
               onClick={() => handleMonthChange(1)}
-              aria-label={t('pagination.nextMonth')}
+              aria-label={
+                reportRange === 'year'
+                  ? t('pagination.nextYear')
+                  : t('pagination.nextMonth')
+              }
             >
               ›
             </button>

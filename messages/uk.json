@@ -1320,6 +1320,8 @@
     "reports": {
       "recentTitle": "Останні транзакції",
       "addRecord": "Додати запис",
+      "rangeMonth": "Місяць",
+      "rangeYear": "Рік",
       "addTitle": "Додати запис звіту",
       "createButton": "Створити звіт",
       "editTitle": "Редагувати запис звіту",
@@ -1330,17 +1332,20 @@
         "description": "Опис",
         "category": "Категорія",
         "account": "Рахунок",
+        "date": "Дата",
         "amount": "Сума",
         "balance": "Баланс",
         "actions": "Дії"
       },
-      "empty": "За цей місяць звітів ще немає.",
+      "empty": "За цей період звітів ще немає.",
       "editAria": "Редагувати звіт",
       "deleteAria": "Видалити звіт"
     },
     "pagination": {
       "previousMonth": "Попередній місяць",
-      "nextMonth": "Наступний місяць"
+      "nextMonth": "Наступний місяць",
+      "previousYear": "Попередній рік",
+      "nextYear": "Наступний рік"
     },
     "forms": {
       "account": {
