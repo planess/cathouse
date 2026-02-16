@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef } from 'react';
 
+import type { SerializedObservation } from '@app/api/history/[animalId]/observations/route';
 import { useModal } from '@app/hooks/use-modal';
 
 import Btn from './btn';
@@ -12,7 +13,6 @@ import {
   type ObservationFormHandle,
 } from './observation-form';
 
-import type { SerializedObservation } from '../server/create-observation';
 import type { InformatorOption } from '../types';
 
 type AddObservationProps = {
@@ -58,7 +58,6 @@ export default function AddObservation({
     });
 
     if (result) {
-      console.log('Observation created:', result);
       router.refresh();
     }
   }, [animalId, informatorOptions, modal, router, t]);

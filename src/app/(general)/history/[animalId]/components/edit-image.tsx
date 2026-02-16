@@ -3,13 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState, type ChangeEvent } from 'react';
 
-import { replaceImage } from '../server/replace-image';
-
 import { EditButton } from './edit-button';
 
 type EditImageProps = {
   animalId: string;
 };
+
+const MAX_SIZE = 5.5 * 1024 * 1024; // 5.5 MB
 
 export default function EditImage({ animalId }: EditImageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,27 +32,42 @@ export default function EditImage({ animalId }: EditImageProps) {
         return;
       }
 
+      if (file.size > MAX_SIZE) {
+        // You might want to use a toast or a more UI-integrated error display here
+        // For now, alerting the user is a direct feedback mechanism
+        window.alert(
+          'The selected image is too large. Please select an image under 5.5MB.',
+        );
+        event.target.value = ''; // Reset input
+        return;
+      }
+
       setIsProcessing(true);
 
       try {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('animalId', animalId);
 
-        const result = await replaceImage(formData);
+        const response = await fetch(`/api/history/${animalId}/image`, {
+          method: 'PUT',
+          body: formData,
+        });
 
-        if (result?.success) {
-          console.log(
-            `Selected image size: ${result.size} bytes (~${Math.round(result.size / 1024)} KB)`,
-          );
+        const result = (await response.json()) as {
+          success: boolean;
+          name?: string;
+          size?: number;
+          errorCode?: string;
+          message?: string;
+        };
+
+        if (result.success) {
           router.refresh();
-        } else if (result) {
-          console.error(
-            `Failed to replace image: ${result.errorCode} – ${result.message}`,
-          );
+        } else {
+          window.alert(result.message ?? 'Failed to replace image');
         }
-      } catch (error) {
-        console.error('Failed to replace image', error);
+      } catch {
+        window.alert('Failed to replace image. Please try again.');
       } finally {
         setIsProcessing(false);
         event.target.value = '';

@@ -12,12 +12,8 @@ import {
   type ChangeEvent,
 } from 'react';
 
+import type { SerializedObservation } from '@app/api/history/[animalId]/observations/route';
 import { useModal } from '@app/hooks/use-modal';
-
-import {
-  createObservation,
-  type SerializedObservation,
-} from '../server/create-observation';
 
 import {
   CreateInformatorForm,
@@ -39,6 +35,7 @@ type ObservationFormProps = {
 };
 
 const ACCEPTED_MIME = 'image/png,image/jpeg';
+const MAX_SIZE = 5.5 * 1024 * 1024;
 
 export const ObservationForm = forwardRef<
   ObservationFormHandle,
@@ -73,7 +70,18 @@ export const ObservationForm = forwardRef<
 
   const handleFilesChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
+      setError(null);
       const selected = [...(event.target.files ?? [])];
+
+      const oversizedFiles = selected.filter((file) => file.size > MAX_SIZE);
+
+      if (oversizedFiles.length > 0) {
+        const fileNames = oversizedFiles.map((f) => f.name).join(', ');
+        setError(`Some files exceed the 5.5MB limit: ${fileNames}`);
+        event.target.value = ''; // Reset the input so they can retry
+        return;
+      }
+
       setFiles(selected);
     },
     [],
@@ -134,14 +142,27 @@ export const ObservationForm = forwardRef<
     setIsSubmitting(true);
 
     try {
-      const response = await createObservation(payload);
+      const response = await fetch(`/api/history/${animalId}/observations`, {
+        method: 'POST',
+        body: payload,
+      });
 
-      if (!response.success) {
-        setError(response.message);
-        throw new Error(response.message);
+      const result = (await response.json()) as {
+        success: boolean;
+        observation?: SerializedObservation;
+        message?: string;
+      };
+
+      if (!result.success) {
+        setError(result.message ?? 'Unknown error');
+        throw new Error(result.message ?? 'Unknown error');
       }
 
-      return response.observation;
+      if (!result.observation) {
+        throw new Error('No observation returned');
+      }
+
+      return result.observation;
     } finally {
       setIsSubmitting(false);
     }
@@ -343,7 +364,7 @@ export const ObservationForm = forwardRef<
         <p className="text-xs text-slate-500 py-3">{t('use_current_date')}</p>
       </div>
 
-      {error && (
+      {(error ?? '').length > 0 && (
         <p className="rounded-2xl bg-rose-50 px-4 py-2 text-sm text-rose-700">
           {error}
         </p>

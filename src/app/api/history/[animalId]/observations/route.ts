@@ -1,7 +1,6 @@
-'use server';
-
 import { ObjectId } from 'mongodb';
 import { revalidatePath } from 'next/cache';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { editHistoryGranted } from '@app/accessors/edit-history-granted';
@@ -11,28 +10,34 @@ import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument, AnimalObservation } from '@app/models/animal';
 import type { MediaAsset } from '@app/models/media-asset';
 
-import { uploadAnimalMedia } from '../../server/upload-animal-media';
+import { uploadAnimalMedia } from '../../../../(general)/history/server/upload-animal-media';
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 5.5 * 1024 * 1024;
 const MAX_ASSETS = 5;
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg']);
 const ALLOWED_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg']);
 
 const payloadSchema = z.object({
-  animalId: z
-    .string()
-    .trim()
-    .refine((value) => ObjectId.isValid(value), {
-      message: 'Animal identifier is invalid.',
-    }),
   note: z
     .string()
     .optional()
-    .transform((value) => (value ? value.trim() : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.trim().length === 0) {
+        return;
+      }
+
+      return value.trim();
+    }),
   informator: z
     .string()
     .optional()
-    .transform((value) => (value ? value.trim() : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.trim().length === 0) {
+        return;
+      }
+
+      return value.trim();
+    }),
   health: z
     .string()
     .optional()
@@ -48,15 +53,33 @@ const payloadSchema = z.object({
   locationLatitude: z
     .string()
     .optional()
-    .transform((value) => (value ? Number.parseFloat(value) : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.length === 0) {
+        return;
+      }
+
+      return Number.parseFloat(value);
+    }),
   locationLongitude: z
     .string()
     .optional()
-    .transform((value) => (value ? Number.parseFloat(value) : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.length === 0) {
+        return;
+      }
+
+      return Number.parseFloat(value);
+    }),
   locationAddress: z
     .string()
     .optional()
-    .transform((value) => (value ? value.trim() : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.trim().length === 0) {
+        return;
+      }
+
+      return value.trim();
+    }),
 });
 
 type SerializedMediaAsset = Omit<MediaAsset, 'uploadedAt'> & {
@@ -80,46 +103,39 @@ export type SerializedObservation = {
   createdAt: string;
 };
 
-type CreateObservationSuccess = {
-  success: true;
-  observation: SerializedObservation;
-};
-
-type CreateObservationError = {
-  success: false;
-  status: number;
-  errorCode:
-    | 'UNAUTHORIZED'
-    | 'FORBIDDEN'
-    | 'INVALID_INPUT'
-    | 'NOT_FOUND'
-    | 'UNSUPPORTED_FORMAT'
-    | 'FILE_TOO_LARGE'
-    | 'UPDATE_FAILED'
-    | 'UPLOAD_FAILED';
-  message: string;
-};
-
-export type CreateObservationResponse =
-  | CreateObservationSuccess
-  | CreateObservationError;
-
-export async function createObservation(
-  formData: FormData,
-): Promise<CreateObservationResponse> {
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ animalId: string }> },
+) {
   const user = await getUser();
 
   if (!user) {
-    return {
-      success: false,
-      status: 401,
-      errorCode: 'UNAUTHORIZED',
-      message: 'Sign in to add observations.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'UNAUTHORIZED',
+        message: 'Sign in to add observations.',
+      },
+      { status: 401 },
+    );
   }
 
+  const { animalId } = await context.params;
+
+  if (!ObjectId.isValid(animalId)) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: 'Animal identifier is invalid.',
+      },
+      { status: 400 },
+    );
+  }
+
+  const formData = await request.formData();
+
   const rawPayload = {
-    animalId: formData.get('animalId')?.toString() ?? '',
     note: formData.get('note')?.toString(),
     informator: formData.get('informator')?.toString(),
     health: formData.get('health')?.toString(),
@@ -131,16 +147,17 @@ export async function createObservation(
   const parsedPayload = payloadSchema.safeParse(rawPayload);
 
   if (!parsedPayload.success) {
-    return {
-      success: false,
-      status: 400,
-      errorCode: 'INVALID_INPUT',
-      message: parsedPayload.error.issues[0]?.message ?? 'Invalid payload.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: parsedPayload.error.issues[0]?.message ?? 'Invalid payload.',
+      },
+      { status: 400 },
+    );
   }
 
   const {
-    animalId,
     note,
     informator,
     health,
@@ -149,13 +166,19 @@ export async function createObservation(
     locationAddress,
   } = parsedPayload.data;
 
-  if (informator && !ObjectId.isValid(informator)) {
-    return {
-      success: false,
-      status: 400,
-      errorCode: 'INVALID_INPUT',
-      message: 'Informator identifier is invalid.',
-    };
+  if (
+    typeof informator !== 'undefined' &&
+    informator.length > 0 &&
+    !ObjectId.isValid(informator)
+  ) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: 'Informator identifier is invalid.',
+      },
+      { status: 400 },
+    );
   }
 
   if (
@@ -164,16 +187,21 @@ export async function createObservation(
     (typeof locationLongitude !== 'undefined' &&
       Number.isNaN(locationLongitude))
   ) {
-    return {
-      success: false,
-      status: 400,
-      errorCode: 'INVALID_INPUT',
-      message: 'Location coordinates are invalid.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: 'Location coordinates are invalid.',
+      },
+      { status: 400 },
+    );
   }
 
   const animalObjectId = new ObjectId(animalId);
-  const informatorId = informator ? new ObjectId(informator) : undefined;
+  const informatorId =
+    typeof informator !== 'undefined' && informator.length > 0
+      ? new ObjectId(informator)
+      : undefined;
 
   const client = await clientPromise;
   const db = client.db();
@@ -181,23 +209,27 @@ export async function createObservation(
   const animal = await animalsCollection.findOne({ _id: animalObjectId });
 
   if (!animal) {
-    return {
-      success: false,
-      status: 404,
-      errorCode: 'NOT_FOUND',
-      message: 'Animal was not found.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'NOT_FOUND',
+        message: 'Animal was not found.',
+      },
+      { status: 404 },
+    );
   }
 
   const hasHistoryAccess = await editHistoryGranted(animal.createdBy);
 
   if (!hasHistoryAccess) {
-    return {
-      success: false,
-      status: 403,
-      errorCode: 'FORBIDDEN',
-      message: 'You do not have permission to add observations.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'FORBIDDEN',
+        message: 'You do not have permission to add observations.',
+      },
+      { status: 403 },
+    );
   }
 
   const files = formData
@@ -205,12 +237,14 @@ export async function createObservation(
     .filter((file): file is File => file instanceof File && file.size > 0);
 
   if (files.length > MAX_ASSETS) {
-    return {
-      success: false,
-      status: 400,
-      errorCode: 'INVALID_INPUT',
-      message: `Attach up to ${MAX_ASSETS} images per observation.`,
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: `Attach up to ${MAX_ASSETS} images per observation.`,
+      },
+      { status: 400 },
+    );
   }
 
   for (const file of files) {
@@ -222,47 +256,61 @@ export async function createObservation(
     );
 
     if (!isMimeAllowed && !isExtensionAllowed) {
-      return {
-        success: false,
-        status: 415,
-        errorCode: 'UNSUPPORTED_FORMAT',
-        message: 'Only PNG and JPG images are allowed.',
-      };
+      return NextResponse.json(
+        {
+          success: false,
+          errorCode: 'UNSUPPORTED_FORMAT',
+          message: 'Only PNG and JPG images are allowed.',
+        },
+        { status: 415 },
+      );
     }
 
     if (file.size > MAX_IMAGE_BYTES) {
-      return {
-        success: false,
-        status: 413,
-        errorCode: 'FILE_TOO_LARGE',
-        message: 'Each image must not exceed 5MB.',
-      };
+      return NextResponse.json(
+        {
+          success: false,
+          errorCode: 'FILE_TOO_LARGE',
+          message: 'Each image must not exceed 5.5MB.',
+        },
+        { status: 413 },
+      );
     }
   }
 
-  if (!note && files.length === 0 && !locationLatitude && !locationLongitude) {
-    return {
-      success: false,
-      status: 400,
-      errorCode: 'INVALID_INPUT',
-      message: 'Provide a note, images, or a map location.',
-    };
+  if (
+    (typeof note === 'undefined' || note.length === 0) &&
+    files.length === 0 &&
+    typeof locationLatitude === 'undefined' &&
+    typeof locationLongitude === 'undefined'
+  ) {
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: 'Provide a note, images, or a map location.',
+      },
+      { status: 400 },
+    );
   }
 
   if (
     (typeof locationLatitude !== 'undefined' ||
       typeof locationLongitude !== 'undefined') &&
-    (!locationAddress ||
+    (typeof locationAddress === 'undefined' ||
+      locationAddress.length === 0 ||
       typeof locationLatitude === 'undefined' ||
       typeof locationLongitude === 'undefined')
   ) {
-    return {
-      success: false,
-      status: 400,
-      errorCode: 'INVALID_INPUT',
-      message:
-        'Address and both coordinates are required when location is provided.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message:
+          'Address and both coordinates are required when location is provided.',
+      },
+      { status: 400 },
+    );
   }
 
   let assets: MediaAsset[] | undefined;
@@ -271,17 +319,20 @@ export async function createObservation(
     try {
       assets = await uploadAnimalMedia(files, animalObjectId, user.id);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(
-        `[createObservation] Unable to upload assets for ${animalObjectId.toHexString()}`,
+        `[POST /api/history/${animalId}/observations] Unable to upload assets`,
         error,
       );
 
-      return {
-        success: false,
-        status: 500,
-        errorCode: 'UPLOAD_FAILED',
-        message: 'Unable to upload images right now.',
-      };
+      return NextResponse.json(
+        {
+          success: false,
+          errorCode: 'UPLOAD_FAILED',
+          message: 'Unable to upload images right now.',
+        },
+        { status: 500 },
+      );
     }
   }
 
@@ -293,11 +344,11 @@ export async function createObservation(
     createdAt: now,
   };
 
-  if (note) {
+  if (typeof note !== 'undefined' && note.length > 0) {
     observation.note = note;
   }
 
-  if (assets?.length) {
+  if (typeof assets !== 'undefined' && assets.length > 0) {
     observation.assets = assets;
   }
 
@@ -308,7 +359,8 @@ export async function createObservation(
   if (
     typeof locationLatitude !== 'undefined' &&
     typeof locationLongitude !== 'undefined' &&
-    locationAddress
+    typeof locationAddress !== 'undefined' &&
+    locationAddress.length > 0
   ) {
     observation.location = {
       address: locationAddress,
@@ -331,39 +383,46 @@ export async function createObservation(
     );
   } catch (error) {
     const errInfo =
-      error && typeof error === 'object' && 'errInfo' in error
+      typeof error === 'object' && error !== null && 'errInfo' in error
         ? JSON.stringify((error as { errInfo?: unknown }).errInfo)
         : undefined;
 
+    // eslint-disable-next-line no-console
     console.error(
-      `[createObservation] Unable to save observation for ${animalObjectId.toHexString()}`,
+      `[POST /api/history/${animalId}/observations] Unable to save observation`,
       errInfo,
       error,
     );
 
-    return {
-      success: false,
-      status: 500,
-      errorCode: 'UPDATE_FAILED',
-      message: 'Unable to save observation right now.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'UPDATE_FAILED',
+        message: 'Unable to save observation right now.',
+      },
+      { status: 500 },
+    );
   }
 
   if (!updateResult.acknowledged || updateResult.modifiedCount === 0) {
-    return {
-      success: false,
-      status: 500,
-      errorCode: 'INVALID_INPUT',
-      message: 'Unable to save observation right now.',
-    };
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: 'INVALID_INPUT',
+        message: 'Unable to save observation right now.',
+      },
+      { status: 500 },
+    );
   }
 
   revalidatePath(`/history/${animalObjectId.toHexString()}`);
 
-  return {
+  const serialized = serializeObservation(observation, user.id);
+
+  return NextResponse.json({
     success: true,
-    observation: serializeObservation(observation, user.id),
-  };
+    observation: serialized,
+  });
 }
 
 function serializeObservation(
