@@ -424,7 +424,7 @@ export const TreatmentForm = forwardRef<
 
       if (mode === 'edit') {
         if (typeof treatmentIndex !== 'number') {
-          throw new Error('Treatment identifier is missing.');
+          throw new TypeError('Treatment identifier is missing.');
         }
 
         payload.append('treatmentIndex', String(treatmentIndex));
@@ -583,7 +583,7 @@ export const TreatmentForm = forwardRef<
                         <span className="flex-1" />
                         {item.clinic && (
                           <span className="flex-none flex gap-3">
-                            <span className="border-l border-slate-300"></span>
+                            <span className="border-l border-slate-300" />
                             <span className="text-slate-500">
                               {clinicLabelMap.get(item.clinic) ?? item.clinic}
                             </span>
@@ -665,14 +665,14 @@ export const TreatmentForm = forwardRef<
 
                   <button
                     type="button"
-                    onClick={() =>
-                      handleCreateClinic((value) =>
+                    onClick={() => {
+                      void handleCreateClinic((value) =>
                         setInterventionForm((prev) => ({
                           ...prev,
                           clinic: value,
                         })),
-                      )
-                    }
+                      );
+                    }}
                     className="basis-[32px] shrink-0 inline-flex items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                     aria-label={t('form.clinic_modal.add_label')}
                   >
@@ -764,7 +764,7 @@ export const TreatmentForm = forwardRef<
                         <span className="flex-1" />
                         {item.clinic && (
                           <span className="flex-none flex gap-3">
-                            <span className="border-l border-slate-300"></span>
+                            <span className="border-l border-slate-300" />
                             <span className="text-slate-500">
                               {clinicLabelMap.get(item.clinic) ?? item.clinic}
                             </span>
@@ -869,14 +869,14 @@ export const TreatmentForm = forwardRef<
 
                   <button
                     type="button"
-                    onClick={() =>
-                      handleCreateClinic((value) =>
+                    onClick={() => {
+                      void handleCreateClinic((value) =>
                         setMedicationForm((prev) => ({
                           ...prev,
                           clinic: value,
                         })),
-                      )
-                    }
+                      );
+                    }}
                     className="basis-[32px] shrink-0 inline-flex items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                     aria-label={t('form.clinic_modal.add_label')}
                   >

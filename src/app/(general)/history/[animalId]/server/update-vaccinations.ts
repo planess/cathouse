@@ -88,11 +88,11 @@ function parseJsonArray(value: FormDataEntryValue | null): unknown[] {
     const parsed = JSON.parse(raw);
 
     if (!Array.isArray(parsed)) {
-      throw new Error('Expected array');
+      throw new TypeError('Expected array');
     }
 
     return parsed;
-  } catch (error) {
+  } catch {
     throw new Error('INVALID_JSON');
   }
 }
@@ -119,7 +119,7 @@ export async function updateVaccinations(
     rawParasites = parseJsonArray(formData.get('parasites'));
     rawRabies = parseJsonArray(formData.get('rabies'));
     rawVirus = parseJsonArray(formData.get('virus'));
-  } catch (error) {
+  } catch {
     return {
       success: false,
       status: 400,
@@ -177,19 +177,19 @@ export async function updateVaccinations(
   const set: Record<string, unknown> = {};
   const unset: Record<string, ''> = {};
 
-  if (parasites.length) {
+  if (parasites.length > 0) {
     set['vetMarkers.parasites'] = parasites;
   } else {
     unset['vetMarkers.parasites'] = '';
   }
 
-  if (rabies.length) {
+  if (rabies.length > 0) {
     set['vetMarkers.rabiesVaccination'] = rabies;
   } else {
     unset['vetMarkers.rabiesVaccination'] = '';
   }
 
-  if (virus.length) {
+  if (virus.length > 0) {
     set['vetMarkers.virusVaccination'] = virus;
   } else {
     unset['vetMarkers.virusVaccination'] = '';
@@ -199,8 +199,8 @@ export async function updateVaccinations(
     const updateResult = await animalsCollection.updateOne(
       { _id: animalObjectId },
       {
-        ...(Object.keys(set).length ? { $set: set } : {}),
-        ...(Object.keys(unset).length ? { $unset: unset } : {}),
+        ...(Object.keys(set).length > 0 ? { $set: set } : {}),
+        ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       },
     );
 
@@ -218,7 +218,7 @@ export async function updateVaccinations(
     };
   }
 
-  await revalidatePath(`/history/${animalObjectId.toHexString()}`);
+  revalidatePath(`/history/${animalObjectId.toHexString()}`);
 
   return {
     success: true,

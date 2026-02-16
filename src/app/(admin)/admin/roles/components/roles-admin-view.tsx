@@ -1,14 +1,15 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
+
+import { useModal } from '@app/hooks/use-modal';
 
 import {
   createRole,
   softDeleteRole,
   updateRole,
 } from '../../../../actions/roles.server';
-import { useModal } from '@app/hooks/use-modal';
 
 export type RoleRow = {
   id: string;
@@ -537,7 +538,7 @@ function PermissionLabel({ permission }: { permission: PermissionOption }) {
     <span className="flex min-w-0 flex-col items-start">
       <span className="truncate">{permission.name}</span>
       <span className="text-[10px] font-normal text-slate-400">
-        {permission.description || 'No description'}
+        {permission.description ?? 'No description'}
       </span>
     </span>
   );

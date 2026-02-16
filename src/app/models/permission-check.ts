@@ -11,12 +11,12 @@
  * The system uses this to make authorization decisions throughout the application.
  */
 export interface PermissionCheck {
-    /** The user ID whose permissions are being checked */
-    userId: string;
-    /** The resource/entity the user is trying to access */
-    resource: string;
-    /** The specific action the user is trying to perform on the resource */
-    action: string;
-    /** Optional context for the permission check - must match the context of the user's role assignment */
-    context?: string;
+  /** The user ID whose permissions are being checked */
+  userId: string;
+  /** The resource/entity the user is trying to access */
+  resource: string;
+  /** The specific action the user is trying to perform on the resource */
+  action: string;
+  /** Optional context for the permission check - must match the context of the user's role assignment */
+  context?: string;
 }

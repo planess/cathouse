@@ -16,7 +16,7 @@ interface FormData {
 export default function AuthForm({ handler }: HandlerParams<string>) {
   const t = useTranslations('authorization');
   const [pending, setPending] = useState(false);
-  const { register, handleSubmit, formState, setError, clearErrors, reset } =
+  const { register, handleSubmit, formState, clearErrors, reset } =
     useForm<FormData>({ criteriaMode: 'all' });
 
   const onSubmit = handleSubmit(async (args) => {

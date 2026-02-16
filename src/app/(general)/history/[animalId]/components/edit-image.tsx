@@ -72,7 +72,9 @@ export default function EditImage({ animalId }: EditImageProps) {
         type="file"
         accept="image/png,image/jpeg"
         className="sr-only"
-        onChange={handleFileChange}
+        onChange={(event) => {
+          void handleFileChange(event);
+        }}
       />
     </div>
   );

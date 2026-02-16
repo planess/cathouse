@@ -101,7 +101,7 @@ export function getAgeLabel(birthday?: Date, t?: TranslateFn): string {
     formatAgePart(days, 'day', t),
   ].filter(Boolean) as string[];
 
-  if (!parts.length) {
+  if (parts.length === 0) {
     return t?.('age.recent') ?? 'Born recently';
   }
 

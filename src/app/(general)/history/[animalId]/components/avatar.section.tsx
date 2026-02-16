@@ -14,7 +14,11 @@ interface AvatarProps {
   canEdit: boolean;
 }
 
-export default function AvatarSection({ heroImage, animal, canEdit }: AvatarProps) {
+export default function AvatarSection({
+  heroImage,
+  animal,
+  canEdit,
+}: AvatarProps) {
   const cardTranslations = useTranslations('historypage');
   const statusLabel = formatLabel(animal.status, cardTranslations);
 

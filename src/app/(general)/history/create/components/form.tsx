@@ -4,13 +4,11 @@ import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 
-import RadioField from '@app/(general)/history/components/radio-field/radio-field';
 import InputField from '@app/(guest)/components/input-field/input-field';
 import { Button } from '@app/components/button';
 import { AnimalSex, animalSpeciesList } from '@app/models/animal';
 import type { AnimalSpecies } from '@app/models/animal';
 
-import CustomField from '../../components/custom-field/custom-field';
 import SelectorField from '../../components/selector-field/selector-field';
 import { saveAnimal } from '../../server/save-animal';
 

@@ -15,8 +15,6 @@ import { ServerActionResponse } from '@app/models/server-action-response.server'
 
 import { ServerFormData } from '../../models/server-form-data';
 
-const PERIOD = 1000 * 60 * 60 * 24 * 7; // 7 days in milliseconds
-
 export async function authenticate(
   rawData: ServerFormData,
 ): Promise<ServerActionResponse> {

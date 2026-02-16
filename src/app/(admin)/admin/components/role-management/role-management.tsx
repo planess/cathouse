@@ -19,7 +19,7 @@ const getStringArray = (formData: FormData, field: string): string[] => {
     }
   }
 
-  return Array.from(uniqueValues);
+  return [...uniqueValues];
 };
 
 export function RoleManagement() {
@@ -101,16 +101,20 @@ export function RoleManagement() {
         void loadRoles();
       } else {
         const errorDetails = await response.json();
-        
-        setError('Failed to create role' + JSON.stringify(errorDetails.details));
+
+        setError(
+          'Failed to create role' + JSON.stringify(errorDetails.details),
+        );
       }
-    } catch (err) {
+    } catch {
       setError('Failed to create role');
     }
   };
 
   const handleUpdateRole = async (formData: FormData) => {
-    if (!editingRole) return;
+    if (!editingRole) {
+      return;
+    }
 
     try {
       const roleData = {
@@ -135,15 +139,19 @@ export function RoleManagement() {
       } else {
         const errorDetails = await response.json();
 
-        setError('Failed to update role' + JSON.stringify(errorDetails.details));
+        setError(
+          'Failed to update role' + JSON.stringify(errorDetails.details),
+        );
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update role');
     }
   };
 
   const handleDeleteRole = async (roleId: string) => {
-    if (!confirm('Are you sure you want to delete this role?')) return;
+    if (!confirm('Are you sure you want to delete this role?')) {
+      return;
+    }
 
     try {
       const response = await fetch(`/api/admin/roles/${roleId}`, {
@@ -151,11 +159,11 @@ export function RoleManagement() {
       });
 
       if (response.ok) {
-        loadRoles();
+        void loadRoles();
       } else {
         setError('Failed to delete role');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete role');
     }
   };
@@ -200,7 +208,9 @@ export function RoleManagement() {
         <RoleCreating
           permissions={permissions}
           roles={roles}
-          submit={handleCreateRole}
+          submit={(formData) => {
+            void handleCreateRole(formData);
+          }}
           cancel={() => setShowCreateForm(false)}
         />
       )}
@@ -211,7 +221,9 @@ export function RoleManagement() {
           activeRole={editingRole}
           permissions={permissions}
           roles={roles}
-          submit={handleUpdateRole}
+          submit={(formData) => {
+            void handleUpdateRole(formData);
+          }}
           cancel={() => setEditingRole(null)}
         />
       )}

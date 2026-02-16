@@ -24,7 +24,10 @@ function buildCategoryTree(
   const reportMap = new Map<string, InventoryReportRow[]>();
 
   reports.forEach((report) => {
-    if (typeof report.categoryId !== 'string' || report.categoryId.length === 0) {
+    if (
+      typeof report.categoryId !== 'string' ||
+      report.categoryId.length === 0
+    ) {
       return;
     }
 
@@ -55,17 +58,15 @@ function buildCategoryTree(
 
   const tree = categories.map(mapNode);
 
-  const uncategorized = reports.filter(
-    (report) => {
-      const categoryId = report.categoryId;
+  const uncategorized = reports.filter((report) => {
+    const categoryId = report.categoryId;
 
-      return (
-        typeof categoryId !== 'string' ||
-        categoryId.length === 0 ||
-        !knownCategoryIds.has(categoryId)
-      );
-    },
-  );
+    return (
+      typeof categoryId !== 'string' ||
+      categoryId.length === 0 ||
+      !knownCategoryIds.has(categoryId)
+    );
+  });
 
   if (uncategorized.length > 0) {
     tree.push({
@@ -130,12 +131,16 @@ export function InventoryTable({
         <span className="font-semibold text-slate-900 dark:text-white">
           {report.quantity}
         </span>
-        <span className="ml-1 text-xs text-slate-400">{t('table.unitsLabel')}</span>
+        <span className="ml-1 text-xs text-slate-400">
+          {t('table.unitsLabel')}
+        </span>
       </td>
       <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
         {report.storageName || '-'}
       </td>
-      <td className="px-6 py-4 text-slate-500">{report.expirationDate || '-'}</td>
+      <td className="px-6 py-4 text-slate-500">
+        {report.expirationDate || '-'}
+      </td>
       <td className="px-6 py-4 text-slate-500">{report.createdAt || '-'}</td>
       <td className="px-6 py-4 text-slate-500">{report.type || '-'}</td>
       <td className="px-6 py-4 text-right">
@@ -164,7 +169,10 @@ export function InventoryTable({
       const hasContent = hasChildren || hasReports;
 
       const rows: ReactNode[] = [
-        <tr key={`category-${node.id}`} className="bg-slate-50/80 dark:bg-slate-900/60">
+        <tr
+          key={`category-${node.id}`}
+          className="bg-slate-50/80 dark:bg-slate-900/60"
+        >
           <td colSpan={8} className="px-6 py-3">
             <button
               type="button"
@@ -202,7 +210,9 @@ export function InventoryTable({
         return rows;
       }
 
-      rows.push(...node.reports.map((report) => renderReportRow(report, depth)));
+      rows.push(
+        ...node.reports.map((report) => renderReportRow(report, depth)),
+      );
 
       if (hasChildren) {
         rows.push(...renderCategoryRows(node.children, depth + 1));

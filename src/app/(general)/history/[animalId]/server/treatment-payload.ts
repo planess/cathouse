@@ -6,6 +6,7 @@ import type {
   VetMedicineRecord,
   VetTreatmentRecord,
 } from '@app/models/animal';
+
 import { TreatmentPayloadError } from './treatment-payload-error';
 
 const MAX_RECORDS_PER_SECTION = 50;
@@ -14,7 +15,13 @@ const clinicFieldSchema = z
   .string()
   .trim()
   .optional()
-  .transform((value) => (value ? value : undefined));
+  .transform((value) => {
+    if (typeof value === 'undefined' || value.length === 0) {
+      return;
+    }
+
+    return value;
+  });
 
 const interventionSchema = z.object({
   date: z.string().trim().min(1, 'Provide the intervention date.'),
@@ -28,13 +35,25 @@ const medicationSchema = z.object({
     .string()
     .trim()
     .optional()
-    .transform((value) => (value ? value : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.length === 0) {
+        return;
+      }
+
+      return value;
+    }),
   startDate: z.string().trim().min(1, 'Provide the medication start date.'),
   endDate: z
     .string()
     .trim()
     .optional()
-    .transform((value) => (value ? value : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.length === 0) {
+        return;
+      }
+
+      return value;
+    }),
   clinic: clinicFieldSchema,
 });
 
@@ -46,12 +65,24 @@ const payloadSchema = z.object({
     .string()
     .trim()
     .optional()
-    .transform((value) => (value ? value : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.length === 0) {
+        return;
+      }
+
+      return value;
+    }),
   summary: z
     .string()
     .trim()
     .optional()
-    .transform((value) => (value ? value : undefined)),
+    .transform((value) => {
+      if (typeof value === 'undefined' || value.length === 0) {
+        return;
+      }
+
+      return value;
+    }),
   interventions: z.array(interventionSchema).max(MAX_RECORDS_PER_SECTION),
   medications: z.array(medicationSchema).max(MAX_RECORDS_PER_SECTION),
 });
@@ -64,7 +95,7 @@ function parseJson(input: FormDataEntryValue | null, field: string) {
   try {
     const parsed = JSON.parse(rawValue);
     if (!Array.isArray(parsed)) {
-      throw new Error();
+      throw new TypeError(`${field} payload must be an array.`);
     }
 
     return parsed;
@@ -85,7 +116,7 @@ function toDate(value: string, label: string) {
 
 function toObjectId(value: string | undefined, label: string) {
   if (!value) {
-    return undefined;
+    return;
   }
 
   if (!ObjectId.isValid(value)) {
@@ -136,7 +167,10 @@ function normalizeMedications(
       record.clinic = clinicId;
     }
 
-    if (record.endDate && record.endDate.getTime() < record.startDate.getTime()) {
+    if (
+      record.endDate &&
+      record.endDate.getTime() < record.startDate.getTime()
+    ) {
       throw new TreatmentPayloadError(
         'Medication end date cannot be earlier than the start date.',
       );
@@ -147,7 +181,10 @@ function normalizeMedications(
 }
 
 export function parseTreatmentFormData(formData: FormData) {
-  const interventions = parseJson(formData.get('interventions'), 'Interventions');
+  const interventions = parseJson(
+    formData.get('interventions'),
+    'Interventions',
+  );
   const medications = parseJson(formData.get('medications'), 'Medications');
 
   const rawPayload: TreatmentPayload = {
@@ -197,14 +234,16 @@ export function parseTreatmentFormData(formData: FormData) {
     treatment.summary = parsed.data.summary;
   }
 
-  const normalizedInterventions = normalizeInterventions(parsed.data.interventions);
+  const normalizedInterventions = normalizeInterventions(
+    parsed.data.interventions,
+  );
   const normalizedMedications = normalizeMedications(parsed.data.medications);
 
-  if (normalizedInterventions.length) {
+  if (normalizedInterventions.length > 0) {
     treatment.interventions = normalizedInterventions;
   }
 
-  if (normalizedMedications.length) {
+  if (normalizedMedications.length > 0) {
     treatment.medications = normalizedMedications;
   }
 

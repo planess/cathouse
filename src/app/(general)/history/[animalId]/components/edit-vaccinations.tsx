@@ -66,6 +66,11 @@ export default function EditVaccinations({
   }, [animalId, clinicOptions, initialValues, modal, router, t]);
 
   return (
-    <EditButton label={t('edit_vaccinations_label')} onClick={editHandler} />
+    <EditButton
+      label={t('edit_vaccinations_label')}
+      onClick={() => {
+        void editHandler();
+      }}
+    />
   );
 }

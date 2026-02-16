@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import {
   forwardRef,
   useCallback,
@@ -9,16 +10,14 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
 
-import type {
-  ClinicOption,
-  VaccinationModalInitialValues,
-} from '../types';
-import { updateVaccinations } from '../server/update-vaccinations';
-import { PlusIcon } from './icons';
 import { formatDate as formatDisplayDate } from '../../components/card/card.helpers';
+import { updateVaccinations } from '../server/update-vaccinations';
+
+import { PlusIcon } from './icons';
+
+import type { ClinicOption, VaccinationModalInitialValues } from '../types';
+import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 
 export type EditVaccinationsFormHandle = {
   submit: () => Promise<'updated'>;
@@ -50,7 +49,12 @@ type SwipeableRowProps = {
 
 const SWIPE_THRESHOLD_PX = 40;
 
-const SwipeableRow = ({ item, children, onToggle, swipeLabel }: SwipeableRowProps) => {
+const SwipeableRow = ({
+  item,
+  children,
+  onToggle,
+  swipeLabel,
+}: SwipeableRowProps) => {
   const startXRef = useRef<number | null>(null);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -323,7 +327,7 @@ export const EditVaccinationsForm = forwardRef<
     emptyLabel: string,
     showClinic: boolean,
   ) => {
-    if (!items.length) {
+    if (items.length === 0) {
       return <p className="text-sm text-slate-500">{emptyLabel}</p>;
     }
 
@@ -380,7 +384,9 @@ export const EditVaccinationsForm = forwardRef<
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">{swipeHint}</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+        {swipeHint}
+      </p>
 
       <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:bg-gray-700 dark:border-gray-600 transition-colors">
         <header className="mb-3 flex items-start justify-between gap-4">
@@ -413,10 +419,12 @@ export const EditVaccinationsForm = forwardRef<
               id="parasite-name"
               type="text"
               value={parasiteForm.name}
-              onChange={(event) => setParasiteForm((prev) => ({
-                ...prev,
-                name: event.target.value,
-              }))}
+              onChange={(event) =>
+                setParasiteForm((prev) => ({
+                  ...prev,
+                  name: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
             />
           </div>
@@ -432,10 +440,12 @@ export const EditVaccinationsForm = forwardRef<
               id="parasite-date"
               type="date"
               value={parasiteForm.date}
-              onChange={(event) => setParasiteForm((prev) => ({
-                ...prev,
-                date: event.target.value,
-              }))}
+              onChange={(event) =>
+                setParasiteForm((prev) => ({
+                  ...prev,
+                  date: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
             />
           </div>
@@ -484,10 +494,12 @@ export const EditVaccinationsForm = forwardRef<
               id="rabies-name"
               type="text"
               value={rabiesForm.name}
-              onChange={(event) => setRabiesForm((prev) => ({
-                ...prev,
-                name: event.target.value,
-              }))}
+              onChange={(event) =>
+                setRabiesForm((prev) => ({
+                  ...prev,
+                  name: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
             />
           </div>
@@ -503,10 +515,12 @@ export const EditVaccinationsForm = forwardRef<
               id="rabies-date"
               type="date"
               value={rabiesForm.date}
-              onChange={(event) => setRabiesForm((prev) => ({
-                ...prev,
-                date: event.target.value,
-              }))}
+              onChange={(event) =>
+                setRabiesForm((prev) => ({
+                  ...prev,
+                  date: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
             />
           </div>
@@ -521,10 +535,12 @@ export const EditVaccinationsForm = forwardRef<
             <select
               id="rabies-clinic"
               value={rabiesForm.clinic}
-              onChange={(event) => setRabiesForm((prev) => ({
-                ...prev,
-                clinic: event.target.value,
-              }))}
+              onChange={(event) =>
+                setRabiesForm((prev) => ({
+                  ...prev,
+                  clinic: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
               disabled={!hasClinicOptions}
             >
@@ -592,10 +608,12 @@ export const EditVaccinationsForm = forwardRef<
               id="virus-name"
               type="text"
               value={virusForm.name}
-              onChange={(event) => setVirusForm((prev) => ({
-                ...prev,
-                name: event.target.value,
-              }))}
+              onChange={(event) =>
+                setVirusForm((prev) => ({
+                  ...prev,
+                  name: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
             />
           </div>
@@ -611,10 +629,12 @@ export const EditVaccinationsForm = forwardRef<
               id="virus-date"
               type="date"
               value={virusForm.date}
-              onChange={(event) => setVirusForm((prev) => ({
-                ...prev,
-                date: event.target.value,
-              }))}
+              onChange={(event) =>
+                setVirusForm((prev) => ({
+                  ...prev,
+                  date: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
             />
           </div>
@@ -629,10 +649,12 @@ export const EditVaccinationsForm = forwardRef<
             <select
               id="virus-clinic"
               value={virusForm.clinic}
-              onChange={(event) => setVirusForm((prev) => ({
-                ...prev,
-                clinic: event.target.value,
-              }))}
+              onChange={(event) =>
+                setVirusForm((prev) => ({
+                  ...prev,
+                  clinic: event.target.value,
+                }))
+              }
               className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 disabled:opacity-60 dark:bg-zinc-500 dark:text-stone-50 transition-colors"
               disabled={!hasClinicOptions}
             >

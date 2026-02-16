@@ -18,8 +18,8 @@ export class RBACService extends Singleton {
   async assignRole(
     userId: ObjectId,
     roleId: ObjectId,
-    context?: string,
-    expiresAt?: number,
+    _context?: string,
+    _expiresAt?: number,
   ): Promise<{ success: boolean; error?: string }> {
     const dbClient = await clientPromise;
     const db = dbClient.db();
@@ -59,7 +59,7 @@ export class RBACService extends Singleton {
   async removeRoleForUser(
     userId: ObjectId,
     roleId: ObjectId,
-    context?: string,
+    _context?: string,
   ): Promise<{ success: boolean; error?: string }> {
     const dbClient = await clientPromise;
     const db = dbClient.db();
@@ -67,10 +67,9 @@ export class RBACService extends Singleton {
     try {
       const result = await db
         .collection(DbTables.users)
-        .updateOne(
-          { _id: userId },
-          { $pull: { roles: roleId } } as unknown as UpdateFilter<Document>,
-        );
+        .updateOne({ _id: userId }, {
+          $pull: { roles: roleId },
+        } as unknown as UpdateFilter<Document>);
 
       return {
         success: true,
@@ -189,10 +188,9 @@ export class RBACService extends Singleton {
     try {
       await db
         .collection(DbTables.roles)
-        .updateOne(
-          { _id: roleId },
-          { $pull: { permissions: { $in: permissionId } } } as unknown as UpdateFilter<Document>,
-        );
+        .updateOne({ _id: roleId }, {
+          $pull: { permissions: { $in: permissionId } },
+        } as unknown as UpdateFilter<Document>);
 
       return { success: true };
     } catch (error) {

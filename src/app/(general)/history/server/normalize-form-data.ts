@@ -45,7 +45,6 @@ export function normalizeFormData(formData: FormData): ValidationResult {
   const informator = getString(formData, 'informator') ?? undefined;
   if (informator) {
     // check if valid ObjectId?
-
   }
 
   const statusValue = getString(formData, 'status');
@@ -79,18 +78,7 @@ function getString(formData: FormData, key: string): string | null {
   }
 
   const trimmed = value.trim();
-  return trimmed.length ? trimmed : null;
-}
-
-function getDate(formData: FormData, key: string): Date | 'invalid' | null {
-  const value = getString(formData, key);
-
-  if (!value) {
-    return null;
-  }
-
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? 'invalid' : date;
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 function extractFiles(formData: FormData, key: string): File[] {

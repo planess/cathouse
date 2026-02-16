@@ -1,6 +1,5 @@
 'use server';
 
-import { ObjectId } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
 import { string, ZodError } from 'zod';
 
@@ -55,7 +54,7 @@ export async function changePassword(
 
   try {
     originPassword = decrypt(privateKey, passHash);
-  } catch (error) {
+  } catch {
     return {
       status: 'error',
       errors: { root: ['Failed to decrypt password'] },
@@ -74,7 +73,7 @@ export async function changePassword(
     if (error instanceof ZodError) {
       const errors = {} as ResponseErrors;
 
-      for (const { path, message } of error.issues) {
+      for (const { message } of error.issues) {
         const key = 'passHash'; //path.join('.');
 
         errors[key] ??= [];

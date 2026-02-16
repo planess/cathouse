@@ -9,11 +9,7 @@ import { publishHistoryGranted } from '@app/accessors/publish-history-granted';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { Sterilized } from '@app/models/db/sterilized';
 
-import {
-  buildBadges,
-  formatDate,
-  resolveAnimalImage,
-} from '../components/card/card.helpers';
+import { resolveAnimalImage } from '../components/card/card.helpers';
 
 import AvatarSocialsSection from './components/avatar-socials.section';
 import AvatarSection from './components/avatar.section';
@@ -56,18 +52,13 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
   }
 
   const canPublish = await publishHistoryGranted(animal.createdBy);
-  const [t, cardTranslations] = await Promise.all([
-    getTranslations('historypage'),
-    getTranslations('historypage.card'),
-  ]);
+  const [t] = await Promise.all([getTranslations('historypage')]);
   const headers = await httpHeaders();
   const backHref = resolveHistoryBackHref(headers.get('referer'));
   const heroImage = resolveAnimalImage(
     animal.mainAsset?.key,
     process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL,
   );
-  const heroBadges = buildBadges(animal, cardTranslations);
-  const createdLabel = formatDate(animal.createdAt);
   const sortedObservations = sortObservations(animal.observations);
 
   const sterilizedRecord: Sterilized | undefined =

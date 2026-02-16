@@ -9,7 +9,9 @@ export default function Selector({ list, attach }: SelectorProps) {
   console.log('--- Selector render', attach);
   return (
     <select
-      onChange={(e) => attach(e.target.value)}
+      onChange={(e) => {
+        void attach(e.target.value);
+      }}
       className="border border-gray-300 rounded p-1"
     >
       <option value="">Select new role</option>

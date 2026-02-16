@@ -1,4 +1,6 @@
-export function formatDisplayName(value: string | undefined | null): string | null {
+export function formatDisplayName(
+  value: string | undefined | null,
+): string | null {
   if (!value) {
     return null;
   }

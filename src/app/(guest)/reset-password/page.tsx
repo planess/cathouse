@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
@@ -8,7 +9,6 @@ import RestoreForm from './components/restore-form';
 import { sendRestoreEmail } from './server/send-restore-email';
 
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 export default async function ResetPasswordPage({
   searchParams,

@@ -16,7 +16,10 @@ type AddTreatmentProps = {
   clinicOptions: ClinicOption[];
 };
 
-export default function AddTreatment({ animalId, clinicOptions }: AddTreatmentProps) {
+export default function AddTreatment({
+  animalId,
+  clinicOptions,
+}: AddTreatmentProps) {
   const t = useTranslations('historypage.personal');
   const modal = useModal();
   const router = useRouter();

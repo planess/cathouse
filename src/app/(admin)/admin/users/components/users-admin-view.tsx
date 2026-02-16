@@ -1,8 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 import {
   createUser,
@@ -10,7 +10,6 @@ import {
   updateUser,
 } from '@app/actions/users.server';
 import { useModal } from '@app/hooks/use-modal';
-import { CheckRoundIcon } from '@app/(general)/history/[animalId]/components/icons';
 
 export type UserRow = {
   id: string;

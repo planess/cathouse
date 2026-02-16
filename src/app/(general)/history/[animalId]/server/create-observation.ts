@@ -59,8 +59,6 @@ const payloadSchema = z.object({
     .transform((value) => (value ? value.trim() : undefined)),
 });
 
-type Payload = z.infer<typeof payloadSchema>;
-
 type SerializedMediaAsset = Omit<MediaAsset, 'uploadedAt'> & {
   uploadedAt: string;
 };
@@ -360,7 +358,7 @@ export async function createObservation(
     };
   }
 
-  await revalidatePath(`/history/${animalObjectId.toHexString()}`);
+  revalidatePath(`/history/${animalObjectId.toHexString()}`);
 
   return {
     success: true,

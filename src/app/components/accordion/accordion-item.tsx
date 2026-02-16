@@ -174,7 +174,12 @@ export function AccordionItem({
       toggle: handleToggle,
       toggleButtonProps,
       chevron: (
-        <span className={clsx('text-slate-500 transition-transform duration-300 size-5', { 'rotate-180': resolvedOpen })}>
+        <span
+          className={clsx(
+            'text-slate-500 transition-transform duration-300 size-5',
+            { 'rotate-180': resolvedOpen },
+          )}
+        >
           <ChevronIcon />
         </span>
       ),
@@ -197,7 +202,12 @@ export function AccordionItem({
       return (
         <button {...toggleButtonProps}>
           <div className="flex-1 overflow-hidden">{title}</div>
-          <span className={clsx('text-slate-500 transition-transform duration-300 size-5', { 'rotate-180': resolvedOpen })}>
+          <span
+            className={clsx(
+              'text-slate-500 transition-transform duration-300 size-5',
+              { 'rotate-180': resolvedOpen },
+            )}
+          >
             <ChevronIcon />
           </span>
         </button>

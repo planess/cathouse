@@ -68,15 +68,19 @@ type InternalModalState = {
   origin: ModalOrigin | null;
 };
 
+const noop = (): void => {
+  return;
+};
+
 const defaultContext: ModalContextValue = {
   showModal: () =>
-    createModalHandle(Promise.resolve(undefined), {
+    createModalHandle(Promise.resolve(), {
       id: 0,
-      setActionEnabled: () => undefined,
-      enableAction: () => undefined,
-      disableAction: () => undefined,
+      setActionEnabled: noop,
+      enableAction: noop,
+      disableAction: noop,
     }),
-  dismissModal: () => undefined,
+  dismissModal: noop,
   isOpen: false,
 };
 
@@ -259,12 +263,10 @@ export function ModalProvider({ children }: ModalProviderProps) {
     const body = document.body;
 
     if (modalStack.length > 0) {
-      if (!bodyStyleCacheRef.current) {
-        bodyStyleCacheRef.current = {
-          overflow: body.style.overflow,
-          paddingRight: body.style.paddingRight,
-        };
-      }
+      bodyStyleCacheRef.current ??= {
+        overflow: body.style.overflow,
+        paddingRight: body.style.paddingRight,
+      };
 
       if (scrollbarWidthRef.current === 0) {
         scrollbarWidthRef.current =
@@ -373,32 +375,43 @@ export function ModalProvider({ children }: ModalProviderProps) {
   );
 
   const renderModals = () => {
-    if (!modalStack.length || !isMounted) {
+    if (modalStack.length === 0 || !isMounted) {
       return null;
     }
 
     return createPortal(
       <>
         {modalStack.map((state, index) => {
-          const { options } = state;
-          const dismissible = options.dismissible ?? true;
-          const actions = (options.actions as
-            | ModalAction<unknown>[]
-            | undefined) ?? [
+          const {
+            id: stateId,
+            options,
+            origin: stateOrigin,
+            status: lifecycleState,
+          } = state;
+          const {
+            content: modalContent,
+            description,
+            title,
+            dismissLabel,
+            origin,
+            size = 'md',
+            dismissible = true,
+            actions: optionActions,
+          } = options;
+          const actions = optionActions ?? [
             {
               id: 'default-modal-close',
-              label: options.dismissLabel ?? 'Close',
+              label: dismissLabel ?? 'Close',
               tone: 'primary',
-              onSelect: () => undefined,
+              onSelect: noop,
             },
           ];
 
           const content =
-            typeof options.content === 'function'
-              ? options.content()
-              : (options.content ?? options.description);
+            typeof modalContent === 'function'
+              ? modalContent()
+              : (modalContent ?? description);
 
-          const size = options.size ?? 'md';
           const sizeClass = {
             sm: 'max-w-md',
             md: 'max-w-lg',
@@ -410,16 +423,13 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
           const isTop = index === modalStack.length - 1;
           const overlayOpacity = Math.min(0.45 + index * 0.08, 0.8);
-          const lifecycleState = state.status;
           const isClosing = lifecycleState === 'closing';
           const isTopAndActive = isTop && !isClosing;
-          const panelStyle = resolveModalOriginStyle(
-            state.origin ?? options.origin,
-          );
+          const panelStyle = resolveModalOriginStyle(stateOrigin ?? origin);
 
           return (
             <div
-              key={state.id}
+              key={stateId}
               className={clsx(
                 'modal-overlay fixed inset-0 flex items-center justify-center px-4 py-6 backdrop-blur-sm',
                 isTopAndActive ? 'pointer-events-auto' : 'pointer-events-none',
@@ -468,15 +478,15 @@ export function ModalProvider({ children }: ModalProviderProps) {
                 )}
 
                 <div className="flex-1 overflow-y-auto pr-1">
-                  {options.title && (
+                  {title && (
                     <h2 className="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-200 transition-colors">
-                      {options.title}
+                      {title}
                     </h2>
                   )}
 
-                  {options.description && (
+                  {description && (
                     <div className="mb-4 text-sm text-slate-600 dark:text-slate-300 transition-colors">
-                      {options.description}
+                      {description}
                     </div>
                   )}
 
@@ -489,27 +499,26 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
                 <div className="mt-6 flex flex-wrap justify-end gap-3">
                   {actions.map((action) => {
-                    const tone = action.tone ?? 'secondary';
-                    const actionId = action.id ?? action.label;
+                    const { tone = 'secondary', id, label, disabled } = action;
+                    const actionId = id ?? label;
                     const isLoading =
                       pendingActionId === actionId && isTopAndActive;
+                    const isDisabled =
+                      (disabled ?? false) || isLoading || !isTopAndActive;
 
                     return (
                       <button
                         key={actionId}
                         type="button"
-                        disabled={
-                          action.disabled || isLoading || !isTopAndActive
-                        }
-                        onClick={() => void handleAction(action, state.id)}
+                        disabled={isDisabled}
+                        onClick={() => void handleAction(action, stateId)}
                         className={clsx(
                           'inline-flex min-w-24 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-colors',
                           resolveToneClass(tone),
-                          (action.disabled || isLoading || !isTopAndActive) &&
-                            'opacity-60',
+                          isDisabled && 'opacity-60',
                         )}
                       >
-                        {isLoading ? 'Please wait…' : action.label}
+                        {isLoading ? 'Please wait…' : label}
                       </button>
                     );
                   })}
@@ -561,6 +570,8 @@ function resolveToneClass(tone: ModalTone) {
   switch (tone) {
     case 'primary':
       return 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-sky-500 dark:text-slate-900 dark:hover:bg-sky-600';
+    case 'secondary':
+      return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
     case 'danger':
       return 'bg-rose-600 text-white hover:bg-rose-700';
     case 'ghost':

@@ -4,6 +4,9 @@ import { revalidatePath } from 'next/cache';
 
 import { serverMigrationRunner } from '../services/migration-runner.server';
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
 /**
  * Server action to run pending migrations and refresh the admin page
  */
@@ -17,7 +20,7 @@ export async function runPendingMigrations() {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to run migrations: ${error}`,
+      message: `Failed to run migrations: ${getErrorMessage(error)}`,
     };
   }
 }
@@ -31,7 +34,7 @@ export async function getMigrationStatus() {
   } catch (error) {
     return {
       success: false,
-      status: `Failed to check migration status: ${error}`,
+      status: `Failed to check migration status: ${getErrorMessage(error)}`,
     };
   }
 }
@@ -49,7 +52,7 @@ export async function revertLastMigration() {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to revert migration: ${error}`,
+      message: `Failed to revert migration: ${getErrorMessage(error)}`,
     };
   }
 }
@@ -63,7 +66,7 @@ export async function forceRunMigrations() {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to force run migrations: ${error}`,
+      message: `Failed to force run migrations: ${getErrorMessage(error)}`,
     };
   }
 }
@@ -77,7 +80,7 @@ export async function createMigration(name: string) {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to create migration: ${error}`,
+      message: `Failed to create migration: ${getErrorMessage(error)}`,
     };
   }
 }

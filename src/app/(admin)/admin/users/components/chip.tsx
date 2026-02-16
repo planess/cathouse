@@ -12,7 +12,9 @@ export default function Chip({ label, close }: ChipProps) {
       <button
         type="button"
         className="text-gray-500 hover:text-gray-700"
-        onClick={close}
+        onClick={() => {
+          void close?.();
+        }}
       >
         &times;
       </button>

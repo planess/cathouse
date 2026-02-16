@@ -34,7 +34,7 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
   const [left, setLeft] = useState(
     Math.floor((expiresIn.getTime() - Date.now()) / 1000),
   );
-  const { cryptoKey, isLoading, error: cryptoError } = useCryptoKeys();
+  const { cryptoKey } = useCryptoKeys();
   const [pending, setPending] = useState(false);
   const t = useTranslations('authorization');
 

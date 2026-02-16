@@ -73,10 +73,9 @@ function getVisibleMonths<T extends { month: number }>(
   const currentMonth = now.getMonth() + 1;
   const maxMonth = year === currentYear ? currentMonth : 12;
 
-  return months
-    .filter((month) => month.month <= maxMonth)
-    .slice()
-    .sort((a, b) => b.month - a.month);
+  return [...months.filter((month) => month.month <= maxMonth)].sort(
+    (a, b) => b.month - a.month,
+  );
 }
 
 function getYearBreakdown(months: MonthFinance[]) {
@@ -88,7 +87,7 @@ function getYearBreakdown(months: MonthFinance[]) {
     });
   });
 
-  return Array.from(totals.entries())
+  return [...totals.entries()]
     .map(([name, amount]) => ({ name, amount }))
     .sort((a, b) => b.amount - a.amount);
 }
@@ -417,7 +416,7 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
               <div key={`finance-${yearData.year}`} className="space-y-4">
                 {yearData.year === FOUNDATION_START_YEAR &&
                 isFinanceYearEmpty(yearData) ? (
-                  <PreparationComponent showBalance={true} />
+                  <PreparationComponent showBalance />
                 ) : yearData.year === initialYear &&
                   yearData.year === new Date().getFullYear() &&
                   isFinanceYearEmpty(yearData) ? (

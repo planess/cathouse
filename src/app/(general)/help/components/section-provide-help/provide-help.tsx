@@ -34,11 +34,7 @@ export default function ProvideHelp() {
         {BENEFITS.map(({ key, image }) => (
           <div key={key} className="flex items-center gap-3">
             <div className="flex-none">
-              <Image
-                src={image}
-                alt={t(`benefits.${key}.alt`)}
-                width={100}
-              />
+              <Image src={image} alt={t(`benefits.${key}.alt`)} width={100} />
             </div>
 
             <div>

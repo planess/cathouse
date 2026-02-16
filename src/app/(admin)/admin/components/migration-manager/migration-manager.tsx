@@ -9,6 +9,9 @@ import {
   runPendingMigrations,
 } from '../../../../actions/migrations.server';
 
+const toErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 export function MigrationManager() {
   const [status, setStatus] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +29,7 @@ export function MigrationManager() {
         setStatus(`Error: ${result.status}`);
       }
     } catch (error) {
-      setStatus(`Failed to check status: ${error}`);
+      setStatus(`Failed to check status: ${toErrorMessage(error)}`);
     } finally {
       setLoading(false);
     }
@@ -40,7 +43,7 @@ export function MigrationManager() {
 
       setStatus(result.message);
     } catch (error) {
-      setStatus(`Failed to run migrations: ${error}`);
+      setStatus(`Failed to run migrations: ${toErrorMessage(error)}`);
     } finally {
       setLoading(false);
     }
@@ -54,7 +57,7 @@ export function MigrationManager() {
 
       setStatus(result.message);
     } catch (error) {
-      setStatus(`Failed to force run migrations: ${error}`);
+      setStatus(`Failed to force run migrations: ${toErrorMessage(error)}`);
     } finally {
       setLoading(false);
     }
@@ -78,7 +81,7 @@ export function MigrationManager() {
         setMigrationName('');
       }
     } catch (error) {
-      setStatus(`Failed to create migration: ${error}`);
+      setStatus(`Failed to create migration: ${toErrorMessage(error)}`);
     } finally {
       setLoading(false);
     }
@@ -92,7 +95,9 @@ export function MigrationManager() {
         {/* Check Status */}
         <div className="flex gap-2">
           <button
-            onClick={handleCheckStatus}
+            onClick={() => {
+              void handleCheckStatus();
+            }}
             disabled={loading}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
           >
@@ -103,7 +108,9 @@ export function MigrationManager() {
         {/* Run Migrations */}
         <div className="flex gap-2">
           <button
-            onClick={handleRunMigrations}
+            onClick={() => {
+              void handleRunMigrations();
+            }}
             disabled={loading}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
           >
@@ -111,7 +118,9 @@ export function MigrationManager() {
           </button>
 
           <button
-            onClick={handleForceRunMigrations}
+            onClick={() => {
+              void handleForceRunMigrations();
+            }}
             disabled={loading}
             className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
           >
@@ -129,7 +138,9 @@ export function MigrationManager() {
             className="px-3 py-2 border border-gray-300 rounded flex-1"
           />
           <button
-            onClick={handleCreateMigration}
+            onClick={() => {
+              void handleCreateMigration();
+            }}
             disabled={loading || !migrationName.trim()}
             className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
           >

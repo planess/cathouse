@@ -43,8 +43,6 @@ const payloadSchema = z.object({
     }),
 });
 
-type Payload = z.infer<typeof payloadSchema>;
-
 type CreateClinicSuccess = {
   success: true;
   clinic: ClinicOption;

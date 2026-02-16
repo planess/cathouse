@@ -21,9 +21,12 @@ export default function Logo() {
 
       const now = Date.now();
 
-      clickTimesRef.current = clickTimesRef.current
-        .filter((timestamp) => now - timestamp <= CLICK_WINDOW_MS)
-        .concat(now);
+      clickTimesRef.current = [
+        ...clickTimesRef.current.filter(
+          (timestamp) => now - timestamp <= CLICK_WINDOW_MS,
+        ),
+        now,
+      ];
 
       if (clickTimesRef.current.length >= CLICK_TARGET_COUNT) {
         clickTimesRef.current = [];

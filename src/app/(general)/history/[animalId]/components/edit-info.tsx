@@ -77,5 +77,12 @@ export default function EditInfo({
     t,
   ]);
 
-  return <EditButton label={t('edit_button_label')} onClick={editHandler} />;
+  return (
+    <EditButton
+      label={t('edit_button_label')}
+      onClick={() => {
+        void editHandler();
+      }}
+    />
+  );
 }

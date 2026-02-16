@@ -2,6 +2,7 @@
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
+
 import type { InformatorOption } from '../types';
 import type { ObjectId } from 'mongodb';
 

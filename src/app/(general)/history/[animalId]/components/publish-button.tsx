@@ -32,7 +32,13 @@ export default function PublishButton({ animalId }: PublishButtonProps) {
   return (
     <>
       <span>Draft animal</span>
-      <Button onClick={handlePublish}>Publish</Button>
+      <Button
+        onClick={() => {
+          void handlePublish();
+        }}
+      >
+        Publish
+      </Button>
     </>
   );
 }

@@ -59,7 +59,9 @@ export default function InfoSection({
           <h1 className="text-3xl font-bold text-slate-900 lg:text-4xl dark:text-slate-200 transition-colors">
             {animal.name}
           </h1>
-          <div className="text-sm text-slate-600 dark:text-slate-300 transition-colors">{ageLabel}</div>
+          <div className="text-sm text-slate-600 dark:text-slate-300 transition-colors">
+            {ageLabel}
+          </div>
         </div>
 
         <div className="flex gap-2 items-center">

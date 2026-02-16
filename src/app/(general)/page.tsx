@@ -27,18 +27,20 @@ import type { Metadata } from 'next';
 const missionKeys = ['population', 'medical', 'community'] as const;
 const trackerActionKeys = ['reports', 'stations', 'emergency'] as const;
 
-const icons = [
-  <VisibilityIcon />,
-  <SearchIcon />,
-  <CaptureIcon />,
-  <MedicalBoxIcon />,
-  <VaccinesIcon />,
-  <HomeCareIcon />,
-  <PetsIcon />,
-].map((icon, idx) => (
+const iconComponents = [
+  VisibilityIcon,
+  SearchIcon,
+  CaptureIcon,
+  MedicalBoxIcon,
+  VaccinesIcon,
+  HomeCareIcon,
+  PetsIcon,
+];
+
+const icons = iconComponents.map((IconComponent, idx) => (
   <RoundIcon
     key={idx + 1}
-    icon={icon}
+    icon={<IconComponent />}
     className="bg-[#00a6f4]/10 text-[#00a6f4] dark:bg-zinc-400 dark:text-sky-900 transition-colors"
   />
 ));

@@ -21,7 +21,9 @@ export async function GET(request: NextRequest) {
   const dbClient = await clientPromise;
   const db = dbClient.db();
 
-  const activeSession = await db.collection(DbTables.sessions).findOne({ token });
+  const activeSession = await db
+    .collection(DbTables.sessions)
+    .findOne({ token });
 
   if (!activeSession) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -29,16 +31,11 @@ export async function GET(request: NextRequest) {
 
   const record = await db
     .collection(DbTables.users)
-    .findOne(
-      { _id: activeSession.userID },
-      { projection: { password: 0 } },
-    );
+    .findOne({ _id: activeSession.userID }, { projection: { password: 0 } });
 
   if (!record) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-
-  const profile = await db.collection(DbTables.profiles).findOne({ _id: record._id });
 
   // check permissions or 403 error
 

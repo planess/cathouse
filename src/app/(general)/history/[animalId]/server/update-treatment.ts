@@ -127,7 +127,7 @@ export async function updateTreatment(
     };
   }
 
-  await revalidatePath(`/history/${parsedPayload.animalId.toHexString()}`);
+  revalidatePath(`/history/${parsedPayload.animalId.toHexString()}`);
 
   return { success: true };
 }

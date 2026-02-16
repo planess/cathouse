@@ -11,7 +11,10 @@ interface CurrentUserPermission {
   isLoading: boolean;
 }
 
-export function usePermission(permission: SystemPermission, context?: string): CurrentUserPermission {
+export function usePermission(
+  permission: SystemPermission,
+  _context?: string,
+): CurrentUserPermission {
   const user = useCurrentUser();
   const isLoading = useUserLoading();
 

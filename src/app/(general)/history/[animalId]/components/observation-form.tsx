@@ -73,7 +73,7 @@ export const ObservationForm = forwardRef<
 
   const handleFilesChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      const selected = Array.from(event.target.files ?? []);
+      const selected = [...(event.target.files ?? [])];
       setFiles(selected);
     },
     [],
@@ -220,7 +220,9 @@ export const ObservationForm = forwardRef<
 
             <button
               type="button"
-              onClick={handleCreateInformator}
+              onClick={() => {
+                void handleCreateInformator();
+              }}
               className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-neutral-400 "
               aria-label={t('form.informator_add_label')}
               title={t('form.informator_add_label')}

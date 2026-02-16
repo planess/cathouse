@@ -14,7 +14,9 @@ interface ClinicDocument {
 
 const DEFAULT_LIMIT = 200;
 
-export async function listClinicOptions(limit = DEFAULT_LIMIT): Promise<ClinicOption[]> {
+export async function listClinicOptions(
+  limit = DEFAULT_LIMIT,
+): Promise<ClinicOption[]> {
   const client = await clientPromise;
   const db = client.db();
   const clinicsCollection = db.collection<ClinicDocument>(DbTables.clinics);

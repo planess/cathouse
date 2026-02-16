@@ -66,7 +66,7 @@ export function LocationField({
       return;
     }
 
-    if (document.getElementById(LEAFLET_CSS_ID)) {
+    if (document.querySelector(`#${LEAFLET_CSS_ID}`)) {
       return;
     }
 
@@ -272,7 +272,9 @@ export function LocationField({
         <div ref={containerRef} className="h-64 w-full rounded-t-2xl" />
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-sm">
-          <p className="text-slate-600 dark:text-slate-400 transition-colors">{statusMessage}</p>
+          <p className="text-slate-600 dark:text-slate-400 transition-colors">
+            {statusMessage}
+          </p>
           <button
             type="button"
             onClick={handleDetectLocation}

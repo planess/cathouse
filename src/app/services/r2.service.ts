@@ -1,7 +1,9 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { createHash, randomUUID } from 'crypto';
 
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+
 import { MediaAsset } from '@app/models/media-asset';
+
 import { Singleton } from './singleton';
 
 const DEFAULT_MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB per asset
@@ -27,7 +29,9 @@ export class R2Service extends Singleton {
 
     this.bucket = this.requireEnv('CLOUDFLARE_R2_BUCKET');
     this.publicBaseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL;
-    this.maxFileSizeBytes = Number(process.env.CLOUDFLARE_R2_MAX_FILE_BYTES ?? DEFAULT_MAX_FILE_SIZE_BYTES);
+    this.maxFileSizeBytes = Number(
+      process.env.CLOUDFLARE_R2_MAX_FILE_BYTES ?? DEFAULT_MAX_FILE_SIZE_BYTES,
+    );
 
     this.client = new S3Client({
       region: 'auto',
@@ -40,22 +44,32 @@ export class R2Service extends Singleton {
     });
   }
 
-  async uploadFiles(files: File[], options: UploadOptions = {}): Promise<MediaAsset[]> {
-    if (!files.length) {
+  async uploadFiles(
+    files: File[],
+    options: UploadOptions = {},
+  ): Promise<MediaAsset[]> {
+    if (files.length === 0) {
       return [];
     }
 
-    const sanitizedFolder = options.folder?.replace(/[^a-zA-Z0-9/_-]+/g, '-').replace(/^-+|-+$/g, '');
+    const sanitizedFolder = options.folder
+      ?.replace(/[^\w/-]+/g, '-')
+      .replaceAll(/^-+|-+$/g, '');
 
     const uploads = files.map(async (file) => {
       if (file.size > this.maxFileSizeBytes) {
-        throw new Error(`File ${file.name} is too large. Max ${this.maxFileSizeBytes} bytes allowed.`);
+        throw new Error(
+          `File ${file.name} is too large. Max ${this.maxFileSizeBytes} bytes allowed.`,
+        );
       }
 
       const buffer = Buffer.from(await file.arrayBuffer());
       const checksum = createHash('sha256').update(buffer).digest('hex');
       const normalizedName = this.normalizeName(file.name);
-      const key = [sanitizedFolder, `${Date.now()}-${randomUUID()}-${normalizedName}`]
+      const key = [
+        sanitizedFolder,
+        `${Date.now()}-${randomUUID()}-${normalizedName}`,
+      ]
         .filter(Boolean)
         .join('/');
 
@@ -100,9 +114,9 @@ export class R2Service extends Singleton {
     return fileName
       .trim()
       .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9._-]/g, '')
-      .replace(/-+/g, '-');
+      .replaceAll(/\s+/g, '-')
+      .replaceAll(/[^\d._a-z-]/g, '')
+      .replaceAll(/-+/g, '-');
   }
 
   private requireEnv(key: string): string {

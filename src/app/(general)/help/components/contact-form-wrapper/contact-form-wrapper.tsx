@@ -22,7 +22,7 @@ export default function ContactFormWrapper() {
           claim: t('checkboxLabel'),
         });
 
-        return consent ? handler(...args) : { status: 'declined' } as const;
+        return consent ? handler(...args) : ({ status: 'declined' } as const);
       } catch {
         return { status: 'error' } as const;
       }

@@ -10,10 +10,6 @@ import type { ReactNode } from 'react';
 export default function LegalInfoPage() {
   const t = useTranslations('legalinfopage');
 
-  const statuteUrl = '/assets/statute.pdf';
-  const privacyUrl = '/privacy-policy';
-  const cookiesUrl = '/privacy-policy#cookies';
-
   const requisites = [
     { key: 'fullName', value: t('sections.requisites.items.fullName') },
     { key: 'edrpou', value: t('sections.requisites.items.edrpou') },

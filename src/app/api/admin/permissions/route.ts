@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@app/ins/mongo-client';
 
 // GET /api/admin/permissions - Get all permissions
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // TODO: Add authentication and permission check
   // const hasPermission = await rbacService.hasPermission({
   //   userId: getCurrentUserId(),
@@ -19,10 +19,7 @@ export async function GET(request: NextRequest) {
     const dbClient = await clientPromise;
     const db = dbClient.db();
 
-    const permissions = await db
-      .collection('permissions')
-      .find({})
-      .toArray();
+    const permissions = await db.collection('permissions').find({}).toArray();
 
     return NextResponse.json({ permissions });
   } catch {

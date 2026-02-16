@@ -20,16 +20,16 @@ export default function RoleList({
   const renderPermissionBadges = (permissionIds: string[]) => {
     if (permissionIds.length === 0) {
       return (
-        <span className="text-xs text-gray-500">
-          No permissions assigned
-        </span>
+        <span className="text-xs text-gray-500">No permissions assigned</span>
       );
     }
 
     return (
       <div className="flex flex-wrap gap-1">
         {permissionIds.map((permissionId) => {
-          const permission = permissions.find(({ _id }) => _id === permissionId);
+          const permission = permissions.find(
+            ({ _id }) => _id === permissionId,
+          );
 
           return permission ? (
             <span

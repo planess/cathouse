@@ -7,7 +7,7 @@ export async function pemToCryptoKey(pemKey: string): Promise<CryptoKey> {
     const base64Key = pemKey
       .replace(/-----BEGIN PUBLIC KEY-----/, '')
       .replace(/-----END PUBLIC KEY-----/, '')
-      .replace(/\s/g, '');
+      .replaceAll(/\s/g, '');
 
     // Convert base64 to ArrayBuffer
     const binaryString = atob(base64Key);

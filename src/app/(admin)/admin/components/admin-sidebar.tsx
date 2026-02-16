@@ -220,7 +220,6 @@ export function AdminSidebar() {
       <nav className="flex-1 px-4 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
-          const Icon = item.Icon;
 
           return (
             <Link
@@ -233,7 +232,7 @@ export function AdminSidebar() {
                   : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
               }`}
             >
-              <Icon className="h-5 w-5" />
+              <item.Icon className="h-5 w-5" />
               <span>{item.label}</span>
             </Link>
           );
@@ -255,7 +254,7 @@ export function AdminSidebar() {
         </div>
         <button
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:border-sky-200 hover:text-sky-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-sky-400/40 dark:hover:text-sky-200"
-          disabled={true}
+          disabled
         >
           <span>Sign out</span>
           <span aria-hidden="true">{'->'}</span>

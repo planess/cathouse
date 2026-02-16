@@ -57,7 +57,11 @@ body {
 @keyframes cathouse-modal-slide-in {
   0% {
     opacity: 0;
-    transform: translate3d(var(--modal-origin-translate-x, 0px), var(--modal-origin-translate-y, -56px), 0)
+    transform: translate3d(
+        var(--modal-origin-translate-x, 0px),
+        var(--modal-origin-translate-y, -56px),
+        0
+      )
       scale(0.82);
   }
 
@@ -130,7 +134,8 @@ body {
 .modal-panel {
   --modal-origin-translate-x: 0px;
   --modal-origin-translate-y: -56px;
-  animation: cathouse-modal-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: cathouse-modal-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
   transform-origin: center;
 }
 

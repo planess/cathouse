@@ -318,7 +318,7 @@ export async function GET(request: Request) {
     });
 
     monthCategoryTotals.forEach((entries, month) => {
-      const breakdown = Array.from(entries.entries())
+      const breakdown = [...entries.entries()]
         .map(([name, amount]) => ({ name, amount }))
         .sort((a, b) => b.amount - a.amount);
 
@@ -349,14 +349,13 @@ export async function GET(request: Request) {
     ? financeMonths.reduce((sum, entry) => sum + entry.outgoing, 0)
     : 0;
 
-  const hasPrevious =
-    !(year <= FOUNDATION_START_YEAR);
-      // ? false
-      // : loadImpact && loadFinance
-      //   ? Boolean(previousSterilized ?? previousObservation ?? previousFinance)
-      //   : loadImpact
-      //     ? Boolean(previousSterilized ?? previousObservation)
-      //     : Boolean(previousFinance);
+  const hasPrevious = !(year <= FOUNDATION_START_YEAR);
+  // ? false
+  // : loadImpact && loadFinance
+  //   ? Boolean(previousSterilized ?? previousObservation ?? previousFinance)
+  //   : loadImpact
+  //     ? Boolean(previousSterilized ?? previousObservation)
+  //     : Boolean(previousFinance);
 
   return NextResponse.json({
     success: true,

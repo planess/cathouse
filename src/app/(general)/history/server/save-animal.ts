@@ -55,11 +55,12 @@ export async function saveAnimal(
 
     insertedId = newAnimalId;
 
-    const uploadedAssets = data.files.length
-      ? await uploadAnimalMedia(data.files, newAnimalId, user.id)
-      : [];
+    const uploadedAssets =
+      data.files.length > 0
+        ? await uploadAnimalMedia(data.files, newAnimalId, user.id)
+        : [];
 
-    if (uploadedAssets.length) {
+    if (uploadedAssets.length > 0) {
       const [primaryAsset] = uploadedAssets;
       const updatePayload: Partial<AnimalDocument> = {};
 
@@ -91,8 +92,11 @@ export async function saveAnimal(
     const errInfo =
       error && typeof error === 'object' && 'errInfo' in error
         ? JSON.stringify(
-            (error as { errInfo?: { details?: { schemaRulesNotSatisfied?: unknown } } }).errInfo
-              ?.details?.schemaRulesNotSatisfied,
+            (
+              error as {
+                errInfo?: { details?: { schemaRulesNotSatisfied?: unknown } };
+              }
+            ).errInfo?.details?.schemaRulesNotSatisfied,
           )
         : undefined;
 

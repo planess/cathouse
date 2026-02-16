@@ -28,13 +28,15 @@ export async function POST() {
     const db = client.db();
     const collection = db.collection('encryption');
 
-    const result = await collection.insertOne({
+    await collection.insertOne({
       id: crypto.randomUUID(),
       algorithm,
       publicKey,
       privateKey,
       createdAt,
-      createdBy: new ObjectId(crypto.createHash('md5').update('system').digest('hex').slice(0, 24)), // todo: change to real user id
+      createdBy: new ObjectId(
+        crypto.createHash('md5').update('system').digest('hex').slice(0, 24),
+      ), // todo: change to real user id
     });
 
     // Return only the public key to the client (private key stays on server)

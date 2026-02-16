@@ -6,6 +6,9 @@ interface PaginationProps {
   totalPages: number;
 }
 
+const buildHref = (pageNumber: number) =>
+  pageNumber <= 1 ? '/history' : `/history?page=${pageNumber}`;
+
 export default async function Pagination({
   safePage,
   totalPages,
@@ -13,8 +16,6 @@ export default async function Pagination({
   const t = await getTranslations('historypage');
   const hasPrev = safePage > 1;
   const hasNext = safePage < totalPages;
-  const buildHref = (pageNumber: number) =>
-    pageNumber <= 1 ? '/history' : `/history?page=${pageNumber}`;
 
   return (
     <nav

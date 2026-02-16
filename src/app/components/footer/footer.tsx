@@ -6,6 +6,7 @@ import logodark from '@public/assets/logo3-dark.svg';
 
 import LanguageSwitcher from '@app/components/language-switcher/language-switcher';
 import { getUser } from '@app/hooks/get-user';
+
 import { Tooltip } from '../tooltip';
 
 const linkBlock = [

@@ -20,7 +20,6 @@ export function ObservationCard({ observation }: ObservationCardProps) {
   const dateLabel = formatDate(observation.date) ?? 'Unknown date';
   const locationAddress =
     observation.location?.address ?? 'Undisclosed location';
-  const attachments = observation.assets?.length ?? 0;
   const healthScore = observation.health;
 
   const locationLabel = (
@@ -47,10 +46,12 @@ export function ObservationCard({ observation }: ObservationCardProps) {
   ) : null;
   const title = (
     <span className="flex gap-3 text-sm">
-      <span className="font-medium text-gray-900 dark:text-slate-200 transition-colors">{dateLabel}</span>
+      <span className="font-medium text-gray-900 dark:text-slate-200 transition-colors">
+        {dateLabel}
+      </span>
       {location && (
         <>
-          <span className="border-l border-slate-300"></span>
+          <span className="border-l border-slate-300" />
           <span>{location}</span>
         </>
       )}
@@ -74,21 +75,22 @@ export function ObservationCard({ observation }: ObservationCardProps) {
     observation.assets?.map(({ key }) =>
       resolveAnimalImage(key, process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL),
     ) ?? [];
-  const previewContent = imagePreview.length ? (
-    <div className="flex gap-2">
-      {imagePreview.map((src, index) => (
-        <Image
-          key={index}
-          src={src}
-          alt={`${index} preview`}
-          width={50}
-          height={50}
-          className="flex-none object-cover duration-500 ease-out group-hover:scale-[1.02]"
-          sizes="50px"
-        />
-      ))}
-    </div>
-  ) : null;
+  const previewContent =
+    imagePreview.length > 0 ? (
+      <div className="flex gap-2">
+        {imagePreview.map((src, index) => (
+          <Image
+            key={index}
+            src={src}
+            alt={`${index} preview`}
+            width={50}
+            height={50}
+            className="flex-none object-cover duration-500 ease-out group-hover:scale-[1.02]"
+            sizes="50px"
+          />
+        ))}
+      </div>
+    ) : null;
 
   return (
     <AccordionItem

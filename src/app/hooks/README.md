@@ -37,13 +37,17 @@ function MyClientComponent() {
 ### Convenience Hooks
 
 ```tsx
-import { useIsAuthenticated, useCurrentUser, useAuthLoading } from '@/app/hooks/use-user';
+import {
+  useIsAuthenticated,
+  useCurrentUser,
+  useAuthLoading,
+} from '@/app/hooks/use-user';
 
 function MyComponent() {
   const isAuthenticated = useIsAuthenticated();
   const user = useCurrentUser();
   const isLoading = useAuthLoading();
-  
+
   // Use these values...
 }
 ```
@@ -81,11 +85,11 @@ import { isAuthenticated, getCurrentUser } from '@/app/hooks/get-user';
 export default async function AnotherServerComponent() {
   const authenticated = await isAuthenticated();
   const user = await getCurrentUser();
-  
+
   if (!authenticated) {
     return <div>Access denied</div>;
   }
-  
+
   return <UserProfile user={user} />;
 }
 ```
@@ -101,11 +105,11 @@ import { getUser } from '@/app/hooks/get-user';
 
 export async function protectedAction() {
   const { isAuthenticated, user } = await getUser();
-  
+
   if (!isAuthenticated) {
     throw new Error('Unauthorized');
   }
-  
+
   // Proceed with authenticated user
   return { success: true, userId: user?.id };
 }
@@ -121,11 +125,11 @@ import { getUser } from '@/app/hooks/get-user';
 
 export async function GET(request: NextRequest) {
   const { isAuthenticated, user } = await getUser();
-  
+
   if (!isAuthenticated) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  
+
   return NextResponse.json({ user });
 }
 ```
@@ -169,6 +173,7 @@ interface ServerAuthState {
 ### 1. Token Storage
 
 Store authentication tokens in:
+
 - **Client**: `localStorage` or `sessionStorage`
 - **Server**: HTTP-only cookies (recommended) or Authorization header
 
@@ -181,13 +186,13 @@ Implement your token validation logic:
 async function validateToken(token: string): Promise<User | null> {
   try {
     const response = await fetch('https://your-api.com/auth/validate', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
-    
+
     if (response.ok) {
       return await response.json();
     }
-    
+
     return null;
   } catch (error) {
     console.error('Token validation failed:', error);
@@ -206,17 +211,20 @@ async function validateToken(token: string): Promise<User | null> {
 ## Best Practices
 
 ### Security
+
 - Always validate tokens on the server side
 - Use HTTP-only cookies for sensitive tokens
 - Implement proper token expiration handling
 - Add CSRF protection for forms
 
 ### Performance
+
 - Cache authentication results when appropriate
 - Use React Suspense boundaries for loading states
 - Implement proper error boundaries
 
 ### User Experience
+
 - Show loading states during authentication checks
 - Provide clear feedback for authentication failures
 - Implement proper redirect logic for protected routes
@@ -229,11 +237,11 @@ import { redirect } from 'next/navigation';
 
 export default async function ProtectedPage() {
   const { isAuthenticated } = await getUser();
-  
+
   if (!isAuthenticated) {
     redirect('/signin');
   }
-  
+
   return <div>This is a protected page</div>;
 }
 ```
@@ -245,7 +253,7 @@ import { getUser } from '@/app/hooks/get-user';
 
 export default async function ConditionalComponent() {
   const { user, isAuthenticated } = await getUser();
-  
+
   return (
     <div>
       {isAuthenticated ? (

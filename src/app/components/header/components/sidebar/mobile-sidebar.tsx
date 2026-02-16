@@ -34,7 +34,7 @@ export default function MobileSidebar({
 
   useEffect(() => {
     if (!isOpen) {
-      return undefined;
+      return;
     }
 
     const previousOverflow = document.body.style.overflow;
@@ -47,7 +47,7 @@ export default function MobileSidebar({
 
   useEffect(() => {
     if (!isOpen) {
-      return undefined;
+      return;
     }
 
     const handleKeydown = (event: KeyboardEvent) => {

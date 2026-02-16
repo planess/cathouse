@@ -40,7 +40,7 @@ export function MapPicker({
       return;
     }
 
-    if (document.getElementById(LEAFLET_CSS_ID)) {
+    if (document.querySelector(`#${LEAFLET_CSS_ID}`)) {
       return;
     }
 

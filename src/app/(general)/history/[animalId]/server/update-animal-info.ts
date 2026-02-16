@@ -34,19 +34,39 @@ const payloadSchema = z.object({
   description: z
     .string()
     .optional()
-    .transform((value) => value?.trim() || undefined),
+    .transform((value) => {
+      const trimmed = value?.trim();
+      return typeof trimmed === 'string' && trimmed.length > 0
+        ? trimmed
+        : undefined;
+    }),
   passportCode: z
     .string()
     .optional()
-    .transform((value) => value?.trim() || undefined),
+    .transform((value) => {
+      const trimmed = value?.trim();
+      return typeof trimmed === 'string' && trimmed.length > 0
+        ? trimmed
+        : undefined;
+    }),
   chipNumber: z
     .string()
     .optional()
-    .transform((value) => value?.trim() || undefined),
+    .transform((value) => {
+      const trimmed = value?.trim();
+      return typeof trimmed === 'string' && trimmed.length > 0
+        ? trimmed
+        : undefined;
+    }),
   informator: z
     .string()
     .optional()
-    .transform((value) => value?.trim() || undefined),
+    .transform((value) => {
+      const trimmed = value?.trim();
+      return typeof trimmed === 'string' && trimmed.length > 0
+        ? trimmed
+        : undefined;
+    }),
   status: z.nativeEnum(AnimalStatus),
   sterilizedEnabled: z
     .string()
@@ -63,14 +83,22 @@ const payloadSchema = z.object({
   sterilizedMethod: z
     .string()
     .optional()
-    .transform((value) => value?.trim() || undefined),
+    .transform((value) => {
+      const trimmed = value?.trim();
+      return typeof trimmed === 'string' && trimmed.length > 0
+        ? trimmed
+        : undefined;
+    }),
   sterilizedClinic: z
     .string()
     .optional()
-    .transform((value) => value?.trim() || undefined),
+    .transform((value) => {
+      const trimmed = value?.trim();
+      return typeof trimmed === 'string' && trimmed.length > 0
+        ? trimmed
+        : undefined;
+    }),
 });
-
-type Payload = z.infer<typeof payloadSchema>;
 
 type UpdateAnimalInfoSuccess = {
   success: true;
@@ -262,7 +290,7 @@ export async function updateAnimalInfo(
       { _id: animalObjectId },
       {
         $set: set,
-        ...(Object.keys(unset).length ? { $unset: unset } : {}),
+        ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       },
     );
 
@@ -285,7 +313,7 @@ export async function updateAnimalInfo(
     };
   }
 
-  await revalidatePath(`/history/${animalObjectId.toHexString()}`);
+  revalidatePath(`/history/${animalObjectId.toHexString()}`);
 
   return {
     success: true,

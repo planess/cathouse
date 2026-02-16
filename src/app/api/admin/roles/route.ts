@@ -109,12 +109,12 @@ const resolvePermissionsWithInheritance = (
 
   return roles.map((role) => ({
     ...role,
-    resolvedPermissions: Array.from(resolvePermissions(role._id)),
+    resolvedPermissions: [...resolvePermissions(role._id)],
   }));
 };
 
 // GET /api/admin/roles - Get all roles
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // TODO: Add authentication and permission check
   // const hasPermission = await rbacService.hasPermission({
   //   userId: getCurrentUserId(),

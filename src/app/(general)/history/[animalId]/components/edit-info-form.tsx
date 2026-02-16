@@ -352,7 +352,9 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
 
               <button
                 type="button"
-                onClick={handleAddInformator}
+                onClick={() => {
+                  void handleAddInformator();
+                }}
                 className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 dark:bg-stone-700 dark:text-stone-50 transition-colors hover:border-slate-900 hover:text-slate-900"
                 aria-label={t('form.informator_add_label')}
                 title={t('form.informator_add_label')}
@@ -480,7 +482,9 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
 
                   <button
                     type="button"
-                    onClick={handleAddClinic}
+                    onClick={() => {
+                      void handleAddClinic();
+                    }}
                     className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-slate-900 hover:text-slate-900 dark:bg-zinc-500 dark:text-stone-50"
                     aria-label={t('form.clinic_modal.add_label')}
                     title={t('form.clinic_modal.add_label')}
