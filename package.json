@@ -1,6 +1,6 @@
 {
   "name": "cathouse",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "private": true,
   "scripts": {
     "tsc": "tsc --noEmit",
@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
+    "husky": "husky install",
     "test:e2e": "playwright test",
     "vercel": "vercel",
     "preview:deploy": "node _temp/preview.env/deploy.js",
@@ -29,6 +30,8 @@
     "mongodb": "^6.18.0",
     "next": "^15.3.3",
     "next-intl": "^4.3.4",
+    "package-lock.json": "^1.0.0",
+    "package.json": "^2.0.1",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -61,6 +64,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unicorn": "^60.0.0",
+    "husky": "^9.1.7",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
     "jsdom": "^26.1.0",
