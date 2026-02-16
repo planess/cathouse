@@ -3,8 +3,9 @@
 import { headers as _headers } from 'next/headers';
 import { email, object, string, union, ZodError } from 'zod';
 
+import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
-import { ServerResponse } from '@app/models/server-response';
+import { ServerActionResponse } from '@app/models/server-action-response.server';
 
 import { ContactFormData } from '../models/contact-form-data';
 
@@ -14,20 +15,20 @@ const CommunicationForm = object({
     /* email */ email().lowercase(),
     /* phone number */ string().regex(/[\d\s()+-]+/),
   ]),
-  location: string(),
+  // location: string(),
   message: string(),
 }).required();
 
 export async function handler(
   formData: ContactFormData,
-): Promise<ServerResponse> {
+): Promise<ServerActionResponse> {
   let data;
 
   try {
     data = CommunicationForm.parse(formData);
   } catch (error) {
     if (error instanceof ZodError) {
-      return { status: 'error', errors: error.issues };
+      return { status: 'error', errors: error.issues as any };
     }
 
     throw error;
@@ -36,9 +37,14 @@ export async function handler(
   const headers = await _headers();
   const userAgent = headers.get('user-agent');
 
+  const forwardedFor = headers.get('x-forwarded-for');
+  const realIp = headers.get('x-real-ip');
+  const ip = forwardedFor?.split(',')[0]?.trim() ?? realIp ?? 'unknown';
+
   const extendedData = {
+    ip,
     userAgent,
-    createdAt: Date.now(),
+    createdAt: new Date(),
   };
 
   const dbClient = await clientPromise;
@@ -46,12 +52,13 @@ export async function handler(
 
   try {
     await db
-      .collection('communications')
+      .collection(DbTables.connections)
       .insertOne({ ...data, ...extendedData });
 
     return { status: 'ok' };
-  } catch {
+  } catch (error) {
     // Log the error
+    console.log(error, data, extendedData);
 
     return { status: 'error' };
   }

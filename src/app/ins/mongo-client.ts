@@ -12,7 +12,7 @@ declare global {
 }
 
 if (!uri) {
-  throw new Error('Please add your Mongo URI to .env');
+  throw new Error('Please add your Mongo URI into environment');
 }
 
 if (process.env.NODE_ENV === 'development') {

@@ -1,18 +1,23 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { createElement, JSX, useState } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 
 import { Button } from '@app/components/button';
-import { ServerHandlerParams } from '@app/models/server-handler-params';
+import { formatDisplayName } from '@app/helpers/format-display-name';
+import { HandlerParams } from '@app/models/handler-params.server';
 
 import { ContactFormData } from '../../models/contact-form-data';
 
 export default function ContactForm({
   handler,
-}: ServerHandlerParams<ContactFormData>) {
+}: HandlerParams<ContactFormData>) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState, getValues } =
     useForm<ContactFormData>();
+  const t = useTranslations('contactForm');
 
   const http = handleSubmit(async (data) => {
     const response = await handler(data);
@@ -42,12 +47,12 @@ export default function ContactForm({
     <form onSubmit={a} className="flex flex-col gap-1">
       <div className="flex flex-col">
         <Field
-          label="Ім'я"
+          label={t('fields.name.label')}
           element="input"
           config={{
             ...register('name', { required: true }),
             type: 'text',
-            placeholder: 'Будемо знати як звертатись при зустрічі',
+            placeholder: t('fields.name.placeholder'),
             disabled: sent,
           }}
         />
@@ -55,12 +60,12 @@ export default function ContactForm({
 
       <div className="flex flex-col">
         <Field
-          label="Email або телефон"
+          label={t('fields.contacts.label')}
           element="input"
           config={{
             ...register('contacts', { required: true }),
             type: 'text',
-            placeholder: 'Щоб вийти на зворотній контакт',
+            placeholder: t('fields.contacts.placeholder'),
             disabled: sent,
           }}
         />
@@ -68,11 +73,10 @@ export default function ContactForm({
 
       <div className="flex flex-col">
         <Field
-          label="Повідомлення"
+          label={t('fields.message.label')}
           config={{
             ...register('message', { required: true }),
-            placeholder:
-              'Розкажіть детально чим можете допомагати, коли і як часто',
+            placeholder: t('fields.message.placeholder'),
             disabled: sent,
           }}
           element="textarea"
@@ -84,7 +88,7 @@ export default function ContactForm({
           <Thankyou contact={getValues('contacts')} name={getValues('name')} />
         ) : (
           <Button className="ml-auto" disabled={loading || !formState.isValid}>
-            Надіслати
+            {t('submit')}
           </Button>
         )}
       </div>
@@ -94,13 +98,18 @@ export default function ContactForm({
 
 function Thankyou({ contact, name }: { contact: string; name: string }) {
   const isEmail = /[^@]+@[^@]{2,}/.test(contact);
+  const t = useTranslations('contactForm');
+  const normalizedName = formatDisplayName(name);
+  const resolvedName = normalizedName ?? t('status.defaultName');
+  const channelKey = isEmail ? 'email' : 'phone';
 
   return (
     <div>
-      Повідомлення надіслано і ми уже беремось його переглядати.{' '}
-      {name[0].toUpperCase()}
-      {name.slice(1).toLowerCase()}, намагатимемось дати швидку реакцію на{' '}
-      {isEmail ? 'email' : 'номер'} <strong>{contact}</strong>.
+      {t('status.success', {
+        name: resolvedName,
+        channel: t(`status.channel.${channelKey}`),
+        contact,
+      })}
     </div>
   );
 }
@@ -115,12 +124,13 @@ interface R<T extends E> {
 
 function Field<T extends E>({ label, config, element }: R<T>) {
   const Element = createElement(element, {
-    className: 'bg-stone-50 flex-auto p-2',
+    className:
+      'bg-stone-50 flex-auto p-2 dark:bg-stone-300 dark:placeholder:text-stone-400 dark:text-stone-900 transition-colors',
     ...config,
   });
 
   return (
-    <label className="flex p-[2px] rounded-lg bg-linear-to-r from-sky-50 to-zinc-50">
+    <label className="flex flex-col md:flex-row p-0.5 rounded-lg bg-linear-to-r from-sky-50 to-zinc-50 dark:from-zinc-500 dark:to-zinc-700 transition-colors">
       <span className="py-2 px-3 w-45">{label}</span>
       {Element}
     </label>

@@ -1,9 +1,14 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
-import type { Metadata } from 'next';
 import './globals.css';
+
+import { CookieConsent } from './components/cookie-consent';
+import { ModalProvider } from './providers/modal';
+import { UserProvider } from './providers/user';
+
+import type { Metadata, Viewport } from 'next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -15,10 +20,23 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: 'Периметр',
-  description: 'Благодійний фонд "Периметр" допомагає безпритульним тваринам',
-  robots: 'noindex, nofollow',
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: 'layout' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    robots: 'noindex, nofollow',
+  };
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // minimumScale: 1,
+  // maximumScale: 5,
+  // userScalable: true,
 };
 
 export default async function RootLayout({
@@ -28,12 +46,21 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
 
+  setRequestLocale(locale);
+
   return (
     <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <UserProvider>
+            <ModalProvider>
+              {children}
+              <CookieConsent />
+            </ModalProvider>
+          </UserProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

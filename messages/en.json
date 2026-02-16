@@ -1,7 +1,1603 @@
 {
+  "yes": "Yes",
+  "no": "No",
+  "cookieConsent": {
+    "text": "We only use technical cookies necessary for the proper functioning of the site (including session and authorization storage). These cookies are not used for advertising.",
+    "agree": "Accept",
+    "reject": "Reject",
+    "tune": "Customize",
+    "untilAccept": "This functionality depends on your consent to the use of cookies."
+  },
+  "gdpr": {
+    "default": {
+      "title": "Personal data processing consent",
+      "content": "Please review and accept the personal data processing consent to continue.",
+      "declineLabel": "Decline",
+      "acceptLabel": "Accept",
+      "triggerLabel": "Review consent",
+      "declinedError": "GDPR consent declined"
+    }
+  },
+  "header": {
+    "home": "Home",
+    "contacts": "Contacts",
+    "history": "History",
+    "registry": "Registry",
+    "help": "Help",
+    "logoSecret": "Tap five times quickly to open the sign-in page",
+    "logoAltSmall": "Foundation compact logo",
+    "menuTitle": "Navigation",
+    "menuOpenLabel": "Open navigation menu",
+    "menuCloseLabel": "Close navigation menu",
+    "emergencyButton": "Report an animal"
+  },
+  "reportDialog": {
+    "buttonLabel": "Report",
+    "title": "Share an emergency",
+    "description1": "We are based in Lviv, but please remember - we are <strong>not a shelter</strong> and do not have our own facilities for long-term animal care. We primarily recommend reaching out to:",
+    "description2": "<info><highlight>https://lkplev.com|LKP Lev</highlight>, Lviv, Promyslova St. 56</info>",
+    "description3": "<info><highlight>https://www.domivka.org.ua|Domivka Vryatovanykh Tvaryn</highlight>, Lviv, Dovbusha St. 24</info>",
+    "description4": "There are similar organizations in other cities that can provide assistance.",
+    "description": "Choose a convenient way to contact us, describe the problem, and we'll route it to the right volunteer as soon as possible.",
+    "closeLabel": "Close"
+  },
+  "helppage": {
+    "title": "Mutual Aid",
+    "sections": {
+      "s1-title": "Let's together",
+      "s1-text": "help",
+      "s2-title": "support",
+      "s2-text": "each other"
+    },
+    "provide": {
+      "title": "When challenges appear",
+      "paragraphs": {
+        "intro1": "We know that not everyone can rescue, treat, or rehome animals alone, so the foundation supports people who refuse to stay indifferent.",
+        "intro2": "You are not left alone with a difficult situation. Your effort becomes part of a larger rescue system, letting you change an animal’s destiny without spending every resource on your own.",
+        "cta": "From our side you can receive:"
+      },
+      "benefits": {
+        "medical": {
+          "title": "Medical guidance and treatment support",
+          "description": "We help you find veterinarians and co-fund treatment or sterilization for stray animals.",
+          "alt": "Medicine and help illustration"
+        },
+        "adoption": {
+          "title": "Rehoming support",
+          "description": "We publish information about rescued animals on our platforms and help them find temporary or permanent homes.",
+          "alt": "Cat resting at home illustration"
+        },
+        "volunteers": {
+          "title": "Volunteer care",
+          "description": "We provide food, carriers, medications, and essentials to people who temporarily shelter an animal.",
+          "alt": "Volunteer feeding a cat illustration"
+        },
+        "education": {
+          "title": "Sharing knowledge",
+          "description": "We teach how to act safely and effectively when you find a stray animal.",
+          "alt": "Learning materials illustration"
+        }
+      }
+    },
+    "receive": {
+      "title": "Join the support network",
+      "intro": "Any help is tangible and important. The more people step in, the lighter the load for everyone—that is exactly the approach we want to build.",
+      "callout": "We need active participants for different directions:",
+      "areas": {
+        "observation": {
+          "title": "Operational observation",
+          "paragraphs": {
+            "p1": "Trips to assigned locations help us search for and monitor stray animals, assess their health, count individuals, and record conditions like shelter, food access, and interaction with people or other animals.",
+            "p2": "Every visit ends with a short report describing health status, location specifics, potential risks (for example hostile people or unsafe areas), and recommendations such as urgent veterinary help or sterilization."
+          }
+        },
+        "response": {
+          "title": "Field response",
+          "paragraphs": {
+            "p1": "We capture stray animals for sterilization, treatment, or relocation, respond to emergencies where animals need immediate help, and evaluate every scene to choose the next steps.",
+            "p2": "Volunteers transport animals to safe places, clinics, or shelters using nets, carriers, or other tools; experience with animals (clinics, shelters, volunteer programs) is a plus.",
+            "p3": "Detailed documentation is crucial: the location, animal condition, capture circumstances, and next actions, such as transferring the case to veterinary services."
+          }
+        },
+        "medical": {
+          "title": "Medical support (requires education)",
+          "paragraphs": {
+            "p1": "Volunteers perform medical examinations, assess health, and carry out procedures such as vaccination, sterilization, or treatment both in equipped rooms and directly in the field.",
+            "p2": "They handle wound care, administer medicines, or perform surgeries; in the field they stabilize animals, provide first aid, and help organize transport to a safe place or clinic.",
+            "p3": "Accurate records about each animal, procedures, medicines, and follow-up recommendations are required in either digital or paper form."
+          }
+        },
+        "it": {
+          "title": "IT field",
+          "paragraphs": {
+            "p1": "We are building a convenient platform for visitors and volunteers—personal dashboards, interactive stray-location maps, and trip-planning tools."
+          },
+          "rolesIntro": "To keep the process efficient we welcome specialists in different roles:",
+          "roles": {
+            "designers": {
+              "label": "designers",
+              "description": "to craft inviting and accessible interfaces"
+            },
+            "analysts": {
+              "label": "business analysts",
+              "description": "to capture user needs and prioritize features"
+            },
+            "developers": {
+              "label": "JavaScript developers",
+              "description": "to implement product functionality"
+            },
+            "testers": {
+              "label": "testers",
+              "description": "to guarantee quality before releases"
+            },
+            "devops": {
+              "label": "DevOps engineers",
+              "description": "to configure and maintain infrastructure"
+            }
+          }
+        },
+        "care": {
+          "title": "Care and guardianship",
+          "paragraphs": {
+            "p1": "The foundation does not have a large shelter, so temporary housing for adult or young stray pets during quarantine or treatment is incredibly valuable.",
+            "p2": "A covered, safe area—or an adapted wing of a home or commercial space—dramatically accelerates assistance. Several small safe houses across the city are easier to support than transporting every animal to one distant site. Safety and comfort for people and animals remain the main criteria.",
+            "p3": "We provide food, bedding, litter boxes, and other supplies. Volunteers record health updates, procedures, medicines, and care recommendations in whichever format is convenient.",
+            "p4": "Ideas on how to organize such spaces, even without your own premises, are also a meaningful contribution."
+          }
+        }
+      },
+      "closing": "We appreciate every level of involvement—from one-time help to regular participation—and we will always respect your experience and comfort when selecting tasks.",
+      "contactCta": "Send us a message and let’s get acquainted ❤️"
+    },
+    "modal": {
+      "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Peryferiia”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
+      "checkboxLabel": "I consent to the processing of my personal data"
+    }
+  },
   "contactspage": {
+    "title": "Contact",
     "aboutus": "We're a small, passionate team dedicated to animal welfare. While we don't have a physical shelter, we partner with veterinary clinics to provide treatment and temporary housing for animals in need as they wait for their forever homes.",
     "map1": "We primarily operate within the zone shown on the map. While our reach is focused, we strive to be helpful for as many animals as possible within our operational capacity.",
-    "map2": "We strive to expand our influence on helping stray animals over a larger zone. This requires the participation of more people, and we invite everyone to join the team."
+    "map2": "We strive to expand our influence on helping stray animals over a larger zone. This requires the participation of more people, and we invite everyone to join the team.",
+    "section1_title": "Always here",
+    "section2_title": "Message us",
+    "section2_intro": "Write your thoughts and we will try to take them into account in our work.",
+    "map_title": "Activity Zone",
+    "links": {
+      "emailAria": "Open email app",
+      "phoneAria": "Call the listed phone number",
+      "telegramAria": "Open our Telegram channel",
+      "instagramAria": "Open our Instagram profile"
+    },
+    "modal": {
+      "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Periphery”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
+      "checkboxLabel": "I consent to the processing of my personal data"
+    }
+  },
+  "privacypage": {
+    "title": "Privacy Policy",
+    "updated": "Last updated: {date}",
+    "intro": "We respect your privacy and explain why and what data we collect and how we protect it when you use this site or contact the Foundation.",
+    "sections": {
+      "who": {
+        "title": "Who we are",
+        "items": {
+          "controller": "Data controller: Charitable Foundation “Periphery”.",
+          "edrpou": "EDRPOU: 45962629.",
+          "email": "Contact email for data protection matters: <email>info@perilines.com.ua.</email>",
+          "contactPerson": "Data protection contact person is available via this email. The Foundation has not appointed a separate data protection officer because the scale of processing does not pose special risk (Art. 24 of the Law)."
+        }
+      },
+      "definitions": {
+        "title": "Definitions",
+        "items": {
+          "intro": "Under the Law of Ukraine “On Personal Data Protection”, we use the following terms:",
+          "personalData": "Personal data: any information relating to an identified or identifiable natural person.",
+          "processing": "Processing of personal data: any action or set of actions such as collection, registration, accumulation, storage, adaptation, change, renewal, use, dissemination, depersonalization, or destruction.",
+          "subject": "Data subject: a natural person whose data is processed.",
+          "controller": "Data controller: the Foundation that determines the purpose and means of processing.",
+          "processor": "Data processor: a person entrusted by the Foundation to process data under a contract."
+        }
+      },
+      "children": {
+        "title": "Children",
+        "items": {
+          "open": "The Foundation's website is open to all users regardless of age.",
+          "noTarget": "We do not target activities at minors and do not enter into agreements or interact with children without the participation and consent of their legal representatives.",
+          "under14Consent": "If processing personal data of persons under 14 is necessary, it is carried out only with parental or legal representative consent.",
+          "noSensitive": "We do not process children’s data without such consent and do not collect sensitive data about children (Art. 7 of the Law)."
+        }
+      },
+      "sensitive": {
+        "title": "Prohibition on sensitive data",
+        "items": {
+          "ban": "We do not process sensitive personal data such as racial or ethnic origin, political, religious or philosophical beliefs, membership in political parties or trade unions, health, sex life, biometric or genetic data (Art. 7 of the Law).",
+          "exception": "If such processing becomes necessary (for example, for medical assistance to volunteers), it will be carried out only with your consent or in other cases provided by law."
+        }
+      },
+      "collection": {
+        "title": "Information we collect after your consent",
+        "items": {
+          "contact": "Contact details you provide (name, email, phone) when you reach out or submit forms.",
+          "technical": "Basic technical data such as IP address, device type, and browser for security and analytics.",
+          "content": "Content you choose to share, such as messages about animals or files you upload.",
+          "payments": "We do not store payment card details; payments are processed by third-party providers.",
+          "notice": "When collecting data, we inform you about the controller, data composition, your rights, processing purpose, and recipients (Art. 12 of the Law). If data is collected indirectly, the notice is provided within 30 days."
+        }
+      },
+      "analytics": {
+        "title": "Technical and behavioral data",
+        "items": {
+          "data": "We may collect technical and behavioral data such as pages visited, interactions with site elements, frequency and duration of use, and device parameters (browser type, operating system, approximate city-level location).",
+          "use": "This data helps analyze site performance and improve usability, stability, and effectiveness, and understand how users interact with our content.",
+          "consent": "Collection and processing of behavioral and analytics data occur only with your consent via the cookie management mechanism."
+        }
+      },
+      "use": {
+        "title": "How we use information",
+        "items": {
+          "respond": "Respond to your requests and coordinate help.",
+          "organize": "Organize assistance for animals and manage requests.",
+          "volunteers": "Coordinate volunteers and partners involved in care.",
+          "reporting": "Keep required reporting and documentation.",
+          "maintain": "Maintain site functionality, prevent abuse, and improve performance.",
+          "legal": "Comply with legal obligations and protect our volunteers and partners.",
+          "noAutomated": "We do not use data for automated decision-making or legally significant profiling."
+        }
+      },
+      "basis": {
+        "title": "Legal basis for processing",
+        "items": {
+          "consent": "Your consent where required.",
+          "request": "Your request or inquiry addressed to the Foundation.",
+          "obligation": "Compliance with legal obligations.",
+          "legitimate": "Our legitimate interest in security and operational needs.",
+          "principles": "Processing is transparent and follows adequacy, accuracy, and storage limitation principles (Art. 6 of the Law). A change of purpose requires new consent."
+        }
+      },
+      "cookies": {
+        "title": "Cookies and localStorage",
+        "items": {
+          "necessary": "We use both technically necessary cookies for site operation and analytical cookies—only after obtaining user consent.",
+          "noAds": "We do not use cookies for advertising.",
+          "analytics": "Cookies are used only after consent and help us understand usage and improve the service.",
+          "control": "You can manage cookies in your browser settings.",
+          "withdraw": "You can change or withdraw your consent at any time through cookie settings."
+        }
+      },
+      "email": {
+        "title": "Email communications",
+        "items": {
+          "purpose": "We may send informational messages, news, or reports to email addresses voluntarily provided when contacting, registering, or interacting with the Foundation.",
+          "optout": "You can opt out at any time using the unsubscribe link or by emailing the Foundation.",
+          "notice": "When sending emails, we inform you about the option to unsubscribe (Art. 21 of the Law)."
+        }
+      },
+      "sharing": {
+        "title": "Data sharing",
+        "items": {
+          "partners": "We share information only with trusted partners to provide help.",
+          "clinics": "Veterinary clinics, when needed to help animals.",
+          "payments": "Payment service providers for processing donations or fees.",
+          "providers": "Technical service providers (hosting, email) that support the website.",
+          "noSale": "We do not sell personal data, nor use data for marketing or targeted advertising.",
+          "noMarketingTargeting": "Data is not used for individual marketing targeting or shared with third parties for advertising purposes.",
+          "legal": "We may disclose data if required by law.",
+          "processors": "Processors (partners) handle data only within the scope and purpose defined by contract with the Foundation and are obliged to protect it (Art. 4 of the Law).",
+          "notice": "Where consent is required, we notify you about data transfer within 10 days (Art. 21 of the Law)."
+        }
+      },
+      "international": {
+        "title": "International data transfers",
+        "items": {
+          "transfers": "If we use international services, data may be processed outside Ukraine.",
+          "safeguards": "We apply appropriate safeguards in line with applicable law.",
+          "adequacy": "Transfers occur only to countries with an adequate level of protection (EEA, Council of Europe Convention signatories) or with safeguards such as contracts or consent, as provided by Art. 29 of the Law."
+        }
+      },
+      "retention": {
+        "title": "Data retention",
+        "items": {
+          "duration": "We keep data only as long as needed for the purposes described above.",
+          "inquiries": "Inquiries are stored for the time required to process and follow up.",
+          "volunteer": "Volunteer data is retained according to internal policies and legal requirements.",
+          "financial": "Financial records are stored for statutory periods.",
+          "cleanup": "We delete or anonymize data when it is no longer required.",
+          "deletionNotice": "When processing ends, data is deleted or destroyed (Art. 15 of the Law). We notify you about deletion within 10 days."
+        }
+      },
+      "breach": {
+        "title": "Data breach response",
+        "items": {
+          "response": "If a data breach is detected, the Foundation immediately takes mitigation steps, assesses risks, and, if the breach threatens your rights, notifies you within 72 hours and the Commissioner of the Verkhovna Rada of Ukraine on Human Rights (Art. 18 of the Law)."
+        }
+      },
+      "security": {
+        "title": "Security",
+        "items": {
+          "measures": "We apply technical and organizational measures to protect data.",
+          "accessControl": "Access to personal data is limited to authorized persons.",
+          "measuresDetails": "Measures include encryption, access controls, regular audits, staff training, and protection from unauthorized access (Art. 24 of the Law). Staff sign confidentiality undertakings."
+        }
+      },
+      "updates": {
+        "title": "Policy updates",
+        "items": {
+          "changes": "We may update this policy from time to time. The current version is always available on this page.",
+          "material": "For material changes (e.g., a new processing purpose), we will notify you via email or on the website (Art. 21 of the Law).",
+          "effective": "Effective date: {consentDate}"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "If you have questions about this policy or your data, contact us and we will respond as soon as possible.",
+        "emailLabel": "info@perilines.com.ua"
+      }
+    }
+  },
+  "historypage": {
+    "title": "Registry of our animals",
+    "panel1": "We register animals that we monitor, care for, and treat. Each history is our inspiration and helps coordinate the efforts of volunteers and clinics to provide the best care. Each record has a unique story, characteristics, and conditions.",
+    "createHistory": "Create new history",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "summary": "Page {page} of {total}"
+    },
+    "personal": {
+      "backtohistory": "Back to animal list",
+      "reference": "Reference ID",
+      "observations": "Observations",
+      "add_observation": "Add observation",
+      "vaccinations": "Vaccinations",
+      "vaccinations_empty": "No vaccination records yet",
+      "edit_vaccinations_label": "Edit vaccinations",
+      "treatments": "Treatment",
+      "add_treatment": "Add treatment",
+      "treatments_empty": "No treatment records yet",
+      "treatments_unknown_date": "Unknown date",
+      "treatments_in_progress": "In progress",
+      "treatments_complaints": "Complaints: {complaints}",
+      "treatments_interventions": "Interventions",
+      "treatments_medications": "Medications",
+      "treatments_start_label": "Start: {date}",
+      "treatments_end_label": "End: {date}",
+      "treatments_start_end_label": "{start} - {end}",
+      "edit_button_label": "Edit general info",
+      "no_observations": "No observations recorded yet",
+      "use_current_date": "Creating the record the date will be set to current moment",
+      "status": {
+        "free": "Outside",
+        "under-treatment": "Under treatment",
+        "sheltered": "In shelter",
+        "returned": "Returned to habitat",
+        "adopted": "Adopted",
+        "dead": "Passed away",
+        "unknown": "Unknown"
+      },
+      "vaccination": {
+        "parasites": "Parasites",
+        "rabies": "Rabies",
+        "virus": "Virus"
+      },
+      "form": {
+        "submit": "Add",
+        "close": "Close",
+        "cancel": "Cancel",
+        "save": "Save changes",
+        "edit_modal_title": "Edit general information",
+        "edit_modal_description": "Update the animal profile, add new contacts, and keep sterilization data accurate.",
+        "name_label": "Name",
+        "name_error": "Provide the animal name.",
+        "birthday_label": "Birthday",
+        "description_label": "Description",
+        "description_placeholder": "Behavior, medical notes, or anything that helps potential adopters.",
+        "passport_label": "Passport code",
+        "chip_label": "Chip number",
+        "status_label": "Status",
+        "status_options": {
+          "free": "Outside, not caught",
+          "under-treatment": "Under treatment",
+          "sheltered": "In shelter",
+          "returned": "Returned to habitat",
+          "adopted": "Adopted",
+          "dead": "Passed away",
+          "unknown": "Unknown"
+        },
+        "informator_label": "Informator",
+        "informator_placeholder": "Select a person (optional)",
+        "informator_hint": "Pick someone from the people directory if the report came from an external informant.",
+        "informator_empty": "No people records are available yet.",
+        "informator_add_label": "Add informator",
+        "informator_modal": {
+          "title": "Add informator",
+          "description": "Save a person once and reuse them for future observations.",
+          "name_label": "Name",
+          "name_placeholder": "Full name",
+          "name_hint": "Use their preferred way of being introduced.",
+          "name_error": "Provide the person's name.",
+          "phone_label": "Phone",
+          "phone_placeholder": "+380000000000",
+          "phone_hint": "Store the phone exactly as it was shared.",
+          "phone_error": "Provide the phone number.",
+          "age_label": "Age",
+          "age_placeholder": "Years",
+          "age_hint": "Optional. Helps to identify the person faster.",
+          "saving": "Saving informator..."
+        },
+        "clinic_modal": {
+          "title": "Add clinic",
+          "description": "Save a veterinary clinic once and reuse it later.",
+          "add_label": "Add clinic",
+          "empty_label": "No clinics saved yet.",
+          "name_label": "Clinic name",
+          "name_placeholder": "Name as shared publicly",
+          "name_hint": "Helps volunteers and guardians coordinate visits.",
+          "name_error": "Provide the clinic name.",
+          "location_label": "Location",
+          "location_description": "Pin the clinic on the map to simplify routing.",
+          "location_detect": "Use my location",
+          "location_detecting": "Detecting...",
+          "location_detected": "Location updated.",
+          "location_detect_error": "Unable to detect location automatically.",
+          "location_unsupported": "Geolocation is not supported.",
+          "location_required": "Select the clinic location on the map.",
+          "location_clear": "Clear location",
+          "location_status_idle": "Tap on the map to place the clinic mark.",
+          "address_label": "Address",
+          "address_placeholder": "Street, building number, floor...",
+          "address_error": "Provide the clinic address.",
+          "coordinates_label": "Coordinates",
+          "saving": "Saving clinic..."
+        },
+        "vaccinations_modal": {
+          "title": "Update vaccinations",
+          "description": "Log deworming, rabies, and virus shots so volunteers stay synchronized.",
+          "swipe_hint": "Swipe a record left or right (or press Enter) to mark it for deletion. Swipe again to undo.",
+          "deleted_badge": "Will be deleted",
+          "new_badge": "New",
+          "name_label": "Name",
+          "date_label": "Date",
+          "clinic_label": "Clinic",
+          "clinic_placeholder": "Select a clinic",
+          "no_clinics": "No clinics available",
+          "clinic_required_hint": "Add a clinic first to log vaccinations.",
+          "parasites_title": "Parasites",
+          "parasites_description": "Track deworming and antiparasitic treatments.",
+          "parasites_empty": "No parasite treatments recorded yet.",
+          "parasites_error": "Provide the medicine name and date.",
+          "rabies_title": "Rabies",
+          "rabies_description": "Register every mandatory rabies shot.",
+          "virus_title": "Virus",
+          "virus_description": "Track DHPP, Leptospirosis, and other viral vaccines.",
+          "vaccination_empty": "No vaccination entries yet.",
+          "vaccination_error": "Provide the vaccine name, date, and clinic.",
+          "add_button_label": "Add",
+          "validation_error": "Fill in the required fields before saving.",
+          "validation_clinic": "Select a clinic for every vaccine entry.",
+          "saving": "Saving vaccination records..."
+        },
+        "treatment_modal": {
+          "title_create": "Add treatment plan",
+          "title_edit": "Update treatment plan",
+          "description": "Log complaints, interventions, and medication schedules to keep everyone aligned.",
+          "edit_label": "Edit treatment",
+          "complaints_label": "Complaints",
+          "complaints_placeholder": "Symptoms, reasons for visiting the clinic...",
+          "complaints_error": "Describe the complaints.",
+          "start_date_label": "Start date",
+          "start_date_error": "Provide the treatment start date.",
+          "end_date_label": "End date",
+          "end_date_hint": "Leave empty if the treatment is still in progress.",
+          "end_date_error": "End date cannot be earlier than the start date.",
+          "summary_label": "Summary",
+          "summary_placeholder": "Notes from the vet, response to therapy, next steps...",
+          "swipe_hint": "Swipe a row left or right (or press Enter) to mark it for deletion. Swipe again to undo.",
+          "deleted_badge": "Will be deleted",
+          "intervention_label": "Intervention",
+          "interventions_title": "Interventions",
+          "interventions_description": "Track procedures performed during the treatment.",
+          "interventions_empty": "No interventions recorded yet.",
+          "interventions_error": "Provide the intervention date and description.",
+          "date_label": "Date",
+          "description_label": "Description",
+          "clinic_label": "Clinic",
+          "clinic_placeholder": "Select a clinic (optional)",
+          "no_clinics": "No clinics available",
+          "add_button_label": "Add",
+          "medications_title": "Medications",
+          "medications_description": "List prescribed medicines and their dosage.",
+          "medications_empty": "No medications recorded yet.",
+          "medications_error": "Provide the medication name and start date.",
+          "medication_name_label": "Medication name",
+          "medication_dosage_label": "Dosage",
+          "ongoing_label": "Ongoing",
+          "validation_error": "Fill in the required fields before saving.",
+          "saving": "Saving treatment..."
+        },
+        "note_label": "Observation note",
+        "note_placeholder": "Describe what was noticed, symptoms, or context...",
+        "health_label": "Health status (1-10)",
+        "health_description": "Slide to rate the current condition: 1 is critical, 10 is excellent.",
+        "location_label": "Location",
+        "location_description": "We attempt to detect your current position automatically. Adjust the pin or tap anywhere on the map.",
+        "location_detect": "Use my location",
+        "location_detecting": "Detecting...",
+        "location_detected": "Location updated.",
+        "location_detect_error": "Unable to read your position. Allow geolocation or tap the map manually.",
+        "location_unsupported": "Geolocation is not supported in this browser.",
+        "location_address_label": "Address or place name",
+        "location_address_placeholder": "Street, landmark, or any helpful notes",
+        "location_address_required": "Provide an address or place name for the selected location.",
+        "location_coordinates_label": "Coordinates",
+        "location_clear": "Clear location",
+        "location_status_idle": "Tap the map to place a pin.",
+        "assets_label": "Photos",
+        "assets_hint": "Up to 5 PNG or JPG images, 5MB each.",
+        "assets_remove": "Remove",
+        "assets_total": "{count} file(s) - {size}",
+        "errors_primary": "Add a note, a map location, or photos before saving.",
+        "sterilization_title": "Sterilization",
+        "sterilization_description": "Track when and how the procedure happened to coordinate clinics and volunteers.",
+        "sterilization_toggle": "Mark as sterilized",
+        "sterilization_date_label": "Procedure date",
+        "sterilization_date_error": "Provide the sterilization date.",
+        "sterilization_method_label": "Method",
+        "sterilization_method_placeholder": "Surgery, chemical, etc.",
+        "sterilization_clinic_label": "Clinic",
+        "sterilization_clinic_placeholder": "Select a clinic (optional)",
+        "saving_general": "Saving changes...",
+        "saving": "Saving observation..."
+      }
+    },
+    "card": {
+      "age": {
+        "unknown": "Unknown age",
+        "unborn": "Not born yet",
+        "recent": "Born recently",
+        "oldSuffix": "{value} old",
+        "year": "{count, plural, one {{count} year} other {{count} years}}",
+        "month": "{count, plural, one {{count} month} other {{count} months}}",
+        "day": "{count, plural, one {{count} day} other {{count} days}}"
+      },
+      "labels": {
+        "unknown": "Unknown",
+        "age": "Age:",
+        "lastSeen": "Last seen:",
+        "createdOn": "Created on {date}",
+        "createdAt": "Created: {date}",
+        "sex": "Sex",
+        "chip": "Chip number",
+        "sterilized": "Sterilized"
+      },
+      "descriptionFallback": "There is no description yet for this animal. Add one to help adopters learn more.",
+      "actions": {
+        "openMap": "Open map",
+        "viewProfile": "View profile"
+      },
+      "answers": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "sex": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "badges": {
+        "sterilized": "Sterilized",
+        "vaccinated": "Vaccinated",
+        "underTreatment": "Under treatment",
+        "cured": "Cured"
+      }
+    }
+  },
+  "authorization": {
+    "already-have-account-link": "Already registered",
+    "want-account-link": "Ready to register",
+    "saveUserErrorCommon": "Failed to save registration",
+    "internalError": "We are conducting technical work. Registration will be available very soon.",
+    "wrongCredentials": "User not found",
+    "title": {
+      "register": "Registration",
+      "auth": "Authorization",
+      "reset-password": "Password Recovery"
+    },
+    "notice": {
+      "chooseDirection": "You can choose how you want to contribute in your personal dashboard."
+    },
+    "form": {
+      "hint": {
+        "password": "Minimum {n} characters, use special characters"
+      },
+      "label": {
+        "email": "Email",
+        "password": "Password",
+        "register-button": "Let's go",
+        "auth-button": "Sign in",
+        "reset-password-button": "Send email"
+      },
+      "placeholder": {
+        "auth-password": "Profile password",
+        "email": "Personal email",
+        "email-reset": "Email where the account is registered",
+        "password": "Create a strong password"
+      },
+      "validation": {
+        "minPasswordLength": "Minimum {n} characters",
+        "email": "Invalid email format",
+        "unknown": "Unknown strange error"
+      },
+      "error": {
+        "required": "Field is required"
+      }
+    }
+  },
+  "adminpage": {
+    "title": "Admin panel",
+    "users": {
+      "title": "User management"
+    },
+    "roles": {
+      "title": "Roles management"
+    },
+    "migrations": {
+      "title": "Database migrations"
+    }
+  },
+  "homepage": {
+    "title": "Welcome to Foundation",
+    "description": "This sandbox page confirms the platform is running correctly.",
+    "checklist": {
+      "title": "Internationalization test",
+      "helper": "The navigation labels below reuse the translations from the header."
+    },
+    "hero": {
+      "announcement": {
+        "note": "Our foundation supports stray animals, however we are <strong>not a shelter</strong> and cannot keep animals permanently. We collaborate with veterinarians for treatment and release them back to their previous or new habitats."
+      },
+      "title": {
+        "lead": "Saving lives on <highlight>the streets</highlight>"
+      },
+      "description": "We focus on <tooltip>TNR|Trap-Neuter-Return</tooltip> to humanely control the population without cruelty and support <tooltip>colonies|We call this term the habitats of stray cats</tooltip>.",
+      "ctaReport": "Report an animal",
+      "ctaDonate": "Donate",
+      "ctaHelp": "Get involved",
+      "badge": {
+        "label": "Health verified",
+        "value": "Cleared for release"
+      },
+      "healthCard": {
+        "title": "Healthy and monitored",
+        "status": "Checked with a partner clinic today"
+      }
+    },
+    "mission": {
+      "title": "Our mission: Control & Response",
+      "description": "Every surgery prevents dozens of kittens from harsh street life. Our goal is to reduce animal suffering and improve their quality of life.",
+      "features": {
+        "population": {
+          "title": "Population control",
+          "description": "Humane sterilization is the most effective long-term solution for stray animals."
+        },
+        "medical": {
+          "title": "Medical assistance",
+          "description": "We secure vaccines and trauma treatment for stray cats."
+        },
+        "community": {
+          "title": "Community support",
+          "description": "We train and equip neighbors so they can protect local colonies."
+        }
+      }
+    },
+    "tnr": {
+      "label": "TNR path",
+      "title": "7 steps to a better life",
+      "steps": {
+        "1": {
+          "title": "Observation",
+          "description": "We begin with careful street monitoring to understand colony size and members."
+        },
+        "2": {
+          "title": "Identification",
+          "description": "The team checks ear clips and tags to see which cats are already sterilized and who still needs help."
+        },
+        "3": {
+          "title": "Capture",
+          "description": "We use humane traps and a lot of patience so the process stays calm and safe."
+        },
+        "4": {
+          "title": "Veterinary visit",
+          "description": "Each animal sees a licensed vet for diagnostics, and vaccinations."
+        },
+        "5": {
+          "title": "Treatment & sterilization",
+          "description": "The core step that prevents uncontrolled reproduction and heals injuries or parasites."
+        },
+        "6": {
+          "title": "Rehabilitation",
+          "description": "Animals recover in specialized facilities with care until they are healthy."
+        },
+        "7": {
+          "title": "Return or adoption",
+          "description": "Wild animals return to their territory. Socialized animals seek loving homes through publications."
+        }
+      }
+    },
+    "tracker": {
+      "title": "Track & Protect",
+      "subtitle": "Colony monitoring system",
+      "description": "Become the guardian of your neighborhood. Report observations and help us keep track of local colonies.",
+      "actions": {
+        "reports": "Register new animal observations",
+        "stations": "Report a state of animals in your area",
+        "emergency": "Request a help in emergencies"
+      },
+      "cta": "Access live map",
+      "card": {
+        "title": "Colony #42",
+        "status": "Latest activity",
+        "value": "New sighting in Zone B",
+        "timestamp": "2 hours ago"
+      }
+    }
+  },
+  "locationpage": {
+    "title": "Location",
+    "body": "We are preparing an interactive map with our active zones. Stay tuned."
+  },
+  "fundworkpage": {
+    "title": "Fund work",
+    "hero": {
+      "eyebrow": "Strategy & impact",
+      "title": "Where every contribution goes",
+      "description": "We build a system of safe zones where every action is directed at sterilization, vaccination, and controlled care for stray animals.",
+      "ctaPrimary": "Join the support",
+      "ctaSecondary": "Contact the team"
+    },
+    "story": {
+      "title": "About the fund and our story",
+      "paragraphs": {
+        "first": "Fund began as a volunteer initiative helping stray animals with personal resources. But local assistance cannot solve the underlying problem of homelessness and every year the story repeats itself over and over.",
+        "second": "In 2025 we became a registered foundation to move from situational help to building a network of safe zones and systematic sterilization. However, at the beginning, legal and ogranizational challenges slowed us down so that full-fledged operations could start in 2026.",
+        "third": "Today we focus on mass sterilization in controlled areas. We do not possess shelters to place animals permanently. We collaborate with veterinary clinics for treatment and rehabilitation to create acceptable living conditions in their natural environment."
+      },
+      "highlights": {
+        "before": {
+          "badge": "≈",
+          "title": "Before 2025",
+          "description": "Volunteer practice and local experience"
+        },
+        "preparation": {
+          "badge": "⏳",
+          "title": "2025",
+          "description": "Foundation registration and organizational setup"
+        },
+        "now": {
+          "badge": "✓",
+          "title": "Since 2025",
+          "description": "Official status and safe-zone program"
+        },
+        "goal": {
+          "badge": "★",
+          "title": "Strategic goal for 2026",
+          "description": "Sterilize 80% of the population in controlled areas"
+        }
+      }
+    },
+    "help": {
+      "title": "Who we help",
+      "subtitle": "Our mission is humane population control through sterilization and safe living zones. It is compromise for residents and animals to ensure safe coexistence without cruelty.",
+      "cards": {
+        "animals": {
+          "icon": "🐾",
+          "title": "Stray animals",
+          "description": "Mass sterilization, vaccination, and return to supervised zones."
+        },
+        "training": {
+          "icon": "🎓",
+          "title": "Colony caretakers",
+          "description": "Colony control, monitoring animal contact with local residents."
+        },
+        "wildlife": {
+          "icon": "🌿",
+          "title": "Wild animals",
+          "description": "Emergency aid and transport to rehabilitation centers."
+        },
+        "cruelty": {
+          "icon": "⚖️",
+          "title": "Cruelty cases",
+          "description": "Legal support, rescue, and urgent veterinary care."
+        }
+      }
+    },
+    "principles": {
+      "title": "Our principles",
+      "subtitle": "We moved away from outdated shelter-first practices. Our priority is safe coexistence in managed environments.",
+      "badge": "Periphery ethics protocol",
+      "items": {
+        "humanity": {
+          "title": "Humanity",
+          "description": "Stress-minimizing capture and painless procedures."
+        },
+        "law": {
+          "title": "Legality",
+          "description": "Every action follows current regulations."
+        },
+        "responsibility": {
+          "title": "Responsibility",
+          "description": "Transparent accounting for every intervention."
+        },
+        "animal": {
+          "title": "Animal first",
+          "description": "The animal's welfare is always the priority."
+        },
+        "system": {
+          "title": "System thinking",
+          "description": "We address the causes of homelessness through mass sterilization."
+        }
+      }
+    },
+    "cycle": {
+      "title": "Operational cycle",
+      "subtitle": "Every animal follows a structured path from the street to safe, healthy life in its environment.",
+      "steps": {
+        "monitoring": {
+          "title": "Monitoring & zones",
+          "description": "We track safe zones and respond to community reports."
+        },
+        "capture": {
+          "title": "Humane capture",
+          "description": "Professional equipment and protocols minimize stress."
+        },
+        "prep": {
+          "title": "Veterinary preparation",
+          "description": "Exams, vaccinations, and mandatory microchipping."
+        },
+        "sterilization": {
+          "title": "Sterilization",
+          "description": "Partner clinics stop the cycle of suffering and overpopulation."
+        },
+        "rehab": {
+          "title": "Rehabilitation",
+          "description": "Post-op recovery in controlled conditions until stable."
+        },
+        "return": {
+          "title": "Return to zone",
+          "description": "Release to safe areas with continued remote monitoring."
+        }
+      }
+    },
+    "notes": {
+      "title": "Important notes",
+      "items": {
+        "rodents": {
+          "title": "Rodent control:",
+          "description": "Sterilization does not change hunting instincts; returning animals helps natural control."
+        },
+        "intervention": {
+          "title": "Right to intervene:",
+          "description": "The foundation will initiate removal of animals when cruelty or life-threatening conditions are confirmed by vets."
+        },
+        "adoption": {
+          "title": "Adoption is an exception:",
+          "description": "We seek homes only for animals who cannot survive outside due to age or health."
+        }
+      }
+    },
+    "transparency": {
+      "title": "Transparency & reporting",
+      "description": "We report 100% of financial income in monthly updates. Physical aid is documented on request with photos or receipts.",
+      "cta": "View reports"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "shelters": {
+          "question": "Why don't you place all animals in shelters?",
+          "answer": "Shelters are overcrowded, and permanent housing does not solve population growth. Sterilization and return (TNR) is the most humane, effective method."
+        },
+        "pets": {
+          "question": "Why don't you help owned pets?",
+          "answer": "Our mission addresses homelessness. Responsible ownership is a personal duty, and our limited resources focus on animals without protection."
+        },
+        "report": {
+          "question": "How can I report an animal in need?",
+          "answer": "Use the “Report an animal” button in the menu or message us with photos and a location. We prioritize based on urgency and capacity."
+        }
+      }
+    },
+    "callout": {
+      "title": "Become part of systemic change",
+      "description": "Your contribution today builds a professional solution for homelessness tomorrow.",
+      "ctaHelp": "Make a contribution",
+      "ctaContact": "Become a volunteer"
+    }
+  },
+  "legalinfopage": {
+    "title": "Legal information",
+    "checkLink": "Check the details <link>here</link>",
+    "sections": {
+      "requisites": {
+        "title": "Foundation details",
+        "labels": {
+          "fullName": "Full legal name",
+          "edrpou": "EDRPOU",
+          "location": "Location",
+          "contacts": "Contacts",
+          "head": "Head of the foundation",
+          "nonprofitStatus": "Non-profit status"
+        },
+        "items": {
+          "fullName": "PERIPHERY CHARITABLE FOUNDATION",
+          "edrpou": "45962629",
+          "location": "Lviv, Ukraine, 79048",
+          "contacts": "<phone>+38 (097) 39 59 022</phone>, <email>info@perilines.com.ua</email>, <telegram>Telegram</telegram>, <instagram>Instagram</instagram>",
+          "head": "Duleba Oleh",
+          "nonprofitStatus": "Entered into the register in accordance with Decision No. 2513054600489 under category 0036 (charitable organizations). Check the status <link>here</link>."
+        }
+      },
+      "documents": {
+        "title": "Policies and documents",
+        "items": {
+          "statute": "<pdf>Statute|/Statut-Foundation.pdf</pdf>. Describes the basic principles and rules of the foundation.",
+          "privacy": "<link>Privacy Policy</link>. Explains how we handle personal data."
+        }
+      },
+      "about": {
+        "title": "About the foundation",
+        "items": {
+          "mission": "Our mission is to help stray animals through rescue, treatment, and rehoming support.",
+          "noShelter": "We do not operate a permanent shelter and work with veterinary clinics and temporary foster care.",
+          "requests": "For official requests, reports, or document copies, contact us at <email>info@perilines.com.ua</email>."
+        }
+      }
+    }
+  },
+  "paymentspage": {
+    "title": "Support & Donations",
+    "intro": "Your help gives stray animals a chance at a dignified life. Every contribution, big or small, directly funds medical care, sterilization, nutrition, and community support matters.",
+    "heroNote": "Please note: at the moment our foundation cannot accept automated payments through the website. Please use the bank details below to transfer to the foundation’s general account.",
+    "financial": {
+      "title": "Financial support",
+      "subtitle": "How contribution saves lives",
+      "uses": {
+        "sterilization": {
+          "title": "Sterilization",
+          "description": "Humane population control and preventing the birth of new stray animals."
+        },
+        "treatment": {
+          "title": "Treatment",
+          "description": "Medicines, complex surgeries for injured animals, and post-op recovery."
+        },
+        "food": {
+          "title": "Nutrition",
+          "description": "Quality dry and wet food for animals in shelters and on the street."
+        }
+      },
+      "ibanTitle": "IBAN bank details",
+      "ibanNote": "Charitable support",
+      "iban": {
+        "copyTitle": "Copy",
+        "edrpou": "EDRPOU",
+        "mfo": "MFO",
+        "bank": "Bank name",
+        "recipient": "Recipient",
+        "paymentDestination": "Payment destination",
+        "account1": {
+          "description": "Often used for purchasing food and medicines."
+        },
+        "account2": {
+          "description": "This account is also in UAH but usually used to cover expenses in clinics."
+        }
+      },
+      "ibanQuestions": {
+        "answer1": "Both accounts are in UAH (Ukrainian Hryvnia). You can use either for donations.",
+        "question2": "What 2 similar accounts are for?",
+        "answer2": "The different conditions of service and control, different group of expenses and reports."
+      },
+      "quickDonate": {
+        "title": "Quick donation",
+        "subtitle": "Choose a support amount or enter your own to create a one-time donation.",
+        "inputPlaceholder": "Enter another amount",
+        "qrTitle": "Transfer via QR",
+        "qrDescription": "Scan the code with your banking app for a fast transfer.",
+        "button": "Open application"
+      }
+    },
+    "nonMoney": {
+      "title": "Help in action",
+      "subtitle": "Ways to contribute beyond money",
+      "cards": {
+        "foster": {
+          "title": "Foster care",
+          "description": "Temporary homes for animals recovering from surgery or awaiting adoption.",
+          "cta": "Join in",
+          "image": "https://www.smartpetshome.com/wp-content/uploads/2024/07/y1ng0.o_httpss.mj_.runaRJNb24l3vs_a_dog_and_a_cat_are_happily__784defaf-32ed-49b3-a163-14b063211c33_2-11-jpg.webp"
+        },
+        "walking": {
+          "title": "Field work",
+          "description": "Assist with monitoring, feeding, and reporting on local stray animal colonies.",
+          "cta": "Become a volunteer",
+          "image": "https://images.squarespace-cdn.com/content/v1/55c945e0e4b04386fb9f8162/1459809705382-MLQ2RPVAI3DIDS4M6RTZ/trapping-0446.jpg?format=2500w"
+        },
+        "experts": {
+          "title": "Experts",
+          "description": "Veterinarians, IT specialists, logistics coordinators, lawyers — your skills can make a difference.",
+          "cta": "I’m a professional",
+          "image": "https://engageduniversity.blogs.wesleyan.edu/files/2014/11/Personal-Brand.jpg"
+        },
+        "items": {
+          "title": "Supplies & food",
+          "description": "Medicines, food, traps, and other essentials for caring for strays.",
+          "cta": "Donate items",
+          "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCA_6289GmamEgMWgpByKcjGLe9ha6j0dHruYFEU_lrGTwMzrg3jFmsOAmHFmhfiKmAR3hTrcOnFGBm0AFwrDPvQchjoi_2BbwlJ3BtBvTQaD9ZviFQAzo5fklDnPwVsFa7orhdGMpkQWC1Mc1F0oUgRNplx7qVF9YLbxGMJiKO7Z7_ANXL4Ajem-5QGYA-HLLbtRcx4fk-2UoFXqSZ7DRULT_0dZ04ESSCJftZJFvXXlLNCsymB3JyTkawcGYxXiyX4xLSyRT_eOc"
+        }
+      }
+    },
+    "transparency": {
+      "title": "All expenses under control and reflected in reports",
+      "description": "We maintain full transparency about how donations are used. Regular financial reports are published on our website, detailing income sources and expenditure breakdowns. This ensures everyone can see the real impact of their contribution.",
+      "reports": "Reports",
+      "contact": "Contact"
+    }
+  },
+  "offerpage": {
+    "title": "Public offer",
+    "intro": "This document sets the terms for making voluntary charitable donations to the Foundation’s programs. By making a payment, you agree to these terms.",
+    "nav": {
+      "title": "Document contents",
+      "subtitle": "Last updated: November 1, 2024",
+      "items": {
+        "section1": "General provisions",
+        "section2": "Subject and purpose of the donation",
+        "section3": "Use of donations",
+        "section4": "Use of balances and redistribution",
+        "section5": "Non-refundable donations",
+        "section6": "Liability of the parties",
+        "section7": "Transparency and reporting",
+        "section8": "Personal data confidentiality",
+        "section9": "Force majeure circumstances",
+        "section10": "Final provisions",
+        "requisites": "Requisites"
+      }
+    },
+    "sections": {
+      "general": {
+        "title": "General provisions",
+        "p1": "This Public Offer (the “Offer”) is an official proposal by the Periphery Charitable Foundation (the “Foundation”), represented by its Director acting under the Charter, to conclude a voluntary charitable donation agreement with any individual or legal entity (the “Donor”).",
+        "p2": "The Offer is governed by the Law of Ukraine “On Charitable Activities and Charitable Organizations”, the Civil Code of Ukraine, and other applicable regulations.",
+        "p3": "Acceptance of the Offer (full and unconditional acceptance of its terms) occurs when the charitable donation is credited to the Foundation’s bank account — via payment systems on the website or by bank details. From that moment, the donation agreement is deemed concluded.",
+        "definitions": {
+          "title": "Definitions",
+          "p1": "Public offer — a valid proposal of the Foundation, published on the website, addressed to an indefinite number of persons, to conclude a donation agreement on the terms set out in this Offer.",
+          "p2": "Acceptance — the Donor’s full and unconditional acceptance of the Offer terms by making a charitable donation.",
+          "p3": "Donor — any legally capable individual or legal entity that voluntarily makes a charitable donation.",
+          "p4": "Charitable donation — a voluntary, free-of-charge transfer of funds by the Donor into the Foundation’s ownership to achieve statutory goals.",
+          "p5": "Foundation — the Periphery Charitable Foundation, registered in accordance with the laws of Ukraine."
+        }
+      },
+      "donation": {
+        "title": "Subject and purpose of the donation",
+        "p1": "A charitable donation is voluntary, free of charge, and does not provide any reward or material benefit to the Donor.",
+        "p2": "The purpose of the donation is to finance the Foundation’s statutory activities, namely: humane regulation of stray animal populations through the TNR program(Trap-Neuter-Return); sterilization / castration of cats; veterinary assistance, treatment, vaccination, parasite control; temporary care during rehabilitation; procurement of food, medicines, equipment for trapping and logistics; socialization and finding homes for cats that can be adopted.",
+        "rightsTitle": "Donor rights",
+        "rights": {
+          "p1": "Determine the amount and purpose of the donation.",
+          "p2": "Receive information on the use of funds through public reports on the Foundation’s website.",
+          "p3": "Submit requests to the Foundation regarding activities and reporting."
+        },
+        "obligationsTitle": "Donor obligations",
+        "obligations": {
+          "p1": "Review the Offer terms before making a payment.",
+          "p2": "Provide accurate data for payment processing."
+        },
+        "foundationRightsTitle": "Foundation rights",
+        "foundationRights": {
+          "p1": "Use donations exclusively for statutory purposes.",
+          "p2": "Amend the Offer with publication on the website.",
+          "p3": "Enter into separate agreements with Donors on terms different from those in the Offer."
+        },
+        "foundationObligationsTitle": "Foundation obligations",
+        "foundationObligations": {
+          "p1": "Use funds for their intended purposes and publish reports.",
+          "p2": "Ensure confidentiality of the Donor’s personal data.",
+          "p3": "Inform about Offer changes by updating the website."
+        }
+      },
+      "use": {
+        "title": "Use of donations",
+        "general": {
+          "title": "General account",
+          "description": "Funds received on the relevant account without a specified purpose are used to ensure uninterrupted Foundation operations and cover priority needs (sterilization, treatment, food, transport, veterinary services)."
+        },
+        "targeted": {
+          "title": "Targeted collections",
+          "description": "Funds received on a special account with an additional specified purpose (e.g., “for sterilization”, “for treatment of cat #X”, “for food”), funds are used exclusively for that purpose. Main targeted expense areas:",
+          "items": {
+            "catch": {
+              "title": "Trapping and logistics:",
+              "description": "equipment, traps, transport."
+            },
+            "sterilization": {
+              "title": "Sterilization and castration:",
+              "description": "payment for procedures at veterinary clinics."
+            },
+            "treatment": {
+              "title": "Treatment and vaccination:",
+              "description": "medicines, tests, inpatient care, vaccinations."
+            },
+            "food": {
+              "title": "Food:",
+              "description": "quality food for animals in temporary care and street colonies under supervision."
+            }
+          }
+        },
+        "distribution": {
+          "title": "Approximate allocation of incoming funds",
+          "p1": "~70% — direct medical aid and sterilization.",
+          "p2": "~20% — food, temporary care, logistics.",
+          "p3": "~10% — administrative expenses necessary to implement programs."
+        },
+        "recurring": {
+          "title": "Recurring payments",
+          "p1": "If the Donor chooses recurring payments (subscription), funds are automatically charged monthly (or at the chosen interval) from the Donor’s card.",
+          "p2": "The Donor can cancel the subscription at any time through their bank account, payment system (e.g., WayForPay/LiqPay), or by emailing the Foundation. Cancellation takes effect from the next billing period.",
+          "p3": "The Foundation is not responsible for the technical aspects of recurring payments provided by payment systems."
+        }
+      },
+      "leftovers": {
+        "title": "Use of balances and redistribution",
+        "p1": "If more funds are collected than needed for a specific announced project/animal, the remaining amount is automatically redirected to the Foundation’s general account.",
+        "p2": "These funds are used for other urgent needs: emergency surgeries, food, sterilization of new colonies, etc.",
+        "p3": "If it becomes impossible to achieve the stated purpose for reasons beyond the Foundation’s control (animal died, escaped, project canceled, etc.), the funds are redirected to similar statutory purposes."
+      },
+      "nonRefundable": {
+        "title": "Non-refundable donations",
+        "p1": "Under Ukrainian law, a charitable donation is non-refundable and is not subject to return.",
+        "p2": "By making a payment, the Donor confirms they have read the Offer terms and understand the non-refundable nature of the contribution.",
+        "p3": "Exception — technical errors of payment systems (double charge, etc.), confirmed by bank documents."
+      },
+      "liability": {
+        "title": "Liability of the parties",
+        "p2": "The Donor is responsible for the accuracy of the provided data and the legality of the funds’ source.",
+        "p3": "In case of a breach of the Offer terms, the parties are liable in accordance with Ukrainian law."
+      },
+      "transparency": {
+        "title": "Transparency and reporting",
+        "p1": "The Foundation adheres to principles of maximum openness. We publish detailed financial reports (income, expenses, photos/acts of completed work) in the “Reports” section on the website."
+      },
+      "confidentiality": {
+        "title": "Personal data confidentiality",
+        "p1": "By making a donation, the Donor consents to the processing of personal data (full name, email, phone number, payment data) necessary to execute the agreement and keep records.",
+        "p2": "The Foundation undertakes to protect this data in accordance with the Law of Ukraine “On Personal Data Protection” and not to transfer it to third parties for commercial purposes."
+      },
+      "forceMajeure": {
+        "title": "Force majeure circumstances",
+        "p1": "The parties are released from liability for non-performance or improper performance of obligations if caused by force majeure circumstances such as: war, natural disasters, fires, floods, earthquakes, epidemics, strikes, decisions of public authorities, etc.",
+        "p2": "The party invoking force majeure must promptly notify the other party.",
+        "p3": "After force majeure ends, obligations resume."
+      },
+      "final": {
+        "title": "Final provisions",
+        "p1": "The Foundation reserves the right to amend the Offer. The new version takes effect upon publication on the website.",
+        "p2": "All disputes related to this Offer are resolved through negotiations. If no agreement is reached, disputes are resolved in court at the place of the Foundation’s registration in accordance with Ukrainian law. The applicable law is exclusively the law of Ukraine.",
+        "term": {
+          "title": "Term of the Offer",
+          "p1": "The Offer is valid indefinitely from the date of its publication on the Foundation’s website.",
+          "p2": "The Foundation may terminate the Offer at any time by publishing a notice on the website 7 days before termination.",
+          "p3": "Agreements concluded before termination of the Offer remain in force."
+        },
+        "other": {
+          "title": "Other provisions",
+          "p1": "The Foundation may enter into individual donation agreements on terms different from those set out in the Offer.",
+          "p2": "If certain provisions of the Offer are deemed invalid, the remaining provisions remain in force."
+        }
+      }
+    },
+    "requisites": {
+      "title": "Foundation requisites",
+      "labels": {
+        "fullName": "Full legal name:",
+        "edrpou": "EDRPOU:",
+        "address": "Legal address:",
+        "email": "Contact email:"
+      },
+      "values": {
+        "fullName": "PERIPHERY CHARITABLE FOUNDATION",
+        "edrpou": "45962629",
+        "address": "27 Pavla Dumanskogo St., Lviv, Ukraine, 79048",
+        "email": "info@perilines.com.ua"
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions (FAQ)",
+      "items": {
+        "report": {
+          "question": "Can I receive a report about my donation?",
+          "answer": "Yes, we publish monthly financial reports on the website. You can also email us to clarify the status of your contribution."
+        },
+        "excess": {
+          "question": "Where do funds go if a campaign goal has already been met?",
+          "answer": "According to Clause 4.1 of the Offer, excess funds are redirected to other current statutory needs of the Foundation."
+        },
+        "facilities_support": {
+          "question": "Can I support by providing facilities instead of money?",
+          "answer": "Yes, non-monetary support such as temporary rooms, garages, or adapted spaces for recovery or short-term shelter is very valuable. Please contact us to coordinate."
+        }
+      }
+    }
+  },
+  "reportspage": {
+    "title": "Reports",
+    "pageTitle": "Foundation reports",
+    "pageDescription": "We believe in full transparency. Here you can review the results of our work and financial reports.",
+    "intro": "We publish reports to keep our work transparent. Annual reports summarize finances, activities, and impact.",
+    "nav": {
+      "title": "Reports navigation",
+      "subtitle": "Updated monthly",
+      "question": "Have questions about reporting?",
+      "contactCta": "Contact us",
+      "items": {
+        "impact": "Impact & statistics",
+        "financials": "Financial reports"
+      }
+    },
+    "newSeason": {
+      "title": "We are preparing for a new season",
+      "description": "This is the beginning of our activities and we are working to create a handy format for reports. New sterilization reports and financial results will appear on this page soon. Thank you for your patience!"
+    },
+    "preparation": {
+      "title": "2025 was a preparation year",
+      "description": "The foundation was established in 2025 and focused on legal setup, operational planning, and team preparation. This is why productive activity and financial turnover are reflected as zero for that period.",
+      "zeroBalance": {
+        "incoming": "Incoming: ₴0",
+        "outgoing": "Outgoing: ₴0"
+      }
+    },
+    "labels": {
+      "period": "Reporting period",
+      "status": "Status"
+    },
+    "reports": {
+      "annual": {
+        "title": "Annual report",
+        "subtitle": "Overview of the foundation’s year",
+        "period": "2025",
+        "status": "In preparation",
+        "summary": "Includes financial statements, program outcomes, and key impact metrics.",
+        "request": "Need the latest signed version? Request it via <email>info@perilines.com.ua</email>."
+      }
+    }
+  },
+  "reportsContent": {
+    "impact": {
+      "title": "Impact & statistics (TNR)",
+      "summary": "Year summary for {year}",
+      "sterilized": "Sterilized",
+      "locations": "{count, plural, one {Locations} other {Locations}} checked",
+      "monthsTitle": "Monthly activity · {year}",
+      "locationsChecked": "Locations checked"
+    },
+    "finance": {
+      "title": "Financial reports",
+      "yearLabel": "{year}",
+      "monthLabel": "Monthly report",
+      "breakdownToggle": "Expense breakdown",
+      "yearTotal": "Total for {year}",
+      "yearCategories": "Yearly categories"
+    },
+    "actions": {
+      "loading": "Loading...",
+      "loadPrevious": "Load previous year"
+    }
+  },
+  "adminFinance": {
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "create": "Create",
+      "saveChanges": "Save changes",
+      "delete": "Delete",
+      "disable": "Disable",
+      "remove": "Remove"
+    },
+    "account": {
+      "overviewTitle": "Account overview",
+      "overviewSubtitle": "{count} active accounts · This month: {month}",
+      "noAccounts": "No active accounts yet. Add your first bank account to start tracking balances.",
+      "activeBadge": "Active",
+      "thisMonth": "This month",
+      "currentBalance": "Current balance",
+      "debt": "Debt",
+      "addAccount": "Add new account",
+      "addTitle": "Add new account",
+      "editTitle": "Edit {name}",
+      "createButton": "Create account",
+      "disableTitle": "Disable account?",
+      "disableBody": "This will set <strong>{name}</strong> as inactive.",
+      "editAria": "Edit {name}",
+      "disableAria": "Disable {name}"
+    },
+    "summary": {
+      "totalBalance": "Total fund balance",
+      "monthly": "Monthly statistics",
+      "yearly": "Yearly statistics",
+      "incoming": "Incoming",
+      "expenses": "Expenses"
+    },
+    "reports": {
+      "recentTitle": "Recent transactions",
+      "addRecord": "Add new record",
+      "rangeMonth": "Month",
+      "rangeYear": "Year",
+      "addTitle": "Add report item",
+      "createButton": "Create report",
+      "editTitle": "Edit report item",
+      "deleteTitle": "Delete report item?",
+      "deleteBody": "This will permanently remove the report.",
+      "categories": "Categories",
+      "table": {
+        "description": "Description",
+        "category": "Category",
+        "account": "Account",
+        "date": "Date",
+        "amount": "Amount",
+        "balance": "Balance",
+        "actions": "Actions"
+      },
+      "empty": "No reports for this period yet.",
+      "editAria": "Edit report",
+      "deleteAria": "Delete report"
+    },
+    "pagination": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "previousYear": "Previous year",
+      "nextYear": "Next year"
+    },
+    "forms": {
+      "account": {
+        "nameLabel": "Name",
+        "namePlaceholder": "Main shelter account",
+        "ibanLabel": "IBAN",
+        "requiredHint": "Please complete required fields before saving.",
+        "nameRequired": "Name is required.",
+        "ibanRequired": "IBAN is required.",
+        "ibanInvalid": "IBAN must match the required format."
+      },
+      "report": {
+        "typeLabel": "Type",
+        "typeIncoming": "Incoming",
+        "typeOutgoing": "Outgoing",
+        "typeDebt": "Debt",
+        "amountLabel": "Amount",
+        "amountPlaceholder": "0",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Monthly shelter expenses",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select category",
+        "accountLabel": "Account",
+        "accountPlaceholder": "Select account",
+        "detailsTitle": "Details",
+        "addDetail": "Add detail",
+        "detailsEmpty": "Add detail rows to break down the report amount.",
+        "detailLabel": "Detail {index}",
+        "detailDescriptionPlaceholder": "Extra note",
+        "detailAmountPlaceholder": "0",
+        "detailCategoryPlaceholder": "Optional subcategory",
+        "descriptionRequired": "Description is required.",
+        "amountRequired": "Amount must be greater than zero.",
+        "categoryRequired": "Category is required.",
+        "accountRequired": "Account is required."
+      }
+    },
+    "categories": {
+      "modalTitle": "Categories",
+      "incomingTitle": "Incoming",
+      "outgoingTitle": "Outgoing",
+      "panelTitle": "{title} categories",
+      "addCategory": "Add category",
+      "noCategories": "No categories yet.",
+      "addTitle": "Add {title} category",
+      "nameLabel": "Name",
+      "namePlaceholder": "Donations",
+      "parentLabel": "Parent",
+      "parentPlaceholder": "No parent",
+      "deleteErrorTitle": "Unable to delete category"
+    }
+  },
+  "adminInventory": {
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "create": "Create",
+      "saveChanges": "Save changes",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "title": "Inventory management",
+    "subtitle": "Unified control for inventory, categories, and storage locations.",
+    "actions": {
+      "manageStorages": "Manage storages",
+      "manageCategories": "Manage categories",
+      "addItem": "Add new item"
+    },
+    "table": {
+      "title": "Inventory stock",
+      "subtitle": "Grouped by category and linked to storage locations.",
+      "columns": {
+        "name": "Product hierarchy / name",
+        "sku": "SKU",
+        "quantity": "Quantity",
+        "storage": "Storage location",
+        "expiration": "Exp. date",
+        "received": "Received",
+        "source": "Source",
+        "actions": "Actions"
+      },
+      "categoryCount": "{count} items",
+      "unitsLabel": "units",
+      "empty": "No inventory records yet.",
+      "noItems": "No items in this category.",
+      "uncategorized": "Uncategorized",
+      "actionsLabel": "Open actions",
+      "editAria": "Edit {name}"
+    },
+    "reports": {
+      "addTitle": "Add inventory item",
+      "editTitle": "Edit {name}",
+      "submitErrorTitle": "Unable to save inventory item",
+      "form": {
+        "skuLabel": "SKU",
+        "skuPlaceholder": "Optional SKU",
+        "nameLabel": "Item name",
+        "namePlaceholder": "Disposable gloves",
+        "nameRequired": "Item name is required.",
+        "typeLabel": "Type",
+        "typePlaceholder": "Select type",
+        "typeEquipment": "Equipment",
+        "typeConsumable": "Consumable",
+        "typeRequired": "Type is required.",
+        "quantityLabel": "Quantity",
+        "quantityPlaceholder": "0",
+        "quantityRequired": "Quantity must be greater than zero.",
+        "expirationDateLabel": "Expiration date",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select category",
+        "categoryRequired": "Category is required.",
+        "storageLabel": "Storage",
+        "storagePlaceholder": "Select storage",
+        "storageRequired": "Storage is required.",
+        "imagesLabel": "Images",
+        "imagesHint": "Optional: upload PNG, JPG, or WEBP files.",
+        "removeImage": "Remove"
+      }
+    },
+    "storages": {
+      "modalTitle": "Storages",
+      "description": "Manage storage locations and map coordinates.",
+      "addStorage": "Add storage",
+      "addTitle": "Add storage location",
+      "editTitle": "Edit {name}",
+      "deleteTitle": "Delete storage {name}?",
+      "deleteBody": "This will permanently remove the storage location.",
+      "deleteErrorTitle": "Unable to delete storage",
+      "editAria": "Edit {name}",
+      "deleteAria": "Delete {name}",
+      "table": {
+        "name": "Name",
+        "location": "Location",
+        "createdAt": "Created",
+        "actions": "Actions",
+        "empty": "No storages added yet.",
+        "noLocation": "No location"
+      },
+      "form": {
+        "nameLabel": "Storage name",
+        "namePlaceholder": "Main warehouse",
+        "nameRequired": "Storage name is required.",
+        "locationLabel": "Location",
+        "locationHint": "Select a point on the map to set coordinates.",
+        "locationRequired": "Location is required.",
+        "clearLocation": "Clear location",
+        "latitudeLabel": "Latitude",
+        "longitudeLabel": "Longitude",
+        "mapHint": "Click to set a location",
+        "mapAria": "Storage location map"
+      }
+    },
+    "categories": {
+      "modalTitle": "Categories",
+      "description": "Create nested categories and keep hierarchy clean.",
+      "addCategory": "Add category",
+      "addTitle": "Add category",
+      "editTitle": "Edit {name}",
+      "deleteTitle": "Delete category {name}?",
+      "deleteBody": "This will permanently remove the category.",
+      "deleteErrorTitle": "Unable to delete category",
+      "empty": "No categories added yet.",
+      "table": {
+        "name": "Name",
+        "inherits": "Inherits",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "form": {
+        "nameLabel": "Category name",
+        "namePlaceholder": "Medical supplies",
+        "nameRequired": "Category name is required.",
+        "parentLabel": "Parent category",
+        "parentPlaceholder": "No parent"
+      }
+    }
+  },
+  "footer": {
+    "tagline": "Since <tooltip>{year}|Officially since 2025 but we started much earlier. We took the minimum time involved, this is also experience</tooltip> with care for our little friends",
+    "attribution": "by {org}",
+    "slogan": "Every life matters. The value of life is immeasurable.",
+    "links": {
+      "privacy": "Privacy Policy",
+      "legal": "Legal information",
+      "fundWork": "Fund work",
+      "payments": "Support the fund",
+      "offer": "Public offer",
+      "reports": "Reports"
+    }
+  },
+  "contactForm": {
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "So we know how to greet you when we meet"
+      },
+      "contacts": {
+        "label": "Email or phone",
+        "placeholder": "So we can reach back out"
+      },
+      "location": {
+        "label": "Location",
+        "placeholder": "Helps us estimate the distance between us right away"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Describe how you can help, when, and how often"
+      }
+    },
+    "submit": "Send",
+    "status": {
+      "success": "Your message has been sent and we're already reviewing it. {name}, we will reply to the {channel} {contact} as soon as possible.",
+      "channel": {
+        "email": "email",
+        "phone": "number"
+      },
+      "defaultName": "friend"
+    }
+  },
+  "layout": {
+    "title": "Periphery",
+    "description": "The Periphery charity foundation helps stray animals"
+  },
+  "unavailable": {
+    "title": "The site will be back soon",
+    "description": "We are performing maintenance right now. Please come back a bit later."
+  },
+  "emails": {
+    "restore-password": {
+      "subject": "Password Reset Request",
+      "title": "Restore Access",
+      "heading": "Forgot your password?",
+      "txt1": "Hey, you received a request to reset your password.",
+      "txt2": "Click the button below to get new access.",
+      "buttonLabel": "Reset My Password",
+      "expiration": "This link is only valid for {duration} and expires at {expiry}.",
+      "trouble": "Having trouble?",
+      "ignore": "Didn't request a password reset? You can ignore this message, although, we highly recommend you make sure your email service is under the control or change current password to enhance security.",
+      "address": "Lviv, Ukraine",
+      "donotReply": "This email was sent automatically, please do not reply to it."
+    }
+  },
+  "duration": {
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "hours": "{count, plural, one {# hour} other {# hours}}"
   }
 }

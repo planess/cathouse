@@ -52,5 +52,15 @@ export default function Map() {
     }
   }, []);
 
-  return <div ref={mref} style={{ width: '100%', height: '400px' }} />;
+  return (
+    <div
+      ref={mref}
+      style={{
+        width: '100%',
+        height: '400px',
+        position: 'relative',
+        zIndex: 5,
+      }}
+    />
+  );
 }

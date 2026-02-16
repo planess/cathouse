@@ -42,7 +42,119 @@ body {
   height: 100%;
 }
 
-.title {
-  color: #333;
-  /* background: linear-gradient(167deg,#fedc2a 4.31%, #75aff2 49.13%, #0e6ca7 79.88%); */
+html {
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: auto;
+}
+
+@keyframes cathouse-modal-slide-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(
+        var(--modal-origin-translate-x, 0px),
+        var(--modal-origin-translate-y, -56px),
+        0
+      )
+      scale(0.82);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes cathouse-modal-fade-out {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -2vh, 0) scale(0.96);
+  }
+}
+
+@keyframes cathouse-overlay-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes cathouse-overlay-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes admin-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-fade-up {
+  animation: admin-fade-up 0.6s ease both;
+}
+
+.admin-fade-up-delay {
+  animation-delay: 0.12s;
+}
+
+.modal-overlay {
+  animation: cathouse-overlay-fade-in 0.5s ease forwards;
+}
+
+.modal-overlay[data-state='closing'] {
+  animation: cathouse-overlay-fade-out 0.5s ease forwards;
+}
+
+.modal-panel {
+  --modal-origin-translate-x: 0px;
+  --modal-origin-translate-y: -56px;
+  animation: cathouse-modal-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+  transform-origin: center;
+}
+
+.modal-panel[data-state='closing'] {
+  animation: cathouse-modal-fade-out 0.5s ease forwards;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-overlay[data-state='closing'],
+  .modal-panel,
+  .modal-panel[data-state='closing'] {
+    animation-duration: 0ms;
+    animation-fill-mode: forwards;
+  }
+
+  .admin-fade-up,
+  .admin-fade-up-delay {
+    animation: none;
+  }
 }

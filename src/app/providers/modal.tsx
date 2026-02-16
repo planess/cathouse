@@ -1,0 +1,613 @@
+'use client';
+
+import clsx from 'clsx';
+import {
+  createContext,
+  type CSSProperties,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
+
+const MODAL_EXIT_MS = 500;
+
+type ModalLifecycleState = 'open' | 'closing';
+
+export type ModalTone = 'primary' | 'secondary' | 'danger' | 'ghost';
+
+export type ModalAction<T> = {
+  id?: string;
+  label: string;
+  tone?: ModalTone;
+  onSelect?: () => Promise<T> | T | void;
+  value?: T;
+  disabled?: boolean;
+  autoClose?: boolean;
+};
+
+export type ModalHandle<T> = Promise<T | undefined> & {
+  id: number;
+  setActionEnabled: (actionId: string, enabled: boolean) => void;
+  enableAction: (actionId: string) => void;
+  disableAction: (actionId: string) => void;
+};
+
+export type ModalOrigin = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export type ModalOptions<T> = {
+  title?: string;
+  content?: ReactNode | (() => ReactNode);
+  description?: ReactNode;
+  actions?: ModalAction<T>[];
+  dismissible?: boolean;
+  dismissLabel?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'; // default: 'md'
+  origin?: ModalOrigin;
+};
+
+type ModalContextValue = {
+  showModal: <T>(options: ModalOptions<T>) => ModalHandle<T>;
+  dismissModal: (result?: unknown) => void;
+  isOpen: boolean;
+};
+
+type InternalModalState = {
+  options: ModalOptions<unknown>;
+  resolve: (value: unknown) => void;
+  id: number;
+  status: ModalLifecycleState;
+  origin: ModalOrigin | null;
+};
+
+const noop = (): void => {
+  return;
+};
+
+const defaultContext: ModalContextValue = {
+  showModal: <T,>() =>
+    createModalHandle<T>(Promise.resolve(void 0), {
+      id: 0,
+      setActionEnabled: noop,
+      enableAction: noop,
+      disableAction: noop,
+    }),
+  dismissModal: noop,
+  isOpen: false,
+};
+
+export const ModalContext = createContext<ModalContextValue>(defaultContext);
+
+interface ModalProviderProps {
+  children: ReactNode;
+}
+
+export function ModalProvider({ children }: ModalProviderProps) {
+  const [modalStack, setModalStack] = useState<InternalModalState[]>([]);
+  const [pendingActionId, setPendingActionId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+  const activeModal = modalStack[modalStack.length - 1] ?? null;
+  const bodyStyleCacheRef = useRef<{
+    overflow: string;
+    paddingRight: string;
+  } | null>(null);
+  const scrollbarWidthRef = useRef(0);
+  const pointerOriginRef = useRef<ModalOrigin | null>(null);
+  const exitTimersRef = useRef<Map<number, number>>(new Map());
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      pointerOriginRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        width: 1,
+        height: 1,
+      };
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown, {
+      passive: true,
+    });
+
+    return () => window.removeEventListener('pointerdown', handlePointerDown);
+  }, []);
+
+  const dismissModal = useCallback((result?: unknown) => {
+    setPendingActionId(null);
+    setModalStack((current) => {
+      if (current.length === 0) {
+        return current;
+      }
+
+      const lastIndex = current.length - 1;
+      const target = current[lastIndex];
+
+      if (!target) {
+        return current;
+      }
+
+      if (target.status === 'closing') {
+        return current;
+      }
+
+      target.resolve(result);
+
+      if (typeof window !== 'undefined') {
+        const timeoutId = window.setTimeout(() => {
+          setModalStack((state) =>
+            state.filter((modal) => modal.id !== target.id),
+          );
+          exitTimersRef.current.delete(target.id);
+        }, MODAL_EXIT_MS);
+
+        exitTimersRef.current.set(target.id, timeoutId);
+      }
+
+      return current.map((modal, index) =>
+        index === lastIndex
+          ? {
+              ...modal,
+              status: 'closing',
+            }
+          : modal,
+      );
+    });
+  }, []);
+
+  const setActionDisabled = useCallback(
+    (modalId: number, actionId: string, disabled: boolean) => {
+      setModalStack((current) =>
+        current.map((modal) => {
+          if (modal.id !== modalId || !modal.options.actions) {
+            return modal;
+          }
+
+          const nextActions = modal.options.actions.map((action) => {
+            const resolvedId = action.id ?? action.label;
+
+            if (resolvedId !== actionId) {
+              return action;
+            }
+
+            if (action.disabled === disabled) {
+              return action;
+            }
+
+            return {
+              ...action,
+              disabled,
+            };
+          });
+
+          return {
+            ...modal,
+            options: {
+              ...modal.options,
+              actions: nextActions,
+            },
+          };
+        }),
+      );
+    },
+    [],
+  );
+
+  const showModal = useCallback(
+    <T,>(options: ModalOptions<T>) => {
+      const modalId = Date.now() + Math.random();
+
+      const promise = new Promise<T | undefined>((resolve) => {
+        setModalStack((current) => [
+          ...current,
+          {
+            options,
+            resolve: resolve as (value: unknown) => void,
+            id: modalId,
+            status: 'open',
+            origin: cloneOrigin(options.origin ?? pointerOriginRef.current),
+          },
+        ]);
+      });
+
+      return createModalHandle(promise, {
+        id: modalId,
+        setActionEnabled: (actionId, enabled) =>
+          setActionDisabled(modalId, actionId, !enabled),
+        enableAction: (actionId) => setActionDisabled(modalId, actionId, false),
+        disableAction: (actionId) => setActionDisabled(modalId, actionId, true),
+      });
+    },
+    [setActionDisabled],
+  );
+
+  useEffect(() => {
+    if (!activeModal) {
+      return;
+    }
+
+    const dismissible = activeModal.options.dismissible ?? true;
+
+    if (!dismissible) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        dismissModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeModal, dismissModal]);
+
+  useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+
+    const body = document.body;
+
+    if (modalStack.length > 0) {
+      bodyStyleCacheRef.current ??= {
+        overflow: body.style.overflow,
+        paddingRight: body.style.paddingRight,
+      };
+
+      if (scrollbarWidthRef.current === 0) {
+        scrollbarWidthRef.current =
+          window.innerWidth - document.documentElement.clientWidth;
+      }
+
+      body.style.overflow = 'hidden';
+
+      if (scrollbarWidthRef.current > 0) {
+        body.style.paddingRight = `${scrollbarWidthRef.current}px`;
+      } else if (bodyStyleCacheRef.current) {
+        body.style.paddingRight = bodyStyleCacheRef.current.paddingRight;
+      }
+
+      return;
+    }
+
+    if (bodyStyleCacheRef.current) {
+      body.style.overflow = bodyStyleCacheRef.current.overflow;
+      body.style.paddingRight = bodyStyleCacheRef.current.paddingRight;
+      bodyStyleCacheRef.current = null;
+    } else {
+      body.style.overflow = '';
+      body.style.paddingRight = '';
+    }
+
+    scrollbarWidthRef.current = 0;
+  }, [isMounted, modalStack.length]);
+
+  useEffect(
+    () => () => {
+      if (bodyStyleCacheRef.current) {
+        document.body.style.overflow = bodyStyleCacheRef.current.overflow;
+        document.body.style.paddingRight =
+          bodyStyleCacheRef.current.paddingRight;
+        bodyStyleCacheRef.current = null;
+      } else {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }
+      scrollbarWidthRef.current = 0;
+    },
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      exitTimersRef.current.forEach((timeoutId) => {
+        if (typeof window !== 'undefined') {
+          window.clearTimeout(timeoutId);
+        }
+      });
+      exitTimersRef.current.clear();
+    },
+    [],
+  );
+
+  const handleAction = useCallback(
+    async (action: ModalAction<unknown>, modalId: number) => {
+      if (action.disabled) {
+        return;
+      }
+
+      const currentTop = modalStack[modalStack.length - 1]?.id;
+
+      if (!currentTop || currentTop !== modalId) {
+        return;
+      }
+
+      const autoClose = action.autoClose !== false;
+      const actionId = action.id ?? action.label;
+
+      setPendingActionId(actionId);
+
+      try {
+        const outcome = (await action.onSelect?.()) ?? action.value;
+
+        if (autoClose) {
+          dismissModal(outcome);
+          return;
+        }
+
+        if (typeof outcome !== 'undefined') {
+          setModalStack((current) => {
+            const target = current.find((state) => state.id === modalId);
+            target?.resolve(outcome);
+            return current;
+          });
+        }
+      } catch (error) {
+        console.error('Modal action failed', error);
+      } finally {
+        setPendingActionId(null);
+      }
+    },
+    [dismissModal, modalStack],
+  );
+
+  const contextValue = useMemo<ModalContextValue>(
+    () => ({
+      showModal,
+      dismissModal,
+      isOpen: modalStack.length > 0,
+    }),
+    [dismissModal, modalStack.length, showModal],
+  );
+
+  const renderModals = () => {
+    if (modalStack.length === 0 || !isMounted) {
+      return null;
+    }
+
+    return createPortal(
+      <>
+        {modalStack.map((state, index) => {
+          const {
+            id: stateId,
+            options,
+            origin: stateOrigin,
+            status: lifecycleState,
+          } = state;
+          const {
+            content: modalContent,
+            description,
+            title,
+            dismissLabel,
+            origin,
+            size = 'md',
+            dismissible = true,
+            actions: optionActions,
+          } = options;
+          const actions = optionActions ?? [
+            {
+              id: 'default-modal-close',
+              label: dismissLabel ?? 'Close',
+              tone: 'primary',
+              onSelect: noop,
+            },
+          ];
+
+          const content =
+            typeof modalContent === 'function'
+              ? modalContent()
+              : (modalContent ?? description);
+
+          const sizeClass = {
+            sm: 'max-w-md',
+            md: 'max-w-lg',
+            lg: 'max-w-2xl',
+            xl: 'max-w-4xl',
+            full: 'max-w-none',
+          }[size];
+          const isFullScreen = size === 'full';
+
+          const isTop = index === modalStack.length - 1;
+          const overlayOpacity = Math.min(0.45 + index * 0.08, 0.8);
+          const isClosing = lifecycleState === 'closing';
+          const isTopAndActive = isTop && !isClosing;
+          const panelStyle = resolveModalOriginStyle(stateOrigin ?? origin);
+
+          return (
+            <div
+              key={stateId}
+              className={clsx(
+                'modal-overlay fixed inset-0 flex items-center justify-center px-4 py-6 backdrop-blur-sm',
+                isTopAndActive ? 'pointer-events-auto' : 'pointer-events-none',
+              )}
+              style={{
+                zIndex: 50 + index,
+                backgroundColor: `rgba(15,23,42,${overlayOpacity})`,
+              }}
+              data-state={lifecycleState}
+            >
+              <button
+                type="button"
+                className="absolute inset-0 h-full w-full cursor-default"
+                aria-label="Dismiss modal overlay"
+                disabled={!isTopAndActive}
+                onClick={() => {
+                  if (isTopAndActive && dismissible) {
+                    dismissModal();
+                  }
+                }}
+              />
+
+              <div
+                className={clsx(
+                  'modal-panel relative z-10 flex w-full max-h-[95vh] transform flex-col overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 p-6 shadow-2xl transition-colors',
+                  (!isTop || isClosing) && 'scale-[0.98]',
+                  isFullScreen ? 'h-full' : '',
+                  sizeClass,
+                )}
+                role="dialog"
+                aria-modal="true"
+                aria-hidden={!isTopAndActive}
+                data-state={lifecycleState}
+                style={panelStyle}
+              >
+                {dismissible && (
+                  <button
+                    type="button"
+                    onClick={() => isTopAndActive && dismissModal()}
+                    className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+                    aria-label="Close modal"
+                    disabled={!isTopAndActive}
+                  >
+                    <CloseIcon />
+                  </button>
+                )}
+
+                <div className="flex-1 overflow-y-auto pr-1">
+                  {title && (
+                    <h2 className="mb-2 text-2xl font-semibold text-slate-900 dark:text-slate-200 transition-colors">
+                      {title}
+                    </h2>
+                  )}
+
+                  {description && (
+                    <div className="mb-4 text-sm text-slate-600 dark:text-slate-300 transition-colors">
+                      {description}
+                    </div>
+                  )}
+
+                  {content && (
+                    <div className="mt-4 text-slate-700 dark:text-slate-200 transition-colors">
+                      {content}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-6 flex flex-wrap justify-end gap-3">
+                  {actions.map((action) => {
+                    const { tone = 'secondary', id, label, disabled } = action;
+                    const actionId = id ?? label;
+                    const isLoading =
+                      pendingActionId === actionId && isTopAndActive;
+                    const isDisabled =
+                      (disabled ?? false) || isLoading || !isTopAndActive;
+
+                    return (
+                      <button
+                        key={actionId}
+                        type="button"
+                        disabled={isDisabled}
+                        onClick={() => void handleAction(action, stateId)}
+                        className={clsx(
+                          'inline-flex min-w-24 items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-colors',
+                          resolveToneClass(tone),
+                          isDisabled && 'opacity-60',
+                        )}
+                      >
+                        {isLoading ? 'Please wait…' : label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </>,
+      document.body,
+    );
+  };
+
+  return (
+    <ModalContext.Provider value={contextValue}>
+      {children}
+      {renderModals()}
+    </ModalContext.Provider>
+  );
+}
+
+function cloneOrigin(origin?: ModalOrigin | null): ModalOrigin | null {
+  if (!origin) {
+    return null;
+  }
+
+  const { x, y, width, height } = origin;
+
+  return { x, y, width, height };
+}
+
+function resolveModalOriginStyle(origin?: ModalOrigin | null): CSSProperties {
+  if (typeof window === 'undefined' || !origin) {
+    return {};
+  }
+
+  const viewportCenterX = window.innerWidth / 2;
+  const viewportCenterY = window.innerHeight / 2;
+  const originCenterX = origin.x + origin.width / 2;
+  const originCenterY = origin.y + origin.height / 2;
+
+  return {
+    '--modal-origin-translate-x': `${originCenterX - viewportCenterX}px`,
+    '--modal-origin-translate-y': `${originCenterY - viewportCenterY}px`,
+  } as CSSProperties;
+}
+
+function resolveToneClass(tone: ModalTone) {
+  switch (tone) {
+    case 'primary':
+      return 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-sky-500 dark:text-slate-900 dark:hover:bg-sky-600';
+    case 'secondary':
+      return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
+    case 'danger':
+      return 'bg-rose-600 text-white hover:bg-rose-700';
+    case 'ghost':
+      return 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+    default:
+      return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
+  }
+}
+
+function createModalHandle<T>(
+  promise: Promise<T | undefined>,
+  controls: {
+    id: number;
+    setActionEnabled: (actionId: string, enabled: boolean) => void;
+    enableAction: (actionId: string) => void;
+    disableAction: (actionId: string) => void;
+  },
+): ModalHandle<T> {
+  return Object.assign(promise, controls);
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="h-4 w-4"
+    >
+      <path
+        d="M6 6l12 12M18 6L6 18"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

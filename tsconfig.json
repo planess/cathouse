@@ -21,7 +21,9 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@i18n/*": ["./src/i18n/*"],
-      "@public/*": ["./public/*"]
+      "@public/*": ["./public/*"],
+      "@email/*": ["./src/email-template/*"],
+      "@helpers/*": ["./src/app/helpers/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
