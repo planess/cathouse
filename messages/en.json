@@ -1246,6 +1246,14 @@
       "title": "We are preparing for a new season",
       "description": "This is the beginning of our activities and we are working to create a handy format for reports. New sterilization reports and financial results will appear on this page soon. Thank you for your patience!"
     },
+    "preparation": {
+      "title": "2025 was a preparation year",
+      "description": "The foundation was established in 2025 and focused on legal setup, operational planning, and team preparation. This is why productive activity and financial turnover are reflected as zero for that period.",
+      "zeroBalance": {
+        "incoming": "Incoming: ₴0",
+        "outgoing": "Outgoing: ₴0"
+      }
+    },
     "labels": {
       "period": "Reporting period",
       "status": "Status"

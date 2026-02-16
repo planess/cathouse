@@ -39,7 +39,7 @@ export default async function ReportsPage() {
   ];
 
   return (
-    <div className={`mx-auto w-full max-w-7xl px-4 py-8 md:px-20 lg:px-40`}>
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-20 lg:px-40">
       <div className="mb-10 flex flex-col gap-4 border-b border-[#e7ebf4] pb-6 dark:border-[#2d3a52] md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-black tracking-[-0.033em] text-[#0d121c] dark:text-white">

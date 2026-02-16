@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
+import { NextResponse } from 'next/server';
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 
 const DEFAULT_YEAR = new Date().getFullYear();
+const FOUNDATION_START_YEAR = 2025;
 
 type OutgoingCategoryDocument = {
   _id: ObjectId;
@@ -144,8 +145,12 @@ export async function GET(request: Request) {
   }
 
   if (loadFinance) {
-    [financeTotals, outgoingBreakdownTotals, outgoingCategories, previousFinance] =
-      await Promise.all([
+    [
+      financeTotals,
+      outgoingBreakdownTotals,
+      outgoingCategories,
+      previousFinance,
+    ] = await Promise.all([
       db
         .collection(DbTables.reportsFinance)
         .aggregate<{ _id: { month: number; type: string }; total: number }>([
@@ -172,7 +177,10 @@ export async function GET(request: Request) {
         .toArray(),
       db
         .collection(DbTables.reportsFinance)
-        .aggregate<{ _id: { month: number; category: ObjectId }; total: number }>([
+        .aggregate<{
+          _id: { month: number; category: ObjectId };
+          total: number;
+        }>([
           {
             $match: {
               createdAt: { $gte: start, $lt: end },
@@ -222,7 +230,7 @@ export async function GET(request: Request) {
         createdAt: { $gte: previousStart, $lt: previousEnd },
         type: { $in: ['incoming', 'outgoing'] },
       }),
-      ]);
+    ]);
   }
 
   const sterilizedByMonth = loadImpact
@@ -300,9 +308,10 @@ export async function GET(request: Request) {
       const month = entry._id.month;
       const categoryId = entry._id.category?.toString();
       const label = categoryId
-        ? categoryNameMap.get(categoryId) ?? 'Без категорії'
+        ? (categoryNameMap.get(categoryId) ?? 'Без категорії')
         : 'Без категорії';
-      const monthMap = monthCategoryTotals.get(month) ?? new Map<string, number>();
+      const monthMap =
+        monthCategoryTotals.get(month) ?? new Map<string, number>();
 
       monthMap.set(label, (monthMap.get(label) ?? 0) + entry.total);
       monthCategoryTotals.set(month, monthMap);
@@ -341,11 +350,13 @@ export async function GET(request: Request) {
     : 0;
 
   const hasPrevious =
-    loadImpact && loadFinance
-      ? Boolean(previousSterilized ?? previousObservation ?? previousFinance)
-      : loadImpact
-        ? Boolean(previousSterilized ?? previousObservation)
-        : Boolean(previousFinance);
+    !(year <= FOUNDATION_START_YEAR);
+      // ? false
+      // : loadImpact && loadFinance
+      //   ? Boolean(previousSterilized ?? previousObservation ?? previousFinance)
+      //   : loadImpact
+      //     ? Boolean(previousSterilized ?? previousObservation)
+      //     : Boolean(previousFinance);
 
   return NextResponse.json({
     success: true,
