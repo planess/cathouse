@@ -24,6 +24,7 @@ import { CategoryOption } from '../models/category-option';
 import { FinanceSummary } from '../models/finance-summary';
 import { ReportFormState } from '../models/report-form-state';
 import { ReportRow } from '../models/report-row';
+import { TranslationFn } from '../models/transform-fn';
 
 import AccountForm from './account-form';
 import CategoriesModal from './categories-modal';
@@ -74,6 +75,8 @@ export function FinanceAdminView({
   const searchParams = useSearchParams();
   const { showModal } = useModal();
   const t = useTranslations('adminFinance');
+  const translate: TranslationFn = (key, values) =>
+    t(key, values as Record<string, string | number | Date> | undefined);
   const [expandedReportIds, setExpandedReportIds] = useState<
     Record<string, boolean>
   >({});
@@ -137,7 +140,7 @@ export function FinanceAdminView({
   }) => {
     const formStateRef = { current: options.initialState };
     const formValidityRef = {
-      current: isAccountFormValid(options.initialState, t),
+      current: isAccountFormValid(options.initialState, translate),
     };
 
     const modalHandle = showModal({
@@ -263,7 +266,7 @@ export function FinanceAdminView({
   }) => {
     const formStateRef = { current: options.initialState };
     const formValidityRef = {
-      current: isReportFormValid(options.initialState, t),
+      current: isReportFormValid(options.initialState, translate),
     };
 
     const modalHandle = showModal({

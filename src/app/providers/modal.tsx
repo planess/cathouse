@@ -73,8 +73,8 @@ const noop = (): void => {
 };
 
 const defaultContext: ModalContextValue = {
-  showModal: () =>
-    createModalHandle(Promise.resolve(), {
+  showModal: <T,>() =>
+    createModalHandle<T>(Promise.resolve(void 0), {
       id: 0,
       setActionEnabled: noop,
       enableAction: noop,

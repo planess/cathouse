@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { validateAccountForm } from '../helpers/validate-account-form';
 import { AccountFormState } from '../models/account-form-state';
+import { TranslationFn } from '../models/transform-fn';
 
 import { IbanInput } from './iban-input';
 
@@ -18,8 +19,10 @@ export default function AccountForm({
   const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState<AccountFormState>(initialState);
   const [touched, setTouched] = useState({ name: false, iban: false });
+  const translate: TranslationFn = (key, values) =>
+    t(key, values as Record<string, string | number | Date> | undefined);
 
-  const errors = validateAccountForm(formState, t);
+  const errors = validateAccountForm(formState, translate);
   const isValid = Object.keys(errors).length === 0;
   const nameError = touched.name ? (errors.name ?? '') : '';
   const ibanError = touched.iban ? (errors.iban ?? '') : '';
@@ -28,7 +31,7 @@ export default function AccountForm({
     setFormState(nextState);
     onChange(nextState);
     onValidityChange(
-      Object.keys(validateAccountForm(nextState, t)).length === 0,
+      Object.keys(validateAccountForm(nextState, translate)).length === 0,
     );
   };
 

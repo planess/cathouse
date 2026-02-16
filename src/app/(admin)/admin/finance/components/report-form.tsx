@@ -6,6 +6,7 @@ import { AccountRow } from '../models/account-row';
 import { CategoryOption } from '../models/category-option';
 import { ReportDetailFormState } from '../models/report-detail-form-state';
 import { ReportFormState } from '../models/report-form-state';
+import { TranslationFn } from '../models/transform-fn';
 
 export default function ReportForm({
   accounts,
@@ -30,13 +31,18 @@ export default function ReportForm({
     categoryId: false,
     accountId: false,
   });
+  const translate: TranslationFn = (key, values) =>
+    t(
+      key,
+      values as Record<string, string | number | Date> | undefined,
+    );
 
   const categoryOptions =
     formState.type === 'incoming'
       ? incomingCategoryOptions
       : outgoingCategoryOptions;
 
-  const errors = validateReportForm(formState, t);
+  const errors = validateReportForm(formState, translate);
   const descriptionError = touched.description
     ? (errors.description ?? '')
     : '';
@@ -48,7 +54,7 @@ export default function ReportForm({
     setFormState(nextState);
     onChange(nextState);
     onValidityChange(
-      Object.keys(validateReportForm(nextState, t)).length === 0,
+      Object.keys(validateReportForm(nextState, translate)).length === 0,
     );
   };
 

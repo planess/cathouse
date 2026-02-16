@@ -6,6 +6,7 @@ import { useModal } from '@app/hooks/use-modal';
 import { handleDeleteCategory } from '../helpers/handle-delete-category';
 import { CategoryNode } from '../models/category-node';
 import { CategoryOption } from '../models/category-option';
+import { TranslationFn } from '../models/transform-fn';
 
 import CategoryForm from './category-form';
 import CategoryTree from './category-tree';
@@ -25,6 +26,11 @@ export default function CategoryPanel({
 }) {
   const t = useTranslations('adminFinance');
   const { showModal } = useModal();
+  const translate: TranslationFn = (key, values) =>
+    t(
+      key,
+      values as Record<string, string | number | Date> | undefined,
+    );
 
   const handleAddCategory = () => {
     const formStateRef = { current: { name: '', inheritsId: '' } };
@@ -86,7 +92,7 @@ export default function CategoryPanel({
                 type,
                 onRefresh,
                 showModal,
-                t,
+                t: translate,
               })
             }
           />
