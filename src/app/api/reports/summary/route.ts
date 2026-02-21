@@ -221,10 +221,8 @@ export async function GET(request: Request) {
         ])
         .toArray(),
       db
-        .collection<OutgoingCategoryDocument>(
-          DbTables.financeOutgoingCategories,
-        )
-        .find({})
+        .collection<OutgoingCategoryDocument>(DbTables.financeOutgoingPurposes)
+        .find()
         .toArray(),
       db.collection(DbTables.reportsFinance).findOne({
         createdAt: { $gte: previousStart, $lt: previousEnd },

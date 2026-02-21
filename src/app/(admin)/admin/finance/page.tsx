@@ -22,6 +22,10 @@ type CategoryDocument = {
   _id: ObjectId;
   name: string;
   inherits?: ObjectId;
+  linkedTo?: ObjectId;
+  active?: boolean;
+  specific?: boolean;
+  createdAt: Date;
 };
 
 type ReportDetailDocument = {
@@ -52,6 +56,9 @@ type ReportRange = 'month' | 'year';
 type CategoryNode = {
   id: string;
   name: string;
+  active?: boolean;
+  specific?: boolean;
+  linkedToName?: string;
   children: CategoryNode[];
 };
 
@@ -73,7 +80,7 @@ const getDebtReports = unstable_cache(
 );
 
 function parseMonthParam(param?: string): Date {
-  if (!param || !/^\d{4}-\d{2}$/.test(param)) {
+  if (typeof param !== 'string' || !/^\d{4}-\d{2}$/.test(param)) {
     return new Date();
   }
 
@@ -114,7 +121,7 @@ function parseReportRange(param?: string): ReportRange {
 }
 
 function formatCreatedAt(value: unknown): string {
-  if (!value) {
+  if (value === null || value === undefined) {
     return '';
   }
 
@@ -130,13 +137,20 @@ function formatCreatedAt(value: unknown): string {
   return '';
 }
 
-function buildCategoryTree(categories: CategoryDocument[]): CategoryNode[] {
+function buildCategoryTree(
+  categories: CategoryDocument[],
+  linkedNameById?: Map<string, string>,
+): CategoryNode[] {
   const nodes = new Map<string, CategoryNode & { parentId?: string }>();
 
   categories.forEach((category) => {
     nodes.set(category._id.toString(), {
       id: category._id.toString(),
       name: category.name,
+      active: category.active,
+      specific: category.specific,
+      linkedToName:
+        linkedNameById?.get(category.linkedTo?.toString() ?? '') ?? undefined,
       parentId: category.inherits?.toString(),
       children: [],
     });
@@ -145,7 +159,7 @@ function buildCategoryTree(categories: CategoryDocument[]): CategoryNode[] {
   const roots: CategoryNode[] = [];
 
   nodes.forEach((node) => {
-    if (node.parentId && nodes.has(node.parentId)) {
+    if (typeof node.parentId === 'string' && nodes.has(node.parentId)) {
       nodes.get(node.parentId)?.children.push(node);
       return;
     }
@@ -200,12 +214,12 @@ export default async function FinancePage({
       .sort({ createdAt: 1 })
       .toArray(),
     db
-      .collection<CategoryDocument>(DbTables.financeIncomingCategories)
-      .find({})
+      .collection<CategoryDocument>(DbTables.financeIncomingGoals)
+      .find()
       .toArray(),
     db
-      .collection<CategoryDocument>(DbTables.financeOutgoingCategories)
-      .find({})
+      .collection<CategoryDocument>(DbTables.financeOutgoingPurposes)
+      .find()
       .toArray(),
     db
       .collection<ReportDocument>(DbTables.reportsFinance)
@@ -398,7 +412,10 @@ export default async function FinancePage({
         description: report.description ?? '',
         categoryName,
         categoryId,
-        accountName: accountId ? (accountMap.get(accountId) ?? '') : '',
+        accountName:
+          typeof accountId === 'string'
+            ? (accountMap.get(accountId) ?? '')
+            : '',
         accountId,
         amount: report.amount ?? 0,
         balance: report.balance ?? 0,
@@ -433,7 +450,10 @@ export default async function FinancePage({
         description: report.description ?? '',
         categoryName,
         categoryId,
-        accountName: accountId ? (accountMap.get(accountId) ?? '') : '',
+        accountName:
+          typeof accountId === 'string'
+            ? (accountMap.get(accountId) ?? '')
+            : '',
         accountId,
         amount: report.amount ?? 0,
         balance: report.balance ?? 0,
@@ -466,16 +486,20 @@ export default async function FinancePage({
   const financeProps: FinanceAdminViewProps = {
     accounts: normalizedAccounts,
     incomingCategories: buildCategoryTree(incomingCategories),
-    outgoingCategories: buildCategoryTree(outgoingCategories),
+    outgoingCategories: buildCategoryTree(outgoingCategories, incomingCategoryMap),
     incomingCategoryOptions: incomingCategories.map((category) => ({
       id: category._id.toString(),
       name: category.name,
       inheritsFrom: category.inherits?.toString() ?? null,
+      specific: category.specific === true,
+      active: category.active !== false,
     })),
     outgoingCategoryOptions: outgoingCategories.map((category) => ({
       id: category._id.toString(),
       name: category.name,
       inheritsFrom: category.inherits?.toString() ?? null,
+      active: category.active !== false,
+      linkedToIncoming: category.linkedTo?.toString() ?? null,
     })),
     reports: combinedReports,
     summary: {

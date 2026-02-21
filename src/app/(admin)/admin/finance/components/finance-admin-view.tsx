@@ -20,7 +20,10 @@ import { isReportFormValid } from '../helpers/is-report-form-valid';
 import { AccountFormState } from '../models/account-form-state';
 import { AccountRow } from '../models/account-row';
 import { CategoryNode } from '../models/category-node';
-import { CategoryOption } from '../models/category-option';
+import {
+  CategoryIncomingOption,
+  CategoryOption,
+} from '../models/category-option';
 import { FinanceSummary } from '../models/finance-summary';
 import { ReportFormState } from '../models/report-form-state';
 import { ReportRow } from '../models/report-row';
@@ -34,7 +37,7 @@ export type FinanceAdminViewProps = {
   accounts: AccountRow[];
   incomingCategories: CategoryNode[];
   outgoingCategories: CategoryNode[];
-  incomingCategoryOptions: CategoryOption[];
+  incomingCategoryOptions: CategoryIncomingOption[];
   outgoingCategoryOptions: CategoryOption[];
   reports: ReportRow[];
   summary: FinanceSummary;

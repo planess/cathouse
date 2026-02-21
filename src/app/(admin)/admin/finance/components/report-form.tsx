@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 
 import { validateReportForm } from '../helpers/validate-report-form';
 import { AccountRow } from '../models/account-row';
-import { CategoryOption } from '../models/category-option';
+import {
+  CategoryIncomingOption,
+  CategoryOption,
+} from '../models/category-option';
 import { ReportDetailFormState } from '../models/report-detail-form-state';
 import { ReportFormState } from '../models/report-form-state';
 import { TranslationFn } from '../models/transform-fn';
@@ -17,7 +20,7 @@ export default function ReportForm({
   onValidityChange,
 }: {
   accounts: AccountRow[];
-  incomingCategoryOptions: CategoryOption[];
+  incomingCategoryOptions: CategoryIncomingOption[];
   outgoingCategoryOptions: CategoryOption[];
   initialState: ReportFormState;
   onChange: (state: ReportFormState) => void;

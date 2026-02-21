@@ -1,7 +1,10 @@
 import { useTranslations } from 'next-intl';
 
 import { CategoryNode } from '../models/category-node';
-import { CategoryOption } from '../models/category-option';
+import {
+  CategoryIncomingOption,
+  CategoryOption,
+} from '../models/category-option';
 
 import CategoryPanel from './category-panel';
 
@@ -14,7 +17,7 @@ export default function CategoriesModal({
 }: {
   incoming: CategoryNode[];
   outgoing: CategoryNode[];
-  incomingOptions: CategoryOption[];
+  incomingOptions: CategoryIncomingOption[];
   outgoingOptions: CategoryOption[];
   onRefresh: () => void;
 }) {
@@ -25,6 +28,7 @@ export default function CategoriesModal({
       <CategoryPanel
         title={t('categories.incomingTitle')}
         categories={incoming}
+        incomingCategories={incoming}
         options={incomingOptions}
         type="incoming"
         onRefresh={onRefresh}
@@ -32,6 +36,7 @@ export default function CategoriesModal({
       <CategoryPanel
         title={t('categories.outgoingTitle')}
         categories={outgoing}
+        incomingCategories={incoming}
         options={outgoingOptions}
         type="outgoing"
         onRefresh={onRefresh}

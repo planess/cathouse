@@ -6,12 +6,16 @@ import { CategoryOption } from '../models/category-option';
 export default function CategoryForm({
   options,
   onChange,
+  initialState,
 }: {
   options: CategoryOption[];
   onChange: (state: { name: string; inheritsId: string }) => void;
+  initialState?: { name: string; inheritsId: string };
 }) {
   const t = useTranslations('adminFinance');
-  const [formState, setFormState] = useState({ name: '', inheritsId: '' });
+  const [formState, setFormState] = useState(
+    initialState ?? { name: '', inheritsId: '' },
+  );
 
   const updateState = (nextState: { name: string; inheritsId: string }) => {
     setFormState(nextState);

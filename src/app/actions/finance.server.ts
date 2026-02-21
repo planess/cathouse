@@ -1,6 +1,6 @@
 'use server';
 
-import { ObjectId } from 'mongodb';
+import { Decimal128, ObjectId } from 'mongodb';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { DbTables } from '@app/enum/db-tables';
@@ -13,11 +13,25 @@ type AccountPayload = {
   iban: string;
 };
 
-type CategoryPayload = {
+type BaseCategoryPayload = {
   id?: string;
   name: string;
   inheritsId?: string;
+  active?: boolean;
+};
+
+type CategoryPayload = BaseCategoryPayload & {
   type: 'incoming' | 'outgoing';
+};
+
+type IncomingCategoryPayload = BaseCategoryPayload & {
+  specific: boolean;
+};
+
+type OutgoingCategoryPayload = BaseCategoryPayload;
+
+type OutgoingCategoryPayloadExtended = OutgoingCategoryPayload & {
+  linkedToId?: string;
 };
 
 type ReportDetailPayload = {
@@ -41,11 +55,25 @@ function normalizeText(value?: string): string {
 }
 
 function toObjectId(value?: string): ObjectId | null {
-  if (!value) {
+  if (typeof value !== 'string' || value.trim() === '') {
     return null;
   }
 
   return ObjectId.isValid(value) ? new ObjectId(value) : null;
+}
+
+function resolveCategoryCollection(type: CategoryPayload['type']) {
+  return type === 'incoming'
+    ? DbTables.financeIncomingGoals
+    : DbTables.financeOutgoingPurposes;
+}
+
+function hasSpecificFlag(payload: unknown): boolean {
+  return (
+    typeof payload === 'object' &&
+    payload !== null &&
+    Object.hasOwn(payload, 'specific')
+  );
 }
 
 function toDetails(details?: ReportDetailPayload[]) {
@@ -124,7 +152,9 @@ export async function createAccount(payload: AccountPayload) {
 }
 
 export async function updateAccount(payload: AccountPayload) {
-  if (!payload.id || !ObjectId.isValid(payload.id)) {
+  const accountIdText = payload.id ?? '';
+
+  if (!ObjectId.isValid(accountIdText)) {
     return { success: false, message: 'Invalid account id.' };
   }
 
@@ -139,7 +169,7 @@ export async function updateAccount(payload: AccountPayload) {
   const db = dbClient.db();
 
   await db.collection(DbTables.bankAccounts).updateOne(
-    { _id: new ObjectId(payload.id) },
+    { _id: new ObjectId(accountIdText) },
     {
       $set: {
         name,
@@ -171,6 +201,30 @@ export async function deactivateAccount(accountId: string) {
 }
 
 export async function createCategory(payload: CategoryPayload) {
+  if (payload.type === 'outgoing' && hasSpecificFlag(payload)) {
+    return {
+      success: false,
+      message: '`specific` is supported only for incoming categories.',
+    };
+  }
+
+  if (payload.type === 'incoming') {
+    return createIncomingCategory({
+      name: payload.name,
+      inheritsId: payload.inheritsId,
+      active: true,
+      specific: false,
+    });
+  }
+
+  return createOutgoingCategory({
+    name: payload.name,
+    inheritsId: payload.inheritsId,
+    active: true,
+  });
+}
+
+export async function createIncomingCategory(payload: IncomingCategoryPayload) {
   const name = normalizeText(payload.name);
 
   if (!name) {
@@ -178,17 +232,16 @@ export async function createCategory(payload: CategoryPayload) {
   }
 
   const inheritsId = toObjectId(payload.inheritsId);
-  const table =
-    payload.type === 'incoming'
-      ? DbTables.financeIncomingCategories
-      : DbTables.financeOutgoingCategories;
 
   const dbClient = await clientPromise;
   const db = dbClient.db();
 
-  await db.collection(table).insertOne({
-    name,
+  await db.collection(DbTables.financeIncomingGoals).insertOne({
     ...(inheritsId ? { inherits: inheritsId } : {}),
+    name,
+    active: true,
+    specific: payload.specific,
+    balance: Decimal128.fromString('0'),
     createdAt: new Date(),
   });
 
@@ -197,37 +250,312 @@ export async function createCategory(payload: CategoryPayload) {
   return { success: true, message: 'Category created.' };
 }
 
-export async function deleteCategory(payload: CategoryPayload) {
-  if (!payload.id || !ObjectId.isValid(payload.id)) {
-    return { success: false, message: 'Invalid category id.' };
+export async function createOutgoingCategory(
+  payload: OutgoingCategoryPayloadExtended,
+) {
+  if (hasSpecificFlag(payload)) {
+    return {
+      success: false,
+      message: '`specific` is supported only for incoming categories.',
+    };
   }
 
-  const table =
-    payload.type === 'incoming'
-      ? DbTables.financeIncomingCategories
-      : DbTables.financeOutgoingCategories;
+  const name = normalizeText(payload.name);
+
+  if (!name) {
+    return { success: false, message: 'Category name is required.' };
+  }
+
+  const inheritsId = toObjectId(payload.inheritsId);
+  const linkedToId = toObjectId(payload.linkedToId);
 
   const dbClient = await clientPromise;
   const db = dbClient.db();
 
-  const categoryId = new ObjectId(payload.id);
-
-  const inUse = await db.collection(DbTables.reportsFinance).findOne({
-    $or: [{ category: categoryId }, { 'details.category': categoryId }],
+  await db.collection(DbTables.financeOutgoingPurposes).insertOne({
+    name,
+    active: true,
+    ...(inheritsId ? { inherits: inheritsId } : {}),
+    ...(linkedToId ? { linkedTo: linkedToId } : {}),
+    createdAt: new Date(),
   });
-
-  if (inUse) {
-    return {
-      success: false,
-      message: 'This category has linked reports and cannot be deleted.',
-    };
-  }
-
-  await db.collection(table).deleteOne({ _id: categoryId });
 
   revalidatePath('/admin/finance');
 
-  return { success: true, message: 'Category deleted.' };
+  return { success: true, message: 'Category created.' };
+}
+
+export async function updateCategory(
+  payload: CategoryPayload,
+): Promise<{ success: boolean; message: string }> {
+  if (payload.type === 'outgoing' && hasSpecificFlag(payload)) {
+    return {
+      success: false,
+      message: '`specific` is supported only for incoming categories.',
+    };
+  }
+
+  if (payload.type === 'incoming') {
+    return updateIncomingCategory({
+      id: payload.id,
+      name: payload.name,
+      inheritsId: payload.inheritsId,
+      active: true,
+      specific: false,
+    });
+  }
+
+  return updateOutgoingCategory({
+    id: payload.id,
+    name: payload.name,
+    inheritsId: payload.inheritsId,
+    active: true,
+  });
+}
+
+export async function updateIncomingCategory(
+  payload: IncomingCategoryPayload,
+): Promise<{ success: boolean; message: string }> {
+  const categoryIdText = payload.id ?? '';
+
+  if (!ObjectId.isValid(categoryIdText)) {
+    return { success: false, message: 'Invalid category id.' };
+  }
+
+  const name = normalizeText(payload.name);
+
+  if (!name) {
+    return { success: false, message: 'Category name is required.' };
+  }
+
+  const categoryId = new ObjectId(categoryIdText);
+  const inheritsId = toObjectId(payload.inheritsId);
+
+  if (inheritsId?.equals(categoryId) === true) {
+    return {
+      success: false,
+      message: 'Category cannot inherit from itself.',
+    };
+  }
+
+  const dbClient = await clientPromise;
+  const db = dbClient.db();
+
+  const existingCategory = await db
+    .collection(DbTables.financeIncomingGoals)
+    .findOne({
+      _id: categoryId,
+    });
+
+  if (!existingCategory) {
+    return { success: false, message: 'Category not found.' };
+  }
+
+  if (inheritsId) {
+    const parentExists = await db
+      .collection(DbTables.financeIncomingGoals)
+      .findOne({ _id: inheritsId });
+
+    if (!parentExists) {
+      return { success: false, message: 'Parent category not found.' };
+    }
+  }
+
+  const update: { $set: Record<string, unknown>; $unset?: Record<string, ''> } =
+    {
+      $set: {
+        name,
+        active: payload.active ?? true,
+        specific: payload.specific,
+      },
+    };
+
+  if (inheritsId) {
+    update.$set.inherits = inheritsId;
+  } else {
+    update.$unset = { inherits: '' };
+  }
+
+  await db
+    .collection(DbTables.financeIncomingGoals)
+    .updateOne({ _id: categoryId }, update);
+
+  revalidatePath('/admin/finance');
+
+  return { success: true, message: 'Category updated.' };
+}
+
+export async function updateOutgoingCategory(
+  payload: OutgoingCategoryPayloadExtended,
+): Promise<{ success: boolean; message: string }> {
+  if (hasSpecificFlag(payload)) {
+    return {
+      success: false,
+      message: '`specific` is supported only for incoming categories.',
+    };
+  }
+
+  const categoryIdText = payload.id ?? '';
+
+  if (!ObjectId.isValid(categoryIdText)) {
+    return { success: false, message: 'Invalid category id.' };
+  }
+
+  const name = normalizeText(payload.name);
+
+  if (!name) {
+    return { success: false, message: 'Category name is required.' };
+  }
+
+  const categoryId = new ObjectId(categoryIdText);
+  const inheritsId = toObjectId(payload.inheritsId);
+  const linkedToId = toObjectId(payload.linkedToId);
+
+  if (inheritsId?.equals(categoryId) === true) {
+    return {
+      success: false,
+      message: 'Category cannot inherit from itself.',
+    };
+  }
+
+  const dbClient = await clientPromise;
+  const db = dbClient.db();
+
+  const existingCategory = await db
+    .collection(DbTables.financeOutgoingPurposes)
+    .findOne({
+      _id: categoryId,
+    });
+
+  if (!existingCategory) {
+    return { success: false, message: 'Category not found.' };
+  }
+
+  if (inheritsId) {
+    const parentExists = await db
+      .collection(DbTables.financeOutgoingPurposes)
+      .findOne({ _id: inheritsId });
+
+    if (!parentExists) {
+      return { success: false, message: 'Parent category not found.' };
+    }
+  }
+
+  if (linkedToId) {
+    const linkedIncomingExists = await db
+      .collection(DbTables.financeIncomingGoals)
+      .findOne({ _id: linkedToId });
+
+    if (!linkedIncomingExists) {
+      return { success: false, message: 'Linked incoming category not found.' };
+    }
+  }
+
+  const update: { $set: Record<string, unknown>; $unset?: Record<string, ''> } =
+    {
+      $set: {
+        name,
+        active: payload.active ?? true,
+      },
+    };
+
+  if (inheritsId) {
+    update.$set.inherits = inheritsId;
+  } else {
+    update.$unset = { inherits: '' };
+  }
+
+  if (linkedToId) {
+    update.$set.linkedTo = linkedToId;
+  } else {
+    update.$unset = {
+      ...(update.$unset ?? {}),
+      linkedTo: '',
+    };
+  }
+
+  await db
+    .collection(DbTables.financeOutgoingPurposes)
+    .updateOne({ _id: categoryId }, update);
+
+  revalidatePath('/admin/finance');
+
+  return { success: true, message: 'Category updated.' };
+}
+
+export async function deleteCategory(payload: CategoryPayload) {
+  const categoryIdText = payload.id ?? '';
+
+  if (!ObjectId.isValid(categoryIdText)) {
+    return { success: false, message: 'Invalid category id.' };
+  }
+
+  const dbClient = await clientPromise;
+  const db = dbClient.db();
+
+  const categoryId = new ObjectId(categoryIdText);
+
+  const collectionName = resolveCategoryCollection(payload.type);
+
+    const categories = await db
+      .collection<{ _id: ObjectId; inherits?: ObjectId }>(collectionName)
+      .find({}, { projection: { _id: 1, inherits: 1 } })
+      .toArray();
+
+    const childrenByParentId = new Map<string, string[]>();
+
+    categories.forEach((category) => {
+      const parentId = category.inherits?.toString();
+
+      if (parentId === undefined) {
+        return;
+      }
+
+      const current = childrenByParentId.get(parentId) ?? [];
+      current.push(category._id.toString());
+      childrenByParentId.set(parentId, current);
+    });
+
+    const idsToDeactivate = new Set<string>();
+    const queue = [categoryId.toString()];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+
+      if (currentId === undefined || idsToDeactivate.has(currentId)) {
+        continue;
+      }
+
+      idsToDeactivate.add(currentId);
+
+      const children = childrenByParentId.get(currentId) ?? [];
+      children.forEach((childId) => {
+        if (!idsToDeactivate.has(childId)) {
+          queue.push(childId);
+        }
+      });
+    }
+
+    const objectIds = [...idsToDeactivate]
+      .filter((id) => ObjectId.isValid(id))
+      .map((id) => new ObjectId(id));
+
+    if (objectIds.length === 0) {
+      return { success: false, message: 'Category not found.' };
+    }
+
+    await db.collection(collectionName).updateMany(
+      { _id: { $in: objectIds } },
+      {
+        $set: {
+          active: false,
+        },
+      },
+    );
+
+    revalidatePath('/admin/finance');
+
+  return { success: true, message: 'Category deactivated.' };
 }
 
 export async function createReport(payload: ReportPayload) {
@@ -287,7 +615,9 @@ export async function createReport(payload: ReportPayload) {
 }
 
 export async function updateReport(payload: ReportPayload) {
-  if (!payload.id || !ObjectId.isValid(payload.id)) {
+  const reportIdText = payload.id ?? '';
+
+  if (!ObjectId.isValid(reportIdText)) {
     return { success: false, message: 'Invalid report id.' };
   }
 
@@ -313,7 +643,7 @@ export async function updateReport(payload: ReportPayload) {
 
   const existing = await db
     .collection(DbTables.reportsFinance)
-    .findOne({ _id: new ObjectId(payload.id) });
+    .findOne({ _id: new ObjectId(reportIdText) });
 
   if (!existing) {
     return { success: false, message: 'Report not found.' };
@@ -372,7 +702,7 @@ export async function updateReport(payload: ReportPayload) {
 
   await db
     .collection(DbTables.reportsFinance)
-    .updateOne({ _id: new ObjectId(payload.id) }, update);
+    .updateOne({ _id: new ObjectId(reportIdText) }, update);
 
   revalidatePath('/admin/finance');
   if (previousType === 'debt' || payload.type === 'debt') {
