@@ -5,4 +5,5 @@ export type AccountRow = {
   balance: number;
   thisMonthNet: number;
   debtTotal: number;
+  active: boolean;
 };

@@ -1303,9 +1303,10 @@
     },
     "account": {
       "overviewTitle": "Account overview",
-      "overviewSubtitle": "{count} active accounts · This month: {month}",
+      "overviewSubtitle": "{count} active {count, plural, one {account} other {accounts}}",
       "noAccounts": "No active accounts yet. Add your first bank account to start tracking balances.",
       "activeBadge": "Active",
+      "inactiveBadge": "Inactive",
       "thisMonth": "This month",
       "currentBalance": "Current balance",
       "debt": "Debt",

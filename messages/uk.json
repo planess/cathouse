@@ -1303,9 +1303,10 @@
     },
     "account": {
       "overviewTitle": "Огляд рахунків",
-      "overviewSubtitle": "{count} активних рахунків · Цього місяця: {month}",
+      "overviewSubtitle": "{count} {count, plural, one {активний рахунок} few {активні рахунки} many {активних рахунків} other {активних рахунків}}",
       "noAccounts": "Немає активних рахунків. Додайте перший рахунок, щоб відстежувати баланс.",
       "activeBadge": "Активний",
+      "inactiveBadge": "Неактивний",
       "thisMonth": "Цього місяця",
       "currentBalance": "Поточний баланс",
       "debt": "Борг",

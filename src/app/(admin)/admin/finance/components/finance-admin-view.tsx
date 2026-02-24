@@ -437,8 +437,18 @@ export function FinanceAdminView({
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white">
                           {account.name}
                         </h4>
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
-                          {t('account.activeBadge')}
+                        <span
+                          className={clsx(
+                            'rounded-full  px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide',
+                            {
+                              'text-emerald-600 bg-emerald-50': account.active,
+                              'text-zinc-600 bg-zinc-50': !account.active,
+                            },
+                          )}
+                        >
+                          {account.active
+                            ? t('account.activeBadge')
+                            : t('account.inactiveBadge')}
                         </span>
                       </div>
                       <p className="mt-1 text-[10px] font-mono text-slate-500">
@@ -480,7 +490,11 @@ export function FinanceAdminView({
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div
+                      className={clsx('flex items-center gap-1', {
+                        invisible: !account.active,
+                      })}
+                    >
                       <button
                         className="rounded-lg p-2 text-slate-400 transition hover:text-sky-500"
                         type="button"
