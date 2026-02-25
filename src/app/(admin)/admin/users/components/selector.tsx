@@ -1,9 +1,6 @@
 'use client';
 
-interface SelectorProps {
-  list: Map<string, string>;
-  attach: (roleId: string) => Promise<void>;
-}
+import { SelectorProps } from '../types/user-components.types';
 
 export default function Selector({ list, attach }: SelectorProps) {
   console.log('--- Selector render', attach);

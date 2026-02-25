@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
 
 import { DbTables } from '@app/enum/db-tables';
@@ -6,26 +5,9 @@ import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import clientPromise from '@app/ins/mongo-client';
 
 import { RolesAdminView } from './components/roles-admin-view';
+import { PermissionDocument, RoleDocument } from './types/roles-page.types';
 
 import type { Metadata } from 'next';
-
-type RoleDocument = {
-  _id: ObjectId;
-  name: string;
-  description?: string;
-  permissions?: ObjectId[];
-  inherits?: ObjectId[];
-  isActive?: boolean;
-  createdAt?: Date | string;
-};
-
-type PermissionDocument = {
-  _id: ObjectId;
-  name: string;
-  description?: string;
-  resource?: string;
-  action?: string;
-};
 
 const normalizeRoleDocument = (role: RoleDocument) => {
   const createdAt =

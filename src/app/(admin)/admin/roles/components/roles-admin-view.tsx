@@ -10,36 +10,16 @@ import {
   softDeleteRole,
   updateRole,
 } from '../../../../actions/roles.server';
-
-export type RoleRow = {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string[];
-  inheritsFrom: string[];
-  isActive: boolean;
-  createdAt?: string;
-};
-
-export type PermissionOption = {
-  id: string;
-  name: string;
-  description?: string;
-  resource?: string;
-  action?: string;
-};
-
-type RoleOption = {
-  id: string;
-  name: string;
-};
-
-type RoleFormState = {
-  name: string;
-  description: string;
-  inheritsFrom: string[];
-  permissions: string[];
-};
+import {
+  PermissionLabelProps,
+  PermissionOption,
+  RoleFormProps,
+  RoleFormState,
+  RoleModalOptions,
+  RoleOption,
+  RoleRow,
+  RolesAdminViewProps,
+} from '../types/roles-admin-view.types';
 
 const defaultFormState: RoleFormState = {
   name: '',
@@ -48,13 +28,7 @@ const defaultFormState: RoleFormState = {
   permissions: [],
 };
 
-export function RolesAdminView({
-  roles,
-  permissions,
-}: {
-  roles: RoleRow[];
-  permissions: PermissionOption[];
-}) {
+export function RolesAdminView({ roles, permissions }: RolesAdminViewProps) {
   const router = useRouter();
   const { showModal } = useModal();
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -74,13 +48,7 @@ export function RolesAdminView({
     );
   }, [permissions]);
 
-  const openRoleModal = (options: {
-    title: string;
-    initialState: RoleFormState;
-    submitLabel: string;
-    excludeRoleId?: string;
-    onSubmit: (state: RoleFormState) => Promise<void>;
-  }) => {
+  const openRoleModal = (options: RoleModalOptions) => {
     const formStateRef = { current: options.initialState };
 
     void showModal({
@@ -326,13 +294,7 @@ function RoleForm({
   permissionOptions,
   excludeRoleId,
   onChange,
-}: {
-  initialState: RoleFormState;
-  roleOptions: RoleOption[];
-  permissionOptions: PermissionOption[];
-  excludeRoleId?: string;
-  onChange: (state: RoleFormState) => void;
-}) {
+}: RoleFormProps) {
   const [formState, setFormState] = useState<RoleFormState>(initialState);
 
   const filteredRoleOptions = roleOptions.filter(
@@ -533,7 +495,7 @@ function RoleForm({
   );
 }
 
-function PermissionLabel({ permission }: { permission: PermissionOption }) {
+function PermissionLabel({ permission }: PermissionLabelProps) {
   return (
     <span className="flex min-w-0 flex-col items-start">
       <span className="truncate">{permission.name}</span>

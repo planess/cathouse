@@ -5,17 +5,14 @@ import { useEffect, useState } from 'react';
 
 import { MapPicker } from '@app/components/map/map-picker';
 
+import type { StorageFormProps } from '../types/inventory-component-props.types';
 import type { StorageFormState } from '../types/inventory.types';
 
 export function StorageForm({
   initialState,
   onChange,
   onValidityChange,
-}: {
-  initialState: StorageFormState;
-  onChange: (state: StorageFormState) => void;
-  onValidityChange: (isValid: boolean) => void;
-}) {
+}: StorageFormProps) {
   const t = useTranslations('adminInventory');
   const [formState, setFormState] = useState<StorageFormState>(initialState);
   const [touched, setTouched] = useState({ name: false, location: false });

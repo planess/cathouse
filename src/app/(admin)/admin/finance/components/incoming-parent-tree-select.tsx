@@ -1,23 +1,10 @@
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { CategoryNode } from '../models/category-node';
-
-type IncomingParentTreeSelectProps = {
-  categories: CategoryNode[];
-  selectedParentId: string;
-  disabled: boolean;
-  emptyLabel: string;
-  onSelect: (parentId: string) => void;
-};
-
-type TreeItemProps = {
-  node: CategoryNode;
-  depth: number;
-  selectedParentId: string;
-  disabled: boolean;
-  onSelect: (parentId: string) => void;
-};
+import {
+  IncomingParentTreeSelectProps,
+  TreeItemProps,
+} from '../models/props/incoming-parent-tree-select-props';
 
 function TreeItem({
   node,
@@ -53,11 +40,6 @@ function TreeItem({
           {node.active === false ? (
             <span className="rounded-full border border-slate-300 bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
               {t('categories.inactiveBadge')}
-            </span>
-          ) : null}
-          {node.specific === true ? (
-            <span className="rounded-full border border-sky-200 bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">
-              {t('categories.specificBadge')}
             </span>
           ) : null}
         </span>

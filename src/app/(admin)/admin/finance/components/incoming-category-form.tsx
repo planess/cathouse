@@ -1,35 +1,25 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { CategoryNode } from '../models/category-node';
+import {
+  IncomingCategoryFormProps,
+  IncomingCategoryFormState,
+} from '../models/props/incoming-category-form-props';
 
 import IncomingParentTreeSelect from './incoming-parent-tree-select';
-
-type IncomingCategoryFormState = {
-  name: string;
-  inheritsId: string;
-  active: boolean;
-  specific: boolean;
-};
 
 export default function IncomingCategoryForm({
   categories,
   onChange,
   initialState,
   allowActiveEdit,
-}: {
-  categories: CategoryNode[];
-  onChange: (state: IncomingCategoryFormState) => void;
-  initialState?: IncomingCategoryFormState;
-  allowActiveEdit: boolean;
-}) {
+}: IncomingCategoryFormProps) {
   const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState<IncomingCategoryFormState>(
     initialState ?? {
       name: '',
       inheritsId: '',
       active: true,
-      specific: false,
     },
   );
 
@@ -88,29 +78,6 @@ export default function IncomingCategoryForm({
               disabled={!allowActiveEdit}
               onChange={(event) =>
                 updateState({ ...formState, active: event.target.checked })
-              }
-            />
-          </label>
-        </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-          <label className="flex cursor-pointer items-center justify-between gap-4">
-            <span>
-              <p className="text-xs font-semibold text-slate-700">
-                {t('categories.specificLabel')}
-              </p>
-              <p className="text-[11px] text-slate-500">
-                {t('categories.specificHint')}
-              </p>
-            </span>
-            <input
-              className="h-4 w-4"
-              type="checkbox"
-              checked={formState.specific}
-              onChange={(event) =>
-                updateState({
-                  ...formState,
-                  specific: event.target.checked,
-                })
               }
             />
           </label>

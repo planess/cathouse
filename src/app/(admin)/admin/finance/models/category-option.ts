@@ -3,12 +3,5 @@ export type CategoryOption = {
   name: string;
   inheritsFrom?: string | null;
   active: boolean;
-};
-
-export type CategoryIncomingOption = CategoryOption & {
-  specific: boolean;
-};
-
-export type CategoryOutgoingOption = CategoryOption & {
-  linkedToIncoming?: string | null;
+  balance?: number;
 };

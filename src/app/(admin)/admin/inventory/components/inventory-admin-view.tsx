@@ -10,14 +10,14 @@ import {
 import { useModal } from '@app/hooks/use-modal';
 
 import { CategoriesModal } from './inventory-categories-modal';
-import {
-  InventoryReportForm,
-  type InventoryReportFormState,
-} from './inventory-report-form';
+import { InventoryReportForm } from './inventory-report-form';
 import { StoragesModal } from './inventory-storages-modal';
 import { InventoryTable } from './inventory-table';
 
-import type { InventoryAdminViewProps } from '../types/inventory.types';
+import type {
+  InventoryAdminViewProps,
+  InventoryReportFormState,
+} from '../types/inventory.types';
 
 function buildReportFormData(state: InventoryReportFormState, id?: string) {
   const formData = new FormData();

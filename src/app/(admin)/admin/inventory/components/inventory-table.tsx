@@ -4,17 +4,13 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState, type ReactNode } from 'react';
 
 import type {
+  InventoryTableProps,
+  TableCategoryNode,
+} from '../types/inventory-component-props.types';
+import type {
   InventoryCategoryNode,
   InventoryReportRow,
 } from '../types/inventory.types';
-
-type TableCategoryNode = {
-  id: string;
-  name: string;
-  children: TableCategoryNode[];
-  reports: InventoryReportRow[];
-  totalCount: number;
-};
 
 function buildCategoryTree(
   categories: InventoryCategoryNode[],
@@ -89,11 +85,7 @@ export function InventoryTable({
   categories,
   reports,
   onEditReport,
-}: {
-  categories: InventoryCategoryNode[];
-  reports: InventoryReportRow[];
-  onEditReport: (report: InventoryReportRow) => void;
-}) {
+}: InventoryTableProps) {
   const t = useTranslations('adminInventory');
   const tree = useMemo(
     () => buildCategoryTree(categories, reports, t('table.uncategorized')),

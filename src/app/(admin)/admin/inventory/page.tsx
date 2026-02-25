@@ -6,20 +6,13 @@ import {
   buildCategoryTree,
   formatDateLabel,
 } from './helpers/inventory-helpers';
+import { StorageWithLocation } from './types/inventory-page.types';
 
 import type {
   InventoryCategoryDocument,
   InventoryReportDocument,
-  InventoryStorageDocument,
 } from './types/inventory-db.types';
 import type { InventoryAdminViewProps } from './types/inventory.types';
-
-type StorageWithLocation = InventoryStorageDocument & {
-  location?: {
-    latitude?: number;
-    longitude?: number;
-  };
-};
 
 export default async function InventoryPage() {
   const dbClient = await clientPromise;

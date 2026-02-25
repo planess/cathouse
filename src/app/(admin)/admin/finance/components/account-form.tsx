@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { validateAccountForm } from '../helpers/validate-account-form';
 import { AccountFormState } from '../models/account-form-state';
+import { AccountFormProps } from '../models/props/account-form-props';
 import { TranslationFn } from '../models/transform-fn';
 
 import { IbanInput } from './iban-input';
@@ -11,11 +12,7 @@ export default function AccountForm({
   initialState,
   onChange,
   onValidityChange,
-}: {
-  initialState: AccountFormState;
-  onChange: (state: AccountFormState) => void;
-  onValidityChange: (isValid: boolean) => void;
-}) {
+}: AccountFormProps) {
   const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState<AccountFormState>(initialState);
   const [touched, setTouched] = useState({ name: false, iban: false });

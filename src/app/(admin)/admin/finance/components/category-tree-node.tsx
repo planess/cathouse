@@ -1,25 +1,17 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { CategoryNode } from '../models/category-node';
+import { CategoryTreeNodeProps } from '../models/props/category-tree-props';
 
 export default function CategoryTreeNode({
   node,
-  type,
   onEdit,
   onDelete,
-}: {
-  node: CategoryNode;
-  type: 'incoming' | 'outgoing';
-  onEdit: (categoryId: string) => void;
-  onDelete: (categoryId: string) => void;
-}) {
+}: CategoryTreeNodeProps) {
   const t = useTranslations('adminFinance');
   const [expanded, setExpanded] = useState(true);
   const hasLinkedOutgoingLabel =
-    type === 'outgoing' &&
-    node.linkedToName !== undefined &&
-    node.linkedToName !== '';
+    node.linkedToName !== undefined && node.linkedToName !== '';
 
   return (
     <div>
@@ -42,11 +34,6 @@ export default function CategoryTreeNode({
           {node.active === false ? (
             <span className="rounded-full border border-slate-300 bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
               {t('categories.inactiveBadge')}
-            </span>
-          ) : null}
-          {type === 'incoming' && node.specific === true ? (
-            <span className="rounded-full border border-sky-200 bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">
-              {t('categories.specificBadge')}
             </span>
           ) : null}
           {hasLinkedOutgoingLabel ? (
@@ -115,7 +102,6 @@ export default function CategoryTreeNode({
             <CategoryTreeNode
               key={child.id}
               node={child}
-              type={type}
               onEdit={onEdit}
               onDelete={onDelete}
             />

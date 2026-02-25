@@ -1,22 +1,20 @@
-import { deleteCategory } from '@app/actions/finance.server';
+import { deleteCategory } from '@app/actions/finance';
 import { useModal } from '@app/hooks/use-modal';
 
 import { TranslationFn } from '../models/transform-fn';
 
 export async function handleDeleteCategory({
   categoryId,
-  type,
   onRefresh,
   showModal,
   t,
 }: {
   categoryId: string;
-  type: 'incoming' | 'outgoing';
   onRefresh: () => void;
   showModal: ReturnType<typeof useModal>['showModal'];
   t: TranslationFn;
 }) {
-  const result = await deleteCategory({ id: categoryId, name: '', type });
+  const result = await deleteCategory({ id: categoryId, name: '' });
 
   if (!result.success) {
     void showModal({

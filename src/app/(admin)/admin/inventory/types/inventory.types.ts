@@ -36,6 +36,18 @@ export type InventoryReportRow = {
   createdAt: string;
 };
 
+export type InventoryReportFormState = {
+  sku: string;
+  name: string;
+  type: InventoryItemType | '';
+  quantity: string;
+  expirationDate: string;
+  categoryId: string;
+  storageId: string;
+  existingImages: string[];
+  newImages: File[];
+};
+
 export type InventoryItemType = 'equipment' | 'consumable';
 
 export type InventoryAdminViewProps = {

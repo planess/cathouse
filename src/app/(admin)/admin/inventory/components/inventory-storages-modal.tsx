@@ -13,14 +13,10 @@ import { useModal } from '@app/hooks/use-modal';
 import { StorageForm } from './inventory-storage-form';
 
 import type {
-  InventoryStorageRow,
-  StorageFormState,
-} from '../types/inventory.types';
-
-type StorageModalProps = {
-  storages: InventoryStorageRow[];
-  onRefresh: () => void;
-};
+  StorageFormModalOptions,
+  StorageModalProps,
+} from '../types/inventory-component-props.types';
+import type { InventoryStorageRow } from '../types/inventory.types';
 
 export function StoragesModal({ storages, onRefresh }: StorageModalProps) {
   const t = useTranslations('adminInventory');
@@ -37,12 +33,7 @@ export function StoragesModal({ storages, onRefresh }: StorageModalProps) {
     [t],
   );
 
-  const openStorageForm = (options: {
-    title: string;
-    submitLabel: string;
-    initialState: StorageFormState;
-    onSubmit: (state: StorageFormState) => Promise<void>;
-  }) => {
+  const openStorageForm = (options: StorageFormModalOptions) => {
     const formStateRef = { current: options.initialState };
     const formValidityRef = { current: false };
 

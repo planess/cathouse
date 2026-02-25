@@ -14,17 +14,14 @@ import { CategoryForm } from './inventory-category-form';
 import { CategoryTree } from './inventory-category-tree';
 
 import type {
+  CategoriesModalProps,
+  CategoryFormModalOptions,
+} from '../types/inventory-component-props.types';
+import type {
   CategoryFormState,
   InventoryCategoryRow,
   InventoryCategoryNode,
-  InventoryCategoryOption,
 } from '../types/inventory.types';
-
-type CategoriesModalProps = {
-  categories: InventoryCategoryNode[];
-  options: InventoryCategoryOption[];
-  onRefresh: () => void;
-};
 
 export function CategoriesModal({
   categories,
@@ -70,13 +67,7 @@ export function CategoriesModal({
     return flattened;
   }, [categories, categoryNameMap, inheritsMap]);
 
-  const openCategoryForm = (formOptions: {
-    title: string;
-    submitLabel: string;
-    initialState: CategoryFormState;
-    availableOptions: InventoryCategoryOption[];
-    onSubmit: (state: CategoryFormState) => Promise<void>;
-  }) => {
+  const openCategoryForm = (formOptions: CategoryFormModalOptions) => {
     const formStateRef: { current: CategoryFormState } = {
       current: formOptions.initialState,
     };

@@ -1,46 +1,14 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type ChangeEvent,
-  type ReactNode,
-} from 'react';
+import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
 
 import type {
-  InventoryCategoryOption,
-  InventoryStorageRow,
-} from '../types/inventory.types';
-
-export type InventoryReportFormState = {
-  sku: string;
-  name: string;
-  type: 'equipment' | 'consumable' | '';
-  quantity: string;
-  expirationDate: string;
-  categoryId: string;
-  storageId: string;
-  existingImages: string[];
-  newImages: File[];
-};
-
-type InventoryReportFormProps = {
-  initialState: InventoryReportFormState;
-  storages: InventoryStorageRow[];
-  categories: InventoryCategoryOption[];
-  onChange: (state: InventoryReportFormState) => void;
-  onValidityChange: (isValid: boolean) => void;
-};
-
-type FormErrors = {
-  name?: string;
-  type?: string;
-  quantity?: string;
-  categoryId?: string;
-  storageId?: string;
-};
+  FormErrors,
+  FormFieldProps,
+  InventoryReportFormProps,
+} from '../types/inventory-component-props.types';
+import type { InventoryReportFormState } from '../types/inventory.types';
 
 const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
@@ -340,17 +308,7 @@ export function InventoryReportForm({
   );
 }
 
-function FormField({
-  label,
-  required,
-  error,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  error?: string;
-  children: ReactNode;
-}) {
+function FormField({ label, required, error, children }: FormFieldProps) {
   return (
     <div className="space-y-2">
       <label className="text-xs font-semibold text-slate-600">

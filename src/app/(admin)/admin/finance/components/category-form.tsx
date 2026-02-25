@@ -1,23 +1,22 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { CategoryOption } from '../models/category-option';
+import {
+  CategoryFormProps,
+  CategoryFormState,
+} from '../models/props/category-form-props';
 
 export default function CategoryForm({
   options,
   onChange,
   initialState,
-}: {
-  options: CategoryOption[];
-  onChange: (state: { name: string; inheritsId: string }) => void;
-  initialState?: { name: string; inheritsId: string };
-}) {
+}: CategoryFormProps) {
   const t = useTranslations('adminFinance');
   const [formState, setFormState] = useState(
     initialState ?? { name: '', inheritsId: '' },
   );
 
-  const updateState = (nextState: { name: string; inheritsId: string }) => {
+  const updateState = (nextState: CategoryFormState) => {
     setFormState(nextState);
     onChange(nextState);
   };

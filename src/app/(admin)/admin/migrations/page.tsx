@@ -7,15 +7,9 @@ import {
 } from '@app/actions/migrations.server';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
+import { MigrationRow, MigrationState } from './types/migration.types';
+
 import type { Metadata } from 'next';
-
-type MigrationState = 'applied' | 'pending' | 'unknown';
-
-type MigrationRow = {
-  name: string;
-  status: MigrationState;
-  timestamp: string;
-};
 
 function formatMigrationName(fileName: string): string {
   return fileName.replace(/\.js$/i, '').replace(/^\d{14}[_-]/, '');
@@ -93,7 +87,9 @@ export default async function AdminPage() {
         <div className="flex gap-3 flex-col">
           <button
             type="submit"
-            onClick={revertLastMigration}
+            onClick={() => {
+              void revertLastMigration();
+            }}
             className="text-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-500 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
           >
             Revert Last One
@@ -101,7 +97,9 @@ export default async function AdminPage() {
 
           <button
             type="submit"
-            onClick={runPendingMigrations}
+            onClick={() => {
+              void runPendingMigrations();
+            }}
             className="text-center gap-2 rounded-xl bg-sky-600 px-5 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-sky-700"
           >
             Run Pending

@@ -5,11 +5,13 @@ import { usePathname } from 'next/navigation';
 
 import { useCurrentUser } from '@app/hooks/use-user';
 
-const navItems = [
+import { SidebarIconProps, SidebarNavItem } from './admin-sidebar.types';
+
+const navItems: SidebarNavItem[] = [
   {
     href: '/admin',
     label: 'Overview',
-    Icon: function DashboardIcon({ className }: { className?: string }) {
+    Icon: function DashboardIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -31,7 +33,7 @@ const navItems = [
   {
     href: '/admin/users',
     label: 'Users',
-    Icon: function UsersIcon({ className }: { className?: string }) {
+    Icon: function UsersIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -67,7 +69,7 @@ const navItems = [
   {
     href: '/admin/roles',
     label: 'Roles',
-    Icon: function RolesIcon({ className }: { className?: string }) {
+    Icon: function RolesIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -103,7 +105,7 @@ const navItems = [
   {
     href: '/admin/migrations',
     label: 'Migrations',
-    Icon: function MigrationsIcon({ className }: { className?: string }) {
+    Icon: function MigrationsIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -132,7 +134,7 @@ const navItems = [
   {
     href: '/admin/finance',
     label: 'Finance',
-    Icon: function FinanceIcon({ className }: { className?: string }) {
+    Icon: function FinanceIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -161,7 +163,7 @@ const navItems = [
   {
     href: '/admin/inventory',
     label: 'Inventory',
-    Icon: function InventoryIcon({ className }: { className?: string }) {
+    Icon: function InventoryIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"

@@ -1,15 +1,8 @@
 import clsx from 'clsx';
 
 import { PermissionGuard } from '@app/components/permission-guard/permission-guard';
-import { Permission } from '@app/models/permission';
-import { Role } from '@app/models/role';
 
-interface RoleListProps {
-  roles: Role[];
-  permissions: Permission[];
-  onEdit: (role: Role) => void;
-  onDelete: (roleId: string) => void;
-}
+import { RoleListProps } from './types/role-management-props';
 
 export default function RoleList({
   roles,
