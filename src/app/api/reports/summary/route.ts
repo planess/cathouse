@@ -190,27 +190,60 @@ export async function GET(request: Request) {
           {
             $project: {
               month: { $month: '$operationDate' },
+              linkedTo: '$linkedTo',
+              totalAmount: { $toDouble: '$amount' },
+              details: { $ifNull: ['$details', []] },
+            },
+          },
+          {
+            $project: {
+              month: 1,
               items: {
-                $cond: [
-                  { $gt: [{ $size: { $ifNull: ['$details', []] } }, 0] },
+                $concatArrays: [
+                  [
+                    {
+                      category: '$linkedTo',
+                      amount: '$totalAmount',
+                    },
+                  ],
                   {
                     $map: {
-                      input: '$details',
+                      input: {
+                        $filter: {
+                          input: '$details',
+                          as: 'detail',
+                          cond: {
+                            $eq: [{ $type: '$$detail.category' }, 'objectId'],
+                          },
+                        },
+                      },
                       as: 'detail',
                       in: {
-                        category: {
-                          $ifNull: ['$$detail.category', '$linkedTo'],
+                        category: '$linkedTo',
+                        amount: {
+                          $multiply: [{ $toDouble: '$$detail.amount' }, -1],
                         },
+                      },
+                    },
+                  },
+                  {
+                    $map: {
+                      input: {
+                        $filter: {
+                          input: '$details',
+                          as: 'detail',
+                          cond: {
+                            $eq: [{ $type: '$$detail.category' }, 'objectId'],
+                          },
+                        },
+                      },
+                      as: 'detail',
+                      in: {
+                        category: '$$detail.category',
                         amount: { $toDouble: '$$detail.amount' },
                       },
                     },
                   },
-                  [
-                    {
-                      category: '$linkedTo',
-                      amount: { $toDouble: '$amount' },
-                    },
-                  ],
                 ],
               },
             },
