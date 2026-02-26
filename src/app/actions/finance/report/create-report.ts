@@ -75,22 +75,6 @@ export async function createReport(payload: ReportPayload) {
   }
 
   if (payload.type === 'outgoing' && accountId) {
-    console.log(JSON.stringify({
-      ...(categoryId ? { linkedTo: categoryId } : {}),
-      account: accountId,
-      amount: toDecimal(amount),
-      balance: toDecimal(0),
-      recipient,
-      iban,
-      description,
-      operationDate,
-      details: toDetails(payload.details),
-      withdrawal: [],
-      documents: toDocuments(payload.documents),
-      createdAt: new Date(),
-      createdBy: currentUser.id,
-    }));
-    try {
     await db.collection(DbTables.financeOutgoingReports).insertOne({
       ...(categoryId ? { linkedTo: categoryId } : {}),
       account: accountId,
@@ -106,9 +90,6 @@ export async function createReport(payload: ReportPayload) {
       createdAt: new Date(),
       createdBy: currentUser.id,
     });
-  } catch (error) {
-    console.error(JSON.stringify(error.errInfo));
-    throw error;
 
     await rebuildFinanceSnapshots(db);
   }
