@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { Decimal128, ObjectId } from 'mongodb';
 import { unstable_cache } from 'next/cache';
 
 import { DbTables } from '@app/enum/db-tables';
@@ -8,59 +8,17 @@ import {
   FinanceAdminView,
   type FinanceAdminViewProps,
 } from './components/finance-admin-view';
-
-type BankAccountDocument = {
-  _id: ObjectId;
-  name: string;
-  iban: string;
-  balance?: number;
-  isActive?: boolean;
-  createdAt?: Date;
-};
-
-type CategoryDocument = {
-  _id: ObjectId;
-  name: string;
-  inherits?: ObjectId;
-  linkedTo?: ObjectId;
-  active?: boolean;
-  specific?: boolean;
-  createdAt: Date;
-};
-
-type ReportDetailDocument = {
-  description: string;
-  amount: number;
-  category?: ObjectId;
-};
-
-type ReportDocument = {
-  _id: ObjectId;
-  type: 'incoming' | 'outgoing' | 'debt';
-  description?: string;
-  category?: ObjectId;
-  account?: ObjectId;
-  amount: number;
-  balance?: number;
-  details?: ReportDetailDocument[];
-  createdAt?: Date;
-};
-
-type SearchParams = {
-  month?: string;
-  range?: string;
-};
-
-type ReportRange = 'month' | 'year';
-
-type CategoryNode = {
-  id: string;
-  name: string;
-  active?: boolean;
-  specific?: boolean;
-  linkedToName?: string;
-  children: CategoryNode[];
-};
+import { CategoryNode } from './models/category-node';
+import {
+  BankAccountDocument,
+  CategoryDocument,
+  DebtReportDocument,
+  FinancePageProps,
+  IncomingReportDocument,
+  OutgoingReportDocument,
+  ReportRange,
+  ReportDocumentAsset,
+} from './models/finance-page.types';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -70,8 +28,8 @@ const getDebtReports = unstable_cache(
     const db = dbClient.db();
 
     return db
-      .collection<ReportDocument>(DbTables.reportsFinance)
-      .find({ type: 'debt' })
+      .collection<DebtReportDocument>(DbTables.financeDebtReports)
+      .find()
       .sort({ createdAt: -1 })
       .toArray();
   },
@@ -137,6 +95,37 @@ function formatCreatedAt(value: unknown): string {
   return '';
 }
 
+function toNumber(value: unknown): number {
+  if (value instanceof Decimal128) {
+    return Number(value.toString());
+  }
+
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    return Number(value);
+  }
+
+  return 0;
+}
+
+function normalizeDocuments(documents: ReportDocumentAsset[] | undefined) {
+  return (
+    documents?.map((document) => ({
+      key: document.key,
+      url: process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL + '/' + document.key,
+      size: document.size,
+      mimeType: document.mimeType,
+      originalName: document.originalName,
+      uploadedAt: document.uploadedAt.toISOString(),
+      checksum: document.checksum,
+      isDeleted: document.isDeleted === true,
+    })) ?? []
+  );
+}
+
 function buildCategoryTree(
   categories: CategoryDocument[],
   linkedNameById?: Map<string, string>,
@@ -148,7 +137,6 @@ function buildCategoryTree(
       id: category._id.toString(),
       name: category.name,
       active: category.active,
-      specific: category.specific,
       linkedToName:
         linkedNameById?.get(category.linkedTo?.toString() ?? '') ?? undefined,
       parentId: category.inherits?.toString(),
@@ -170,11 +158,7 @@ function buildCategoryTree(
   return roots;
 }
 
-export default async function FinancePage({
-  searchParams,
-}: {
-  searchParams?: Promise<SearchParams>;
-}) {
+export default async function FinancePage({ searchParams }: FinancePageProps) {
   const resolvedSearchParams = await searchParams;
   const selectedMonth = parseMonthParam(resolvedSearchParams?.month);
   const reportRange = parseReportRange(resolvedSearchParams?.range);
@@ -199,127 +183,146 @@ export default async function FinancePage({
 
   const [
     accounts,
-    incomingCategories,
-    outgoingCategories,
-    reports,
+    categories,
+    incomingReports,
+    outgoingReports,
     debtReports,
-    monthTotals,
-    yearTotals,
+    monthIncomingTotals,
+    monthOutgoingTotals,
+    yearIncomingTotals,
+    yearOutgoingTotals,
     monthAccountTotals,
-    debtTotals,
   ] = await Promise.all([
     db
       .collection<BankAccountDocument>(DbTables.bankAccounts)
-      .find({ isActive: { $ne: false } })
+      .find()
       .sort({ createdAt: 1 })
       .toArray(),
     db
-      .collection<CategoryDocument>(DbTables.financeIncomingGoals)
+      .collection<CategoryDocument>(DbTables.financeCategories)
       .find()
       .toArray(),
     db
-      .collection<CategoryDocument>(DbTables.financeOutgoingPurposes)
-      .find()
+      .collection<IncomingReportDocument>(DbTables.financeIncomingReports)
+      .find({ operationDate: { $gte: rangeStart, $lt: rangeEnd } })
+      .sort({ operationDate: -1 })
       .toArray(),
     db
-      .collection<ReportDocument>(DbTables.reportsFinance)
-      .find({ createdAt: { $gte: rangeStart, $lt: rangeEnd } })
-      .sort({ createdAt: -1 })
+      .collection<OutgoingReportDocument>(DbTables.financeOutgoingReports)
+      .find({ operationDate: { $gte: rangeStart, $lt: rangeEnd } })
+      .sort({ operationDate: -1 })
       .toArray(),
     getDebtReports(),
     db
-      .collection<ReportDocument>(DbTables.reportsFinance)
-      .aggregate<{ _id: string; total: number }>([
+      .collection<IncomingReportDocument>(DbTables.financeIncomingReports)
+      .aggregate<{ total: number }>([
         {
           $match: {
-            createdAt: { $gte: monthStart, $lt: monthEnd },
-            type: { $in: ['incoming', 'outgoing'] },
+            operationDate: { $gte: monthStart, $lt: monthEnd },
           },
         },
         {
           $group: {
-            _id: '$type',
-            total: { $sum: '$amount' },
+            _id: null,
+            total: { $sum: { $toDouble: '$amount' } },
           },
         },
       ])
       .toArray(),
     db
-      .collection<ReportDocument>(DbTables.reportsFinance)
-      .aggregate<{ _id: string; total: number }>([
+      .collection<OutgoingReportDocument>(DbTables.financeOutgoingReports)
+      .aggregate<{ total: number }>([
         {
           $match: {
-            createdAt: { $gte: yearStart, $lt: yearEnd },
-            type: { $in: ['incoming', 'outgoing'] },
+            operationDate: { $gte: monthStart, $lt: monthEnd },
           },
         },
         {
           $group: {
-            _id: '$type',
-            total: { $sum: '$amount' },
+            _id: null,
+            total: { $sum: { $toDouble: '$amount' } },
           },
         },
       ])
       .toArray(),
     db
-      .collection<ReportDocument>(DbTables.reportsFinance)
+      .collection<IncomingReportDocument>(DbTables.financeIncomingReports)
+      .aggregate<{ total: number }>([
+        {
+          $match: {
+            operationDate: { $gte: yearStart, $lt: yearEnd },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: { $toDouble: '$amount' } },
+          },
+        },
+      ])
+      .toArray(),
+    db
+      .collection<OutgoingReportDocument>(DbTables.financeOutgoingReports)
+      .aggregate<{ total: number }>([
+        {
+          $match: {
+            operationDate: { $gte: yearStart, $lt: yearEnd },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: { $toDouble: '$amount' } },
+          },
+        },
+      ])
+      .toArray(),
+    db
+      .collection<IncomingReportDocument>(DbTables.financeIncomingReports)
       .aggregate<{ _id: { account: ObjectId; type: string }; total: number }>([
         {
           $match: {
-            createdAt: { $gte: monthStart, $lt: monthEnd },
-            type: { $in: ['incoming', 'outgoing'] },
+            operationDate: { $gte: monthStart, $lt: monthEnd },
             account: { $type: 'objectId' },
           },
         },
         {
           $group: {
-            _id: { account: '$account', type: '$type' },
-            total: { $sum: '$amount' },
-          },
-        },
-      ])
-      .toArray(),
-    db
-      .collection<ReportDocument>(DbTables.reportsFinance)
-      .aggregate<{ _id: ObjectId; total: number }>([
-        {
-          $match: {
-            type: 'debt',
-            account: { $type: 'objectId' },
-          },
-        },
-        {
-          $group: {
-            _id: '$account',
-            total: { $sum: '$amount' },
+            _id: { account: '$account', type: 'incoming' },
+            total: { $sum: { $toDouble: '$amount' } },
           },
         },
       ])
       .toArray(),
   ]);
+
+  const outgoingMonthAccountTotals = await db
+    .collection<OutgoingReportDocument>(DbTables.financeOutgoingReports)
+    .aggregate<{ _id: { account: ObjectId; type: string }; total: number }>([
+      {
+        $match: {
+          operationDate: { $gte: monthStart, $lt: monthEnd },
+          account: { $type: 'objectId' },
+        },
+      },
+      {
+        $group: {
+          _id: { account: '$account', type: 'outgoing' },
+          total: { $sum: { $toDouble: '$amount' } },
+        },
+      },
+    ])
+    .toArray();
+
+  monthAccountTotals.push(...outgoingMonthAccountTotals);
 
   const accountMap = new Map(
     accounts.map((account) => [account._id.toString(), account.name]),
   );
 
-  const incomingCategoryMap = new Map(
-    incomingCategories.map((category) => [
-      category._id.toString(),
-      category.name,
-    ]),
+  const categoryMap = new Map(
+    categories.map((category) => [category._id.toString(), category.name]),
   );
-
-  const outgoingCategoryMap = new Map(
-    outgoingCategories.map((category) => [
-      category._id.toString(),
-      category.name,
-    ]),
-  );
-
-  const allCategoryMap = new Map([
-    ...incomingCategoryMap.entries(),
-    ...outgoingCategoryMap.entries(),
-  ]);
 
   const accountMonthTotals = new Map<
     string,
@@ -344,10 +347,6 @@ export default async function FinancePage({
     accountMonthTotals.set(accountId, current);
   });
 
-  const debtTotalsByAccount = new Map(
-    debtTotals.map((entry) => [entry._id.toString(), entry.total]),
-  );
-
   const normalizedAccounts: FinanceAdminViewProps['accounts'] = accounts.map(
     (account) => {
       const accountId = account._id.toString();
@@ -360,123 +359,168 @@ export default async function FinancePage({
         id: accountId,
         name: account.name,
         iban: account.iban,
-        balance: account.balance ?? 0,
+        active: account.isActive === true,
+        balance: toNumber(account.balance),
         thisMonthNet:
           monthTotalsByAccount.incoming - monthTotalsByAccount.outgoing,
-        debtTotal: debtTotalsByAccount.get(accountId) ?? 0,
+        debtTotal: 0,
       };
     },
   );
 
   const summaryTotals = {
-    monthIncoming: 0,
-    monthOutgoing: 0,
-    yearIncoming: 0,
-    yearOutgoing: 0,
+    monthIncoming: monthIncomingTotals[0]?.total ?? 0,
+    monthOutgoing: monthOutgoingTotals[0]?.total ?? 0,
+    yearIncoming: yearIncomingTotals[0]?.total ?? 0,
+    yearOutgoing: yearOutgoingTotals[0]?.total ?? 0,
   };
 
-  monthTotals.forEach((entry) => {
-    if (entry._id === 'incoming') {
-      summaryTotals.monthIncoming = entry.total;
-    }
-
-    if (entry._id === 'outgoing') {
-      summaryTotals.monthOutgoing = entry.total;
-    }
-  });
-
-  yearTotals.forEach((entry) => {
-    if (entry._id === 'incoming') {
-      summaryTotals.yearIncoming = entry.total;
-    }
-
-    if (entry._id === 'outgoing') {
-      summaryTotals.yearOutgoing = entry.total;
-    }
-  });
-
-  const normalizedReports: FinanceAdminViewProps['reports'] = reports.map(
-    (report) => {
-      const categoryId = report.category?.toString();
+  const normalizedIncomingReports: FinanceAdminViewProps['reports'] =
+    incomingReports.map((report) => {
+      const categoryId = report.linkedTo?.toString();
       const accountId = report.account?.toString();
-      const categoryName =
-        (report.type === 'incoming'
-          ? incomingCategoryMap.get(categoryId ?? '')
-          : outgoingCategoryMap.get(categoryId ?? '')) ??
-        allCategoryMap.get(categoryId ?? '') ??
-        '';
+      const categoryBalanceTo = toNumber(report.deposit);
+      const categoryBalanceDelta =
+        typeof categoryId === 'string' && categoryId.length > 0
+          ? toNumber(report.amount)
+          : 0;
+      const categoryBalanceFrom =
+        categoryBalanceDelta > 0
+          ? categoryBalanceTo - categoryBalanceDelta
+          : undefined;
 
       return {
         id: report._id.toString(),
-        type: report.type,
+        type: 'incoming',
         description: report.description ?? '',
-        categoryName,
+        categoryName: categoryMap.get(categoryId ?? '') ?? '',
+        categoryBalanceFrom,
+        categoryBalanceTo:
+          categoryBalanceDelta > 0 ? categoryBalanceTo : undefined,
+        categoryBalanceDelta,
         categoryId,
         accountName:
           typeof accountId === 'string'
             ? (accountMap.get(accountId) ?? '')
             : '',
         accountId,
-        amount: report.amount ?? 0,
-        balance: report.balance ?? 0,
+        sender: report.sender ?? '',
+        amount: toNumber(report.amount),
+        balance: toNumber(report.balance),
+        operationDate: formatCreatedAt(report.operationDate),
         createdAt: formatCreatedAt(report.createdAt),
-        details:
-          report.details?.map((detail) => ({
-            description: detail.description,
-            amount: detail.amount ?? 0,
-            categoryName: detail.category
-              ? allCategoryMap.get(detail.category.toString())
-              : undefined,
-            categoryId: detail.category?.toString(),
-          })) ?? [],
-      };
-    },
-  );
-
-  const normalizedDebtReports: FinanceAdminViewProps['reports'] =
-    debtReports.map((report) => {
-      const categoryId = report.category?.toString();
-      const accountId = report.account?.toString();
-      const categoryName =
-        (report.type === 'incoming'
-          ? incomingCategoryMap.get(categoryId ?? '')
-          : outgoingCategoryMap.get(categoryId ?? '')) ??
-        allCategoryMap.get(categoryId ?? '') ??
-        '';
-
-      return {
-        id: report._id.toString(),
-        type: report.type,
-        description: report.description ?? '',
-        categoryName,
-        categoryId,
-        accountName:
-          typeof accountId === 'string'
-            ? (accountMap.get(accountId) ?? '')
-            : '',
-        accountId,
-        amount: report.amount ?? 0,
-        balance: report.balance ?? 0,
-        createdAt: formatCreatedAt(report.createdAt),
-        details:
-          report.details?.map((detail) => ({
-            description: detail.description,
-            amount: detail.amount ?? 0,
-            categoryName: detail.category
-              ? allCategoryMap.get(detail.category.toString())
-              : undefined,
-            categoryId: detail.category?.toString(),
-          })) ?? [],
+        details: [],
+        documents: [],
       };
     });
 
-  const monthReports = normalizedReports.filter(
-    (report) => report.type !== 'debt',
-  );
+  const normalizedOutgoingReports: FinanceAdminViewProps['reports'] =
+    outgoingReports.map((report) => {
+      const categoryId = report.linkedTo?.toString();
+      const accountId = report.account?.toString();
+      const categoryWithdrawals =
+        report.withdrawal
+          ?.map((withdrawalItem) => {
+            const to = toNumber(withdrawalItem.balance);
+            const from = toNumber(withdrawalItem.previousBalance);
+            const delta = toNumber(withdrawalItem.amount);
+            const withdrawalCategoryId = withdrawalItem.category?.toString();
+
+            if (delta <= 0) {
+              return null;
+            }
+
+            return {
+              categoryName:
+                typeof withdrawalCategoryId === 'string' &&
+                withdrawalCategoryId.length > 0
+                  ? (categoryMap.get(withdrawalCategoryId) ?? '')
+                  : '',
+              from,
+              to,
+              delta,
+            };
+          })
+          .filter((item) => item !== null) ?? [];
+
+      return {
+        id: report._id.toString(),
+        type: 'outgoing',
+        description: report.description ?? '',
+        categoryName: categoryMap.get(categoryId ?? '') ?? '',
+        categoryWithdrawals,
+        categoryId,
+        accountName:
+          typeof accountId === 'string'
+            ? (accountMap.get(accountId) ?? '')
+            : '',
+        accountId,
+        recipient: report.recipient ?? '',
+        iban: report.iban ?? '',
+        amount: toNumber(report.amount),
+        balance: toNumber(report.balance),
+        operationDate: formatCreatedAt(report.operationDate),
+        createdAt: formatCreatedAt(report.createdAt),
+        details:
+          report.details?.map((detail) => ({
+            description: detail.description,
+            amount: toNumber(detail.amount),
+            categoryName: detail.category
+              ? categoryMap.get(detail.category.toString())
+              : undefined,
+            categoryId: detail.category?.toString(),
+          })) ?? [],
+        documents: normalizeDocuments(report.documents),
+      };
+    });
+
+  const normalizedDebtReports: FinanceAdminViewProps['reports'] =
+    debtReports.map((report) => {
+      const categoryId = report.linkedTo?.toString();
+
+      return {
+        id: report._id.toString(),
+        type: 'debt',
+        description: report.description ?? '',
+        categoryName: categoryMap.get(categoryId ?? '') ?? '',
+        categoryId,
+        accountName: '',
+        recipient: report.recipient ?? '',
+        amount: toNumber(report.amount),
+        balance: 0,
+        operationDate: '',
+        createdAt: formatCreatedAt(report.createdAt),
+        details:
+          report.details?.map((detail) => ({
+            description: detail.description,
+            amount: toNumber(detail.amount),
+            categoryName: detail.category
+              ? categoryMap.get(detail.category.toString())
+              : undefined,
+            categoryId: detail.category?.toString(),
+          })) ?? [],
+        documents: normalizeDocuments(report.documents),
+      };
+    });
+
   const combinedReports: FinanceAdminViewProps['reports'] = [
     ...normalizedDebtReports,
-    ...monthReports,
-  ];
+    ...normalizedIncomingReports,
+    ...normalizedOutgoingReports,
+  ].sort((a, b) => {
+    if (a.type === 'debt' && b.type !== 'debt') {
+      return -1;
+    }
+
+    if (a.type !== 'debt' && b.type === 'debt') {
+      return 1;
+    }
+
+    const left = new Date(a.operationDate || a.createdAt).getTime();
+    const right = new Date(b.operationDate || b.createdAt).getTime();
+
+    return right - left;
+  });
 
   const totalBalance = normalizedAccounts.reduce(
     (sum, account) => sum + account.balance,
@@ -485,21 +529,13 @@ export default async function FinancePage({
 
   const financeProps: FinanceAdminViewProps = {
     accounts: normalizedAccounts,
-    incomingCategories: buildCategoryTree(incomingCategories),
-    outgoingCategories: buildCategoryTree(outgoingCategories, incomingCategoryMap),
-    incomingCategoryOptions: incomingCategories.map((category) => ({
-      id: category._id.toString(),
-      name: category.name,
-      inheritsFrom: category.inherits?.toString() ?? null,
-      specific: category.specific === true,
-      active: category.active !== false,
-    })),
-    outgoingCategoryOptions: outgoingCategories.map((category) => ({
+    categories: buildCategoryTree(categories),
+    categoryOptions: categories.map((category) => ({
       id: category._id.toString(),
       name: category.name,
       inheritsFrom: category.inherits?.toString() ?? null,
       active: category.active !== false,
-      linkedToIncoming: category.linkedTo?.toString() ?? null,
+      balance: toNumber(category.balance),
     })),
     reports: combinedReports,
     summary: {

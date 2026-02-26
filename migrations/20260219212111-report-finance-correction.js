@@ -1,4 +1,4 @@
-const { Decimal128 } = require('mongodb');
+const { Decimal128, ObjectId } = require('mongodb');
 
 // convert Decimal128 values into plain numbers for rollback
 function toNumber(val) {
@@ -38,7 +38,6 @@ module.exports = {
             'account',
             'amount',
             'balance',
-            'linkedTo',
             'operationDate',
             'createdAt',
             'createdBy',
@@ -57,6 +56,10 @@ module.exports = {
               description:
                 'Balance AFTER the transaction in the selected account',
             },
+            deposit: {
+              bsonType: 'decimal',
+              description: 'Amount of the deposit in category',
+            },
             sender: {
               bsonType: 'string',
               description: 'Name of the sender of the transaction',
@@ -65,11 +68,6 @@ module.exports = {
               bsonType: 'string',
               description:
                 'Payment purpose of the transaction. It can indicate the targeted receipt into account, e.g. "Donation", "Grant", "Sponsorship" etc.',
-            },
-            linkedTo: {
-              bsonType: 'objectId',
-              description:
-                'ID of the incoming category this report is linked to',
             },
             operationDate: {
               bsonType: 'date',
@@ -96,6 +94,8 @@ module.exports = {
             'account',
             'amount',
             'balance',
+            'recipient',
+            'description',
             'linkedTo',
             'operationDate',
             'createdAt',
@@ -136,6 +136,31 @@ module.exports = {
               bsonType: 'date',
               description: 'Date when the transaction took place',
             },
+            withdrawal: {
+              bsonType: 'array',
+              description:
+                'List of withdrawals that this outgoing report consists of (used for splitting the amount into multiple categories)',
+              items: {
+                bsonType: 'object',
+                required: ['category', 'amount', 'balance'],
+                properties: {
+                  category: {
+                    bsonType: 'objectId',
+                    description:
+                      'ID of the outgoing category this withdrawal is linked to',
+                  },
+                  amount: {
+                    bsonType: 'decimal',
+                    description: 'Amount of the withdrawal',
+                  },
+                  balance: {
+                    bsonType: 'decimal',
+                    description:
+                      'Balance AFTER the withdrawal in the selected account',
+                  },
+                },
+              },
+            },
             details: {
               bsonType: 'array',
               description: 'Additional details of the transaction',
@@ -164,11 +189,15 @@ module.exports = {
               description: 'List of documents related to the debt',
               items: {
                 bsonType: 'object',
-                required: ['key', 'uploadedAt', 'checksum'],
+                required: ['key', 'url', 'uploadedAt', 'checksum'],
                 properties: {
                   key: {
                     bsonType: 'string',
                     description: 'Key of the document in the storage',
+                  },
+                  url: {
+                    bsonType: 'string',
+                    description: 'Public URL of the document',
                   },
                   size: {
                     bsonType: 'number',
@@ -244,11 +273,15 @@ module.exports = {
               description: 'List of documents related to the debt',
               items: {
                 bsonType: 'object',
-                required: ['key', 'uploadedAt', 'checksum'],
+                required: ['key', 'url', 'uploadedAt', 'checksum'],
                 properties: {
                   key: {
                     bsonType: 'string',
                     description: 'Key of the document in the storage',
+                  },
+                  url: {
+                    bsonType: 'string',
+                    description: 'Public URL of the document',
                   },
                   size: {
                     bsonType: 'number',
@@ -291,32 +324,25 @@ module.exports = {
       },
     });
 
-    await db.collection('finance_incoming_reports').createIndex({ account: 1 });
-    await db.collection('finance_incoming_reports').createIndex({ sender: 1 });
-    await db
-      .collection('finance_incoming_reports')
-      .createIndex({ linkedTo: 1 });
-    await db
-      .collection('finance_incoming_reports')
-      .createIndex({ operationDate: 1 });
+    const financeIncomingReports = db.collection('finance_incoming_reports');
+    const financeOutgoingReports = db.collection('finance_outgoing_reports');
+    const financeDebtReports = db.collection('finance_debt_reports');
 
-    await db.collection('finance_outgoing_reports').createIndex({ account: 1 });
-    await db
-      .collection('finance_outgoing_reports')
-      .createIndex({ recipient: 1 });
-    await db.collection('finance_outgoing_reports').createIndex({ iban: 1 });
-    await db
-      .collection('finance_outgoing_reports')
-      .createIndex({ linkedTo: 1 });
-    await db
-      .collection('finance_outgoing_reports')
-      .createIndex({ operationDate: 1 });
-    await db
-      .collection('finance_outgoing_reports')
-      .createIndex({ 'details.category': 1 });
+    await financeIncomingReports.createIndex({ account: 1 });
+    await financeIncomingReports.createIndex({ sender: 1 });
+    await financeIncomingReports.createIndex({ linkedTo: 1 });
+    await financeIncomingReports.createIndex({ operationDate: 1 });
 
-    await db.collection('finance_debt_reports').createIndex({ recipient: 1 });
-    await db.collection('finance_debt_reports').createIndex({ linkedTo: 1 });
+    await financeOutgoingReports.createIndex({ account: 1 });
+    await financeOutgoingReports.createIndex({ recipient: 1 });
+    await financeOutgoingReports.createIndex({ iban: 1 });
+    await financeOutgoingReports.createIndex({ linkedTo: 1 });
+    await financeOutgoingReports.createIndex({ operationDate: 1 });
+    await financeOutgoingReports.createIndex({ 'withdrawal.category': 1 });
+    await financeOutgoingReports.createIndex({ 'details.category': 1 });
+
+    await financeDebtReports.createIndex({ recipient: 1 });
+    await financeDebtReports.createIndex({ linkedTo: 1 });
 
     // transfer the data from reports_finance to the new collections
     // convert `amount` and `balance` into Decimal128 for the new collections
@@ -342,11 +368,9 @@ module.exports = {
         incomingReports.push({
           _id,
           account,
-          // ensure balance and amount stored as Decimal128
-          balance: toDecimal(balance),
-          amount: toDecimal(amount),
+          balance: toDecimal(balance), // ensure balance stored as Decimal128
+          amount: toDecimal(amount), // ensure amount stored as Decimal128
           description,
-          linkedTo: category,
           sender: 'unknown?',
           operationDate: createdAt,
           createdAt,
@@ -357,15 +381,15 @@ module.exports = {
         const details = report.details?.map((detail) => ({
           category: detail.category,
           description: detail.description,
-          amount: toDecimal(detail.amount),
+          amount: toDecimal(detail.amount), // ensure amount stored as Decimal128
         }));
 
         outgoingReports.push({
           ...(details ? { details } : {}),
           _id,
           account,
-          balance: toDecimal(balance),
-          amount: toDecimal(amount),
+          balance: toDecimal(balance), // ensure balance stored as Decimal128
+          amount: toDecimal(amount), // ensure amount stored as Decimal128
           recipient: 'unknown?',
           iban: 'unknown?',
           description,
@@ -377,8 +401,7 @@ module.exports = {
       } else if (type === 'debt') {
         debtReports.push({
           _id,
-          // debt amount stored as Decimal128 as well
-          amount: toDecimal(amount),
+          amount: toDecimal(amount), // ensure amount stored as Decimal128
           recipient: 'unknown?',
           description,
           linkedTo: category,
@@ -389,19 +412,15 @@ module.exports = {
     }
 
     if (incomingReports.length > 0) {
-      await db
-        .collection('finance_incoming_reports')
-        .insertMany(incomingReports);
+      await financeIncomingReports.insertMany(incomingReports);
     }
 
     if (outgoingReports.length > 0) {
-      await db
-        .collection('finance_outgoing_reports')
-        .insertMany(outgoingReports);
+      await financeOutgoingReports.insertMany(outgoingReports);
     }
 
     if (debtReports.length > 0) {
-      await db.collection('finance_debt_reports').insertMany(debtReports);
+      await financeDebtReports.insertMany(debtReports);
     }
 
     // drop the old collection
@@ -502,54 +521,54 @@ module.exports = {
     const reports = [];
 
     // Convert Decimal128 values back to numbers for the legacy `reports_finance` collection
-    for (const r of incoming) {
+    for (const record of incoming) {
       reports.push({
-        _id: r._id,
+        _id: record._id,
         type: 'incoming',
-        account: r.account,
-        balance: toNumber(r.balance),
-        amount: toNumber(r.amount),
-        description: r.description,
-        category: r.linkedTo,
-        operationDate: r.operationDate ?? r.createdAt,
-        createdAt: r.createdAt,
-        createdBy: r.createdBy,
+        account: record.account,
+        balance: toNumber(record.balance),
+        amount: toNumber(record.amount),
+        description: record.description,
+        category: ObjectId.createFromBase64('YWJjZGVmZ2VmZ2hp'), // incoming reports didn't have categories, set to a default empty category ID for compatibility
+        operationDate: record.operationDate ?? record.createdAt,
+        createdAt: record.createdAt,
+        createdBy: record.createdBy,
       });
     }
 
-    for (const r of outgoing) {
+    for (const record of outgoing) {
       reports.push({
-        _id: r._id,
+        _id: record._id,
         type: 'outgoing',
-        account: r.account,
-        balance: toNumber(r.balance),
-        amount: toNumber(r.amount),
-        description: r.description,
-        details: r.details?.map((d) => ({
+        account: record.account,
+        balance: toNumber(record.balance),
+        amount: toNumber(record.amount),
+        description: record.description,
+        details: record.details?.map((d) => ({
           ...d,
           amount: toNumber(d.amount),
         })),
-        category: r.linkedTo,
-        operationDate: r.operationDate ?? r.createdAt,
-        createdAt: r.createdAt,
-        createdBy: r.createdBy,
+        category: record.linkedTo,
+        operationDate: record.operationDate ?? record.createdAt,
+        createdAt: record.createdAt,
+        createdBy: record.createdBy,
       });
     }
 
     // find first outgoing account to use for debt reports (since they didn't have account info, we need to set something for the legacy collection)
     const firstOutgoing = await db.collection('bank_accounts').findOne();
 
-    for (const r of debt) {
+    for (const record of debt) {
       reports.push({
-        _id: r._id,
+        _id: record._id,
         type: 'debt',
-        amount: toNumber(r.amount),
-        description: r.description,
+        amount: toNumber(record.amount),
+        description: record.description,
         balance: 0, // debt reports didn't have balance, set to 0 for compatibility
         account: firstOutgoing._id, // debt reports didn't have account, set to first outgoing account or null for compatibility
-        category: r.linkedTo,
-        createdAt: r.createdAt,
-        createdBy: r.createdBy,
+        category: record.linkedTo,
+        createdAt: record.createdAt,
+        createdBy: record.createdBy,
       });
     }
 

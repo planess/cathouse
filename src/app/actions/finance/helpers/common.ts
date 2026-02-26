@@ -58,9 +58,9 @@ export function toDetails(details?: ReportDetailPayload[]) {
       const categoryId = toObjectId(detail.categoryId);
 
       return {
+        ...(categoryId ? { category: categoryId } : {}),
         description: normalizeText(detail.description),
         amount: Decimal128.fromString(String(Number(detail.amount ?? 0))),
-        ...(categoryId ? { category: categoryId } : {}),
       };
     });
 }

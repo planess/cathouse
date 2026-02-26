@@ -44,7 +44,6 @@ export async function GET(request: Request) {
   const loadFinance = section !== 'impact';
 
   const { start, end } = getYearRange(year);
-  const { start: previousStart, end: previousEnd } = getYearRange(year - 1);
 
   const dbClient = await clientPromise;
   const db = dbClient.db();
@@ -53,22 +52,16 @@ export async function GET(request: Request) {
   let observationTotals: { _id: number; total: number }[] = [];
   let financeTotals: { _id: { month: number; type: string }; total: number }[] =
     [];
+  let incomingFinanceTotals: { _id: number; total: number }[] = [];
+  let outgoingFinanceTotals: { _id: number; total: number }[] = [];
   let outgoingBreakdownTotals: {
     _id: { month: number; category: ObjectId };
     total: number;
   }[] = [];
   let outgoingCategories: OutgoingCategoryDocument[] = [];
-  let previousSterilized: object | null = null;
-  let previousObservation: object | null = null;
-  let previousFinance: object | null = null;
 
   if (loadImpact) {
-    [
-      sterilizedTotals,
-      observationTotals,
-      previousSterilized,
-      previousObservation,
-    ] = await Promise.all([
+    [sterilizedTotals, observationTotals] = await Promise.all([
       db
         .collection(DbTables.animals)
         .aggregate<{ _id: number; total: number }>([
@@ -129,67 +122,74 @@ export async function GET(request: Request) {
           },
         ])
         .toArray(),
-      db.collection(DbTables.animals).findOne({
-        'vetMarkers.sterilized.date': { $gte: previousStart, $lt: previousEnd },
-      }),
-      db.collection(DbTables.animals).findOne({
-        observations: {
-          $elemMatch: {
-            date: { $gte: previousStart, $lt: previousEnd },
-            'location.coordinates.latitude': { $type: 'number' },
-            'location.coordinates.longitude': { $type: 'number' },
-          },
-        },
-      }),
     ]);
   }
 
   if (loadFinance) {
     [
-      financeTotals,
+      incomingFinanceTotals,
+      outgoingFinanceTotals,
       outgoingBreakdownTotals,
       outgoingCategories,
-      previousFinance,
     ] = await Promise.all([
       db
-        .collection(DbTables.reportsFinance)
-        .aggregate<{ _id: { month: number; type: string }; total: number }>([
+        .collection(DbTables.financeIncomingReports)
+        .aggregate<{ _id: number; total: number }>([
           {
             $match: {
-              createdAt: { $gte: start, $lt: end },
-              type: { $in: ['incoming', 'outgoing'] },
+              operationDate: { $gte: start, $lt: end },
             },
           },
           {
             $project: {
-              month: { $month: '$createdAt' },
-              type: 1,
-              amount: 1,
+              month: { $month: '$operationDate' },
+              amount: { $toDouble: '$amount' },
             },
           },
           {
             $group: {
-              _id: { month: '$month', type: '$type' },
+              _id: '$month',
               total: { $sum: '$amount' },
             },
           },
         ])
         .toArray(),
       db
-        .collection(DbTables.reportsFinance)
+        .collection(DbTables.financeOutgoingReports)
+        .aggregate<{ _id: number; total: number }>([
+          {
+            $match: {
+              operationDate: { $gte: start, $lt: end },
+            },
+          },
+          {
+            $project: {
+              month: { $month: '$operationDate' },
+              amount: { $toDouble: '$amount' },
+            },
+          },
+          {
+            $group: {
+              _id: '$month',
+              total: { $sum: '$amount' },
+            },
+          },
+        ])
+        .toArray(),
+      db
+        .collection(DbTables.financeOutgoingReports)
         .aggregate<{
           _id: { month: number; category: ObjectId };
           total: number;
         }>([
           {
             $match: {
-              createdAt: { $gte: start, $lt: end },
-              type: 'outgoing',
+              operationDate: { $gte: start, $lt: end },
             },
           },
           {
             $project: {
-              month: { $month: '$createdAt' },
+              month: { $month: '$operationDate' },
               items: {
                 $cond: [
                   { $gt: [{ $size: { $ifNull: ['$details', []] } }, 0] },
@@ -199,13 +199,18 @@ export async function GET(request: Request) {
                       as: 'detail',
                       in: {
                         category: {
-                          $ifNull: ['$$detail.category', '$category'],
+                          $ifNull: ['$$detail.category', '$linkedTo'],
                         },
-                        amount: '$$detail.amount',
+                        amount: { $toDouble: '$$detail.amount' },
                       },
                     },
                   },
-                  [{ category: '$category', amount: '$amount' }],
+                  [
+                    {
+                      category: '$linkedTo',
+                      amount: { $toDouble: '$amount' },
+                    },
+                  ],
                 ],
               },
             },
@@ -221,14 +226,21 @@ export async function GET(request: Request) {
         ])
         .toArray(),
       db
-        .collection<OutgoingCategoryDocument>(DbTables.financeOutgoingPurposes)
+        .collection<OutgoingCategoryDocument>(DbTables.financeCategories)
         .find()
         .toArray(),
-      db.collection(DbTables.reportsFinance).findOne({
-        createdAt: { $gte: previousStart, $lt: previousEnd },
-        type: { $in: ['incoming', 'outgoing'] },
-      }),
     ]);
+
+    financeTotals = [
+      ...incomingFinanceTotals.map((entry) => ({
+        _id: { month: entry._id, type: 'incoming' },
+        total: entry.total,
+      })),
+      ...outgoingFinanceTotals.map((entry) => ({
+        _id: { month: entry._id, type: 'outgoing' },
+        total: entry.total,
+      })),
+    ];
   }
 
   const sterilizedByMonth = loadImpact
