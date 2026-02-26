@@ -974,6 +974,7 @@
           "description": "Quality dry and wet food for animals in shelters and on the street."
         }
       },
+      "offerLink": "For legal entities, we have to provide a public offer. Check the details <link>on the link</link>.",
       "ibanTitle": "IBAN bank details",
       "ibanNote": "Charitable support",
       "iban": {
