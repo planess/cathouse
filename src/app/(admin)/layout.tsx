@@ -1,7 +1,10 @@
 import Link from 'next/link';
 
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { requireAnyPermission } from '@app/services/access-verification.service';
+import {
+  hasPermission,
+  requireAnyPermission,
+} from '@app/services/access-verification.service';
 
 import { AdminSidebar } from './admin/components/admin-sidebar';
 
@@ -11,6 +14,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   await requireAnyPermission([SYSTEM_PERMISSIONS.ROLE_ASSIGN]);
+  const canSendEmail = await hasPermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -33,7 +37,7 @@ export default async function AdminLayout({
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                  <span className="h-8 w-8 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 text-white flex items-center justify-center">
+                  <span className="h-8 w-8 rounded-full bg-linear-to-br from-sky-400 to-blue-600 text-white flex items-center justify-center">
                     AR
                   </span>
                   <span>Mock</span>
@@ -70,6 +74,20 @@ export default async function AdminLayout({
                 >
                   Finance
                 </Link>
+                <Link
+                  href="/admin/acts"
+                  className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                >
+                  Acts
+                </Link>
+                {canSendEmail && (
+                  <Link
+                    href="/admin/email"
+                    className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                  >
+                    Email
+                  </Link>
+                )}
                 <Link
                   href="/admin/inventory"
                   className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
