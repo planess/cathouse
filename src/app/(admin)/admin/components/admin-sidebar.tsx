@@ -37,6 +37,35 @@ const navItems: Array<
     },
   },
   {
+    href: '/admin/migrations',
+    label: 'Migrations',
+    Icon: function MigrationsIcon({ className }: SidebarIconProps) {
+      return (
+        <svg
+          aria-hidden="true"
+          className={className}
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M7.5 6.25h9a1.25 1.25 0 0 1 1.25 1.25v9a1.25 1.25 0 0 1-1.25 1.25h-9A1.25 1.25 0 0 1 6.25 16.5v-9A1.25 1.25 0 0 1 7.5 6.25Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M9 10h6M9 13.5h6"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+      );
+    },
+  },
+  {
     href: '/admin/users',
     label: 'Users',
     Icon: function UsersIcon({ className }: SidebarIconProps) {
@@ -109,64 +138,6 @@ const navItems: Array<
     },
   },
   {
-    href: '/admin/migrations',
-    label: 'Migrations',
-    Icon: function MigrationsIcon({ className }: SidebarIconProps) {
-      return (
-        <svg
-          aria-hidden="true"
-          className={className}
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M7.5 6.25h9a1.25 1.25 0 0 1 1.25 1.25v9a1.25 1.25 0 0 1-1.25 1.25h-9A1.25 1.25 0 0 1 6.25 16.5v-9A1.25 1.25 0 0 1 7.5 6.25Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M9 10h6M9 13.5h6"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
-      );
-    },
-  },
-  {
-    href: '/admin/finance',
-    label: 'Finance',
-    Icon: function FinanceIcon({ className }: SidebarIconProps) {
-      return (
-        <svg
-          aria-hidden="true"
-          className={className}
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M4.75 7.25h14.5a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M6.75 12h4.5M13 12h4.25"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
-      );
-    },
-  },
-  {
     href: '/admin/acts',
     label: 'Acts',
     Icon: function ActsIcon({ className }: SidebarIconProps) {
@@ -202,11 +173,11 @@ const navItems: Array<
       );
     },
   },
+
   {
-    href: '/admin/email',
-    label: 'Email',
-    requiredPermission: SYSTEM_PERMISSIONS.EMAIL_SEND,
-    Icon: function EmailIcon({ className }: SidebarIconProps) {
+    href: '/admin/finance',
+    label: 'Finance',
+    Icon: function FinanceIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -215,14 +186,14 @@ const navItems: Array<
           viewBox="0 0 24 24"
         >
           <path
-            d="M3.75 7.5l8.25 5.25L20.25 7.5"
+            d="M4.75 7.25h14.5a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1Z"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="1.5"
           />
           <path
-            d="M4.75 6.75h14.5a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-8.5a1 1 0 0 1 1-1Z"
+            d="M6.75 12h4.5M13 12h4.25"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -232,6 +203,7 @@ const navItems: Array<
       );
     },
   },
+
   {
     href: '/admin/inventory',
     label: 'Inventory',
@@ -259,6 +231,36 @@ const navItems: Array<
           />
           <path
             d="M8 12h8"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+      );
+    },
+  },
+  {
+    href: '/admin/email',
+    label: 'Email',
+    requiredPermission: SYSTEM_PERMISSIONS.EMAIL_SEND,
+    Icon: function EmailIcon({ className }: SidebarIconProps) {
+      return (
+        <svg
+          aria-hidden="true"
+          className={className}
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3.75 7.5l8.25 5.25L20.25 7.5"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M4.75 6.75h14.5a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-8.5a1 1 0 0 1 1-1Z"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"

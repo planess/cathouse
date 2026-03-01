@@ -51,6 +51,12 @@ export default async function AdminLayout({
                   Overview
                 </Link>
                 <Link
+                  href="/admin/migrations"
+                  className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                >
+                  Migrations
+                </Link>
+                <Link
                   href="/admin/users"
                   className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
                 >
@@ -63,10 +69,10 @@ export default async function AdminLayout({
                   Roles
                 </Link>
                 <Link
-                  href="/admin/migrations"
+                  href="/admin/acts"
                   className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
                 >
-                  Migrations
+                  Acts
                 </Link>
                 <Link
                   href="/admin/finance"
@@ -75,10 +81,10 @@ export default async function AdminLayout({
                   Finance
                 </Link>
                 <Link
-                  href="/admin/acts"
+                  href="/admin/inventory"
                   className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
                 >
-                  Acts
+                  Inventory
                 </Link>
                 {canSendEmail && (
                   <Link
@@ -88,12 +94,6 @@ export default async function AdminLayout({
                     Email
                   </Link>
                 )}
-                <Link
-                  href="/admin/inventory"
-                  className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
-                >
-                  Inventory
-                </Link>
               </nav>
             </div>
             <div className="min-h-screen px-5 pb-10 pt-6 lg:px-10 lg:pt-8">
