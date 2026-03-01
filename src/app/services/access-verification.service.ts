@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 import { getUser } from '@app/hooks/get-user';
 import type { SystemPermission } from '@app/models/system-permissions';
@@ -14,7 +14,7 @@ interface PageAccessConfig {
   anyOfPermissions?: SystemPermission[];
   /** Context for permission checking */
   context?: string;
-  /** Custom redirect path if access denied */
+  /** Deprecated for page guards: restricted pages now render not-found in place */
   unauthorizedRedirect?: string;
   /** Allow access in development mode */
   allowInDevelopment?: boolean;
@@ -99,24 +99,20 @@ class AccessVerificationService extends Singleton {
   }
 
   /**
-   * Verify access and redirect if unauthorized (for Server Components)
+   * Verify access and render not-found if restricted (for Server Components)
    */
   async verifyPageAccess(
     userId: ObjectId | null,
     config: PageAccessConfig,
   ): Promise<AccessCheckResult> {
     if (!userId) {
-      const redirectPath = config.unauthorizedRedirect ?? '/signin';
-
-      redirect(redirectPath);
+      notFound();
     }
 
     const accessResult = await this.checkAccess(userId, config);
 
     if (!accessResult.hasAccess) {
-      const redirectPath = config.unauthorizedRedirect ?? '/unauthorized';
-
-      redirect(redirectPath);
+      notFound();
     }
 
     return accessResult;

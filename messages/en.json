@@ -31,6 +31,12 @@
     "menuCloseLabel": "Close navigation menu",
     "emergencyButton": "Report an animal"
   },
+  "notFound": {
+    "errorLabel": "Error 404",
+    "title": "Page Not Found",
+    "description": "This page does not exist.",
+    "home": "Go to Home"
+  },
   "reportDialog": {
     "buttonLabel": "Report",
     "title": "Share an emergency",
