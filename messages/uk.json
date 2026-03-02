@@ -21,6 +21,7 @@
   "header": {
     "home": "Головна",
     "contacts": "Комунікація",
+    "acts": "Акти",
     "history": "Історія",
     "registry": "Реєстр",
     "help": "Підтримка",
@@ -648,6 +649,86 @@
     },
     "migrations": {
       "title": "Міграції бази даних"
+    },
+    "acts": {
+      "title": "Акти волонтерів",
+      "summary": "{total, plural, one {{total} акт} few {{total} акти} other {{total} актів}} від {volunteers, plural, one {{volunteers} волонтера} few {{volunteers} волонтерів} other {{volunteers} волонтерів}}",
+      "totalActs": "Всього актів",
+      "volunteers": "Волонтери",
+      "empty": "Поки що немає записів про волонтерські акти.",
+      "table": {
+        "type": "Тип",
+        "status": "Статус",
+        "session": "Сесія",
+        "managed": "Керував",
+        "animals": "Тварини",
+        "documents": "Документи",
+        "equipment": "Обладнання",
+        "notes": "Примітки",
+        "noFiles": "Файлів немає",
+        "filesCount": "{count, plural, one {{count} файл} few {{count} файли} other {{count} файлів}}"
+      },
+      "equipment": {
+        "media": "{count, plural, one {{count} медіа} few {{count} медіа} other {{count} медіа}}"
+      },
+      "statusLabels": {
+        "scheduled": "Заплановано",
+        "pending": "Очікує",
+        "approved": "Підтверджено",
+        "rejected": "Відхилено"
+      }
+    },
+    "volunteerActsCount": "{count, plural, one {{count} акт} few {{count} акти} other {{count} актів}}",
+    "foundationEmail": {
+      "title": "Електронна пошта фонду"
+    }
+  },
+  "actspage": {
+    "title": "Мої волонтерські акти",
+    "subtitle": "Тут ви можете переглядати свої акти та керувати ними.",
+    "createButton": "Створити акт",
+    "createNewAct": "Створити новий акт",
+    "myActs": "Мої акти ({count})",
+    "noActs": "Поки що актів не знайдено.",
+    "form": {
+      "type": "Тип",
+      "animals": "Тварини",
+      "sessionStart": "Початок сесії",
+      "sessionEnd": "Кінець сесії",
+      "notes": "Примітки",
+      "notesShort": "Примітки",
+      "equipment": "Обладнання",
+      "addEquipment": "+ Додати обладнання",
+      "equipmentNumber": "Обладнання #{number}",
+      "remove": "Видалити",
+      "selectEquipment": "Вибрати обладнання",
+      "conditionBefore": "Стан до",
+      "conditionAfter": "Стан після",
+      "mediaAttachments": "Медіа вкладення",
+      "addMediaInput": "+ Додати поле для файлів",
+      "documentsLabel": "Документи",
+      "saveAct": "Зберегти акт",
+      "saveChanges": "Зберегти зміни"
+    },
+    "labels": {
+      "documents": "Документи",
+      "session": "Сесія",
+      "animals": "Тварини",
+      "notes": "Примітки",
+      "none": "Немає",
+      "notAvailable": "Н/Д"
+    },
+    "noPermission": "У вас немає дозволу на створення актів.",
+    "editAct": "Редагувати акт",
+    "deleteAct": "Видалити акт",
+    "messages": {
+      "approvedCannotUpdate": "Підтверджені акти не можна редагувати."
+    },
+    "status": {
+      "scheduled": "Заплановано",
+      "pending": "Очікує",
+      "approved": "Підтверджено",
+      "rejected": "Відхилено"
     }
   },
   "homepage": {
@@ -1494,7 +1575,13 @@
         "typePlaceholder": "Оберіть тип",
         "typeEquipment": "Обладнання",
         "typeConsumable": "Витратний матеріал",
+        "typeAsset": "Актив",
         "typeRequired": "Потрібно обрати тип.",
+        "consumabilityLabel": "Спожитність",
+        "consumabilityPlaceholder": "Оберіть спожитність",
+        "consumabilityReusable": "Багаторазовий",
+        "consumabilitySingleUse": "Одноразовий витратний",
+        "consumabilityMultiUse": "Багатовикористовуваний витратний",
         "quantityLabel": "Кількість",
         "quantityPlaceholder": "0",
         "quantityRequired": "Кількість має бути більшою за нуль.",

@@ -21,6 +21,7 @@
   "header": {
     "home": "Home",
     "contacts": "Contacts",
+    "acts": "Acts",
     "history": "History",
     "registry": "Registry",
     "help": "Help",
@@ -648,6 +649,86 @@
     },
     "migrations": {
       "title": "Database migrations"
+    },
+    "acts": {
+      "title": "Volunteer Acts",
+      "summary": "{total, plural, one {{total} act} other {{total} acts}} from {volunteers, plural, one {{volunteers} volunteer} other {{volunteers} volunteers}}",
+      "totalActs": "Total Acts",
+      "volunteers": "Volunteers",
+      "empty": "No volunteer acts recorded yet.",
+      "table": {
+        "type": "Type",
+        "status": "Status",
+        "session": "Session",
+        "managed": "Managed",
+        "animals": "Animals",
+        "documents": "Documents",
+        "equipment": "Equipment",
+        "notes": "Notes",
+        "noFiles": "No files",
+        "filesCount": "{count, plural, one {{count} file} other {{count} files}}"
+      },
+      "equipment": {
+        "media": "{count, plural, one {{count} media} other {{count} media}}"
+      },
+      "statusLabels": {
+        "scheduled": "Scheduled",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "volunteerActsCount": "{count, plural, one {{count} act} other {{count} acts}}",
+    "foundationEmail": {
+      "title": "Foundation Email"
+    }
+  },
+  "actspage": {
+    "title": "My Volunteer Acts",
+    "subtitle": "You can see your own acts here and manage them.",
+    "createButton": "Create Act",
+    "createNewAct": "Create New Act",
+    "myActs": "My Acts ({count})",
+    "noActs": "No acts found yet.",
+    "form": {
+      "type": "Type",
+      "animals": "Animals",
+      "sessionStart": "Session Start",
+      "sessionEnd": "Session End",
+      "notes": "Notes",
+      "notesShort": "Notes",
+      "equipment": "Equipment",
+      "addEquipment": "+ Add equipment",
+      "equipmentNumber": "Equipment #{number}",
+      "remove": "Remove",
+      "selectEquipment": "Select equipment",
+      "conditionBefore": "Condition Before",
+      "conditionAfter": "Condition After",
+      "mediaAttachments": "Media attachments",
+      "addMediaInput": "+ Add media input",
+      "documentsLabel": "Documents",
+      "saveAct": "Save Act",
+      "saveChanges": "Save Changes"
+    },
+    "labels": {
+      "documents": "Documents",
+      "session": "Session",
+      "animals": "Animals",
+      "notes": "Notes",
+      "none": "None",
+      "notAvailable": "N/A"
+    },
+    "noPermission": "You do not have permission to create acts.",
+    "editAct": "Edit Act",
+    "deleteAct": "Delete Act",
+    "messages": {
+      "approvedCannotUpdate": "Approved acts cannot be updated."
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
     }
   },
   "homepage": {
@@ -1494,7 +1575,13 @@
         "typePlaceholder": "Select type",
         "typeEquipment": "Equipment",
         "typeConsumable": "Consumable",
+        "typeAsset": "Asset",
         "typeRequired": "Type is required.",
+        "consumabilityLabel": "Consumability",
+        "consumabilityPlaceholder": "Select consumability",
+        "consumabilityReusable": "Reusable",
+        "consumabilitySingleUse": "One-off consumable",
+        "consumabilityMultiUse": "Multi-use consumable",
         "quantityLabel": "Quantity",
         "quantityPlaceholder": "0",
         "quantityRequired": "Quantity must be greater than zero.",

@@ -28,6 +28,23 @@ export const SYSTEM_PERMISSIONS = {
   CLINIC_UPDATE: 'clinic:update',
   CLINIC_DELETE: 'clinic:delete',
 
+  // volunteer acts
+  ACT_READ: 'act:read',
+  ACT_CREATE: 'act:create',
+  ACT_UPDATE: 'act:update',
+  ACT_DELETE: 'act:delete',
+  ACT_REGULATE: 'act:regulate',
+
+  // equipment management
+  EQUIPMENT_ACCEPT: 'equipment:accept',
+  EQUIPMENT_EDIT: 'equipment:edit',
+  EQUIPMENT_EXCLUDE: 'equipment:exclude',
+  EQUIPMENT_USE: 'equipment:use',
+  EQUIPMENT_TRANSFER: 'equipment:transfer',
+
+  // foundation email
+  EMAIL_SEND: 'email:send',
+
   // admin management
   ROLE_ASSIGN: 'role:assign',
   ROLE_CREATE: 'role:create',
