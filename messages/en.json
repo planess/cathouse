@@ -676,9 +676,9 @@
         "pending": "Pending",
         "approved": "Approved",
         "rejected": "Rejected"
-      }
+      },
+      "volunteerActsCount": "{count, plural, one {{count} act} other {{count} acts}}"
     },
-    "volunteerActsCount": "{count, plural, one {{count} act} other {{count} acts}}",
     "foundationEmail": {
       "title": "Foundation Email"
     }

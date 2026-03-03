@@ -676,9 +676,9 @@
         "pending": "Очікує",
         "approved": "Підтверджено",
         "rejected": "Відхилено"
-      }
+      },
+      "volunteerActsCount": "{count, plural, one {{count} акт} few {{count} акти} other {{count} актів}}"
     },
-    "volunteerActsCount": "{count, plural, one {{count} акт} few {{count} акти} other {{count} актів}}",
     "foundationEmail": {
       "title": "Електронна пошта фонду"
     }
