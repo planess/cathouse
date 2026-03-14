@@ -4,6 +4,7 @@ export type InventoryStorageRow = {
   latitude: number | null;
   longitude: number | null;
   createdAt: string;
+  canDelete: boolean;
 };
 
 export type InventoryCategoryNode = {
@@ -48,7 +49,9 @@ export type InventoryReportFormState = {
   newImages: File[];
 };
 
-export type InventoryItemType = 'equipment' | 'consumable';
+export type InventoryItemType = 'equipment' | 'consumable' | 'asset';
+
+export type InventoryConsumability = 'reusable' | 'single_use' | 'multi_use';
 
 export type InventoryAdminViewProps = {
   storages: InventoryStorageRow[];

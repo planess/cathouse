@@ -86,9 +86,7 @@ function DynamicActForm({
   };
 
   const removeEquipmentRow = (key: string) => {
-    setEquipmentRows((prev) => {
-      return prev.filter((row) => row.key !== key);
-    });
+    setEquipmentRows((prev) => prev.filter((row) => row.key !== key));
   };
 
   const updateRow = (
@@ -155,7 +153,7 @@ function DynamicActForm({
             name="sessionStart"
             required
             defaultValue={act?.sessionStart ?? ''}
-            className="rounded-md border border-gray-300 px-3 py-2"
+            className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
           />
         </label>
 
@@ -165,7 +163,7 @@ function DynamicActForm({
             type="datetime-local"
             name="sessionEnd"
             defaultValue={act?.sessionEnd ?? ''}
-            className="rounded-md border border-gray-300 px-3 py-2"
+            className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
           />
         </label>
       </div>
@@ -176,17 +174,17 @@ function DynamicActForm({
           name="notes"
           defaultValue={act?.notes ?? ''}
           rows={4}
-          className="rounded-md border border-gray-300 px-3 py-2"
+          className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
         />
       </label>
 
-      <div className="space-y-3 rounded-xl border border-gray-200 p-4">
+      <div className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-[#2d3a52] dark:bg-[#1c2636]">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold">{t('form.equipment')}</p>
           <button
             type="button"
             onClick={addEquipmentRow}
-            className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium"
+            className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium dark:border-[#2d3a52] dark:bg-transparent dark:text-zinc-200"
           >
             {t('form.addEquipment')}
           </button>
@@ -201,16 +199,16 @@ function DynamicActForm({
         {equipmentRows.map((row, index) => (
           <div
             key={row.key}
-            className="space-y-3 rounded-lg border border-gray-200 p-3"
+            className="space-y-3 rounded-lg border border-gray-200 p-3 dark:border-[#2d3a52] dark:bg-[#111827]"
           >
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase text-gray-500">
+              <p className="text-xs font-semibold uppercase text-gray-500 dark:text-zinc-400">
                 {t('form.equipmentNumber', { number: index + 1 })}
               </p>
               <button
                 type="button"
                 onClick={() => removeEquipmentRow(row.key)}
-                className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700"
+                className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 dark:border-red-700/40 dark:text-red-400"
               >
                 {t('form.remove')}
               </button>
@@ -218,7 +216,7 @@ function DynamicActForm({
 
             <div className="space-y-1">
               <p className="text-sm font-medium">{t('form.selectEquipment')}</p>
-              <div className="max-h-36 space-y-1 overflow-y-auto rounded-md border border-gray-200 p-2">
+              <div className="max-h-36 space-y-1 overflow-y-auto rounded-md border border-gray-200 p-2 dark:border-[#2d3a52] dark:bg-transparent">
                 {equipmentOptions.map((equipment) => (
                   <label
                     key={equipment.id}
@@ -248,7 +246,7 @@ function DynamicActForm({
                   onChange={(event) =>
                     updateRow(row.key, 'conditionBefore', event.target.value)
                   }
-                  className="rounded-md border border-gray-300 px-3 py-2"
+                  className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
                 >
                   {CONDITION_OPTIONS.map((option) => (
                     <option key={option} value={option}>
@@ -266,7 +264,7 @@ function DynamicActForm({
                   onChange={(event) =>
                     updateRow(row.key, 'conditionAfter', event.target.value)
                   }
-                  className="rounded-md border border-gray-300 px-3 py-2"
+                  className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
                 >
                   {CONDITION_OPTIONS.map((option) => (
                     <option key={option} value={option}>
@@ -286,7 +284,7 @@ function DynamicActForm({
                 onChange={(event) =>
                   updateRow(row.key, 'notes', event.target.value)
                 }
-                className="rounded-md border border-gray-300 px-3 py-2"
+                className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
               />
             </label>
 
@@ -300,13 +298,13 @@ function DynamicActForm({
                   type="file"
                   name={`equipmentMedia_${index}`}
                   multiple
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
                 />
               ))}
               <button
                 type="button"
                 onClick={() => addMediaInput(row.key)}
-                className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium"
+                className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium dark:border-[#2d3a52] dark:bg-transparent dark:text-zinc-200"
               >
                 {t('form.addMediaInput')}
               </button>
@@ -321,13 +319,13 @@ function DynamicActForm({
           type="file"
           name="documents"
           multiple
-          className="rounded-md border border-gray-300 px-3 py-2"
+          className="rounded-md border border-gray-300 px-3 py-2 dark:border-[#2d3a52] dark:bg-[#15202b] dark:text-zinc-200"
         />
       </label>
 
       <button
         type="submit"
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
+        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
       >
         {mode === 'create' ? t('form.saveAct') : t('form.saveChanges')}
       </button>
@@ -352,15 +350,19 @@ export function ActsPageView({
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 md:px-8">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
-          <p className="text-sm text-gray-600">{t('subtitle')}</p>
+          <h1 className="text-2xl font-semibold dark:text-zinc-200">
+            {t('title')}
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-zinc-400">
+            {t('subtitle')}
+          </p>
         </div>
 
         {canCreate && (
           <button
             type="button"
             onClick={() => setIsCreateOpen((prev) => !prev)}
-            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
+            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
           >
             {t('createButton')}
           </button>
@@ -368,7 +370,7 @@ export function ActsPageView({
       </header>
 
       {canCreate && isCreateOpen ? (
-        <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#2d3a52] dark:bg-[#1c2636]">
           <h2 className="mb-3 text-lg font-semibold">{t('createNewAct')}</h2>
           <DynamicActForm
             mode="create"
@@ -381,7 +383,7 @@ export function ActsPageView({
       ) : null}
 
       {!canCreate ? (
-        <section className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow-sm dark:border-[#2d3a52] dark:bg-[#1c2636] dark:text-zinc-300">
           {t('noPermission')}
         </section>
       ) : null}
@@ -392,7 +394,7 @@ export function ActsPageView({
         </h2>
 
         {acts.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-600">
+          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-600 dark:border-[#2d3a52] dark:bg-[#1c2636] dark:text-zinc-300">
             {t('noActs')}
           </div>
         ) : (
@@ -406,36 +408,41 @@ export function ActsPageView({
             return (
               <article
                 key={act.id}
-                className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#2d3a52] dark:bg-[#1c2636]"
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-base font-semibold">{act.typeName}</h3>
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs">
+                  <h3 className="text-base font-semibold dark:text-zinc-100">
+                    {act.typeName}
+                  </h3>
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-[#253247] dark:text-zinc-200">
                     {t('status.' + act.status) ?? act.status}
                   </span>
                 </div>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-sm text-gray-600 dark:text-zinc-300">
                   {t('labels.session')}: {act.sessionStart} - {act.sessionEnd}
                 </p>
-                <p className="text-sm text-gray-600">
-                  {t('labels.animals')}:{' '}
-                  {act.animalNames.length > 0
-                    ? act.animalNames.join(', ')
-                    : t('labels.none')}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {t('labels.notes')}: {act.notes || t('labels.notAvailable')}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {t('labels.documents')}: {act.documentsCount}
-                </p>
+                {act.animalIds?.length > 0 && (
+                  <p className="text-sm text-gray-600 dark:text-zinc-300">
+                    {t('labels.animals')}: {act.animalNames.join(', ')}
+                  </p>
+                )}
+                {act.notes?.length > 0 && (
+                  <p className="text-sm text-gray-600 dark:text-zinc-300">
+                    {t('labels.notes')}: {act.notes}
+                  </p>
+                )}
+                {act.documentsCount > 0 && (
+                  <p className="text-sm text-gray-600 dark:text-zinc-300">
+                    {t('labels.documents')}: {act.documentsCount}
+                  </p>
+                )}
 
                 {(canUpdate || canDelete) && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {canEditThisAct && (
-                      <details className="w-full rounded-md border border-gray-200 p-3">
-                        <summary className="cursor-pointer text-sm font-medium">
+                      <details className="w-full rounded-md border border-gray-200 p-3 dark:border-[#2d3a52] dark:bg-[#111827]">
+                        <summary className="cursor-pointer text-sm font-medium dark:text-zinc-200">
                           {t('editAct')}
                         </summary>
                         <div className="mt-3">
@@ -452,7 +459,7 @@ export function ActsPageView({
                     )}
 
                     {canUpdate && !canEditThisAct && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-zinc-400">
                         {t('messages.approvedCannotUpdate')}
                       </p>
                     )}
@@ -462,7 +469,7 @@ export function ActsPageView({
                         <input type="hidden" name="actId" value={act.id} />
                         <button
                           type="submit"
-                          className="rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700"
+                          className="rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 dark:border-red-700/40 dark:text-red-400"
                         >
                           {t('deleteAct')}
                         </button>

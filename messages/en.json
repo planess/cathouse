@@ -704,6 +704,13 @@
       "selectEquipment": "Select equipment",
       "conditionBefore": "Condition Before",
       "conditionAfter": "Condition After",
+      "conditionOptions": {
+        "new": "New",
+        "good": "Good",
+        "fair": "Fair",
+        "poor": "Poor",
+        "broken": "Broken"
+      },
       "mediaAttachments": "Media attachments",
       "addMediaInput": "+ Add media input",
       "documentsLabel": "Documents",

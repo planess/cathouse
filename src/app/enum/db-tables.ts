@@ -18,6 +18,7 @@ export enum DbTables {
   reportsStuff = 'reports_stuff',
   inventoryStorage = 'inventory_storage',
   inventoryCategories = 'inventory_categories',
+  inventoryTransactions = 'inventory_transactions',
   reportsInventory = 'reports_inventory',
   volunteerActs = 'volunteer_acts',
   volunteerCategories = 'volunteer_category',

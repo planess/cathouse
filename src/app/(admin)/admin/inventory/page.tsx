@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 
@@ -18,7 +20,19 @@ export default async function InventoryPage() {
   const dbClient = await clientPromise;
   const db = dbClient.db();
 
-  const [storages, categories, reports] = await Promise.all([
+  const [
+    storages,
+    categories,
+    reports,
+    fromTransactionRefs,
+    toTransactionRefs,
+  ]: [
+    StorageWithLocation[],
+    InventoryCategoryDocument[],
+    InventoryReportDocument[],
+    unknown[],
+    unknown[],
+  ] = await Promise.all([
     db
       .collection<StorageWithLocation>(DbTables.inventoryStorage)
       .find({})
@@ -34,7 +48,17 @@ export default async function InventoryPage() {
       .find({})
       .sort({ createdAt: -1 })
       .toArray(),
+    db.collection(DbTables.inventoryTransactions).distinct('from'),
+    db.collection(DbTables.inventoryTransactions).distinct('to'),
   ]);
+
+  const blockedStorageIds = new Set<string>();
+
+  [...fromTransactionRefs, ...toTransactionRefs].forEach((ref) => {
+    if (ref instanceof ObjectId) {
+      blockedStorageIds.add(ref.toString());
+    }
+  });
 
   const storageMap = new Map(
     storages.map((storage) => [storage._id.toString(), storage.name]),
@@ -57,6 +81,7 @@ export default async function InventoryPage() {
           ? storage.location.longitude
           : null,
       createdAt: formatDateLabel(storage.createdAt),
+      canDelete: !blockedStorageIds.has(storage._id.toString()),
     }),
   );
 

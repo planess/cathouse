@@ -704,6 +704,13 @@
       "selectEquipment": "Вибрати обладнання",
       "conditionBefore": "Стан до",
       "conditionAfter": "Стан після",
+      "conditionOptions": {
+        "new": "Новий",
+        "good": "Добрий",
+        "fair": "Задовільний",
+        "poor": "Поганий",
+        "broken": "Зламаний"
+      },
       "mediaAttachments": "Медіа вкладення",
       "addMediaInput": "+ Додати поле для файлів",
       "documentsLabel": "Документи",

@@ -102,6 +102,10 @@ export function StoragesModal({ storages, onRefresh }: StorageModalProps) {
   };
 
   const handleDeleteStorage = (storage: InventoryStorageRow) => {
+    if (!storage.canDelete) {
+      return;
+    }
+
     void showModal({
       title: t('storages.deleteTitle', { name: storage.name }),
       description: t('storages.deleteBody'),
@@ -190,16 +194,18 @@ export function StoragesModal({ storages, onRefresh }: StorageModalProps) {
                       >
                         ✎
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteStorage(storage)}
-                        className="rounded-lg p-1.5 text-slate-400 transition hover:text-rose-500"
-                        aria-label={t('storages.deleteAria', {
-                          name: storage.name,
-                        })}
-                      >
-                        ✕
-                      </button>
+                      {storage.canDelete ? (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteStorage(storage)}
+                          className="rounded-lg p-1.5 text-slate-400 transition hover:text-rose-500"
+                          aria-label={t('storages.deleteAria', {
+                            name: storage.name,
+                          })}
+                        >
+                          ✕
+                        </button>
+                      ) : null}
                     </div>
                   </td>
                 </tr>

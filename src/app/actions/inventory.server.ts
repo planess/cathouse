@@ -234,15 +234,15 @@ export async function deleteStorage(storageId: string) {
 
   const storageObjectId = new ObjectId(storageId);
 
-  const inUse = await db.collection(DbTables.reportsInventory).findOne({
-    storage: storageObjectId,
+  const inUse = await db.collection(DbTables.inventoryTransactions).findOne({
+    $or: [{ from: storageObjectId }, { to: storageObjectId }],
   });
 
   if (inUse) {
     return {
       success: false,
       message:
-        'This storage has linked inventory records and cannot be deleted.',
+        'This storage has linked inventory transactions and cannot be deleted.',
     };
   }
 
