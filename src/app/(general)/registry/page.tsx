@@ -4,53 +4,42 @@ import { getTranslations } from 'next-intl/server';
 import { createHistoryGranted } from '@app/accessors/create-history-granted';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
+import { PlusIcon } from './[animalId]/components/icons';
 import List from './components/list/list';
-import Panel from './components/panel/panel';
 
 import type { Metadata } from 'next';
 
-type HistoryPageProps = {
-  searchParams?: Promise<{
-    page?: string | string[];
-  }>;
-};
-
-export default async function History({
-  searchParams: searchParamsPromise,
-}: HistoryPageProps) {
+export default async function History() {
   const t = await getTranslations('historypage');
   const canCreate = await createHistoryGranted();
-  const searchParams = await searchParamsPromise;
-  const rawPage = Array.isArray(searchParams?.page)
-    ? searchParams?.page?.[0]
-    : searchParams?.page;
-  const parsedPage = Number(rawPage ?? 1);
-  const currentPage =
-    Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
 
   return (
-    <div className="px-6 py-7">
-      <div>
-        <h1 className="text-3xl text-center font-bold dark:text-stone-50 mb-4 transition-colors">
-          {t('title')}
-        </h1>
-
-        <Panel>{t('panel1')}</Panel>
+    <div className="px-4 py-6 sm:px-6 sm:py-7">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="mb-2 text-3xl font-bold dark:text-stone-50 transition-colors">
+            {t('title')}
+          </h1>
+          <p className="mb-4 text-sm text-slate-600 dark:text-slate-300 transition-colors">
+            {t('tracker.subtitle')}
+          </p>
+        </div>
+        <div>
+          {canCreate && (
+            <div className="text-center flex py-4">
+              <Link
+                href="/registry/create"
+                className="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-2xl hover:bg-sky-600 transition w-full"
+              >
+                <PlusIcon /> <span>{t('createHistory')}</span>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
 
-      {canCreate && (
-        <div className="text-center flex py-4">
-          <Link
-            href="/registry/create"
-            className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 transition w-full"
-          >
-            {t('createHistory')}
-          </Link>
-        </div>
-      )}
-
       <div className="mt-4">
-        <List page={currentPage} />
+        <List />
       </div>
     </div>
   );

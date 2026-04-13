@@ -343,9 +343,45 @@
     }
   },
   "historypage": {
-    "title": "Registry of our animals",
+    "title": "Stray Animal Tracker",
     "panel1": "We register animals that we monitor, care for, and treat. Each history is our inspiration and helps coordinate the efforts of volunteers and clinics to provide the best care. Each record has a unique story, characteristics, and conditions.",
-    "createHistory": "Create new history",
+    "createHistory": "Register animal",
+    "tracker": {
+      "subtitle": "Track colonies and stray routes on a live map and open the full animal profile directly from the visible zone list.",
+      "mapAriaLabel": "Animal registry map",
+      "legend": {
+        "sterilized": "Zone is under control",
+        "mixed": "Zone has issues"
+      },
+      "location": {
+        "detectButton": "My location",
+        "predefinedLabel": "Jump to predefined point",
+        "idle": "Choose a predefined point or detect your position.",
+        "detecting": "Detecting your location...",
+        "detected": "Map centered on your location.",
+        "unsupported": "Geolocation is unavailable in this browser.",
+        "error": "Could not detect your location. Pick a predefined point."
+      },
+      "points": {
+        "downtown": "Downtown",
+        "northStation": "North Station",
+        "southeastPark": "Southeast Park"
+      },
+      "visibleAnimals": "Visible animals",
+      "animalsInView": "Animals in current map view: {count}",
+      "searchPlaceholder": "Search visible animals...",
+      "loading": "Updating animals in current viewport...",
+      "loadError": "Unable to load animals for this map area. Try moving the map again.",
+      "addressFallback": "Address not specified",
+      "seenAt": "Seen: {value}",
+      "zoneAnimals": "Animals in zone: {count}",
+      "status": {
+        "sterilized": "Sterilized",
+        "notSterilized": "Not sterilized"
+      },
+      "dateUnknown": "Unknown date",
+      "empty": "No animals found in this viewport. Move the map or change the search query."
+    },
     "pagination": {
       "previous": "Previous",
       "next": "Next",
