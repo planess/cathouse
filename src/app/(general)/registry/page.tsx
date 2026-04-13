@@ -41,7 +41,7 @@ export default async function History({
       {canCreate && (
         <div className="text-center flex py-4">
           <Link
-            href="/history/create"
+            href="/registry/create"
             className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 transition w-full"
           >
             {t('createHistory')}

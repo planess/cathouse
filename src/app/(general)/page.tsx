@@ -20,7 +20,7 @@ import {
   TrendingDownIcon,
   VaccinesIcon,
   VisibilityIcon,
-} from './history/[animalId]/components/icons';
+} from './registry/[animalId]/components/icons';
 
 import type { Metadata } from 'next';
 
@@ -85,7 +85,7 @@ export default function Home() {
                 {t.rich('hero.title.lead', {
                   highlight: (chunks) => (
                     <Link
-                      href="/history"
+                      href="/registry"
                       className="text-[#00a6f4] underline decoration-4 underline-offset-4 decoration-sky-300/30"
                     >
                       {chunks}
@@ -282,7 +282,7 @@ export default function Home() {
             </ul>
             <Link
               className="inline-flex items-center cursor-pointer rounded-xl bg-emerald-500/90 dark:bg-emerald-600/90 dark:hover:bg-emerald-600 dark:shadow-emerald-600/30 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/40 transition-colors hover:bg-emerald-500 tracking-[0.015em]"
-              href="/history"
+              href="/registry"
             >
               {t('tracker.cta')}
             </Link>

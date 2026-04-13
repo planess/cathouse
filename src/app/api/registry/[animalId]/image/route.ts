@@ -8,7 +8,7 @@ import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument } from '@app/models/animal';
 import type { MediaAsset } from '@app/models/media-asset';
 
-import { uploadAnimalMedia } from '../../../../(general)/history/server/upload-animal-media';
+import { uploadAnimalMedia } from '../../../../(general)/registry/server/upload-animal-media';
 
 const MAX_IMAGE_BYTES = 5.5 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg']);
@@ -142,7 +142,7 @@ export async function PUT(
 
     // eslint-disable-next-line no-console
     console.log(
-      `[PUT /api/history/${animalId}/image] Saved ${asset.originalName} (${asset.size} bytes)`,
+      `[PUT /api/registry/${animalId}/image] Saved ${asset.originalName} (${asset.size} bytes)`,
     );
 
     const serializedAsset: SerializedMediaAsset = {
@@ -159,7 +159,7 @@ export async function PUT(
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(
-      `[PUT /api/history/${animalId}/image] Unable to save image`,
+      `[PUT /api/registry/${animalId}/image] Unable to save image`,
       error,
     );
 

@@ -11,28 +11,9 @@ import type { AnimalDocument } from '@app/models/animal';
 import { parseTreatmentFormData } from './treatment-payload';
 import { TreatmentPayloadError } from './treatment-payload-error';
 
-export type TreatmentMutationSuccess = {
-  success: true;
-};
+import type { TreatmentMutationResponse } from './create-treatment';
 
-export type TreatmentMutationError = {
-  success: false;
-  status: number;
-  errorCode:
-    | 'UNAUTHORIZED'
-    | 'FORBIDDEN'
-    | 'INVALID_INPUT'
-    | 'NOT_FOUND'
-    | 'INVALID_STATE'
-    | 'UPDATE_FAILED';
-  message: string;
-};
-
-export type TreatmentMutationResponse =
-  | TreatmentMutationSuccess
-  | TreatmentMutationError;
-
-export async function createTreatment(
+export async function updateTreatment(
   formData: FormData,
 ): Promise<TreatmentMutationResponse> {
   const user = await getUser();
@@ -43,6 +24,18 @@ export async function createTreatment(
       status: 401,
       errorCode: 'UNAUTHORIZED',
       message: 'Sign in to manage treatments.',
+    };
+  }
+
+  const indexRaw = formData.get('treatmentIndex')?.toString() ?? '';
+  const treatmentIndex = Number.parseInt(indexRaw, 10);
+
+  if (Number.isNaN(treatmentIndex) || treatmentIndex < 0) {
+    return {
+      success: false,
+      status: 400,
+      errorCode: 'INVALID_INPUT',
+      message: 'Treatment identifier is invalid.',
     };
   }
 
@@ -92,40 +85,49 @@ export async function createTreatment(
     };
   }
 
-  const hasOpenTreatment = animal.vetTreatments?.some(
-    (record) => !record.endDate,
-  );
+  const vetTreatments = animal.vetTreatments ?? [];
 
-  if (hasOpenTreatment) {
+  if (treatmentIndex >= vetTreatments.length) {
     return {
       success: false,
-      status: 409,
-      errorCode: 'INVALID_STATE',
-      message: 'Finish the current treatment before adding a new one.',
+      status: 404,
+      errorCode: 'NOT_FOUND',
+      message: 'Treatment record was not found.',
     };
   }
 
   try {
     const result = await animalsCollection.updateOne(
       { _id: parsedPayload.animalId },
-      { $push: { vetTreatments: parsedPayload.treatment } },
+      {
+        $set: { [`vetTreatments.${treatmentIndex}`]: parsedPayload.treatment },
+      },
     );
 
     if (!result.acknowledged || result.modifiedCount === 0) {
       throw new Error('Update rejected.');
     }
   } catch (error) {
-    console.error('[createTreatment] Unable to save treatment', error);
+    const errInfo =
+      error && typeof error === 'object' && 'errInfo' in error
+        ? JSON.stringify((error as { errInfo?: unknown }).errInfo)
+        : undefined;
+
+    console.error(
+      '[updateTreatment] Unable to update treatment',
+      error,
+      errInfo,
+    );
 
     return {
       success: false,
       status: 500,
       errorCode: 'UPDATE_FAILED',
-      message: 'Unable to save the treatment right now.',
+      message: 'Unable to update the treatment right now.',
     };
   }
 
-  revalidatePath(`/history/${parsedPayload.animalId.toHexString()}`);
+  revalidatePath(`/registry/${parsedPayload.animalId.toHexString()}`);
 
   return { success: true };
 }

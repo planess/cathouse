@@ -7,7 +7,7 @@ import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import {
   BarChartIcon,
   ReceiptIcon,
-} from '../history/[animalId]/components/icons';
+} from '../registry/[animalId]/components/icons';
 
 import { ReportsContent } from './components/reports-content';
 

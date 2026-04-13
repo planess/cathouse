@@ -218,7 +218,7 @@ export async function updateVaccinations(
     };
   }
 
-  revalidatePath(`/history/${animalObjectId.toHexString()}`);
+  revalidatePath(`/registry/${animalObjectId.toHexString()}`);
 
   return {
     success: true,

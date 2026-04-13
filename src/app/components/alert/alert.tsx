@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { InfoIcon } from '@app/(general)/history/[animalId]/components/icons';
+import { InfoIcon } from '@app/(general)/registry/[animalId]/components/icons';
 
 interface AlertProps {
   text: React.ReactNode | string;

@@ -10,7 +10,7 @@ import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument, AnimalObservation } from '@app/models/animal';
 import type { MediaAsset } from '@app/models/media-asset';
 
-import { uploadAnimalMedia } from '../../../../(general)/history/server/upload-animal-media';
+import { uploadAnimalMedia } from '../../../../(general)/registry/server/upload-animal-media';
 
 const MAX_IMAGE_BYTES = 5.5 * 1024 * 1024;
 const MAX_ASSETS = 5;
@@ -321,7 +321,7 @@ export async function POST(
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(
-        `[POST /api/history/${animalId}/observations] Unable to upload assets`,
+        `[POST /api/registry/${animalId}/observations] Unable to upload assets`,
         error,
       );
 
@@ -389,7 +389,7 @@ export async function POST(
 
     // eslint-disable-next-line no-console
     console.error(
-      `[POST /api/history/${animalId}/observations] Unable to save observation`,
+      `[POST /api/registry/${animalId}/observations] Unable to save observation`,
       errInfo,
       error,
     );
@@ -415,7 +415,7 @@ export async function POST(
     );
   }
 
-  revalidatePath(`/history/${animalObjectId.toHexString()}`);
+  revalidatePath(`/registry/${animalObjectId.toHexString()}`);
 
   const serialized = serializeObservation(observation, user.id);
 

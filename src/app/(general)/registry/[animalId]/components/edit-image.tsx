@@ -48,7 +48,7 @@ export default function EditImage({ animalId }: EditImageProps) {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch(`/api/history/${animalId}/image`, {
+        const response = await fetch(`/api/registry/${animalId}/image`, {
           method: 'PUT',
           body: formData,
         });

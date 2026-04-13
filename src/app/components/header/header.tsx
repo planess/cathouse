@@ -16,7 +16,7 @@ export default async function Header() {
   const links = [
     { key: 'home', href: '/' },
     { key: 'contacts', href: '/contacts' },
-    { key: 'registry', href: '/history' },
+    { key: 'registry', href: '/registry' },
     { key: 'help', href: '/help' },
     ...(canReadActs ? [{ key: 'acts', href: '/acts' }] : []),
   ];

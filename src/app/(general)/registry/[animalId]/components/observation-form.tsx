@@ -12,7 +12,7 @@ import {
   type ChangeEvent,
 } from 'react';
 
-import type { SerializedObservation } from '@app/api/history/[animalId]/observations/route';
+import type { SerializedObservation } from '@app/api/registry/[animalId]/observations/route';
 import { useModal } from '@app/hooks/use-modal';
 
 import {
@@ -142,7 +142,7 @@ export const ObservationForm = forwardRef<
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/history/${animalId}/observations`, {
+      const response = await fetch(`/api/registry/${animalId}/observations`, {
         method: 'POST',
         body: payload,
       });

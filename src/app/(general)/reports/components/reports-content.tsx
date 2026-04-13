@@ -13,7 +13,7 @@ import {
   ReceiptIcon,
   TrendingDownIcon,
   TrendingUpIcon,
-} from '@app/(general)/history/[animalId]/components/icons';
+} from '@app/(general)/registry/[animalId]/components/icons';
 
 import NewSeasonReport from '../new-season';
 import PreparationComponent from '../preparation';

@@ -7,7 +7,7 @@ interface PaginationProps {
 }
 
 const buildHref = (pageNumber: number) =>
-  pageNumber <= 1 ? '/history' : `/history?page=${pageNumber}`;
+  pageNumber <= 1 ? '/registry' : `/registry?page=${pageNumber}`;
 
 export default async function Pagination({
   safePage,

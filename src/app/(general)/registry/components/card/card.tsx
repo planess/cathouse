@@ -45,7 +45,7 @@ export default function Card({ data }: Props) {
     ? buildMapHref(latestObservation.location)
     : null;
   const badges = buildBadges(data, cardTranslations);
-  const detailsHref = data._id ? `/history/${data._id.toString()}` : null;
+  const detailsHref = data._id ? `/registry/${data._id.toString()}` : null;
   const descriptionText =
     data.description ?? cardTranslations('descriptionFallback');
 

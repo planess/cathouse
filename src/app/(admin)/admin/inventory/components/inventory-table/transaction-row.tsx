@@ -5,7 +5,7 @@ import {
   ClockIcon,
   PencilIcon,
   TrashIcon,
-} from '../../../../../(general)/history/[animalId]/components/icons';
+} from '../../../../../(general)/registry/[animalId]/components/icons';
 
 import { displayValue, formatTransactionType } from './table-helpers';
 import {

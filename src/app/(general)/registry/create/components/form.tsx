@@ -61,7 +61,7 @@ export default function Form() {
         throw new Error(response.error);
       }
 
-      router.push(`/history/${response.animalId}`);
+      router.push(`/registry/${response.animalId}`);
     } catch (error) {
       console.error(error);
     }

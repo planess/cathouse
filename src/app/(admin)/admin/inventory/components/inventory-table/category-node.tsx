@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { ArrowIcon } from '../../../../../(general)/history/[animalId]/components/icons';
+import { ArrowIcon } from '../../../../../(general)/registry/[animalId]/components/icons';
 
 import { ItemRow } from './item-row';
 import { countCategoryRows } from './table-helpers';

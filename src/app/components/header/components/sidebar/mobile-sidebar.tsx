@@ -7,7 +7,7 @@ import { useEffect, useId, useState } from 'react';
 import {
   CloseIcon,
   MenuIcon,
-} from '@app/(general)/history/[animalId]/components/icons';
+} from '@app/(general)/registry/[animalId]/components/icons';
 
 type SidebarLink = {
   key: string;

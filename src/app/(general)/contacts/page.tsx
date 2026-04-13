@@ -7,7 +7,7 @@ import {
   InstagramIcon,
   PhoneIcon,
   TelegramIcon,
-} from '../history/[animalId]/components/icons';
+} from '../registry/[animalId]/components/icons';
 
 import ContactFormWrapper from './components/contact-form-wrapper/contact-form-wrapper';
 import Map from './components/map/map';

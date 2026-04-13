@@ -77,7 +77,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
   const currentDomain = headers.get('host');
   const currentProtocol = headers.get('x-forwarded-proto') ?? 'https';
   const animalIdString = animal._id.toString();
-  const telegramShareUrl = `${currentProtocol}://${currentDomain}/history/${animalIdString}`;
+  const telegramShareUrl = `${currentProtocol}://${currentDomain}/registry/${animalIdString}`;
   const shareText = encodeURIComponent(
     `${animal.name} history at Periphery Foundation`,
   );

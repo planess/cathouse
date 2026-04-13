@@ -313,7 +313,7 @@ export async function updateAnimalInfo(
     };
   }
 
-  revalidatePath(`/history/${animalObjectId.toHexString()}`);
+  revalidatePath(`/registry/${animalObjectId.toHexString()}`);
 
   return {
     success: true,

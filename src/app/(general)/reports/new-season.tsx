@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import {
   FolderIcon,
   Search2Icon,
-} from '../history/[animalId]/components/icons';
+} from '../registry/[animalId]/components/icons';
 
 import Section from './section';
 

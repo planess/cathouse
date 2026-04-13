@@ -9,7 +9,7 @@ import {
   DogBowlIcon,
   HealthInterventionIcon,
   MedicalKitIcon,
-} from '../history/[animalId]/components/icons';
+} from '../registry/[animalId]/components/icons';
 
 import { AutoPayment } from './components/auto-payment';
 import IbanCards, { IbanCardItem } from './components/iban-cards';
