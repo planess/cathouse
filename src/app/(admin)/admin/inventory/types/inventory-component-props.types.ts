@@ -1,27 +1,24 @@
 import type {
   CategoryFormState,
+  InventoryAcceptanceFormState,
   InventoryCategoryNode,
   InventoryCategoryOption,
   InventoryCategoryRow,
   InventoryReportFormState,
-  InventoryReportRow,
+  InventorySourceOption,
   InventoryStorageRow,
+  InventoryTableCategoryNode,
+  InventoryTransferFormState,
   StorageFormState,
 } from './inventory.types';
 import type { ReactNode } from 'react';
 
-export type TableCategoryNode = {
-  id: string;
-  name: string;
-  children: TableCategoryNode[];
-  reports: InventoryReportRow[];
-  totalCount: number;
-};
-
 export type InventoryTableProps = {
-  categories: InventoryCategoryNode[];
-  reports: InventoryReportRow[];
-  onEditReport: (report: InventoryReportRow) => void;
+  categories: InventoryTableCategoryNode[];
+  storages: InventoryStorageRow[];
+  peopleOptions: InventorySourceOption[];
+  clinicOptions: InventorySourceOption[];
+  volunteerOptions: InventorySourceOption[];
 };
 
 export type StorageModalProps = {
@@ -58,12 +55,52 @@ export type InventoryReportFormProps = {
   onValidityChange: (isValid: boolean) => void;
 };
 
+export type InventoryAcceptanceFormProps = {
+  initialState: InventoryAcceptanceFormState;
+  storages: InventoryStorageRow[];
+  categoryTree: InventoryCategoryNode[];
+  peopleOptions: InventorySourceOption[];
+  clinicOptions: InventorySourceOption[];
+  volunteerOptions: InventorySourceOption[];
+  onChange: (state: InventoryAcceptanceFormState) => void;
+  onValidityChange: (isValid: boolean) => void;
+};
+
+export type InventoryTransferFormProps = {
+  initialState: InventoryTransferFormState;
+  storages: InventoryStorageRow[];
+  peopleOptions: InventorySourceOption[];
+  clinicOptions: InventorySourceOption[];
+  volunteerOptions: InventorySourceOption[];
+  onChange: (state: InventoryTransferFormState) => void;
+  onValidityChange: (isValid: boolean) => void;
+};
+
 export type FormErrors = {
   name?: string;
   type?: string;
   quantity?: string;
   categoryId?: string;
   storageId?: string;
+  toId?: string;
+  transactionDate?: string;
+  estimatedCost?: string;
+};
+
+export type AcceptanceFormErrors = {
+  name?: string;
+  categoryId?: string;
+  batchNumber?: string;
+  unit?: string;
+  serialNumber?: string;
+  individualId?: string;
+  fromId?: string;
+  fromName?: string;
+  toStorageId?: string;
+  quantity?: string;
+  remainingQuantity?: string;
+  transactionDate?: string;
+  estimatedCost?: string;
 };
 
 export type FormFieldProps = {

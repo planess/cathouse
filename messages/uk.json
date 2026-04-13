@@ -1545,23 +1545,38 @@
     "actions": {
       "manageStorages": "Керувати складами",
       "manageCategories": "Керувати категоріями",
-      "addItem": "Додати позицію"
+      "addItem": "Прийняти позицію"
     },
     "table": {
       "title": "Інвентар на складі",
       "subtitle": "Групування за категоріями та прив'язка до складів.",
       "columns": {
-        "name": "Ієрархія / назва",
-        "sku": "SKU",
-        "quantity": "Кількість",
-        "storage": "Склад",
-        "expiration": "Термін",
-        "received": "Отримано",
-        "source": "Джерело",
-        "actions": "Дії"
+        "name": "Назва",
+        "serialNumber": "Серійний номер",
+        "individualId": "Індивідуальний ID",
+        "expiryDate": "Термін придатності",
+        "unit": "Одиниця",
+        "type": "Тип",
+        "from": "Від",
+        "to": "До",
+        "dateTime": "Дата/час"
       },
       "categoryCount": "{count} позицій",
       "unitsLabel": "од.",
+      "searchPlaceholder": "Пошук інвентарю...",
+      "filterOptions": "Параметри фільтра",
+      "transactionHistory": "Історія транзакцій",
+      "identifierLabel": "Ідентифікатор",
+      "amountLabel": "Кількість",
+      "locationLabel": "Локація",
+      "conditionLabel": "Стан",
+      "currentOwnerLabel": "Поточний власник",
+      "expirationDateLabel": "Термін придатності",
+      "transferLabel": "Передати",
+      "toInlineLabel": "До",
+      "amountInlineLabel": "Кількість",
+      "notesLabel": "Примітки",
+      "addHistoryRecord": "Додати запис історії",
       "empty": "Записів інвентарю ще немає.",
       "noItems": "У цій категорії немає позицій.",
       "uncategorized": "Без категорії",
@@ -1602,6 +1617,47 @@
         "imagesLabel": "Зображення",
         "imagesHint": "Необов'язково: завантажте PNG, JPG або WEBP файли.",
         "removeImage": "Видалити"
+      }
+    },
+    "transfers": {
+      "addTitle": "Додати транзакцію",
+      "submitErrorTitle": "Не вдалося додати транзакцію",
+      "form": {
+        "typeLabel": "Тип транзакції",
+        "fromLabel": "Звідки",
+        "toTypeLabel": "Тип отримувача",
+        "toLabel": "Отримувач",
+        "toPlaceholder": "Оберіть отримувача",
+        "toRequired": "Потрібно обрати отримувача.",
+        "quantityLabel": "Кількість",
+        "quantityInvalid": "Кількість має бути не меншою за попередній залишок.",
+        "remainingQuantityLabel": "Залишок (обчислюється)",
+        "dateLabel": "Дата та час транзакції",
+        "dateRequired": "Потрібно вказати дату та час транзакції.",
+        "conditionLabel": "Стан",
+        "damageDescriptionLabel": "Опис пошкоджень",
+        "notesLabel": "Примітки",
+        "estimatedCostLabel": "Оцінена вартість",
+        "estimatedCostInvalid": "Оцінена вартість має бути нуль або більше.",
+        "mediaLabel": "Документи та зображення",
+        "mediaHint": "Завантажуйте зображення або документи. Відеофайли не приймаються.",
+        "types": {
+          "transfer": "Передача",
+          "release": "Видача",
+          "disposal": "Списання"
+        },
+        "toTypes": {
+          "people": "Людина",
+          "clinic": "Клініка",
+          "volunteer": "Волонтер",
+          "storage": "Склад"
+        },
+        "conditions": {
+          "good": "Добрий",
+          "fair": "Задовільний",
+          "poor": "Поганий",
+          "broken": "Зламаний"
+        }
       }
     },
     "storages": {

@@ -77,8 +77,52 @@ export type InventoryReportDocument = {
   createdBy?: ObjectId;
 };
 
+export type InventoryItemDocument = {
+  _id: ObjectId;
+  name?: string;
+  type?: 'consumable' | 'asset';
+  category?: ObjectId;
+  createdAt?: Date;
+};
+
+export type InventoryConsumableDocument = {
+  _id: ObjectId;
+  itemId: ObjectId;
+  batchNumber?: string;
+  expiryDate?: Date;
+  unit?: string;
+};
+
+export type InventoryAssetDocument = {
+  _id: ObjectId;
+  itemId: ObjectId;
+  serialNumber?: string;
+  individualId?: string;
+};
+
+type InventoryTransactionPartyReference =
+  | {
+      id: ObjectId;
+      name?: string;
+    }
+  | {
+      id?: ObjectId;
+      name: string;
+    };
+
+export type InventoryTransactionParty = {
+  type: string;
+} & InventoryTransactionPartyReference;
+
 export type InventoryTransactionDocument = {
   _id: ObjectId;
-  from?: ObjectId;
-  to?: ObjectId;
+  entityId?: ObjectId;
+  type?: string;
+  from: InventoryTransactionParty;
+  to: InventoryTransactionParty;
+  quantity?: number;
+  remainingQuantity?: number;
+  date?: Date;
+  condition?: string;
+  notes?: string;
 };

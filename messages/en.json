@@ -1545,23 +1545,38 @@
     "actions": {
       "manageStorages": "Manage storages",
       "manageCategories": "Manage categories",
-      "addItem": "Add new item"
+      "addItem": "Accept new item"
     },
     "table": {
       "title": "Inventory stock",
       "subtitle": "Grouped by category and linked to storage locations.",
       "columns": {
-        "name": "Product hierarchy / name",
-        "sku": "SKU",
-        "quantity": "Quantity",
-        "storage": "Storage location",
-        "expiration": "Exp. date",
-        "received": "Received",
-        "source": "Source",
-        "actions": "Actions"
+        "name": "Name",
+        "serialNumber": "Serial Number",
+        "individualId": "Individual ID",
+        "expiryDate": "Expiry date",
+        "unit": "Unit",
+        "type": "Type",
+        "from": "From",
+        "to": "To",
+        "dateTime": "Date/Time"
       },
       "categoryCount": "{count} items",
       "unitsLabel": "units",
+      "searchPlaceholder": "Search inventory...",
+      "filterOptions": "Filter Options",
+      "transactionHistory": "Transaction History",
+      "identifierLabel": "Identifier",
+      "amountLabel": "Amount",
+      "locationLabel": "Location",
+      "conditionLabel": "Condition",
+      "currentOwnerLabel": "Current Owner",
+      "expirationDateLabel": "Expiration Date",
+      "transferLabel": "Transfer",
+      "toInlineLabel": "To",
+      "amountInlineLabel": "Amount",
+      "notesLabel": "Notes",
+      "addHistoryRecord": "Add History Record",
       "empty": "No inventory records yet.",
       "noItems": "No items in this category.",
       "uncategorized": "Uncategorized",
@@ -1602,6 +1617,47 @@
         "imagesLabel": "Images",
         "imagesHint": "Optional: upload PNG, JPG, or WEBP files.",
         "removeImage": "Remove"
+      }
+    },
+    "transfers": {
+      "addTitle": "Append transaction",
+      "submitErrorTitle": "Unable to append transaction",
+      "form": {
+        "typeLabel": "Transaction type",
+        "fromLabel": "From",
+        "toTypeLabel": "Destination type",
+        "toLabel": "Destination",
+        "toPlaceholder": "Select destination",
+        "toRequired": "Destination is required.",
+        "quantityLabel": "Quantity",
+        "quantityInvalid": "Quantity must be at least previous remaining quantity.",
+        "remainingQuantityLabel": "Remaining quantity (calculated)",
+        "dateLabel": "Transaction date and time",
+        "dateRequired": "Transaction date and time is required.",
+        "conditionLabel": "Condition",
+        "damageDescriptionLabel": "Damage description",
+        "notesLabel": "Notes",
+        "estimatedCostLabel": "Estimated cost",
+        "estimatedCostInvalid": "Estimated cost must be zero or more.",
+        "mediaLabel": "Documents and images",
+        "mediaHint": "Upload images or documents. Video files are not accepted.",
+        "types": {
+          "transfer": "Transfer",
+          "release": "Release",
+          "disposal": "Disposal"
+        },
+        "toTypes": {
+          "people": "People",
+          "clinic": "Clinic",
+          "volunteer": "Volunteer",
+          "storage": "Storage"
+        },
+        "conditions": {
+          "good": "Good",
+          "fair": "Fair",
+          "poor": "Poor",
+          "broken": "Broken"
+        }
       }
     },
     "storages": {

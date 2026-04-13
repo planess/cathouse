@@ -263,7 +263,7 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['itemId', 'type', 'to', 'date', 'createdAt', 'createdBy'],
+          required: ['entityId', 'type', 'from', 'date', 'createdAt', 'createdBy'],
           properties: {
             entityId: {
               bsonType: 'objectId',
@@ -272,17 +272,57 @@ module.exports = {
             },
             type: {
               bsonType: 'string',
-              enum: ['acceptance', 'release', 'usage', 'transfer'],
+              enum: ['donation', 'purchase', 'transfer', 'release', 'disposal'],
               description: 'Type of the transaction',
             },
             from: {
-              bsonType: 'objectId',
+              bsonType: 'object',
               description:
-                'Source of the transaction (user or storage). Null if anonymous acceptance',
+                'Where the item is coming from (user or storage). For donations and purchases',
+              required: ['type'],
+              properties: {
+                type: {
+                  bsonType: 'string',
+                  enum: [
+                    'people',
+                    'clinic',
+                    'shop',
+                    'organization',
+                    'volunteer',
+                  ],
+                  description: 'Type of the source',
+                },
+                id: {
+                  bsonType: 'objectId',
+                  description: 'ID of the source entity',
+                },
+                name: {
+                  bsonType: 'string',
+                  description: 'Name of the source entity',
+                },
+              },
             },
             to: {
-              bsonType: 'objectId',
-              description: 'Destination of the transaction (user or storage)',
+              bsonType: 'object',
+              description:
+                'Where the item is going to (user or storage). For releases and transfers',
+              required: ['type'],
+              properties: {
+                type: {
+                  bsonType: 'string',
+                  enum: ['people', 'clinic', 'volunteer', 'storage'],
+                  description:
+                    'Type of the destination (for releases and transfers)',
+                },
+                id: {
+                  bsonType: 'objectId',
+                  description: 'ID of the destination entity',
+                },
+                name: {
+                  bsonType: 'string',
+                  description: 'Name of the destination entity',
+                },
+              },
             },
             quantity: {
               bsonType: 'number',

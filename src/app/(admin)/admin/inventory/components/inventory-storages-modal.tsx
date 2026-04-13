@@ -11,6 +11,7 @@ import {
 import { useModal } from '@app/hooks/use-modal';
 
 import { StorageForm } from './inventory-storage-form';
+import { StoragesTable } from './inventory-storages-modal/storages-table';
 
 import type {
   StorageFormModalOptions,
@@ -149,70 +150,21 @@ export function StoragesModal({ storages, onRefresh }: StorageModalProps) {
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200/70">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-            <tr>
-              <th className="px-5 py-3">{t('storages.table.name')}</th>
-              <th className="px-5 py-3">{t('storages.table.location')}</th>
-              <th className="px-5 py-3">{t('storages.table.createdAt')}</th>
-              <th className="px-5 py-3 text-right">
-                {t('storages.table.actions')}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200/70">
-            {storages.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="px-5 py-6 text-center text-sm text-slate-500"
-                >
-                  {t('storages.table.empty')}
-                </td>
-              </tr>
-            ) : (
-              storages.map((storage) => (
-                <tr key={storage.id}>
-                  <td className="px-5 py-4 font-semibold text-slate-800">
-                    {storage.name}
-                  </td>
-                  <td className="px-5 py-4 text-xs font-mono text-slate-500">
-                    {locationLabel(storage)}
-                  </td>
-                  <td className="px-5 py-4 text-xs text-slate-500">
-                    {storage.createdAt || '-'}
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleEditStorage(storage)}
-                        className="rounded-lg p-1.5 text-slate-400 transition hover:text-sky-500"
-                        aria-label={t('storages.editAria', {
-                          name: storage.name,
-                        })}
-                      >
-                        ✎
-                      </button>
-                      {storage.canDelete ? (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteStorage(storage)}
-                          className="rounded-lg p-1.5 text-slate-400 transition hover:text-rose-500"
-                          aria-label={t('storages.deleteAria', {
-                            name: storage.name,
-                          })}
-                        >
-                          ✕
-                        </button>
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <StoragesTable
+          storages={storages}
+          locationLabel={locationLabel}
+          onEdit={handleEditStorage}
+          onDelete={handleDeleteStorage}
+          labels={{
+            name: t('storages.table.name'),
+            location: t('storages.table.location'),
+            createdAt: t('storages.table.createdAt'),
+            actions: t('storages.table.actions'),
+            empty: t('storages.table.empty'),
+            editAria: (name) => t('storages.editAria', { name }),
+            deleteAria: (name) => t('storages.deleteAria', { name }),
+          }}
+        />
       </div>
     </div>
   );
