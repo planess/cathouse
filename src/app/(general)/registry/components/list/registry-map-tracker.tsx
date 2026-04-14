@@ -14,6 +14,7 @@ import {
   FOCUS_ZOOM,
   formatSeenAt,
   getZonePalette,
+  MAX_ZOOM,
   normalizeText,
   toLatLngExpression,
 } from './registry-map-tracker.helpers';
@@ -114,6 +115,7 @@ export default function RegistryMapTracker() {
       }
 
       const map = leaflet.map(mapContainerRef.current, {
+        maxZoom: MAX_ZOOM,
         zoomControl: true,
       });
       mapRef.current = map;
@@ -267,7 +269,7 @@ export default function RegistryMapTracker() {
 
   return (
     <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="border border-slate-200 bg-white rounded-3xl shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors overflow-hidden">
+      <div className="flex h-[65dvh] flex-col border border-slate-200 bg-white rounded-3xl shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors overflow-hidden">
         <div className="flex items-center justify-between gap-2 px-3 py-2">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200 transition-colors">
@@ -293,15 +295,15 @@ export default function RegistryMapTracker() {
 
         <div
           ref={mapContainerRef}
-          className="h-105 w-full"
+          className="w-full flex-1"
           aria-label={t('tracker.mapAriaLabel')}
-          style={{zIndex: 5}}
+          style={{ zIndex: 5 }}
         />
       </div>
 
       <div
         className={clsx(
-          'border border-slate-200 bg-white rounded-3xl flex min-h-105 flex-col px-4 py-4 xl:px-5 shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors transition-opacity overflow-hidden',
+          'border border-slate-200 bg-white rounded-3xl flex h-[70dvh] xl:h-[65dvh] flex-col px-4 py-4 xl:px-5 shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors overflow-hidden',
           { 'opacity-50': isLoading },
         )}
       >

@@ -7,8 +7,9 @@ import type { LatLngExpression, LatLngTuple } from 'leaflet';
 const LEAFLET_CSS_ID = 'leaflet-css';
 
 export const DEFAULT_CENTER: LatLngTuple = [49.8397, 24.0297];
-export const DEFAULT_ZOOM = 12;
-export const FOCUS_ZOOM = 16;
+export const DEFAULT_ZOOM = 6;
+export const MAX_ZOOM = 10;
+export const FOCUS_ZOOM = MAX_ZOOM;
 export const CONNECT_DISTANCE_METERS = 10;
 export const MIN_ZONE_RADIUS_METERS = 8;
 export const ZONE_PADDING_METERS = 4;
