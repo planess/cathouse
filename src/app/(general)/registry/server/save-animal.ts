@@ -34,21 +34,19 @@ export async function saveAnimal(
   const now = new Date();
   const client = await clientPromise;
   const db = client.db();
-  const animalsCollection = db.collection<AnimalDocument>(DbTables.animals);
+  const animalsCollection = db.collection(DbTables.animals);
 
   let insertedId: ObjectId | null = null;
 
   try {
     const { insertedId: newAnimalId } = await animalsCollection.insertOne({
       species: data.species,
-      name: data.name,
       sex: data.sex,
       status: data.status,
       draft: true,
       createdAt: now,
       createdBy: user.id,
-      ...(data.informator ? { informator: new ObjectId(data.informator) } : {}),
-      ...(data.description ? { description: data.description } : {}),
+      ...(data.name ? { name: data.name } : {}),
       ...(data.chipNumber ? { chipNumber: data.chipNumber } : {}),
       ...(data.birthday ? { birthday: data.birthday } : {}),
     });
@@ -89,15 +87,13 @@ export async function saveAnimal(
       return { success: false, error: 'Chip ID already exists.' };
     }
 
+    const mongoError = error as {
+      errInfo?: { details?: { schemaRulesNotSatisfied?: unknown } };
+    };
+
     const errInfo =
-      error && typeof error === 'object' && 'errInfo' in error
-        ? JSON.stringify(
-            (
-              error as {
-                errInfo?: { details?: { schemaRulesNotSatisfied?: unknown } };
-              }
-            ).errInfo?.details?.schemaRulesNotSatisfied,
-          )
+      typeof error === 'object' && error !== null && 'errInfo' in error
+        ? JSON.stringify(mongoError.errInfo?.details?.schemaRulesNotSatisfied)
         : undefined;
 
     console.error('Failed to save animal', error, errInfo);

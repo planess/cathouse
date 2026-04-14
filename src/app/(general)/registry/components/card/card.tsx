@@ -35,6 +35,13 @@ export default function Card({ data }: Props) {
     process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL,
   );
   const ageLabel = getAgeLabel(data.birthday, cardTranslations);
+  const nameText = data.name?.trim() || cardTranslations('nameFallback');
+  const nameClassName = clsx(
+    'text-2xl font-semibold md:text-3xl transition-colors',
+    data.name?.trim()
+      ? 'text-slate-900 dark:text-slate-200'
+      : 'text-slate-400 dark:text-slate-400',
+  );
   const statusLabel = formatLabel(data.status, t);
   const createdAtLabel = formatDate(data.createdAt);
   const createdAtText = createdAtLabel
@@ -55,7 +62,7 @@ export default function Card({ data }: Props) {
         <div className="relative w-full overflow-hidden rounded-2xl bg-slate-100 md:max-w-xs">
           <Image
             src={src}
-            alt={`${data.name} preview`}
+            alt={`${nameText} preview`}
             width={640}
             height={480}
             className="h-full w-full object-cover duration-500 ease-out group-hover:scale-[1.02]"
@@ -92,8 +99,8 @@ export default function Card({ data }: Props) {
 
         <div className="flex flex-1 flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h3 className="text-2xl font-semibold text-slate-900 md:text-3xl dark:text-slate-200 transition-colors">
-              {data.name}
+            <h3 className={nameClassName}>
+              {nameText}
             </h3>
 
             <div className="flex gap-x-2 text-sm text-slate-600 dark:text-slate-300 transition-colors">

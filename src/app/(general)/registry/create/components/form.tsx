@@ -13,12 +13,10 @@ import SelectorField from '../../components/selector-field/selector-field';
 import { saveAnimal } from '../../server/save-animal';
 
 type AnimalFormFields = {
-  name: string;
+  name?: string;
   chipid?: string;
   species: AnimalSpecies;
   sex: AnimalSex;
-  description?: string;
-  informator: string;
   birthdate?: string;
   image?: FileList;
 };
@@ -62,8 +60,8 @@ export default function Form() {
       }
 
       router.push(`/registry/${response.animalId}`);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // keep silent, create flow uses server response contract for errors
     }
   });
 
@@ -81,7 +79,7 @@ export default function Form() {
           label="Name"
           element="input"
           config={{
-            ...register('name', { required: true }),
+            ...register('name'),
             placeholder: 'Fluffy',
           }}
         />
@@ -101,30 +99,6 @@ export default function Form() {
           config={{ ...register('species', { required: true }) }}
           options={speciesOptions}
         />
-      </div>
-
-      <div>
-        <InputField
-          label="Description"
-          element="textarea"
-          config={{
-            ...register('description'),
-            placeholder: 'A brief description of the animal',
-            rows: 4,
-          }}
-        />
-      </div>
-
-      <div className="flex gap-2">
-        <div className="flex-1">
-          <SelectorField
-            label="Informator"
-            config={{ ...register('informator') }}
-            options={[]}
-          />
-        </div>
-
-        <Button>Add new</Button>
       </div>
 
       <Button>Save draft</Button>

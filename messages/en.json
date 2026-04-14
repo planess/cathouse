@@ -613,6 +613,7 @@
         "chip": "Chip number",
         "sterilized": "Sterilized"
       },
+      "nameFallback": "No name yet",
       "descriptionFallback": "There is no description yet for this animal. Add one to help adopters learn more.",
       "actions": {
         "openMap": "Open map",

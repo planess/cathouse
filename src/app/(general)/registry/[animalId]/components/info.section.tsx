@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
 import { AnimalDocument } from '@app/models/animal';
@@ -30,13 +31,16 @@ export default function InfoSection({
   clinicOptions,
 }: InfoSectionProps) {
   const cardTranslations = useTranslations('historypage.card');
+  const trimmedName = typeof animal.name === 'string' ? animal.name.trim() : '';
+  const hasName = trimmedName.length > 0;
+  const nameText = hasName ? trimmedName : cardTranslations('nameFallback');
   const ageLabel = getAgeLabel(animal.birthday, cardTranslations);
   const createdAtFormatted = formatDate(animal.createdAt);
   const createdChipLabel = createdAtFormatted
     ? cardTranslations('labels.createdAt', { date: createdAtFormatted })
     : null;
   const editInfoInitialValues: EditInfoInitialValues = {
-    name: animal.name,
+    name: animal.name ?? '',
     birthday: formatInputDate(animal.birthday),
     description: animal.description ?? '',
     passportCode: animal.passportCode ?? '',
@@ -45,10 +49,10 @@ export default function InfoSection({
     status: animal.status as EditInfoInitialValues['status'],
     sterilized: sterilizedRecord
       ? {
-          date: formatInputDate(sterilizedRecord.date),
-          method: sterilizedRecord.method ?? '',
-          clinic: sterilizedRecord.clinic?.toString(),
-        }
+        date: formatInputDate(sterilizedRecord.date),
+        method: sterilizedRecord.method ?? '',
+        clinic: sterilizedRecord.clinic?.toString(),
+      }
       : null,
   };
 
@@ -56,8 +60,15 @@ export default function InfoSection({
     <>
       <div className="flex justify-between items-start">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold text-slate-900 lg:text-4xl dark:text-slate-200 transition-colors">
-            {animal.name}
+          <h1
+            className={clsx(
+              'text-3xl font-bold lg:text-4xl transition-colors',
+              hasName
+                ? 'text-slate-900 dark:text-slate-200'
+                : 'text-slate-400 dark:text-slate-400',
+            )}
+          >
+            {nameText}
           </h1>
           <div className="text-sm text-slate-600 dark:text-slate-300 transition-colors">
             {ageLabel}

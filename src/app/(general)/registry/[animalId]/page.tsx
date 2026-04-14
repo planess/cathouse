@@ -77,9 +77,10 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
   const currentDomain = headers.get('host');
   const currentProtocol = headers.get('x-forwarded-proto') ?? 'https';
   const animalIdString = animal._id.toString();
+  const animalName = animal.name?.trim() || t('card.nameFallback');
   const telegramShareUrl = `${currentProtocol}://${currentDomain}/registry/${animalIdString}`;
   const shareText = encodeURIComponent(
-    `${animal.name} history at Periphery Foundation`,
+    `${animalName} history at Periphery Foundation`,
   );
   const shareTelegramUrl = `https://t.me/share/url?url=${telegramShareUrl}&text=${shareText}`;
   const shareEmailUrl = `mailto:info@perilines.com.ua?subject=${shareText}`;
@@ -214,6 +215,9 @@ export async function generateMetadata({
   }
 
   return {
-    title: composeMetadataTitle(animal.name ?? t('title'), siteTitle),
+    title: composeMetadataTitle(
+      animal.name?.trim() || t('card.nameFallback'),
+      siteTitle,
+    ),
   };
 }

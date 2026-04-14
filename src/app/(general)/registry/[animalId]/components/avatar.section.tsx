@@ -21,12 +21,13 @@ export default function AvatarSection({
 }: AvatarProps) {
   const cardTranslations = useTranslations('historypage');
   const statusLabel = formatLabel(animal.status, cardTranslations);
+  const nameText = animal.name?.trim() || cardTranslations('card.nameFallback');
 
   return (
     <div className="relative overflow-hidden rounded-lg bg-slate-100 shadow-[0_0_8px_rgba(0,0,0,0.1)]">
       <Image
         src={heroImage}
-        alt={`${animal.name} preview`}
+        alt={`${nameText} preview`}
         width={640}
         height={640}
         className="h-full w-full object-cover"

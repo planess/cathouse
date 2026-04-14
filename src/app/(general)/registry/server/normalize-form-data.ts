@@ -2,11 +2,9 @@ import type { AnimalSpecies } from '@app/models/animal';
 import { animalSpeciesList, AnimalSex, AnimalStatus } from '@app/models/animal';
 
 export interface ValidatedAnimalPayload {
-  name: string;
+  name?: string;
   species: AnimalSpecies;
   sex: AnimalSex;
-  description?: string;
-  informator?: string;
   status: AnimalStatus;
   chipNumber?: string;
   birthday?: Date;
@@ -23,10 +21,7 @@ const allowedSexes = new Set<AnimalSex>(Object.values(AnimalSex));
 const allowedStatuses = new Set<AnimalStatus>(Object.values(AnimalStatus));
 
 export function normalizeFormData(formData: FormData): ValidationResult {
-  const name = getString(formData, 'name');
-  if (!name) {
-    return { success: false, error: 'Name is required.' };
-  }
+  const name = getString(formData, 'name') ?? undefined;
 
   const speciesValue = getString(formData, 'species');
   if (!speciesValue || !allowedSpecies.has(speciesValue as AnimalSpecies)) {
@@ -42,11 +37,6 @@ export function normalizeFormData(formData: FormData): ValidationResult {
   // if (birthdayValue === 'invalid') {
   //   return { success: false, error: 'Birth date is invalid.' };
   // }
-  const informator = getString(formData, 'informator') ?? undefined;
-  if (informator) {
-    // check if valid ObjectId?
-  }
-
   const statusValue = getString(formData, 'status');
   const status =
     statusValue && allowedStatuses.has(statusValue as AnimalStatus)
@@ -61,10 +51,8 @@ export function normalizeFormData(formData: FormData): ValidationResult {
       name,
       species: speciesValue as AnimalSpecies,
       sex: sexValue as AnimalSex,
-      description: getString(formData, 'description') ?? undefined,
       status,
       chipNumber,
-      informator,
       files: extractFiles(formData, 'image'),
     },
   };
