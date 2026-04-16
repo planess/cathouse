@@ -1,6 +1,7 @@
 import { type Document, type Filter } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { resolveAnimalImage } from '@app/(general)/registry/components/card/card.helpers';
 import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
@@ -18,6 +19,7 @@ type Bounds = {
 type RawRegistryAnimalRecord = {
   id: string;
   detailsHref: string;
+  mainAssetKey?: string;
   name: string;
   species: string;
   status: AnimalDocument['status'];
@@ -160,6 +162,7 @@ export async function GET(request: NextRequest) {
         detailsHref: {
           $concat: ['/registry/', { $toString: '$_id' }],
         },
+        mainAssetKey: '$mainAsset.key',
         name: 1,
         species: 1,
         status: 1,
@@ -207,8 +210,12 @@ export async function GET(request: NextRequest) {
     .aggregate<RawRegistryAnimalRecord>(pipeline)
     .toArray();
 
-  const animals = rawAnimals.map((animal) => ({
+  const animals = rawAnimals.map(({ mainAssetKey, ...animal }) => ({
     ...animal,
+    previewImage: resolveAnimalImage(
+      mainAssetKey,
+      process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL,
+    ),
     address: animal.address ?? '',
     latitude: typeof animal.latitude === 'number' ? animal.latitude : null,
     longitude: typeof animal.longitude === 'number' ? animal.longitude : null,

@@ -3,6 +3,7 @@ import type { AnimalStatus } from '@app/models/animal';
 export type RegistryAnimalMapRecord = {
   id: string;
   detailsHref: string;
+  previewImage: string;
   name: string;
   species: string;
   status: AnimalStatus;
