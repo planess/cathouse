@@ -7,8 +7,8 @@ export type RegistryAnimalMapRecord = {
   species: string;
   status: AnimalStatus;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   observedAt: string | null;
   isSterilized: boolean;
 };

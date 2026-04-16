@@ -22,8 +22,8 @@ type RawRegistryAnimalRecord = {
   species: string;
   status: AnimalDocument['status'];
   address?: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
   observedAt?: Date | string | null;
   isSterilized: boolean;
 };
@@ -118,8 +118,13 @@ export async function GET(request: NextRequest) {
   }
 
   const findCondition: Filter<AnimalDocument> = {};
+  const shouldLoadVolunteerOwnDraft =
+    shouldLoadOnlyOwnDraft &&
+    isVolunteer &&
+    userId !== null &&
+    userId !== undefined;
 
-  if (shouldLoadOnlyOwnDraft && isVolunteer && userId !== null && userId !== undefined) {
+  if (shouldLoadVolunteerOwnDraft) {
     Object.assign(findCondition, {
       draft: true,
       createdBy: { $eq: userId },
@@ -167,15 +172,18 @@ export async function GET(request: NextRequest) {
         },
       },
     },
-    {
+  ];
+
+  if (!shouldLoadVolunteerOwnDraft) {
+    pipeline.push({
       $match: {
         latitude: { $type: 'number' },
         longitude: { $type: 'number' },
       },
-    },
-  ];
+    });
+  }
 
-  if (bounds !== null) {
+  if (bounds !== null && !shouldLoadVolunteerOwnDraft) {
     pipeline.push({
       $match: {
         latitude: { $gte: bounds.south, $lte: bounds.north },
@@ -202,6 +210,8 @@ export async function GET(request: NextRequest) {
   const animals = rawAnimals.map((animal) => ({
     ...animal,
     address: animal.address ?? '',
+    latitude: typeof animal.latitude === 'number' ? animal.latitude : null,
+    longitude: typeof animal.longitude === 'number' ? animal.longitude : null,
     observedAt:
       animal.observedAt instanceof Date
         ? animal.observedAt.toISOString()

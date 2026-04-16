@@ -63,6 +63,20 @@ type RegistryMapTrackerProps = {
   isVolunteer: boolean;
 };
 
+type RegistryAnimalMapRecordWithCoordinates = RegistryAnimalMapRecord & {
+  latitude: number;
+  longitude: number;
+};
+
+function hasCoordinates(
+  animal: RegistryAnimalMapRecord,
+): animal is RegistryAnimalMapRecordWithCoordinates {
+  return (
+    typeof animal.latitude === 'number' && Number.isFinite(animal.latitude) &&
+    typeof animal.longitude === 'number' && Number.isFinite(animal.longitude)
+  );
+}
+
 export default function RegistryMapTracker({
   isVolunteer,
 }: RegistryMapTrackerProps) {
@@ -283,6 +297,7 @@ export default function RegistryMapTracker({
 
     void (async () => {
       const leaflet = await import('leaflet');
+      const animalsWithCoordinates = animals.filter(hasCoordinates);
 
       pointsLayerRef.current?.remove();
       zonesLayerRef.current?.remove();
@@ -296,7 +311,7 @@ export default function RegistryMapTracker({
       zonesLayerRef.current = zoneLayerGroup;
 
       const zones: RegistrySterilizationZone[] =
-        buildSterilizationZones(animals);
+        buildSterilizationZones(animalsWithCoordinates);
 
       for (const zone of zones) {
         const zoneColors = getZonePalette(zone.allSterilized);
@@ -336,7 +351,7 @@ export default function RegistryMapTracker({
         }
       }
 
-      for (const animal of animals) {
+      for (const animal of animalsWithCoordinates) {
         const markerStroke = animal.isSterilized ? '#15803d' : '#dc2626';
 
         const markerStyle = {

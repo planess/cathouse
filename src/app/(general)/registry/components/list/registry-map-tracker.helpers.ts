@@ -73,13 +73,27 @@ export function toLatLngExpression(
   return [latitude, longitude];
 }
 
+type RegistryAnimalMapRecordWithCoordinates = RegistryAnimalMapRecord & {
+  latitude: number;
+  longitude: number;
+};
+
+function hasCoordinates(
+  animal: RegistryAnimalMapRecord,
+): animal is RegistryAnimalMapRecordWithCoordinates {
+  return (
+    typeof animal.latitude === 'number' && Number.isFinite(animal.latitude) &&
+    typeof animal.longitude === 'number' && Number.isFinite(animal.longitude)
+  );
+}
+
 function toRadians(value: number) {
   return (value * Math.PI) / 180;
 }
 
 function calculateDistanceMeters(
-  left: RegistryAnimalMapRecord,
-  right: RegistryAnimalMapRecord,
+  left: RegistryAnimalMapRecordWithCoordinates,
+  right: RegistryAnimalMapRecordWithCoordinates,
 ) {
   const earthRadius = 6_371_000;
   const latDelta = toRadians(right.latitude - left.latitude);
@@ -95,7 +109,7 @@ function calculateDistanceMeters(
   return earthRadius * angle;
 }
 
-function buildComponentZone(component: RegistryAnimalMapRecord[]) {
+function buildComponentZone(component: RegistryAnimalMapRecordWithCoordinates[]) {
   const latitude =
     component.reduce((sum, animal) => sum + animal.latitude, 0) /
     component.length;
@@ -136,20 +150,22 @@ function buildComponentZone(component: RegistryAnimalMapRecord[]) {
 export function buildSterilizationZones(
   animals: RegistryAnimalMapRecord[],
 ): RegistrySterilizationZone[] {
-  if (animals.length === 0) {
+  const animalsWithCoordinates = animals.filter(hasCoordinates);
+
+  if (animalsWithCoordinates.length === 0) {
     return [];
   }
 
   const visited = new Set<number>();
   const zones: RegistrySterilizationZone[] = [];
 
-  for (const [startIndex, startAnimal] of animals.entries()) {
+  for (const [startIndex, startAnimal] of animalsWithCoordinates.entries()) {
     if (visited.has(startIndex)) {
       continue;
     }
 
     const stack = [startIndex];
-    const component: RegistryAnimalMapRecord[] = [];
+    const component: RegistryAnimalMapRecordWithCoordinates[] = [];
 
     visited.add(startIndex);
     component.push(startAnimal);
@@ -161,9 +177,9 @@ export function buildSterilizationZones(
         continue;
       }
 
-      const currentAnimal = animals[currentIndex];
+      const currentAnimal = animalsWithCoordinates[currentIndex];
 
-      for (const [nextIndex, nextAnimal] of animals.entries()) {
+      for (const [nextIndex, nextAnimal] of animalsWithCoordinates.entries()) {
         if (visited.has(nextIndex)) {
           continue;
         }
