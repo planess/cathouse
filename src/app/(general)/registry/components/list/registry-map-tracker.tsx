@@ -16,21 +16,22 @@ import {
   FOCUS_ZOOM,
   formatSeenAt,
   getZonePalette,
+  hasCoordinates,
   MIN_ZOOM,
   normalizeText,
   toLatLngExpression,
-} from './registry-map-tracker.helpers';
+} from './registry-map-tracker-helpers';
 
+import type {
+  MarkerEntry,
+  RegistryMapTrackerProps,
+  ZoneEntry,
+} from './registry-map-tracker.types';
 import type {
   RegistryAnimalMapRecord,
   RegistrySterilizationZone,
 } from './types';
-import type {
-  Circle as LeafletCircle,
-  CircleMarker as LeafletCircleMarker,
-  LayerGroup,
-  Map as LeafletMap,
-} from 'leaflet';
+import type { LayerGroup, Map as LeafletMap } from 'leaflet';
 import type { ChangeEvent } from 'react';
 
 const ONLY_DRAFT_FILTER_VALUE = 'only-draft';
@@ -42,40 +43,6 @@ const HOVER_ZONE_STROKE = '#f59e0b';
 const HOVER_ZONE_FILL = '#fbbf24';
 const HOVER_ZONE_FILL_OPACITY = 0.22;
 const HOVER_ZONE_WEIGHT = 3;
-
-type MarkerEntry = {
-  marker: LeafletCircleMarker;
-  strokeColor: string;
-  fillColor: string;
-  radius: number;
-  weight: number;
-};
-
-type ZoneEntry = {
-  zone: LeafletCircle;
-  strokeColor: string;
-  fillColor: string;
-  fillOpacity: number;
-  weight: number;
-};
-
-type RegistryMapTrackerProps = {
-  isVolunteer: boolean;
-};
-
-type RegistryAnimalMapRecordWithCoordinates = RegistryAnimalMapRecord & {
-  latitude: number;
-  longitude: number;
-};
-
-function hasCoordinates(
-  animal: RegistryAnimalMapRecord,
-): animal is RegistryAnimalMapRecordWithCoordinates {
-  return (
-    typeof animal.latitude === 'number' && Number.isFinite(animal.latitude) &&
-    typeof animal.longitude === 'number' && Number.isFinite(animal.longitude)
-  );
-}
 
 export default function RegistryMapTracker({
   isVolunteer,
@@ -310,8 +277,9 @@ export default function RegistryMapTracker({
       const zoneLayerGroup = leaflet.layerGroup().addTo(map);
       zonesLayerRef.current = zoneLayerGroup;
 
-      const zones: RegistrySterilizationZone[] =
-        buildSterilizationZones(animalsWithCoordinates);
+      const zones: RegistrySterilizationZone[] = buildSterilizationZones(
+        animalsWithCoordinates,
+      );
 
       for (const zone of zones) {
         const zoneColors = getZonePalette(zone.allSterilized);
