@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -587,41 +588,55 @@ export default function RegistryMapTracker({
                   }}
                   className="group rounded-2xl border border-slate-200 bg-white px-3 py-3 transition-colors hover:border-slate-400 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:border-slate-500"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-sm font-semibold text-slate-900 transition-colors group-hover:text-slate-950 dark:text-slate-100">
-                      {animal.name}
-                    </h3>
-                    <span
-                      className={clsx(
-                        'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
-                        animal.isSterilized
-                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200'
-                          : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200',
-                      )}
-                    >
-                      {animal.isSterilized
-                        ? t('tracker.status.sterilized')
-                        : t('tracker.status.notSterilized')}
-                    </span>
+                  <div className="flex items-start gap-3">
+                    <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-700">
+                      <Image
+                        src={animal.previewImage}
+                        alt={`${animal.name} preview`}
+                        fill
+                        sizes="64px"
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                      />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="text-sm font-semibold text-slate-900 transition-colors group-hover:text-slate-950 dark:text-slate-100">
+                          {animal.name}
+                        </h3>
+                        <span
+                          className={clsx(
+                            'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                            animal.isSterilized
+                              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200'
+                              : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200',
+                          )}
+                        >
+                          {animal.isSterilized
+                            ? t('tracker.status.sterilized')
+                            : t('tracker.status.notSterilized')}
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-xs text-slate-600 dark:text-slate-300 transition-colors">
+                        {animal.species} • {t(`personal.status.${animal.status}`)}
+                      </p>
+
+                      <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                        {animal.address ?? t('tracker.addressFallback')}
+                      </p>
+
+                      <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
+                        {t('tracker.seenAt', {
+                          value: formatSeenAt(
+                            animal.observedAt,
+                            locale,
+                            t('tracker.dateUnknown'),
+                          ),
+                        })}
+                      </p>
+                    </div>
                   </div>
-
-                  <p className="mt-1 text-xs text-slate-600 dark:text-slate-300 transition-colors">
-                    {animal.species} • {t(`personal.status.${animal.status}`)}
-                  </p>
-
-                  <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400 transition-colors">
-                    {animal.address ?? t('tracker.addressFallback')}
-                  </p>
-
-                  <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 transition-colors">
-                    {t('tracker.seenAt', {
-                      value: formatSeenAt(
-                        animal.observedAt,
-                        locale,
-                        t('tracker.dateUnknown'),
-                      ),
-                    })}
-                  </p>
                 </Link>
               ))}
             </div>
