@@ -5,11 +5,21 @@ import type {
 import type { LatLngExpression, LatLngTuple } from 'leaflet';
 
 const LEAFLET_CSS_ID = 'leaflet-css';
+const LEAFLET_TRACKER_STYLE_ID = 'registry-map-leaflet-style';
+const LEAFLET_TRACKER_STYLE_CONTENT = `
+.registry-map-hover-glow {
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.95));
+}
+
+.registry-map-hover-zone-glow {
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.75));
+}
+`;
 
 export const DEFAULT_CENTER: LatLngTuple = [49.8397, 24.0297];
-export const DEFAULT_ZOOM = 6;
-export const MAX_ZOOM = 10;
-export const FOCUS_ZOOM = MAX_ZOOM;
+export const MIN_ZOOM = 14;
+export const DEFAULT_ZOOM = 15;
+export const FOCUS_ZOOM = MIN_ZOOM;
 export const CONNECT_DISTANCE_METERS = 10;
 export const MIN_ZONE_RADIUS_METERS = 8;
 export const ZONE_PADDING_METERS = 4;
@@ -30,15 +40,22 @@ export function ensureLeafletStyles() {
     return;
   }
 
-  if (document.querySelector(`#${LEAFLET_CSS_ID}`)) {
+  if (!document.querySelector(`#${LEAFLET_CSS_ID}`)) {
+    const link = document.createElement('link');
+    link.id = LEAFLET_CSS_ID;
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+  }
+
+  if (document.querySelector(`#${LEAFLET_TRACKER_STYLE_ID}`)) {
     return;
   }
 
-  const link = document.createElement('link');
-  link.id = LEAFLET_CSS_ID;
-  link.rel = 'stylesheet';
-  link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-  document.head.appendChild(link);
+  const style = document.createElement('style');
+  style.id = LEAFLET_TRACKER_STYLE_ID;
+  style.textContent = LEAFLET_TRACKER_STYLE_CONTENT;
+  document.head.appendChild(style);
 }
 
 export function getZonePalette(allSterilized: boolean) {

@@ -85,6 +85,8 @@ function parseBounds(request: NextRequest): {
 
 export async function GET(request: NextRequest) {
   const { bounds, hasInvalidBounds } = parseBounds(request);
+  const shouldLoadOnlyOwnDraft =
+    request.nextUrl.searchParams.get('onlyOwnDraft') === 'true';
 
   if (hasInvalidBounds) {
     return NextResponse.json(
@@ -117,7 +119,12 @@ export async function GET(request: NextRequest) {
 
   const findCondition: Filter<AnimalDocument> = {};
 
-  if (isModerator) {
+  if (shouldLoadOnlyOwnDraft && isVolunteer && userId !== null && userId !== undefined) {
+    Object.assign(findCondition, {
+      draft: true,
+      createdBy: { $eq: userId },
+    });
+  } else if (isModerator) {
     // moderators can access all documents, including drafts
   } else if (isVolunteer && userId !== null && userId !== undefined) {
     Object.assign(findCondition, {

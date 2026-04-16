@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { CheckboxGroup } from '@app/components/checkbox-group';
+
 import {
   buildSterilizationZones,
   DEFAULT_CENTER,
@@ -14,7 +16,7 @@ import {
   FOCUS_ZOOM,
   formatSeenAt,
   getZonePalette,
-  MAX_ZOOM,
+  MIN_ZOOM,
   normalizeText,
   toLatLngExpression,
 } from './registry-map-tracker.helpers';
@@ -23,10 +25,47 @@ import type {
   RegistryAnimalMapRecord,
   RegistrySterilizationZone,
 } from './types';
-import type { LayerGroup, Map as LeafletMap } from 'leaflet';
+import type {
+  Circle as LeafletCircle,
+  CircleMarker as LeafletCircleMarker,
+  LayerGroup,
+  Map as LeafletMap,
+} from 'leaflet';
 import type { ChangeEvent } from 'react';
 
-export default function RegistryMapTracker() {
+const ONLY_DRAFT_FILTER_VALUE = 'only-draft';
+const HOVER_MARKER_STROKE = '#f59e0b';
+const HOVER_MARKER_FILL = '#fef08a';
+const HOVER_MARKER_RADIUS = 8;
+const HOVER_MARKER_WEIGHT = 3;
+const HOVER_ZONE_STROKE = '#f59e0b';
+const HOVER_ZONE_FILL = '#fbbf24';
+const HOVER_ZONE_FILL_OPACITY = 0.22;
+const HOVER_ZONE_WEIGHT = 3;
+
+type MarkerEntry = {
+  marker: LeafletCircleMarker;
+  strokeColor: string;
+  fillColor: string;
+  radius: number;
+  weight: number;
+};
+
+type ZoneEntry = {
+  zone: LeafletCircle;
+  strokeColor: string;
+  fillColor: string;
+  fillOpacity: number;
+  weight: number;
+};
+
+type RegistryMapTrackerProps = {
+  isVolunteer: boolean;
+};
+
+export default function RegistryMapTracker({
+  isVolunteer,
+}: RegistryMapTrackerProps) {
   const t = useTranslations('historypage');
   const locale = useLocale();
   const router = useRouter();
@@ -35,12 +74,25 @@ export default function RegistryMapTracker() {
   const mapRef = useRef<LeafletMap | null>(null);
   const pointsLayerRef = useRef<LayerGroup | null>(null);
   const zonesLayerRef = useRef<LayerGroup | null>(null);
+  const markerByAnimalIdRef = useRef<Map<string, MarkerEntry>>(new Map());
+  const zoneByAnimalIdRef = useRef<Map<string, ZoneEntry>>(new Map());
+  const highlightedAnimalIdRef = useRef<string | null>(null);
+  const onlyOwnDraftRef = useRef(false);
   const requestIdRef = useRef(0);
 
   const [animals, setAnimals] = useState<RegistryAnimalMapRecord[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [isOnlyDraftEnabled, setIsOnlyDraftEnabled] = useState(false);
+  const [hoveredAnimalId, setHoveredAnimalId] = useState<string | null>(null);
+  const [layerRenderVersion, setLayerRenderVersion] = useState(0);
+
+  const isRenderOnlyDraftState = isVolunteer && isOnlyDraftEnabled;
+
+  useEffect(() => {
+    onlyOwnDraftRef.current = isRenderOnlyDraftState;
+  }, [isRenderOnlyDraftState]);
 
   const loadAnimalsInViewport = useCallback(async () => {
     const map = mapRef.current;
@@ -59,6 +111,10 @@ export default function RegistryMapTracker() {
       east: bounds.getEast().toString(),
       west: bounds.getWest().toString(),
     });
+
+    if (onlyOwnDraftRef.current) {
+      query.set('onlyOwnDraft', 'true');
+    }
 
     setIsLoading(true);
     setLoadFailed(false);
@@ -98,6 +154,74 @@ export default function RegistryMapTracker() {
     }
   }, []);
 
+  const resetHoverStyles = useCallback((animalId: string | null) => {
+    if (animalId === null) {
+      return;
+    }
+
+    const markerEntry = markerByAnimalIdRef.current.get(animalId);
+
+    if (markerEntry !== undefined) {
+      markerEntry.marker.setStyle({
+        color: markerEntry.strokeColor,
+        fillColor: markerEntry.fillColor,
+        weight: markerEntry.weight,
+      });
+      markerEntry.marker.setRadius(markerEntry.radius);
+      markerEntry.marker
+        .getElement()
+        ?.classList.remove('registry-map-hover-glow');
+    }
+
+    const zoneEntry = zoneByAnimalIdRef.current.get(animalId);
+
+    if (zoneEntry !== undefined) {
+      zoneEntry.zone.setStyle({
+        color: zoneEntry.strokeColor,
+        fillColor: zoneEntry.fillColor,
+        fillOpacity: zoneEntry.fillOpacity,
+        weight: zoneEntry.weight,
+      });
+      zoneEntry.zone
+        .getElement()
+        ?.classList.remove('registry-map-hover-zone-glow');
+    }
+  }, []);
+
+  const applyHoverStyles = useCallback((animalId: string | null) => {
+    if (animalId === null) {
+      return;
+    }
+
+    const markerEntry = markerByAnimalIdRef.current.get(animalId);
+
+    if (markerEntry !== undefined) {
+      markerEntry.marker.setStyle({
+        color: HOVER_MARKER_STROKE,
+        fillColor: HOVER_MARKER_FILL,
+        weight: HOVER_MARKER_WEIGHT,
+      });
+      markerEntry.marker.setRadius(HOVER_MARKER_RADIUS);
+      markerEntry.marker.getElement()?.classList.add('registry-map-hover-glow');
+      markerEntry.marker.bringToFront();
+    }
+
+    const zoneEntry = zoneByAnimalIdRef.current.get(animalId);
+
+    if (zoneEntry !== undefined) {
+      zoneEntry.zone.setStyle({
+        color: HOVER_ZONE_STROKE,
+        fillColor: HOVER_ZONE_FILL,
+        fillOpacity: HOVER_ZONE_FILL_OPACITY,
+        weight: HOVER_ZONE_WEIGHT,
+      });
+      zoneEntry.zone
+        .getElement()
+        ?.classList.add('registry-map-hover-zone-glow');
+      zoneEntry.zone.bringToFront();
+    }
+  }, []);
+
   useEffect(() => {
     ensureLeafletStyles();
 
@@ -115,7 +239,7 @@ export default function RegistryMapTracker() {
       }
 
       const map = leaflet.map(mapContainerRef.current, {
-        maxZoom: MAX_ZOOM,
+        minZoom: MIN_ZOOM,
         zoomControl: true,
       });
       mapRef.current = map;
@@ -162,6 +286,8 @@ export default function RegistryMapTracker() {
 
       pointsLayerRef.current?.remove();
       zonesLayerRef.current?.remove();
+      markerByAnimalIdRef.current.clear();
+      zoneByAnimalIdRef.current.clear();
 
       const pointLayerGroup = leaflet.layerGroup().addTo(map);
       pointsLayerRef.current = pointLayerGroup;
@@ -175,14 +301,19 @@ export default function RegistryMapTracker() {
       for (const zone of zones) {
         const zoneColors = getZonePalette(zone.allSterilized);
 
-        leaflet
+        const zoneStyle = {
+          color: zoneColors.stroke,
+          fillColor: zoneColors.fill,
+          fillOpacity: 0.14,
+          weight: 2,
+        };
+
+        const zoneCircle = leaflet
           .circle(toLatLngExpression(zone.latitude, zone.longitude), {
             radius: zone.radius,
-            color: zoneColors.stroke,
-            fillColor: zoneColors.fill,
-            fillOpacity: 0.14,
-            weight: 2,
+            ...zoneStyle,
             interactive: false,
+            className: 'registry-map-zone',
           })
           .bindTooltip(
             t('tracker.zoneAnimals', { count: zone.animalIds.length }),
@@ -190,20 +321,36 @@ export default function RegistryMapTracker() {
               direction: 'top',
               sticky: true,
             },
-          )
-          .addTo(zoneLayerGroup);
+          );
+
+        zoneCircle.addTo(zoneLayerGroup);
+
+        for (const animalId of zone.animalIds) {
+          zoneByAnimalIdRef.current.set(animalId, {
+            zone: zoneCircle,
+            strokeColor: zoneStyle.color,
+            fillColor: zoneStyle.fillColor,
+            fillOpacity: zoneStyle.fillOpacity,
+            weight: zoneStyle.weight,
+          });
+        }
       }
 
       for (const animal of animals) {
         const markerStroke = animal.isSterilized ? '#15803d' : '#dc2626';
 
+        const markerStyle = {
+          color: markerStroke,
+          fillColor: '#ffffff',
+          fillOpacity: 1,
+          radius: 5,
+          weight: 2,
+          className: 'registry-map-marker',
+        };
+
         const marker = leaflet
           .circleMarker(toLatLngExpression(animal.latitude, animal.longitude), {
-            color: markerStroke,
-            fillColor: '#ffffff',
-            fillOpacity: 1,
-            radius: 5,
-            weight: 2,
+            ...markerStyle,
           })
           .bindTooltip(animal.name, {
             direction: 'top',
@@ -215,9 +362,32 @@ export default function RegistryMapTracker() {
         });
 
         marker.addTo(pointLayerGroup);
+        markerByAnimalIdRef.current.set(animal.id, {
+          marker,
+          strokeColor: markerStyle.color,
+          fillColor: markerStyle.fillColor,
+          radius: markerStyle.radius,
+          weight: markerStyle.weight,
+        });
       }
+
+      setLayerRenderVersion((current) => current + 1);
     })();
   }, [animals, router, t]);
+
+  useEffect(() => {
+    resetHoverStyles(highlightedAnimalIdRef.current);
+    applyHoverStyles(hoveredAnimalId);
+    highlightedAnimalIdRef.current = hoveredAnimalId;
+  }, [applyHoverStyles, hoveredAnimalId, layerRenderVersion, resetHoverStyles]);
+
+  useEffect(() => {
+    if (mapRef.current === null) {
+      return;
+    }
+
+    void loadAnimalsInViewport();
+  }, [isRenderOnlyDraftState, loadAnimalsInViewport]);
 
   const handleSearchChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -225,6 +395,10 @@ export default function RegistryMapTracker() {
     },
     [],
   );
+
+  const handleDraftFilterChange = useCallback((nextValues: string[]) => {
+    setIsOnlyDraftEnabled(nextValues.includes(ONLY_DRAFT_FILTER_VALUE));
+  }, []);
 
   const handleDetectLocation = useCallback(() => {
     if (
@@ -243,7 +417,9 @@ export default function RegistryMapTracker() {
         const { latitude, longitude } = position.coords;
         mapRef.current?.setView([latitude, longitude], FOCUS_ZOOM);
       },
-      () => {},
+      () => {
+        setLoadFailed(true);
+      },
       {
         enableHighAccuracy: true,
         timeout: 10000,
@@ -269,7 +445,15 @@ export default function RegistryMapTracker() {
 
   return (
     <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="flex h-[65dvh] flex-col border border-slate-200 bg-white rounded-3xl shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors overflow-hidden">
+      <div
+        className={clsx(
+          'flex h-[65dvh] flex-col border border-slate-200 bg-white rounded-3xl shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors overflow-hidden',
+          {
+            'shadow-[0_22px_70px_rgba(15,23,42,0.08),0_0_0_1px_rgba(148,163,184,0.4)_inset] dark:shadow-[0_22px_70px_rgba(2,6,23,0.35),0_0_0_1px_rgba(148,163,184,0.45)_inset]':
+              isRenderOnlyDraftState,
+          },
+        )}
+      >
         <div className="flex items-center justify-between gap-2 px-3 py-2">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200 transition-colors">
@@ -283,6 +467,22 @@ export default function RegistryMapTracker() {
           </div>
 
           <div className="flex items-center gap-2">
+            {isVolunteer && (
+              <CheckboxGroup
+                id="tracker-only-draft"
+                options={[
+                  {
+                    value: ONLY_DRAFT_FILTER_VALUE,
+                    label: t('tracker.onlyDraft.label'),
+                  },
+                ]}
+                value={isOnlyDraftEnabled ? [ONLY_DRAFT_FILTER_VALUE] : []}
+                onChange={handleDraftFilterChange}
+                className="min-w-34 rounded-xl border-slate-300 bg-white/80 dark:border-slate-600 dark:bg-slate-700/60"
+                optionClassName="min-w-0 rounded-xl px-3 py-2"
+              />
+            )}
+
             <button
               type="button"
               onClick={handleDetectLocation}
@@ -293,17 +493,29 @@ export default function RegistryMapTracker() {
           </div>
         </div>
 
-        <div
-          ref={mapContainerRef}
-          className="w-full flex-1"
-          aria-label={t('tracker.mapAriaLabel')}
-          style={{ zIndex: 5 }}
-        />
+        <div className="relative w-full flex-1">
+          <div
+            ref={mapContainerRef}
+            className="h-full w-full"
+            aria-label={t('tracker.mapAriaLabel')}
+            style={{ zIndex: 5 }}
+          />
+          {isRenderOnlyDraftState && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-slate-200/25 dark:bg-slate-200/10"
+            />
+          )}
+        </div>
       </div>
 
       <div
         className={clsx(
           'border border-slate-200 bg-white rounded-3xl flex h-[70dvh] xl:h-[65dvh] flex-col px-4 py-4 xl:px-5 shadow-[0_22px_70px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-800 transition-colors overflow-hidden',
+          {
+            'shadow-[0_22px_70px_rgba(15,23,42,0.08),0_0_0_1px_rgba(148,163,184,0.4)_inset] dark:shadow-[0_22px_70px_rgba(2,6,23,0.35),0_0_0_1px_rgba(148,163,184,0.45)_inset]':
+              isRenderOnlyDraftState,
+          },
           { 'opacity-50': isLoading },
         )}
       >
@@ -346,6 +558,18 @@ export default function RegistryMapTracker() {
                 <Link
                   key={animal.id}
                   href={animal.detailsHref}
+                  onMouseEnter={() => {
+                    setHoveredAnimalId(animal.id);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredAnimalId(null);
+                  }}
+                  onFocus={() => {
+                    setHoveredAnimalId(animal.id);
+                  }}
+                  onBlur={() => {
+                    setHoveredAnimalId(null);
+                  }}
                   className="group rounded-2xl border border-slate-200 bg-white px-3 py-3 transition-colors hover:border-slate-400 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800/80 dark:hover:border-slate-500"
                 >
                   <div className="flex items-start justify-between gap-3">

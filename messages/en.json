@@ -362,6 +362,9 @@
         "unsupported": "Geolocation is unavailable in this browser.",
         "error": "Could not detect your location. Pick a predefined point."
       },
+      "onlyDraft": {
+        "label": "only draft"
+      },
       "points": {
         "downtown": "Downtown",
         "northStation": "North Station",
