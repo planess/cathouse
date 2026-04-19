@@ -21,7 +21,6 @@ const payloadSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, 'Provide the animal name.')
     .max(120, 'Name is too long.'),
   birthday: z
     .string()

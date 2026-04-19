@@ -192,11 +192,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
     const submit = useCallback<() => Promise<'updated'>>(async () => {
       setError(null);
 
-      if (!name.trim()) {
-        const message = t('form.name_error');
-        setError(message);
-        throw new Error(message);
-      }
+      const normalizedName = name.trim();
 
       if (sterilizedEnabled && !sterilizedDate) {
         const message = t('form.sterilization_date_error');
@@ -206,7 +202,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
 
       const payload = new FormData();
       payload.append('animalId', animalId);
-      payload.append('name', name.trim());
+      payload.append('name', normalizedName);
       payload.append('birthday', birthday);
       payload.append('description', description);
       payload.append('passportCode', passportCode);
@@ -516,7 +512,7 @@ export const EditInfoForm = forwardRef<EditInfoFormHandle, EditInfoFormProps>(
           )}
         </section>
 
-        {error && (
+        {error !== null && (
           <p className="rounded-2xl bg-rose-50 px-4 py-2 text-sm text-rose-700">
             {error}
           </p>
