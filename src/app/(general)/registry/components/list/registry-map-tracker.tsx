@@ -61,6 +61,7 @@ export default function RegistryMapTracker({
   const highlightedAnimalIdRef = useRef<string | null>(null);
   const onlyOwnDraftRef = useRef(false);
   const requestIdRef = useRef(0);
+  const shouldReloadAfterMoveRef = useRef(false);
 
   const [animals, setAnimals] = useState<RegistryAnimalMapRecord[]>([]);
   const [searchValue, setSearchValue] = useState('');
@@ -234,16 +235,29 @@ export default function RegistryMapTracker({
 
       map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
 
+      const markNextMoveAsReloadable = () => {
+        shouldReloadAfterMoveRef.current = true;
+      };
+
       const handleMapChanged = () => {
+        if (!shouldReloadAfterMoveRef.current) {
+          return;
+        }
+
+        shouldReloadAfterMoveRef.current = false;
         void loadAnimalsInViewport();
       };
 
       map.on('moveend', handleMapChanged);
+      map.on('dragstart', markNextMoveAsReloadable);
+      map.on('zoomstart', markNextMoveAsReloadable);
 
       void loadAnimalsInViewport();
 
       map.once('unload', () => {
         map.off('moveend', handleMapChanged);
+        map.off('dragstart', markNextMoveAsReloadable);
+        map.off('zoomstart', markNextMoveAsReloadable);
       });
     })();
 
@@ -399,6 +413,7 @@ export default function RegistryMapTracker({
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        shouldReloadAfterMoveRef.current = true;
         mapRef.current?.setView([latitude, longitude], FOCUS_ZOOM);
       },
       () => {
