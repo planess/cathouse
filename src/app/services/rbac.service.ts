@@ -186,11 +186,9 @@ export class RBACService extends Singleton {
     const db = dbClient.db();
 
     try {
-      await db
-        .collection(DbTables.roles)
-        .updateOne({ _id: roleId }, {
-          $pull: { permissions: { $in: permissionId } },
-        } as unknown as UpdateFilter<Document>);
+      await db.collection(DbTables.roles).updateOne({ _id: roleId }, {
+        $pull: { permissions: { $in: permissionId } },
+      } as unknown as UpdateFilter<Document>);
 
       return { success: true };
     } catch (error) {

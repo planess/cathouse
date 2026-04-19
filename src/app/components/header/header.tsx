@@ -1,19 +1,24 @@
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { hasPermission } from '@app/services/access-verification.service';
 
 import { ReportDialogTrigger } from '../report-dialog';
 
 import Logo from './components/logo/logo';
 import MobileSidebar from './components/sidebar/mobile-sidebar';
 
-export default function Header() {
-  const t = useTranslations('header');
+export default async function Header() {
+  const t = await getTranslations('header');
+  const canReadActs = await hasPermission(SYSTEM_PERMISSIONS.ACT_READ);
 
   const links = [
     { key: 'home', href: '/' },
     { key: 'contacts', href: '/contacts' },
-    { key: 'registry', href: '/history' },
+    { key: 'registry', href: '/registry' },
     { key: 'help', href: '/help' },
+    ...(canReadActs ? [{ key: 'acts', href: '/acts' }] : []),
   ];
 
   const localizedLinks = links.map(({ key, href }) => ({

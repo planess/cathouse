@@ -20,7 +20,7 @@ import {
   RefundIcon,
   VolunteerHeartIcon,
   WalletMinusIcon,
-} from '../history/[animalId]/components/icons';
+} from '../registry/[animalId]/components/icons';
 
 import { Accordion } from './accordion';
 import Section from './section';

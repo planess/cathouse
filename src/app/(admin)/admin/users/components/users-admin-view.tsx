@@ -11,28 +11,13 @@ import {
 } from '@app/actions/users.server';
 import { useModal } from '@app/hooks/use-modal';
 
-export type UserRow = {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified: boolean;
-  roles: string[];
-  roleIds: string[];
-  isActive: boolean;
-  createdAt: string;
-};
-
-type RoleOption = {
-  id: string;
-  name: string;
-};
-
-type UserFormState = {
-  email: string;
-  emailVerified: boolean;
-  isActive: boolean;
-  roles: string[];
-};
+import {
+  UserFormProps,
+  UserFormState,
+  UserModalOptions,
+  UserRow,
+  UsersAdminViewProps,
+} from '../types/users-admin-view.types';
 
 const defaultFormState: UserFormState = {
   email: '',
@@ -41,23 +26,12 @@ const defaultFormState: UserFormState = {
   roles: [],
 };
 
-export function UsersAdminView({
-  users,
-  roleOptions,
-}: {
-  users: UserRow[];
-  roleOptions: RoleOption[];
-}) {
+export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
   const router = useRouter();
   const { showModal } = useModal();
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  const openUserModal = (options: {
-    title: string;
-    initialState: UserFormState;
-    submitLabel: string;
-    onSubmit: (state: UserFormState) => Promise<void>;
-  }) => {
+  const openUserModal = (options: UserModalOptions) => {
     const formStateRef = { current: options.initialState };
 
     void showModal({
@@ -305,15 +279,7 @@ export function UsersAdminView({
   );
 }
 
-function UserForm({
-  initialState,
-  roleOptions,
-  onChange,
-}: {
-  initialState: UserFormState;
-  roleOptions: RoleOption[];
-  onChange: (state: UserFormState) => void;
-}) {
+function UserForm({ initialState, roleOptions, onChange }: UserFormProps) {
   const [formState, setFormState] = useState<UserFormState>(initialState);
 
   const selectedRoles = formState.roles.map((roleId) => {

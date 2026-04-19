@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
 
 import { DbTables } from '@app/enum/db-tables';
@@ -6,23 +5,9 @@ import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import clientPromise from '@app/ins/mongo-client';
 
 import { UsersAdminView } from './components/users-admin-view';
+import { DbRole, DbUser } from './types/users-page.types';
 
 import type { Metadata } from 'next';
-
-type DbUser = {
-  _id: ObjectId;
-  email: string;
-  emailVerified?: boolean;
-  roles?: ObjectId[];
-  isActive?: boolean;
-  createdAt?: Date;
-};
-
-type DbRole = {
-  _id: ObjectId;
-  name: string;
-  isActive?: boolean;
-};
 
 function formatDate(value?: Date): string {
   if (!value) {

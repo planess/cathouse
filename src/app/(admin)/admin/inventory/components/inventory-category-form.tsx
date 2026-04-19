@@ -3,22 +3,15 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import type {
-  CategoryFormState,
-  InventoryCategoryOption,
-} from '../types/inventory.types';
+import type { CategoryFormProps } from '../types/inventory-component-props.types';
+import type { CategoryFormState } from '../types/inventory.types';
 
 export function CategoryForm({
   initialState,
   options,
   onChange,
   onValidityChange,
-}: {
-  initialState: CategoryFormState;
-  options: InventoryCategoryOption[];
-  onChange: (state: CategoryFormState) => void;
-  onValidityChange: (isValid: boolean) => void;
-}) {
+}: CategoryFormProps) {
   const t = useTranslations('adminInventory');
   const [formState, setFormState] = useState<CategoryFormState>(initialState);
   const [touched, setTouched] = useState({ name: false });

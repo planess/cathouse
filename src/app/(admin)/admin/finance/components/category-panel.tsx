@@ -1,66 +1,127 @@
 import { useTranslations } from 'next-intl';
 
-import { createCategory } from '@app/actions/finance.server';
+import { createCategory, updateCategory } from '@app/actions/finance';
 import { useModal } from '@app/hooks/use-modal';
 
+import {
+  collectNodeIds,
+  excludeNodesById,
+  findNodeById,
+} from '../helpers/category-tree-utils';
 import { handleDeleteCategory } from '../helpers/handle-delete-category';
-import { CategoryNode } from '../models/category-node';
-import { CategoryOption } from '../models/category-option';
+import {
+  CategoryModalOptions,
+  CategoryModalState,
+} from '../models/props/category-modal-options';
+import { CategoryPanelProps } from '../models/props/category-panel-props';
 import { TranslationFn } from '../models/transform-fn';
 
-import CategoryForm from './category-form';
 import CategoryTree from './category-tree';
+import IncomingCategoryForm from './incoming-category-form';
 
 export default function CategoryPanel({
   title,
   categories,
   options,
-  type,
   onRefresh,
-}: {
-  title: string;
-  categories: CategoryNode[];
-  options: CategoryOption[];
-  type: 'incoming' | 'outgoing';
-  onRefresh: () => void;
-}) {
+}: CategoryPanelProps) {
   const t = useTranslations('adminFinance');
   const { showModal } = useModal();
   const translate: TranslationFn = (key, values) =>
-    t(
-      key,
-      values as Record<string, string | number | Date> | undefined,
-    );
+    t(key, values as Record<string, string | number | Date> | undefined);
 
-  const handleAddCategory = () => {
-    const formStateRef = { current: { name: '', inheritsId: '' } };
+  const openCategoryModal = ({
+    title,
+    submitLabel,
+    initialState,
+    categories,
+    allowActiveEdit,
+    onSubmit,
+  }: CategoryModalOptions) => {
+    const formStateRef = { current: initialState };
 
     void showModal({
-      title: t('categories.addTitle', { title }),
+      title,
       content: (
-        <CategoryForm
-          options={options}
+        <IncomingCategoryForm
+          categories={categories}
+          initialState={initialState}
+          allowActiveEdit={allowActiveEdit}
           onChange={(nextState) => {
-            formStateRef.current = nextState;
+            formStateRef.current = nextState as CategoryModalState;
           }}
         />
       ),
       actions: [
         { label: t('common.cancel'), tone: 'ghost' },
         {
-          label: t('common.create'),
+          label: submitLabel,
           tone: 'primary',
           onSelect: async () => {
-            await createCategory({
-              name: formStateRef.current.name,
-              inheritsId: formStateRef.current.inheritsId,
-              type,
-            });
+            await onSubmit(formStateRef.current);
             onRefresh();
           },
         },
       ],
-      size: 'sm',
+      size: 'lg',
+    });
+  };
+
+  const handleAddCategory = () => {
+    openCategoryModal({
+      title: t('categories.addTitle', { title }),
+      submitLabel: t('common.create'),
+      initialState: {
+        name: '',
+        inheritsId: '',
+        active: true,
+      },
+      categories,
+      allowActiveEdit: false,
+      onSubmit: async (state) => {
+        await createCategory({
+          name: state.name,
+          inheritsId: state.inheritsId,
+          active: true,
+        });
+      },
+    });
+  };
+
+  const handleEditCategory = (categoryId: string) => {
+    const category = options.find((option) => option.id === categoryId);
+
+    if (!category) {
+      return;
+    }
+
+    const editingNode = findNodeById(categories, categoryId);
+    const excludedIds = new Set<string>([categoryId]);
+
+    if (editingNode !== null) {
+      collectNodeIds(editingNode).forEach((id) => excludedIds.add(id));
+    }
+
+    const selectableCategories = excludeNodesById(categories, excludedIds);
+
+    openCategoryModal({
+      title: t('categories.editTitle', { name: category.name }),
+      submitLabel: t('common.saveChanges'),
+      initialState: {
+        name: category.name,
+        inheritsId: category.inheritsFrom ?? '',
+        active: category.active,
+      },
+      categories: selectableCategories,
+      allowActiveEdit: true,
+      onSubmit: async (state) => {
+        await updateCategory({
+          id: categoryId,
+          name: state.name,
+          inheritsId: state.inheritsId,
+          active: state.active,
+        });
+      },
     });
   };
 
@@ -86,10 +147,10 @@ export default function CategoryPanel({
         ) : (
           <CategoryTree
             nodes={categories}
+            onEdit={handleEditCategory}
             onDelete={(categoryId) =>
               void handleDeleteCategory({
                 categoryId,
-                type,
                 onRefresh,
                 showModal,
                 t: translate,

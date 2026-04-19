@@ -21,6 +21,7 @@
   "header": {
     "home": "Home",
     "contacts": "Contacts",
+    "acts": "Acts",
     "history": "History",
     "registry": "Registry",
     "help": "Help",
@@ -30,6 +31,12 @@
     "menuOpenLabel": "Open navigation menu",
     "menuCloseLabel": "Close navigation menu",
     "emergencyButton": "Report an animal"
+  },
+  "notFound": {
+    "errorLabel": "Error 404",
+    "title": "Page Not Found",
+    "description": "This page does not exist.",
+    "home": "Go to Home"
   },
   "reportDialog": {
     "buttonLabel": "Report",
@@ -336,9 +343,48 @@
     }
   },
   "historypage": {
-    "title": "Registry of our animals",
+    "title": "Stray Animal Tracker",
     "panel1": "We register animals that we monitor, care for, and treat. Each history is our inspiration and helps coordinate the efforts of volunteers and clinics to provide the best care. Each record has a unique story, characteristics, and conditions.",
-    "createHistory": "Create new history",
+    "createHistory": "Register animal",
+    "tracker": {
+      "subtitle": "Track colonies and stray routes on a live map and open the full animal profile directly from the visible zone list.",
+      "mapAriaLabel": "Animal registry map",
+      "legend": {
+        "sterilized": "Zone is under control",
+        "mixed": "Zone has issues"
+      },
+      "location": {
+        "detectButton": "My location",
+        "predefinedLabel": "Jump to predefined point",
+        "idle": "Choose a predefined point or detect your position.",
+        "detecting": "Detecting your location...",
+        "detected": "Map centered on your location.",
+        "unsupported": "Geolocation is unavailable in this browser.",
+        "error": "Could not detect your location. Pick a predefined point."
+      },
+      "onlyDraft": {
+        "label": "only draft"
+      },
+      "points": {
+        "downtown": "Downtown",
+        "northStation": "North Station",
+        "southeastPark": "Southeast Park"
+      },
+      "visibleAnimals": "Visible animals",
+      "animalsInView": "Animals in current map view: {count}",
+      "searchPlaceholder": "Search visible animals...",
+      "loading": "Updating animals in current viewport...",
+      "loadError": "Unable to load animals for this map area. Try moving the map again.",
+      "addressFallback": "Address not specified",
+      "seenAt": "Seen: {value}",
+      "zoneAnimals": "Animals in zone: {count}",
+      "status": {
+        "sterilized": "Sterilized",
+        "notSterilized": "Not sterilized"
+      },
+      "dateUnknown": "Unknown date",
+      "empty": "No animals found in this viewport. Move the map or change the search query."
+    },
     "pagination": {
       "previous": "Previous",
       "next": "Next",
@@ -570,6 +616,7 @@
         "chip": "Chip number",
         "sterilized": "Sterilized"
       },
+      "nameFallback": "No name yet",
       "descriptionFallback": "There is no description yet for this animal. Add one to help adopters learn more.",
       "actions": {
         "openMap": "Open map",
@@ -642,6 +689,93 @@
     },
     "migrations": {
       "title": "Database migrations"
+    },
+    "acts": {
+      "title": "Volunteer Acts",
+      "summary": "{total, plural, one {{total} act} other {{total} acts}} from {volunteers, plural, one {{volunteers} volunteer} other {{volunteers} volunteers}}",
+      "totalActs": "Total Acts",
+      "volunteers": "Volunteers",
+      "empty": "No volunteer acts recorded yet.",
+      "table": {
+        "type": "Type",
+        "status": "Status",
+        "session": "Session",
+        "managed": "Managed",
+        "animals": "Animals",
+        "documents": "Documents",
+        "equipment": "Equipment",
+        "notes": "Notes",
+        "noFiles": "No files",
+        "filesCount": "{count, plural, one {{count} file} other {{count} files}}"
+      },
+      "equipment": {
+        "media": "{count, plural, one {{count} media} other {{count} media}}"
+      },
+      "statusLabels": {
+        "scheduled": "Scheduled",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "volunteerActsCount": "{count, plural, one {{count} act} other {{count} acts}}"
+    },
+    "foundationEmail": {
+      "title": "Foundation Email"
+    }
+  },
+  "actspage": {
+    "title": "My Volunteer Acts",
+    "subtitle": "You can see your own acts here and manage them.",
+    "createButton": "Create Act",
+    "createNewAct": "Create New Act",
+    "myActs": "My Acts ({count})",
+    "noActs": "No acts found yet.",
+    "form": {
+      "type": "Type",
+      "animals": "Animals",
+      "sessionStart": "Session Start",
+      "sessionEnd": "Session End",
+      "notes": "Notes",
+      "notesShort": "Notes",
+      "equipment": "Equipment",
+      "addEquipment": "+ Add equipment",
+      "equipmentNumber": "Equipment #{number}",
+      "remove": "Remove",
+      "selectEquipment": "Select equipment",
+      "conditionBefore": "Condition Before",
+      "conditionAfter": "Condition After",
+      "conditionOptions": {
+        "new": "New",
+        "good": "Good",
+        "fair": "Fair",
+        "poor": "Poor",
+        "broken": "Broken"
+      },
+      "mediaAttachments": "Media attachments",
+      "addMediaInput": "+ Add media input",
+      "documentsLabel": "Documents",
+      "saveAct": "Save Act",
+      "saveChanges": "Save Changes"
+    },
+    "labels": {
+      "documents": "Documents",
+      "session": "Session",
+      "animals": "Animals",
+      "notes": "Notes",
+      "none": "None",
+      "notAvailable": "N/A"
+    },
+    "noPermission": "You do not have permission to create acts.",
+    "editAct": "Edit Act",
+    "deleteAct": "Delete Act",
+    "messages": {
+      "approvedCannotUpdate": "Approved acts cannot be updated."
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
     }
   },
   "homepage": {
@@ -974,6 +1108,7 @@
           "description": "Quality dry and wet food for animals in shelters and on the street."
         }
       },
+      "offerLink": "For legal entities, we have to provide a public offer. Check the details <link>on the link</link>.",
       "ibanTitle": "IBAN bank details",
       "ibanNote": "Charitable support",
       "iban": {
@@ -1303,9 +1438,10 @@
     },
     "account": {
       "overviewTitle": "Account overview",
-      "overviewSubtitle": "{count} active accounts · This month: {month}",
+      "overviewSubtitle": "{count} active {count, plural, one {account} other {accounts}}",
       "noAccounts": "No active accounts yet. Add your first bank account to start tracking balances.",
       "activeBadge": "Active",
+      "inactiveBadge": "Inactive",
       "thisMonth": "This month",
       "currentBalance": "Current balance",
       "debt": "Debt",
@@ -1343,6 +1479,7 @@
         "date": "Date",
         "amount": "Amount",
         "balance": "Balance",
+        "documents": "Documents",
         "actions": "Actions"
       },
       "empty": "No reports for this period yet.",
@@ -1374,6 +1511,12 @@
         "amountPlaceholder": "0",
         "descriptionLabel": "Description",
         "descriptionPlaceholder": "Monthly shelter expenses",
+        "counterpartyLabel": "Sender / Recipient",
+        "senderPlaceholder": "Sender",
+        "recipientPlaceholder": "Recipient",
+        "operationDateLabel": "Operation date",
+        "operationDateRequired": "Operation date is required.",
+        "ibanLabel": "Recipient IBAN",
         "categoryLabel": "Category",
         "categoryPlaceholder": "Select category",
         "accountLabel": "Account",
@@ -1385,8 +1528,20 @@
         "detailDescriptionPlaceholder": "Extra note",
         "detailAmountPlaceholder": "0",
         "detailCategoryPlaceholder": "Optional subcategory",
+        "documentsTitle": "Documents",
+        "documentsUpload": "Upload documents",
+        "documentsUploading": "Uploading...",
+        "documentsEmpty": "No documents uploaded yet.",
+        "documentsDelete": "Delete",
+        "documentsRestore": "Restore",
+        "documentsUploadError": "Unable to upload documents.",
         "descriptionRequired": "Description is required.",
         "amountRequired": "Amount must be greater than zero.",
+        "amountMaxHint": "Maximum available from account: {max} (account balance: {account}).",
+        "selectAccountLimitHint": "Select an account to apply outgoing limit.",
+        "amountMaxExceeded": "Amount must not exceed {max}.",
+        "accountPositiveRequired": "Selected account has non-positive balance. Choose another account or switch to debt.",
+        "targetedSpendingHint": "For targeted categories, spending uses selected category balance first, then parent categories until covered or exhausted.",
         "categoryRequired": "Category is required.",
         "accountRequired": "Account is required."
       }
@@ -1399,10 +1554,20 @@
       "addCategory": "Add category",
       "noCategories": "No categories yet.",
       "addTitle": "Add {title} category",
+      "editTitle": "Edit {name}",
+      "editAria": "Edit {name}",
       "nameLabel": "Name",
       "namePlaceholder": "Donations",
       "parentLabel": "Parent",
       "parentPlaceholder": "No parent",
+      "linkedToLabel": "Linked to incoming",
+      "linkedToPlaceholder": "No linked incoming",
+      "activeLabel": "Active category",
+      "activeHint": "Disable to hide from incoming report forms while keeping history.",
+      "specificLabel": "Specific category",
+      "specificHint": "Mark as special for future incoming calculations.",
+      "inactiveBadge": "Inactive",
+      "specificBadge": "Specific",
       "deleteErrorTitle": "Unable to delete category"
     }
   },
@@ -1420,23 +1585,38 @@
     "actions": {
       "manageStorages": "Manage storages",
       "manageCategories": "Manage categories",
-      "addItem": "Add new item"
+      "addItem": "Accept new item"
     },
     "table": {
       "title": "Inventory stock",
       "subtitle": "Grouped by category and linked to storage locations.",
       "columns": {
-        "name": "Product hierarchy / name",
-        "sku": "SKU",
-        "quantity": "Quantity",
-        "storage": "Storage location",
-        "expiration": "Exp. date",
-        "received": "Received",
-        "source": "Source",
-        "actions": "Actions"
+        "name": "Name",
+        "serialNumber": "Serial Number",
+        "individualId": "Individual ID",
+        "expiryDate": "Expiry date",
+        "unit": "Unit",
+        "type": "Type",
+        "from": "From",
+        "to": "To",
+        "dateTime": "Date/Time"
       },
       "categoryCount": "{count} items",
       "unitsLabel": "units",
+      "searchPlaceholder": "Search inventory...",
+      "filterOptions": "Filter Options",
+      "transactionHistory": "Transaction History",
+      "identifierLabel": "Identifier",
+      "amountLabel": "Amount",
+      "locationLabel": "Location",
+      "conditionLabel": "Condition",
+      "currentOwnerLabel": "Current Owner",
+      "expirationDateLabel": "Expiration Date",
+      "transferLabel": "Transfer",
+      "toInlineLabel": "To",
+      "amountInlineLabel": "Amount",
+      "notesLabel": "Notes",
+      "addHistoryRecord": "Add History Record",
       "empty": "No inventory records yet.",
       "noItems": "No items in this category.",
       "uncategorized": "Uncategorized",
@@ -1457,7 +1637,13 @@
         "typePlaceholder": "Select type",
         "typeEquipment": "Equipment",
         "typeConsumable": "Consumable",
+        "typeAsset": "Asset",
         "typeRequired": "Type is required.",
+        "consumabilityLabel": "Consumability",
+        "consumabilityPlaceholder": "Select consumability",
+        "consumabilityReusable": "Reusable",
+        "consumabilitySingleUse": "One-off consumable",
+        "consumabilityMultiUse": "Multi-use consumable",
         "quantityLabel": "Quantity",
         "quantityPlaceholder": "0",
         "quantityRequired": "Quantity must be greater than zero.",
@@ -1471,6 +1657,47 @@
         "imagesLabel": "Images",
         "imagesHint": "Optional: upload PNG, JPG, or WEBP files.",
         "removeImage": "Remove"
+      }
+    },
+    "transfers": {
+      "addTitle": "Append transaction",
+      "submitErrorTitle": "Unable to append transaction",
+      "form": {
+        "typeLabel": "Transaction type",
+        "fromLabel": "From",
+        "toTypeLabel": "Destination type",
+        "toLabel": "Destination",
+        "toPlaceholder": "Select destination",
+        "toRequired": "Destination is required.",
+        "quantityLabel": "Quantity",
+        "quantityInvalid": "Quantity must be at least previous remaining quantity.",
+        "remainingQuantityLabel": "Remaining quantity (calculated)",
+        "dateLabel": "Transaction date and time",
+        "dateRequired": "Transaction date and time is required.",
+        "conditionLabel": "Condition",
+        "damageDescriptionLabel": "Damage description",
+        "notesLabel": "Notes",
+        "estimatedCostLabel": "Estimated cost",
+        "estimatedCostInvalid": "Estimated cost must be zero or more.",
+        "mediaLabel": "Documents and images",
+        "mediaHint": "Upload images or documents. Video files are not accepted.",
+        "types": {
+          "transfer": "Transfer",
+          "release": "Release",
+          "disposal": "Disposal"
+        },
+        "toTypes": {
+          "people": "People",
+          "clinic": "Clinic",
+          "volunteer": "Volunteer",
+          "storage": "Storage"
+        },
+        "conditions": {
+          "good": "Good",
+          "fair": "Fair",
+          "poor": "Poor",
+          "broken": "Broken"
+        }
       }
     },
     "storages": {

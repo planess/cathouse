@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-import { GlobeIcon } from '@app/(general)/history/[animalId]/components/icons';
+import { GlobeIcon } from '@app/(general)/registry/[animalId]/components/icons';
 
 const LOCALES = [
   { code: 'en', label: 'English', short: 'EN' },

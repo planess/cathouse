@@ -1,7 +1,6 @@
 'use client';
 
-import type { InventoryCategoryRow } from '../types/inventory.types';
-import type { ReactNode } from 'react';
+import type { CategoryTreeProps } from '../types/inventory-component-props.types';
 
 export function CategoryTree({
   rows,
@@ -9,20 +8,7 @@ export function CategoryTree({
   onDelete,
   emptyState,
   labels,
-}: {
-  rows: InventoryCategoryRow[];
-  onEdit: (row: InventoryCategoryRow) => void;
-  onDelete: (row: InventoryCategoryRow) => void;
-  emptyState: ReactNode;
-  labels: {
-    name: string;
-    inherits: string;
-    createdAt: string;
-    actions: string;
-    edit: string;
-    delete: string;
-  };
-}) {
+}: CategoryTreeProps) {
   if (rows.length === 0) {
     return (
       <div className="py-6 text-center text-sm text-slate-500">

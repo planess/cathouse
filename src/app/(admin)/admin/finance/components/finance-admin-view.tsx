@@ -12,9 +12,11 @@ import {
   deleteReport,
   updateAccount,
   updateReport,
-} from '@app/actions/finance.server';
+  uploadReportDocuments,
+} from '@app/actions/finance';
 import { useModal } from '@app/hooks/use-modal';
 
+import { formatDateTimeLocal } from '../helpers/format-date-time-local';
 import { isAccountFormValid } from '../helpers/is-account-form-valid';
 import { isReportFormValid } from '../helpers/is-report-form-valid';
 import { AccountFormState } from '../models/account-form-state';
@@ -22,6 +24,10 @@ import { AccountRow } from '../models/account-row';
 import { CategoryNode } from '../models/category-node';
 import { CategoryOption } from '../models/category-option';
 import { FinanceSummary } from '../models/finance-summary';
+import {
+  AccountModalOptions,
+  ReportModalOptions,
+} from '../models/props/finance-admin-view-modal-options';
 import { ReportFormState } from '../models/report-form-state';
 import { ReportRow } from '../models/report-row';
 import { TranslationFn } from '../models/transform-fn';
@@ -32,10 +38,8 @@ import ReportForm from './report-form';
 
 export type FinanceAdminViewProps = {
   accounts: AccountRow[];
-  incomingCategories: CategoryNode[];
-  outgoingCategories: CategoryNode[];
-  incomingCategoryOptions: CategoryOption[];
-  outgoingCategoryOptions: CategoryOption[];
+  categories: CategoryNode[];
+  categoryOptions: CategoryOption[];
   reports: ReportRow[];
   summary: FinanceSummary;
   periodLabel: string;
@@ -54,16 +58,19 @@ const defaultReportForm: ReportFormState = {
   description: '',
   categoryId: '',
   accountId: '',
+  sender: '',
+  recipient: '',
+  iban: '',
+  operationDate: '',
   amount: '',
   details: [],
+  documents: [],
 };
 
 export function FinanceAdminView({
   accounts,
-  incomingCategories,
-  outgoingCategories,
-  incomingCategoryOptions,
-  outgoingCategoryOptions,
+  categories,
+  categoryOptions,
   reports,
   summary,
   periodLabel,
@@ -132,12 +139,7 @@ export function FinanceAdminView({
     router.push(`/admin/finance?${params.toString()}`);
   };
 
-  const openAccountModal = (options: {
-    title: string;
-    initialState: AccountFormState;
-    submitLabel: string;
-    onSubmit: (state: AccountFormState) => Promise<void>;
-  }) => {
+  const openAccountModal = (options: AccountModalOptions) => {
     const formStateRef = { current: options.initialState };
     const formValidityRef = {
       current: isAccountFormValid(options.initialState, translate),
@@ -241,10 +243,8 @@ export function FinanceAdminView({
       title: t('categories.modalTitle'),
       content: (
         <CategoriesModal
-          incoming={incomingCategories}
-          outgoing={outgoingCategories}
-          incomingOptions={incomingCategoryOptions}
-          outgoingOptions={outgoingCategoryOptions}
+          categories={categories}
+          options={categoryOptions}
           onRefresh={() => router.refresh()}
         />
       ),
@@ -254,17 +254,13 @@ export function FinanceAdminView({
           tone: 'primary',
         },
       ],
-      size: 'xl',
+      size: 'md',
     });
   };
 
-  const openReportModal = (options: {
-    title: string;
-    initialState: ReportFormState;
-    submitLabel: string;
-    onSubmit: (state: ReportFormState) => Promise<void>;
-  }) => {
+  const openReportModal = (options: ReportModalOptions) => {
     const formStateRef = { current: options.initialState };
+    const pendingFilesRef = { current: [] as File[] };
     const formValidityRef = {
       current: isReportFormValid(options.initialState, translate),
     };
@@ -274,9 +270,12 @@ export function FinanceAdminView({
       content: (
         <ReportForm
           accounts={accounts}
-          incomingCategoryOptions={incomingCategoryOptions}
-          outgoingCategoryOptions={outgoingCategoryOptions}
+          categories={categories}
+          categoryOptions={categoryOptions}
           initialState={options.initialState}
+          onPendingFilesChange={(files: File[]) => {
+            pendingFilesRef.current = files;
+          }}
           onChange={(nextState) => {
             formStateRef.current = nextState;
           }}
@@ -300,7 +299,34 @@ export function FinanceAdminView({
             if (!formValidityRef.current) {
               return;
             }
-            await options.onSubmit(formStateRef.current);
+
+            const currentState = formStateRef.current;
+            let documents = currentState.documents;
+
+            if (pendingFilesRef.current.length > 0) {
+              const formData = new FormData();
+              formData.set('type', currentState.type);
+              formData.set('operationDate', currentState.operationDate);
+              formData.set('categoryId', currentState.categoryId);
+              formData.set('amount', currentState.amount);
+
+              pendingFilesRef.current.forEach((file) => {
+                formData.append('files', file);
+              });
+
+              const uploadResult = await uploadReportDocuments(formData);
+
+              if (!uploadResult.success) {
+                throw new Error(uploadResult.message);
+              }
+
+              documents = [...documents, ...uploadResult.documents];
+            }
+
+            await options.onSubmit({
+              ...currentState,
+              documents,
+            });
             router.refresh();
           },
         },
@@ -310,9 +336,14 @@ export function FinanceAdminView({
   };
 
   const handleAddReport = () => {
+    const now = new Date();
+
     openReportModal({
       title: t('reports.addTitle'),
-      initialState: defaultReportForm,
+      initialState: {
+        ...defaultReportForm,
+        operationDate: formatDateTimeLocal(now.toISOString()),
+      },
       submitLabel: t('reports.createButton'),
       onSubmit: async (state) => {
         await createReport({
@@ -320,12 +351,17 @@ export function FinanceAdminView({
           description: state.description,
           categoryId: state.categoryId,
           accountId: state.accountId,
+          sender: state.sender,
+          recipient: state.recipient,
+          iban: state.iban,
+          operationDate: state.operationDate,
           amount: Number(state.amount),
           details: state.details.map((detail) => ({
             description: detail.description,
             amount: Number(detail.amount),
             categoryId: detail.categoryId,
           })),
+          documents: state.documents,
         });
       },
     });
@@ -339,12 +375,17 @@ export function FinanceAdminView({
         description: report.description,
         categoryId: report.categoryId ?? '',
         accountId: report.accountId ?? '',
+        sender: report.sender ?? '',
+        recipient: report.recipient ?? '',
+        iban: report.iban ?? '',
+        operationDate: formatDateTimeLocal(report.operationDate),
         amount: String(report.amount),
         details: report.details.map((detail) => ({
           description: detail.description,
           amount: String(detail.amount),
           categoryId: detail.categoryId,
         })),
+        documents: report.documents,
       },
       submitLabel: t('common.saveChanges'),
       onSubmit: async (state) => {
@@ -354,12 +395,17 @@ export function FinanceAdminView({
           description: state.description,
           categoryId: state.categoryId,
           accountId: state.accountId,
+          sender: state.sender,
+          recipient: state.recipient,
+          iban: state.iban,
+          operationDate: state.operationDate,
           amount: Number(state.amount),
           details: state.details.map((detail) => ({
             description: detail.description,
             amount: Number(detail.amount),
             categoryId: detail.categoryId,
           })),
+          documents: state.documents,
         });
       },
     });
@@ -434,8 +480,18 @@ export function FinanceAdminView({
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white">
                           {account.name}
                         </h4>
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
-                          {t('account.activeBadge')}
+                        <span
+                          className={clsx(
+                            'rounded-full  px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide',
+                            {
+                              'text-emerald-600 bg-emerald-50': account.active,
+                              'text-zinc-600 bg-zinc-50': !account.active,
+                            },
+                          )}
+                        >
+                          {account.active
+                            ? t('account.activeBadge')
+                            : t('account.inactiveBadge')}
                         </span>
                       </div>
                       <p className="mt-1 text-[10px] font-mono text-slate-500">
@@ -477,7 +533,11 @@ export function FinanceAdminView({
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div
+                      className={clsx('flex items-center gap-1', {
+                        invisible: !account.active,
+                      })}
+                    >
                       <button
                         className="rounded-lg p-2 text-slate-400 transition hover:text-sky-500"
                         type="button"
@@ -655,6 +715,7 @@ export function FinanceAdminView({
                 <th className="px-6 py-4 text-right">
                   {t('reports.table.balance')}
                 </th>
+                <th className="px-6 py-4">{t('reports.table.documents')}</th>
                 <th className="px-6 py-4 text-right">
                   {t('reports.table.actions')}
                 </th>
@@ -664,7 +725,7 @@ export function FinanceAdminView({
               {reports.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-6 py-6 text-center text-sm text-slate-500"
                   >
                     {t('reports.empty')}
@@ -714,27 +775,29 @@ export function FinanceAdminView({
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-slate-500">
-                          {report.categoryName || '—'}
-                        </span>
+                        {report.categoryName && (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-slate-500">
+                              {report.categoryName}
+                            </span>
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-[10px] font-mono uppercase text-slate-400">
-                        {report.accountName || '—'}
+                        {report.accountName}
                       </td>
                       <td className="px-6 py-4 text-xs font-medium text-slate-500">
-                        {report.type === 'debt' || !report.createdAt
-                          ? '—'
-                          : dateTime.format(new Date(report.createdAt))}
+                        {report.type === 'debt' || report.operationDate === ''
+                          ? ''
+                          : dateTime.format(new Date(report.operationDate))}
                       </td>
-                      <td className="px-6 py-4 text-right text-sm font-bold">
+                      <td className="px-6 py-4 text-right text-xs font-bold whitespace-nowrap">
                         <span
-                          className={
-                            report.type === 'incoming'
-                              ? 'text-emerald-600'
-                              : report.type === 'outgoing'
-                                ? 'text-rose-600'
-                                : 'text-amber-600'
-                          }
+                          className={clsx('whitespace-nowrap', {
+                            'text-emerald-600': report.type === 'incoming',
+                            'text-rose-600': report.type === 'outgoing',
+                            'text-amber-600': report.type === 'debt',
+                          })}
                         >
                           {report.type === 'outgoing'
                             ? '-'
@@ -745,7 +808,70 @@ export function FinanceAdminView({
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right text-xs font-semibold text-slate-500">
-                        {currency.format(report.balance)}
+                        {report.type !== 'debt' && (
+                          <div>
+                            <p className="whitespace-nowrap">
+                              {currency.format(report.balance)}
+                            </p>
+                            {typeof report.categoryBalanceDelta === 'number' &&
+                              report.categoryBalanceDelta > 0 &&
+                              typeof report.categoryBalanceFrom === 'number' &&
+                              typeof report.categoryBalanceTo === 'number' && (
+                                <p className="text-[10px] font-medium text-sky-600 whitespace-nowrap">
+                                  {currency.format(report.categoryBalanceFrom)}{' '}
+                                  {'->'}{' '}
+                                  {currency.format(report.categoryBalanceTo)}
+                                </p>
+                              )}
+                            {report.type === 'outgoing' &&
+                              (report.categoryWithdrawals?.length ?? 0) > 0 && (
+                                <div className="mt-0.5 space-y-0.5">
+                                  {report.categoryWithdrawals?.map(
+                                    (withdrawal, index) => (
+                                      <p
+                                        key={`${report.id}-withdrawal-${index}`}
+                                        className="text-[10px] font-medium text-sky-600 whitespace-nowrap"
+                                      >
+                                        {withdrawal.categoryName
+                                          ? `${withdrawal.categoryName}: `
+                                          : ''}
+                                        {currency.format(withdrawal.from)}{' '}
+                                        {'->'} {currency.format(withdrawal.to)}
+                                      </p>
+                                    ),
+                                  )}
+                                </div>
+                              )}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        {(() => {
+                          const visibleDocuments = report.documents.filter(
+                            (document) => document.isDeleted !== true,
+                          );
+
+                          if (visibleDocuments.length === 0) {
+                            return <span className="text-xs text-slate-400" />;
+                          }
+
+                          return (
+                            <div className="space-y-1">
+                              {visibleDocuments.map((document) => (
+                                <a
+                                  key={`${report.id}-${document.key}-${document.uploadedAt}`}
+                                  className="block max-w-44 truncate text-xs font-medium text-sky-600 hover:text-sky-700 hover:underline"
+                                  href={document.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  title={document.originalName}
+                                >
+                                  {document.originalName}
+                                </a>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
@@ -771,7 +897,7 @@ export function FinanceAdminView({
                     {report.details.length > 0 &&
                       expandedReportIds[report.id] && (
                         <tr className="bg-zinc-200/20 border-x border-x-slate-400">
-                          <td colSpan={3} className="px-6 py-3">
+                          <td colSpan={4} className="px-6 py-3">
                             <div className="space-y-2">
                               {report.details.map((detail, index) => {
                                 const categoryLabel =
@@ -795,9 +921,8 @@ export function FinanceAdminView({
                               })}
                             </div>
                           </td>
-                          <td className="px-6 py-3" />
                           <td className="px-6 py-3 text-right">
-                            <div className="space-y-2">
+                            <div className="space-y-2 text-xs">
                               {report.details.map((detail, index) => {
                                 const categoryLabel =
                                   detail.categoryName?.trim() ?? '';
@@ -821,7 +946,7 @@ export function FinanceAdminView({
                               })}
                             </div>
                           </td>
-                          <td colSpan={2} />
+                          <td colSpan={3} />
                         </tr>
                       )}
                   </Fragment>

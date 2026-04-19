@@ -10,10 +10,15 @@ Key rules:
 
 Main paths:
 - Components: `src/app/components/`
-- Helpers: `src/app/helpers/`
+- Helpers and utilities: `src/app/helpers/`
 - Services: `src/app/services/`
 - Models/hooks/providers: `src/app/models/`, `src/app/hooks/`, `src/app/providers/`
+- Translations: `messages/`
+- MongoDB instance: `src/app/ins`
 
-components should be in dedicated files. For complex components, use subfolders.
-interfaces, type, enums should be in dedicated relative folders.
-helpers should be in dedicated files relative to their usage.
+- components should be in dedicated files. For complex components, use subfolders.
+- interfaces, type, enums should be in separate dedicated relative folders.
+- helpers should be in separate dedicated files relative to their usage.
+- do not use `any` type, prefer specific types or generics.
+- do not create unit tests.
+- fix all eslint errors for changed and created files, but do not add new eslint rules.

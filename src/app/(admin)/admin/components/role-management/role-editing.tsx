@@ -1,13 +1,4 @@
-import { Permission } from '@app/models/permission';
-import { Role } from '@app/models/role';
-
-interface RoleEditingProps {
-  activeRole: Role;
-  permissions: Permission[];
-  roles: Role[];
-  cancel: () => void;
-  submit: (formData: FormData) => void;
-}
+import { RoleEditingProps } from './types/role-management-props';
 
 export default function RoleEditing({
   activeRole,

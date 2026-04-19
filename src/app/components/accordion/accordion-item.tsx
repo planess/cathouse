@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { ChevronIcon } from '@app/(general)/history/[animalId]/components/icons';
+import { ChevronIcon } from '@app/(general)/registry/[animalId]/components/icons';
 import { Rate } from '@app/enum/rate';
 
 export type AccordionRenderState = {

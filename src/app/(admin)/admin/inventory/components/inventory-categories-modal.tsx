@@ -10,21 +10,18 @@ import {
 } from '@app/actions/inventory.server';
 import { useModal } from '@app/hooks/use-modal';
 
+import {
+  buildCategoryRows,
+  collectDescendantIds,
+} from './inventory-categories-modal/category-helpers';
 import { CategoryForm } from './inventory-category-form';
 import { CategoryTree } from './inventory-category-tree';
 
 import type {
-  CategoryFormState,
-  InventoryCategoryRow,
-  InventoryCategoryNode,
-  InventoryCategoryOption,
-} from '../types/inventory.types';
-
-type CategoriesModalProps = {
-  categories: InventoryCategoryNode[];
-  options: InventoryCategoryOption[];
-  onRefresh: () => void;
-};
+  CategoriesModalProps,
+  CategoryFormModalOptions,
+} from '../types/inventory-component-props.types';
+import type { CategoryFormState, InventoryCategoryRow } from '../types/inventory.types';
 
 export function CategoriesModal({
   categories,
@@ -34,49 +31,12 @@ export function CategoriesModal({
   const t = useTranslations('adminInventory');
   const { showModal } = useModal();
 
-  const categoryNameMap = useMemo(
-    () => new Map(options.map((option) => [option.id, option.name])),
-    [options],
-  );
-  const inheritsMap = useMemo(
-    () => new Map(options.map((option) => [option.id, option.inheritsFrom])),
-    [options],
+  const rows = useMemo<InventoryCategoryRow[]>(
+    () => buildCategoryRows(categories, options),
+    [categories, options],
   );
 
-  const rows = useMemo<InventoryCategoryRow[]>(() => {
-    const flattened: InventoryCategoryRow[] = [];
-
-    const walk = (node: InventoryCategoryNode, depth: number) => {
-      const inheritsFrom = inheritsMap.get(node.id) ?? null;
-      const parentName =
-        typeof inheritsFrom === 'string' && inheritsFrom.length > 0
-          ? (categoryNameMap.get(inheritsFrom) ?? '')
-          : '';
-
-      flattened.push({
-        id: node.id,
-        name: node.name,
-        createdAt: node.createdAt,
-        parentName,
-        depth,
-        hasChildren: node.children.length > 0,
-      });
-
-      node.children.forEach((child) => walk(child, depth + 1));
-    };
-
-    categories.forEach((category) => walk(category, 0));
-
-    return flattened;
-  }, [categories, categoryNameMap, inheritsMap]);
-
-  const openCategoryForm = (formOptions: {
-    title: string;
-    submitLabel: string;
-    initialState: CategoryFormState;
-    availableOptions: InventoryCategoryOption[];
-    onSubmit: (state: CategoryFormState) => Promise<void>;
-  }) => {
+  const openCategoryForm = (formOptions: CategoryFormModalOptions) => {
     const formStateRef: { current: CategoryFormState } = {
       current: formOptions.initialState,
     };
@@ -218,40 +178,4 @@ export function CategoriesModal({
       </div>
     </div>
   );
-}
-
-function collectDescendantIds(
-  categories: InventoryCategoryNode[],
-  rootId: string,
-) {
-  const ids = new Set<string>();
-
-  const findNode = (
-    nodes: InventoryCategoryNode[],
-  ): InventoryCategoryNode | null => {
-    for (const node of nodes) {
-      if (node.id === rootId) {
-        return node;
-      }
-
-      const match = findNode(node.children);
-      if (match) {
-        return match;
-      }
-    }
-
-    return null;
-  };
-
-  const walk = (node: InventoryCategoryNode) => {
-    ids.add(node.id);
-    node.children.forEach(walk);
-  };
-
-  const root = findNode(categories);
-  if (root) {
-    walk(root);
-  }
-
-  return ids;
 }

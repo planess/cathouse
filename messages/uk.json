@@ -21,6 +21,7 @@
   "header": {
     "home": "Головна",
     "contacts": "Комунікація",
+    "acts": "Акти",
     "history": "Історія",
     "registry": "Реєстр",
     "help": "Підтримка",
@@ -30,6 +31,12 @@
     "menuOpenLabel": "Відкрити меню навігації",
     "menuCloseLabel": "Закрити меню навігації",
     "emergencyButton": "Повідомити про тварину"
+  },
+  "notFound": {
+    "errorLabel": "Помилка 404",
+    "title": "Сторінку не знайдено",
+    "description": "Ця сторінка не існує.",
+    "home": "Перейти на головну"
   },
   "reportDialog": {
     "buttonLabel": "Повідомити",
@@ -336,9 +343,48 @@
     }
   },
   "historypage": {
-    "title": "Реєстр наших тварин",
+    "title": "Трекер безпритульних тварин",
     "panel1": "Реєструємо тварин, за якими слідкуємо, доглядаємо та лікуємо. Кожна історія є нашим натхненням та допомагає координувати зусилля волонтерів і клінік, щоб забезпечити найкращий догляд. Кожний запис має унікальну історію, особливості та умови.",
-    "createHistory": "Створити нову історію",
+    "createHistory": "Зареєструвати тварину",
+    "tracker": {
+      "subtitle": "Відстежуйте колонії та маршрути безпритульних на мапі й відкривайте повний профіль тварини просто зі списку видимих зон.",
+      "mapAriaLabel": "Мапа реєстру тварин",
+      "legend": {
+        "sterilized": "Зона під контролем",
+        "mixed": "Зона має питання"
+      },
+      "location": {
+        "detectButton": "Моя локація",
+        "predefinedLabel": "Перейти до точки",
+        "idle": "Оберіть готову точку або визначте своє місце.",
+        "detecting": "Визначаємо вашу локацію...",
+        "detected": "Мапу центровано на вашій локації.",
+        "unsupported": "Геолокація недоступна у цьому браузері.",
+        "error": "Не вдалося визначити локацію. Оберіть готову точку."
+      },
+      "onlyDraft": {
+        "label": "лише чернетки"
+      },
+      "points": {
+        "downtown": "Центр міста",
+        "northStation": "Північний вокзал",
+        "southeastPark": "Південно-східний парк"
+      },
+      "visibleAnimals": "Видимі тварини",
+      "animalsInView": "Тварин у поточному вікні мапи: {count}",
+      "searchPlaceholder": "Пошук видимих тварин...",
+      "loading": "Оновлюємо тварин у поточному вікні мапи...",
+      "loadError": "Не вдалося завантажити тварин для цієї ділянки мапи. Спробуйте пересунути мапу ще раз.",
+      "addressFallback": "Адресу не вказано",
+      "seenAt": "Помічено: {value}",
+      "zoneAnimals": "Тварин у зоні: {count}",
+      "status": {
+        "sterilized": "Стерилізовано",
+        "notSterilized": "Не стерилізовано"
+      },
+      "dateUnknown": "Невідома дата",
+      "empty": "У цьому вікні мапи тварин не знайдено. Змініть масштаб, пересуньте мапу або уточніть пошук."
+    },
     "pagination": {
       "previous": "Попередня",
       "next": "Наступна",
@@ -570,6 +616,7 @@
         "chip": "Номер чипа",
         "sterilized": "Стерилізовано"
       },
+      "nameFallback": "Імені ще немає",
       "descriptionFallback": "Поки що немає опису для цієї тварини. Додайте його, щоб опікунам легше було знайомитись.",
       "actions": {
         "openMap": "Відкрити мапу",
@@ -642,6 +689,93 @@
     },
     "migrations": {
       "title": "Міграції бази даних"
+    },
+    "acts": {
+      "title": "Акти волонтерів",
+      "summary": "{total, plural, one {{total} акт} few {{total} акти} other {{total} актів}} від {volunteers, plural, one {{volunteers} волонтера} few {{volunteers} волонтерів} other {{volunteers} волонтерів}}",
+      "totalActs": "Всього актів",
+      "volunteers": "Волонтери",
+      "empty": "Поки що немає записів про волонтерські акти.",
+      "table": {
+        "type": "Тип",
+        "status": "Статус",
+        "session": "Сесія",
+        "managed": "Керував",
+        "animals": "Тварини",
+        "documents": "Документи",
+        "equipment": "Обладнання",
+        "notes": "Примітки",
+        "noFiles": "Файлів немає",
+        "filesCount": "{count, plural, one {{count} файл} few {{count} файли} other {{count} файлів}}"
+      },
+      "equipment": {
+        "media": "{count, plural, one {{count} медіа} few {{count} медіа} other {{count} медіа}}"
+      },
+      "statusLabels": {
+        "scheduled": "Заплановано",
+        "pending": "Очікує",
+        "approved": "Підтверджено",
+        "rejected": "Відхилено"
+      },
+      "volunteerActsCount": "{count, plural, one {{count} акт} few {{count} акти} other {{count} актів}}"
+    },
+    "foundationEmail": {
+      "title": "Електронна пошта фонду"
+    }
+  },
+  "actspage": {
+    "title": "Мої волонтерські акти",
+    "subtitle": "Тут ви можете переглядати свої акти та керувати ними.",
+    "createButton": "Створити акт",
+    "createNewAct": "Створити новий акт",
+    "myActs": "Мої акти ({count})",
+    "noActs": "Поки що актів не знайдено.",
+    "form": {
+      "type": "Тип",
+      "animals": "Тварини",
+      "sessionStart": "Початок сесії",
+      "sessionEnd": "Кінець сесії",
+      "notes": "Примітки",
+      "notesShort": "Примітки",
+      "equipment": "Обладнання",
+      "addEquipment": "+ Додати обладнання",
+      "equipmentNumber": "Обладнання #{number}",
+      "remove": "Видалити",
+      "selectEquipment": "Вибрати обладнання",
+      "conditionBefore": "Стан до",
+      "conditionAfter": "Стан після",
+      "conditionOptions": {
+        "new": "Новий",
+        "good": "Добрий",
+        "fair": "Задовільний",
+        "poor": "Поганий",
+        "broken": "Зламаний"
+      },
+      "mediaAttachments": "Медіа вкладення",
+      "addMediaInput": "+ Додати поле для файлів",
+      "documentsLabel": "Документи",
+      "saveAct": "Зберегти акт",
+      "saveChanges": "Зберегти зміни"
+    },
+    "labels": {
+      "documents": "Документи",
+      "session": "Сесія",
+      "animals": "Тварини",
+      "notes": "Примітки",
+      "none": "Немає",
+      "notAvailable": "Н/Д"
+    },
+    "noPermission": "У вас немає дозволу на створення актів.",
+    "editAct": "Редагувати акт",
+    "deleteAct": "Видалити акт",
+    "messages": {
+      "approvedCannotUpdate": "Підтверджені акти не можна редагувати."
+    },
+    "status": {
+      "scheduled": "Заплановано",
+      "pending": "Очікує",
+      "approved": "Підтверджено",
+      "rejected": "Відхилено"
     }
   },
   "homepage": {
@@ -974,6 +1108,7 @@
           "description": "Закупівля якісного сухого та вологого корму для підопічних у притулках та на вулиці."
         }
       },
+      "offerLink": "Згідно з законом, ми надаємо публічну оферту для внесків. Ви можете ознайомитись з нею <link>за посиланням</link>.",
       "ibanTitle": "Банківські реквізити IBAN",
       "ibanNote": "Добровільна благодійна допомога",
       "iban": {
@@ -1303,9 +1438,10 @@
     },
     "account": {
       "overviewTitle": "Огляд рахунків",
-      "overviewSubtitle": "{count} активних рахунків · Цього місяця: {month}",
+      "overviewSubtitle": "{count} {count, plural, one {активний рахунок} few {активні рахунки} many {активних рахунків} other {активних рахунків}}",
       "noAccounts": "Немає активних рахунків. Додайте перший рахунок, щоб відстежувати баланс.",
       "activeBadge": "Активний",
+      "inactiveBadge": "Неактивний",
       "thisMonth": "Цього місяця",
       "currentBalance": "Поточний баланс",
       "debt": "Борг",
@@ -1343,6 +1479,7 @@
         "date": "Дата",
         "amount": "Сума",
         "balance": "Баланс",
+        "documents": "Документи",
         "actions": "Дії"
       },
       "empty": "За цей період звітів ще немає.",
@@ -1374,6 +1511,12 @@
         "amountPlaceholder": "0",
         "descriptionLabel": "Опис",
         "descriptionPlaceholder": "Щомісячні витрати притулку",
+        "counterpartyLabel": "Відправник / Отримувач",
+        "senderPlaceholder": "Відправник",
+        "recipientPlaceholder": "Отримувач",
+        "operationDateLabel": "Дата операції",
+        "operationDateRequired": "Дата операції обов'язкова.",
+        "ibanLabel": "IBAN отримувача",
         "categoryLabel": "Категорія",
         "categoryPlaceholder": "Оберіть категорію",
         "accountLabel": "Рахунок",
@@ -1385,8 +1528,20 @@
         "detailDescriptionPlaceholder": "Додаткова примітка",
         "detailAmountPlaceholder": "0",
         "detailCategoryPlaceholder": "Необов'язкова підкатегорія",
+        "documentsTitle": "Документи",
+        "documentsUpload": "Завантажити документи",
+        "documentsUploading": "Завантаження...",
+        "documentsEmpty": "Документи ще не завантажені.",
+        "documentsDelete": "Видалити",
+        "documentsRestore": "Відновити",
+        "documentsUploadError": "Не вдалося завантажити документи.",
         "descriptionRequired": "Опис обов'язковий.",
         "amountRequired": "Сума має бути більшою за нуль.",
+        "amountMaxHint": "Максимально доступно з рахунку: {max} (баланс рахунку: {account}).",
+        "selectAccountLimitHint": "Оберіть рахунок, щоб застосувати обмеження витрати.",
+        "amountMaxExceeded": "Сума не може перевищувати {max}.",
+        "accountPositiveRequired": "Обраний рахунок має непозитивний баланс. Оберіть інший рахунок або переключіться на борг.",
+        "targetedSpendingHint": "Для цільових категорій витрата списується спочатку з обраної категорії, далі з батьківських категорій до повного покриття або вичерпання.",
         "categoryRequired": "Категорія обов'язкова.",
         "accountRequired": "Рахунок обов'язковий."
       }
@@ -1399,10 +1554,20 @@
       "addCategory": "Додати категорію",
       "noCategories": "Категорій ще немає.",
       "addTitle": "Додати категорію: {title}",
+      "editTitle": "Редагувати {name}",
+      "editAria": "Редагувати {name}",
       "nameLabel": "Назва",
       "namePlaceholder": "Пожертви",
       "parentLabel": "Батьківська",
       "parentPlaceholder": "Без батьківської",
+      "linkedToLabel": "Пов'язати з надходженням",
+      "linkedToPlaceholder": "Без зв'язку з надходженням",
+      "activeLabel": "Активна категорія",
+      "activeHint": "Вимкніть, щоб приховати у формах надходжень, не втрачаючи історію.",
+      "specificLabel": "Спеціальна категорія",
+      "specificHint": "Позначка для спеціальних розрахунків надходжень у майбутньому.",
+      "inactiveBadge": "Неактивна",
+      "specificBadge": "Спеціальна",
       "deleteErrorTitle": "Неможливо видалити категорію"
     }
   },
@@ -1420,23 +1585,38 @@
     "actions": {
       "manageStorages": "Керувати складами",
       "manageCategories": "Керувати категоріями",
-      "addItem": "Додати позицію"
+      "addItem": "Прийняти позицію"
     },
     "table": {
       "title": "Інвентар на складі",
       "subtitle": "Групування за категоріями та прив'язка до складів.",
       "columns": {
-        "name": "Ієрархія / назва",
-        "sku": "SKU",
-        "quantity": "Кількість",
-        "storage": "Склад",
-        "expiration": "Термін",
-        "received": "Отримано",
-        "source": "Джерело",
-        "actions": "Дії"
+        "name": "Назва",
+        "serialNumber": "Серійний номер",
+        "individualId": "Індивідуальний ID",
+        "expiryDate": "Термін придатності",
+        "unit": "Одиниця",
+        "type": "Тип",
+        "from": "Від",
+        "to": "До",
+        "dateTime": "Дата/час"
       },
       "categoryCount": "{count} позицій",
       "unitsLabel": "од.",
+      "searchPlaceholder": "Пошук інвентарю...",
+      "filterOptions": "Параметри фільтра",
+      "transactionHistory": "Історія транзакцій",
+      "identifierLabel": "Ідентифікатор",
+      "amountLabel": "Кількість",
+      "locationLabel": "Локація",
+      "conditionLabel": "Стан",
+      "currentOwnerLabel": "Поточний власник",
+      "expirationDateLabel": "Термін придатності",
+      "transferLabel": "Передати",
+      "toInlineLabel": "До",
+      "amountInlineLabel": "Кількість",
+      "notesLabel": "Примітки",
+      "addHistoryRecord": "Додати запис історії",
       "empty": "Записів інвентарю ще немає.",
       "noItems": "У цій категорії немає позицій.",
       "uncategorized": "Без категорії",
@@ -1457,7 +1637,13 @@
         "typePlaceholder": "Оберіть тип",
         "typeEquipment": "Обладнання",
         "typeConsumable": "Витратний матеріал",
+        "typeAsset": "Актив",
         "typeRequired": "Потрібно обрати тип.",
+        "consumabilityLabel": "Спожитність",
+        "consumabilityPlaceholder": "Оберіть спожитність",
+        "consumabilityReusable": "Багаторазовий",
+        "consumabilitySingleUse": "Одноразовий витратний",
+        "consumabilityMultiUse": "Багатовикористовуваний витратний",
         "quantityLabel": "Кількість",
         "quantityPlaceholder": "0",
         "quantityRequired": "Кількість має бути більшою за нуль.",
@@ -1471,6 +1657,47 @@
         "imagesLabel": "Зображення",
         "imagesHint": "Необов'язково: завантажте PNG, JPG або WEBP файли.",
         "removeImage": "Видалити"
+      }
+    },
+    "transfers": {
+      "addTitle": "Додати транзакцію",
+      "submitErrorTitle": "Не вдалося додати транзакцію",
+      "form": {
+        "typeLabel": "Тип транзакції",
+        "fromLabel": "Звідки",
+        "toTypeLabel": "Тип отримувача",
+        "toLabel": "Отримувач",
+        "toPlaceholder": "Оберіть отримувача",
+        "toRequired": "Потрібно обрати отримувача.",
+        "quantityLabel": "Кількість",
+        "quantityInvalid": "Кількість має бути не меншою за попередній залишок.",
+        "remainingQuantityLabel": "Залишок (обчислюється)",
+        "dateLabel": "Дата та час транзакції",
+        "dateRequired": "Потрібно вказати дату та час транзакції.",
+        "conditionLabel": "Стан",
+        "damageDescriptionLabel": "Опис пошкоджень",
+        "notesLabel": "Примітки",
+        "estimatedCostLabel": "Оцінена вартість",
+        "estimatedCostInvalid": "Оцінена вартість має бути нуль або більше.",
+        "mediaLabel": "Документи та зображення",
+        "mediaHint": "Завантажуйте зображення або документи. Відеофайли не приймаються.",
+        "types": {
+          "transfer": "Передача",
+          "release": "Видача",
+          "disposal": "Списання"
+        },
+        "toTypes": {
+          "people": "Людина",
+          "clinic": "Клініка",
+          "volunteer": "Волонтер",
+          "storage": "Склад"
+        },
+        "conditions": {
+          "good": "Добрий",
+          "fair": "Задовільний",
+          "poor": "Поганий",
+          "broken": "Зламаний"
+        }
       }
     },
     "storages": {
@@ -1581,7 +1808,7 @@
     "title": "Сайт буде доступний скоро",
     "description": "Зараз ми проводимо технічне обслуговування. Будь ласка, зайдіть пізніше."
   },
-  "emais": {
+  "emails": {
     "restore-password": {
       "subject": "Відновлення пароля до вашого акаунту",
       "title": "Відновлення доступ",

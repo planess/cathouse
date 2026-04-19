@@ -1,4 +1,4 @@
-import { ChevronIcon } from '../history/[animalId]/components/icons';
+import { ChevronIcon } from '../registry/[animalId]/components/icons';
 
 import Section from './section';
 

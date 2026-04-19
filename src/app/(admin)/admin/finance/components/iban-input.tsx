@@ -2,14 +2,7 @@
 
 import { useMemo } from 'react';
 
-type IbanInputProps = {
-  value: string;
-  onChange: (value: string) => void;
-  onBlur?: () => void;
-  label?: string;
-  placeholder?: string;
-  isInvalid?: boolean;
-};
+import { IbanInputProps } from '../models/props/iban-input-props';
 
 const IBAN_REGEX = /^[A-Z]{2}\d{27}$/;
 const IBAN_MAX_LENGTH = 29;

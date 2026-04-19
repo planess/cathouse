@@ -4,12 +4,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { useCurrentUser } from '@app/hooks/use-user';
+import {
+  SYSTEM_PERMISSIONS,
+  type SystemPermission,
+} from '@app/models/system-permissions';
 
-const navItems = [
+import { SidebarIconProps, SidebarNavItem } from './admin-sidebar.types';
+
+const navItems: Array<
+  SidebarNavItem & { requiredPermission?: SystemPermission }
+> = [
   {
     href: '/admin',
     label: 'Overview',
-    Icon: function DashboardIcon({ className }: { className?: string }) {
+    Icon: function DashboardIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -29,9 +37,38 @@ const navItems = [
     },
   },
   {
+    href: '/admin/migrations',
+    label: 'Migrations',
+    Icon: function MigrationsIcon({ className }: SidebarIconProps) {
+      return (
+        <svg
+          aria-hidden="true"
+          className={className}
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M7.5 6.25h9a1.25 1.25 0 0 1 1.25 1.25v9a1.25 1.25 0 0 1-1.25 1.25h-9A1.25 1.25 0 0 1 6.25 16.5v-9A1.25 1.25 0 0 1 7.5 6.25Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M9 10h6M9 13.5h6"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+      );
+    },
+  },
+  {
     href: '/admin/users',
     label: 'Users',
-    Icon: function UsersIcon({ className }: { className?: string }) {
+    Icon: function UsersIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -67,7 +104,7 @@ const navItems = [
   {
     href: '/admin/roles',
     label: 'Roles',
-    Icon: function RolesIcon({ className }: { className?: string }) {
+    Icon: function RolesIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -101,9 +138,9 @@ const navItems = [
     },
   },
   {
-    href: '/admin/migrations',
-    label: 'Migrations',
-    Icon: function MigrationsIcon({ className }: { className?: string }) {
+    href: '/admin/acts',
+    label: 'Acts',
+    Icon: function ActsIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -112,14 +149,21 @@ const navItems = [
           viewBox="0 0 24 24"
         >
           <path
-            d="M7.5 6.25h9a1.25 1.25 0 0 1 1.25 1.25v9a1.25 1.25 0 0 1-1.25 1.25h-9A1.25 1.25 0 0 1 6.25 16.5v-9A1.25 1.25 0 0 1 7.5 6.25Z"
+            d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="1.5"
           />
           <path
-            d="M9 10h6M9 13.5h6"
+            d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M9 12l2 2 4-4"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -129,10 +173,11 @@ const navItems = [
       );
     },
   },
+
   {
     href: '/admin/finance',
     label: 'Finance',
-    Icon: function FinanceIcon({ className }: { className?: string }) {
+    Icon: function FinanceIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -158,10 +203,11 @@ const navItems = [
       );
     },
   },
+
   {
     href: '/admin/inventory',
     label: 'Inventory',
-    Icon: function InventoryIcon({ className }: { className?: string }) {
+    Icon: function InventoryIcon({ className }: SidebarIconProps) {
       return (
         <svg
           aria-hidden="true"
@@ -194,14 +240,49 @@ const navItems = [
       );
     },
   },
+  {
+    href: '/admin/email',
+    label: 'Email',
+    requiredPermission: SYSTEM_PERMISSIONS.EMAIL_SEND,
+    Icon: function EmailIcon({ className }: SidebarIconProps) {
+      return (
+        <svg
+          aria-hidden="true"
+          className={className}
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3.75 7.5l8.25 5.25L20.25 7.5"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M4.75 6.75h14.5a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-8.5a1 1 0 0 1 1-1Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+      );
+    },
+  },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const user = useCurrentUser();
+  const visibleNavItems = navItems.filter(
+    ({ requiredPermission }) =>
+      requiredPermission === undefined ||
+      user?.scopes.includes(requiredPermission),
+  );
 
   return (
-    <aside className="hidden lg:flex w-72 flex-shrink-0 flex-col border-r border-slate-200/80 bg-white/90 text-slate-700 shadow-sm shadow-slate-200/30 dark:border-slate-800 dark:bg-[#11161c] dark:text-slate-200">
+    <aside className="hidden lg:flex w-72 shrink-0 flex-col border-r border-slate-200/80 bg-white/90 text-slate-700 shadow-sm shadow-slate-200/30 dark:border-slate-800 dark:bg-[#11161c] dark:text-slate-200">
       <div className="p-6">
         <div className="flex items-center gap-3">
           <div className="rounded-xl bg-sky-500 p-2.5 text-white shadow-lg shadow-sky-500/30">
@@ -218,7 +299,7 @@ export function AdminSidebar() {
         </div>
       </div>
       <nav className="flex-1 px-4 space-y-1">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = pathname === item.href;
 
           return (
@@ -240,7 +321,7 @@ export function AdminSidebar() {
       </nav>
       <div className="border-t border-slate-200/80 p-4 dark:border-slate-800">
         <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3 text-xs font-semibold text-slate-700 shadow-inner shadow-slate-200/40 dark:bg-slate-900 dark:text-slate-300">
-          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 text-white flex items-center justify-center">
+          <div className="h-9 w-9 rounded-full bg-linear-to-br from-sky-400 to-blue-600 text-white flex items-center justify-center">
             AR
           </div>
           <div className="min-w-0 flex-1">

@@ -1,12 +1,4 @@
-import { Permission } from '@app/models/permission';
-import { Role } from '@app/models/role';
-
-interface RoleCreatingProps {
-  submit: (formData: FormData) => void;
-  cancel: () => void;
-  roles: Role[];
-  permissions: Permission[];
-}
+import { RoleCreatingProps } from './types/role-management-props';
 
 export default function RoleCreating({
   submit,

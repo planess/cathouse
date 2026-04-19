@@ -1,39 +1,22 @@
 import { useTranslations } from 'next-intl';
 
-import { CategoryNode } from '../models/category-node';
-import { CategoryOption } from '../models/category-option';
+import { CategoriesModalProps } from '../models/props/categories-modal-props';
 
 import CategoryPanel from './category-panel';
 
 export default function CategoriesModal({
-  incoming,
-  outgoing,
-  incomingOptions,
-  outgoingOptions,
+  categories,
+  options,
   onRefresh,
-}: {
-  incoming: CategoryNode[];
-  outgoing: CategoryNode[];
-  incomingOptions: CategoryOption[];
-  outgoingOptions: CategoryOption[];
-  onRefresh: () => void;
-}) {
+}: CategoriesModalProps) {
   const t = useTranslations('adminFinance');
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <CategoryPanel
-        title={t('categories.incomingTitle')}
-        categories={incoming}
-        options={incomingOptions}
-        type="incoming"
-        onRefresh={onRefresh}
-      />
+    <div className="grid gap-6">
       <CategoryPanel
         title={t('categories.outgoingTitle')}
-        categories={outgoing}
-        options={outgoingOptions}
-        type="outgoing"
+        categories={categories}
+        options={options}
         onRefresh={onRefresh}
       />
     </div>

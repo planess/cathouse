@@ -8,7 +8,7 @@ import {
   InstagramIcon,
   PhoneIcon,
   TelegramIcon,
-} from '@app/(general)/history/[animalId]/components/icons';
+} from '@app/(general)/registry/[animalId]/components/icons';
 import { useModal } from '@app/hooks/use-modal';
 
 import Alert from '../alert/alert';

@@ -1,9 +1,6 @@
 'use client';
 
-interface ChipProps {
-  label: string;
-  close?: () => Promise<void>;
-}
+import { ChipProps } from '../types/user-components.types';
 
 export default function Chip({ label, close }: ChipProps) {
   return (

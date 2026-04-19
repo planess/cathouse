@@ -9,7 +9,7 @@ import {
   DogBowlIcon,
   HealthInterventionIcon,
   MedicalKitIcon,
-} from '../history/[animalId]/components/icons';
+} from '../registry/[animalId]/components/icons';
 
 import { AutoPayment } from './components/auto-payment';
 import IbanCards, { IbanCardItem } from './components/iban-cards';
@@ -119,13 +119,24 @@ export default function PaymentsPage() {
           className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm space-y-4 dark:bg-zinc-700 dark:border-zinc-500 transition-colors"
         >
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-4">
               <h3 className="flex items-center gap-2 text-xl font-extrabold ">
                 <span className="inline-flex size-6 items-center justify-center rounded-full text-blue-600 dark:text-zinc-200 transition-colors">
                   <BankIcon />
                 </span>
                 {t('financial.ibanTitle')}
               </h3>
+
+              {t.rich('financial.offerLink', {
+                link: (chunks) => (
+                  <Link
+                    href="/offer"
+                    className="text-sky-600 hover:text-sky-700 hover:underline"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </div>
 
             <IbanCards ibanKeys={ibanKeys} />
