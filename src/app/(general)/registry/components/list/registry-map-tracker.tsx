@@ -7,6 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import {
+  formatSexLabel,
+  getAgeLabel,
+} from '@app/(general)/registry/components/card/card.helpers';
 import { CheckboxGroup } from '@app/components/checkbox-group';
 
 import {
@@ -45,10 +49,25 @@ const HOVER_ZONE_FILL = '#fbbf24';
 const HOVER_ZONE_FILL_OPACITY = 0.22;
 const HOVER_ZONE_WEIGHT = 3;
 
+function parseBirthday(value: string | null): Date | undefined {
+  if (typeof value !== 'string' || value.length === 0) {
+    return undefined;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return undefined;
+  }
+
+  return parsed;
+}
+
 export default function RegistryMapTracker({
   isVolunteer,
 }: RegistryMapTrackerProps) {
   const t = useTranslations('historypage');
+  const tCard = useTranslations('historypage.card');
   const locale = useLocale();
   const router = useRouter();
 
@@ -435,7 +454,7 @@ export default function RegistryMapTracker({
 
     return animals.filter((animal) => {
       const haystack = normalizeText(
-        `${animal.name} ${animal.species} ${animal.address}`,
+        `${animal.name} ${animal.sex} ${animal.address}`,
       );
 
       return haystack.includes(normalizedSearch);
@@ -602,7 +621,9 @@ export default function RegistryMapTracker({
                       </div>
 
                       <p className="mt-1 text-xs text-slate-600 dark:text-slate-300 transition-colors">
-                        {animal.species} • {t(`personal.status.${animal.status}`)}
+                        {formatSexLabel(animal.sex, tCard)} •{' '}
+                        {getAgeLabel(parseBirthday(animal.birthday), tCard)} •{' '}
+                        {t(`personal.status.${animal.status}`)}
                       </p>
 
                       <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400 transition-colors">

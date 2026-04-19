@@ -1,11 +1,12 @@
-import type { AnimalStatus } from '@app/models/animal';
+import type { AnimalDocument, AnimalStatus } from '@app/models/animal';
 
 export type RegistryAnimalMapRecord = {
   id: string;
   detailsHref: string;
   previewImage: string;
   name: string;
-  species: string;
+  sex: AnimalDocument['sex'];
+  birthday: string | null;
   status: AnimalStatus;
   address: string;
   latitude: number | null;

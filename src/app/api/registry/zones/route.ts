@@ -21,7 +21,8 @@ type RawRegistryAnimalRecord = {
   detailsHref: string;
   mainAssetKey?: string;
   name: string;
-  species: string;
+  sex: AnimalDocument['sex'];
+  birthday?: Date | string | null;
   status: AnimalDocument['status'];
   address?: string;
   latitude?: number | null;
@@ -164,7 +165,8 @@ export async function GET(request: NextRequest) {
         },
         mainAssetKey: '$mainAsset.key',
         name: 1,
-        species: 1,
+        sex: 1,
+        birthday: 1,
         status: 1,
         address: '$lastObservation.location.address',
         latitude: '$lastObservation.location.coordinates.latitude',
@@ -219,6 +221,12 @@ export async function GET(request: NextRequest) {
     address: animal.address ?? '',
     latitude: typeof animal.latitude === 'number' ? animal.latitude : null,
     longitude: typeof animal.longitude === 'number' ? animal.longitude : null,
+    birthday:
+      animal.birthday instanceof Date
+        ? animal.birthday.toISOString()
+        : typeof animal.birthday === 'string'
+          ? animal.birthday
+          : null,
     observedAt:
       animal.observedAt instanceof Date
         ? animal.observedAt.toISOString()
