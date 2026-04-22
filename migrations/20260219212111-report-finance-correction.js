@@ -379,7 +379,7 @@ module.exports = {
       } else if (type === 'outgoing') {
         // convert nested detail amounts and top-level amount/balance to Decimal128
         const details = report.details?.map((detail) => ({
-          category: detail.category,
+          ...(detail.category ? { category: detail.category } : {}),
           description: detail.description,
           amount: toDecimal(detail.amount), // ensure amount stored as Decimal128
         }));
