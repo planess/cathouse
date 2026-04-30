@@ -11,12 +11,15 @@ import MobileSidebar from './components/sidebar/mobile-sidebar';
 
 export default async function Header() {
   const t = await getTranslations('header');
-  const canReadActs = await hasPermission(SYSTEM_PERMISSIONS.ACT_READ);
+  const [canReadActs, canReadRegistryMap] = await Promise.all([
+    hasPermission(SYSTEM_PERMISSIONS.ACT_READ),
+    hasPermission(SYSTEM_PERMISSIONS.REGISTRY_MAP_READ),
+  ]);
 
   const links = [
     { key: 'home', href: '/' },
     { key: 'contacts', href: '/contacts' },
-    { key: 'registry', href: '/registry' },
+    ...(canReadRegistryMap ? [{ key: 'registry', href: '/registry' }] : []),
     { key: 'help', href: '/help' },
     ...(canReadActs ? [{ key: 'acts', href: '/acts' }] : []),
   ];

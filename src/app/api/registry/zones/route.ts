@@ -104,21 +104,42 @@ export async function GET(request: NextRequest) {
   const user = await getCurrentUser();
   const userId = user?.id;
 
-  let isModerator = false;
-  let isVolunteer = false;
-
-  if (userId !== null && userId !== undefined) {
-    isModerator = await hasPermission(
-      SYSTEM_PERMISSIONS.HISTORY_UPDATE_ANY,
-      undefined,
-      userId,
-    );
-    isVolunteer = await hasPermission(
-      SYSTEM_PERMISSIONS.HISTORY_CREATE,
-      undefined,
-      userId,
+  if (userId === null || userId === undefined) {
+    return NextResponse.json(
+      {
+        animals: [],
+        error: 'Unauthorized',
+      },
+      { status: 401 },
     );
   }
+
+  const canReadRegistryMap = await hasPermission(
+    SYSTEM_PERMISSIONS.REGISTRY_MAP_READ,
+    undefined,
+    userId,
+  );
+
+  if (!canReadRegistryMap) {
+    return NextResponse.json(
+      {
+        animals: [],
+        error: 'Forbidden',
+      },
+      { status: 403 },
+    );
+  }
+
+  const isModerator = await hasPermission(
+    SYSTEM_PERMISSIONS.HISTORY_UPDATE_ANY,
+    undefined,
+    userId,
+  );
+  const isVolunteer = await hasPermission(
+    SYSTEM_PERMISSIONS.HISTORY_CREATE,
+    undefined,
+    userId,
+  );
 
   const findCondition: Filter<AnimalDocument> = {};
   const shouldLoadVolunteerOwnDraft =

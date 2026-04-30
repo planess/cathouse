@@ -1,8 +1,11 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
-import { createHistoryGranted } from '@app/accessors/create-history-granted';
-import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+import { createHistoryGranted } from '../../accessors/create-history-granted';
+import { composeMetadataTitle, getSiteTitle } from '../../helpers/metadata';
+import { SYSTEM_PERMISSIONS } from '../../models/system-permissions';
+import { hasPermission } from '../../services/access-verification.service';
 
 import { PlusIcon } from './[animalId]/components/icons';
 import List from './components/list/list';
@@ -11,6 +14,14 @@ import type { Metadata } from 'next';
 
 export default async function History() {
   const t = await getTranslations('historypage');
+  const canReadRegistryMap = await hasPermission(
+    SYSTEM_PERMISSIONS.REGISTRY_MAP_READ,
+  );
+
+  if (!canReadRegistryMap) {
+    notFound();
+  }
+
   const canCreate = await createHistoryGranted();
 
   return (

@@ -14,6 +14,7 @@
  */
 export const SYSTEM_PERMISSIONS = {
   // content maker
+  REGISTRY_MAP_READ: 'registry:map:read',
   HISTORY_CREATE: 'history:create', // also "UPDATE" included for own records
   HISTORY_PUBLISH: 'history:publish', // only own records
   HISTORY_UPDATE_ANY: 'history:update:any', // update any records
