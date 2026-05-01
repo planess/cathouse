@@ -638,6 +638,37 @@
       }
     }
   },
+  "registryLightPage": {
+    "title": "Community Animal Directory",
+    "eyebrow": "Community animals",
+    "headline": "Meet the animals we <accent>care for</accent> together.",
+    "description": "We monitor and support community cats that require care and treatment.",
+    "privacy": "Slim mode keeps sensitive location data hidden while still showing who needs support right now.",
+    "cta": {
+      "sponsor": "Become a Sponsor",
+      "supplies": "Donate Supplies"
+    },
+    "empty": "No animals are listed right now.",
+    "loadingMore": "Loading more animals...",
+    "loadMoreError": "More animals could not be loaded right now.",
+    "retryLoadMore": "Try again",
+    "cards": {
+      "seenLabel": "Seen by volunteers",
+      "seenUnknown": "Recently updated",
+      "age": "{age} {age, plural, one {year} other {years}} old",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This week",
+      "privacyLabel": "Exact location is hidden in this view.",
+      "descriptionFallback": "This animal is part of the community registry and is being monitored by our team.",
+      "species": {
+        "cat": "Cat",
+        "dog": "Dog",
+        "bird": "Bird",
+        "other": "Animal"
+      }
+    }
+  },
   "authorization": {
     "already-have-account-link": "Already registered",
     "want-account-link": "Ready to register",

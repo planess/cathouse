@@ -1,0 +1,1 @@
+export const REGISTRY_LIGHT_ANIMALS_BATCH_SIZE = 12;

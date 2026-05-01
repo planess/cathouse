@@ -18,11 +18,13 @@ import type { InformatorOption } from '../types';
 type AddObservationProps = {
   animalId: string;
   informatorOptions: InformatorOption[];
+  canReadRegistryMap: boolean;
 };
 
 export default function AddObservation({
   animalId,
   informatorOptions,
+  canReadRegistryMap,
 }: AddObservationProps) {
   const t = useTranslations('historypage');
   const modal = useModal();
@@ -36,6 +38,7 @@ export default function AddObservation({
         <ObservationForm
           ref={formRef}
           animalId={animalId}
+          canReadRegistryMap={canReadRegistryMap}
           informatorOptions={informatorOptions}
         />
       ),

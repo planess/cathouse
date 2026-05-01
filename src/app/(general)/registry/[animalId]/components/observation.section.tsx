@@ -12,6 +12,7 @@ interface ObservationSectionProps {
   animal: AnimalDocument;
   informatorOptions: InformatorOption[];
   canEdit: boolean;
+  canReadRegistryMap: boolean;
   sortedObservations: AnimalObservation[];
 }
 
@@ -19,6 +20,7 @@ export default async function ObservationSection({
   informatorOptions,
   sortedObservations,
   canEdit,
+  canReadRegistryMap,
   animal,
 }: ObservationSectionProps) {
   const t = await getTranslations('historypage');
@@ -34,6 +36,7 @@ export default async function ObservationSection({
           <AddObservation
             animalId={animal._id?.toString() ?? ''}
             informatorOptions={informatorOptions}
+            canReadRegistryMap={canReadRegistryMap}
           />
         )}
       </div>
@@ -47,6 +50,7 @@ export default async function ObservationSection({
               <ObservationCard
                 key={`observation-${observation.date?.toISOString() ?? index}`}
                 observation={observation}
+                canReadRegistryMap={canReadRegistryMap}
               />
             ))}
           </div>

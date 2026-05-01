@@ -31,6 +31,7 @@ export type ObservationFormHandle = {
 
 type ObservationFormProps = {
   animalId: string;
+  canReadRegistryMap: boolean;
   informatorOptions: InformatorOption[];
 };
 
@@ -40,7 +41,7 @@ const MAX_SIZE = 5.5 * 1024 * 1024;
 export const ObservationForm = forwardRef<
   ObservationFormHandle,
   ObservationFormProps
->(({ animalId, informatorOptions }, ref) => {
+>(({ animalId, canReadRegistryMap, informatorOptions }, ref) => {
   const t = useTranslations('historypage.personal');
   const modal = useModal();
   const [note, setNote] = useState('');
@@ -287,22 +288,24 @@ export const ObservationForm = forwardRef<
         />
       </div>
 
-      <LocationField
-        value={location}
-        onChange={setLocation}
-        label={t('form.location_label')}
-        description={t('form.location_description')}
-        detectLabel={t('form.location_detect')}
-        detectingLabel={t('form.location_detecting')}
-        detectedLabel={t('form.location_detected')}
-        detectErrorLabel={t('form.location_detect_error')}
-        unsupportedLabel={t('form.location_unsupported')}
-        addressLabel={t('form.location_address_label')}
-        addressPlaceholder={t('form.location_address_placeholder')}
-        coordinatesLabel={t('form.location_coordinates_label')}
-        clearLabel={t('form.location_clear')}
-        idleLabel={t('form.location_status_idle')}
-      />
+      {canReadRegistryMap && (
+        <LocationField
+          value={location}
+          onChange={setLocation}
+          label={t('form.location_label')}
+          description={t('form.location_description')}
+          detectLabel={t('form.location_detect')}
+          detectingLabel={t('form.location_detecting')}
+          detectedLabel={t('form.location_detected')}
+          detectErrorLabel={t('form.location_detect_error')}
+          unsupportedLabel={t('form.location_unsupported')}
+          addressLabel={t('form.location_address_label')}
+          addressPlaceholder={t('form.location_address_placeholder')}
+          coordinatesLabel={t('form.location_coordinates_label')}
+          clearLabel={t('form.location_clear')}
+          idleLabel={t('form.location_status_idle')}
+        />
+      )}
 
       <div className="space-y-3">
         <div>

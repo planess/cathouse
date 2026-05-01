@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { createHistoryGranted } from '../../accessors/create-history-granted';
 import { composeMetadataTitle, getSiteTitle } from '../../helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '../../models/system-permissions';
 import { hasPermission } from '../../services/access-verification.service';
+import RegistryLightContent from '../registry-light/components/registry-light-content';
 
 import { PlusIcon } from './[animalId]/components/icons';
 import List from './components/list/list';
@@ -19,7 +19,7 @@ export default async function History() {
   );
 
   if (!canReadRegistryMap) {
-    notFound();
+    return <RegistryLightContent />;
   }
 
   const canCreate = await createHistoryGranted();
@@ -57,8 +57,14 @@ export default async function History() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const canReadRegistryMap = await hasPermission(
+    SYSTEM_PERMISSIONS.REGISTRY_MAP_READ,
+  );
+  const translationNamespace = canReadRegistryMap
+    ? 'historypage'
+    : 'registryLightPage';
   const [t, siteTitle] = await Promise.all([
-    getTranslations('historypage'),
+    getTranslations(translationNamespace),
     getSiteTitle(),
   ]);
 
