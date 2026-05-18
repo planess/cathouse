@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { formatLabel } from '../../registry/components/card/card.helpers';
 import {
@@ -20,6 +20,7 @@ import type {
 
 export default function RegistryLightAnimals({
   initialPage,
+  statusFilter,
 }: RegistryLightAnimalsProps) {
   const [animals, setAnimals] = useState<RegistryLightAnimalRecord[]>(
     initialPage.animals,
@@ -35,7 +36,7 @@ export default function RegistryLightAnimals({
   const historyT = useTranslations('historypage');
   const locale = useLocale();
 
-  async function loadMoreAnimals() {
+  const loadMoreAnimals = useCallback(async () => {
     if (isLoadingRef.current || !hasMoreRef.current) {
       return;
     }
@@ -49,6 +50,11 @@ export default function RegistryLightAnimals({
         offset: offsetRef.current.toString(),
         limit: REGISTRY_LIGHT_ANIMALS_BATCH_SIZE.toString(),
       });
+
+      if (statusFilter !== null) {
+        searchParams.set('status', statusFilter);
+      }
+
       const response = await fetch(
         `/api/registry-light?${searchParams.toString()}`,
         {
@@ -81,13 +87,13 @@ export default function RegistryLightAnimals({
       isLoadingRef.current = false;
       setIsLoading(false);
     }
-  }
+  }, [statusFilter]);
 
   useEffect(() => {
     const sentinelElement = sentinelRef.current;
 
     if (sentinelElement === null || !hasMore) {
-      return undefined;
+      return;
     }
 
     const observer = new IntersectionObserver(
@@ -106,7 +112,7 @@ export default function RegistryLightAnimals({
     return () => {
       observer.disconnect();
     };
-  }, [hasMore, animals.length]);
+  }, [hasMore, animals.length, loadMoreAnimals]);
 
   return (
     <div className="space-y-5">

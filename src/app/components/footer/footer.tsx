@@ -16,6 +16,7 @@ const linkBlock = [
     { href: '/work', labelKey: 'links.fundWork' },
   ],
   [
+    { href: '/adoption', labelKey: 'links.adoption' },
     { href: '/payments', labelKey: 'links.payments' },
     { href: '/offer', labelKey: 'links.offer' },
     { href: '/reports', labelKey: 'links.reports' },

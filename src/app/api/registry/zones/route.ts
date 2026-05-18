@@ -5,7 +5,7 @@ import { resolveAnimalImage } from '@app/(general)/registry/components/card/card
 import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
-import type { AnimalDocument } from '@app/models/animal';
+import { AnimalStatus, type AnimalDocument } from '@app/models/animal';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 
@@ -30,6 +30,20 @@ type RawRegistryAnimalRecord = {
   observedAt?: Date | string | null;
   isSterilized: boolean;
 };
+
+const REGISTRY_STATUS_FILTERS = {
+  adoption: [AnimalStatus.underTreatment, AnimalStatus.sheltered],
+} as const;
+
+type RegistryStatusFilter = keyof typeof REGISTRY_STATUS_FILTERS;
+
+function parseStatusFilter(value: string | null): RegistryStatusFilter | null {
+  if (value === 'adoption') {
+    return value;
+  }
+
+  return null;
+}
 
 function parseBounds(request: NextRequest): {
   bounds: Bounds | null;
@@ -90,6 +104,9 @@ export async function GET(request: NextRequest) {
   const { bounds, hasInvalidBounds } = parseBounds(request);
   const shouldLoadOnlyOwnDraft =
     request.nextUrl.searchParams.get('onlyOwnDraft') === 'true';
+  const statusFilter = parseStatusFilter(
+    request.nextUrl.searchParams.get('status'),
+  );
 
   if (hasInvalidBounds) {
     return NextResponse.json(
@@ -161,6 +178,14 @@ export async function GET(request: NextRequest) {
     });
   } else {
     Object.assign(findCondition, { draft: { $ne: true } });
+  }
+
+  if (statusFilter !== null) {
+    Object.assign(findCondition, {
+      status: {
+        $in: REGISTRY_STATUS_FILTERS[statusFilter],
+      },
+    });
   }
 
   const client = await clientPromise;

@@ -1,6 +1,7 @@
 import { type Filter } from 'mongodb';
 
 import { resolveAnimalImage } from '@app/(general)/registry/components/card/card.helpers';
+import { registryStatusFilters } from '@app/(general)/registry/helpers/registry-status-filter';
 import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
@@ -11,6 +12,7 @@ import { hasPermission } from '@app/services/access-verification.service';
 import { REGISTRY_LIGHT_ANIMALS_BATCH_SIZE } from '../registry-light.constants';
 
 import type {
+  RegistryStatusFilter,
   RegistryLightAnimalRecord,
   RegistryLightAnimalsPage,
 } from '../types/registry-light.types';
@@ -29,9 +31,11 @@ function getLatestObservationDate(
   return latestObservation?.date ?? null;
 }
 
-export async function listRegistryLightAnimals(): Promise<
-  RegistryLightAnimalRecord[]
-> {
+export async function listRegistryLightAnimals(
+  options: {
+    statusFilter?: RegistryStatusFilter | null;
+  } = {},
+): Promise<RegistryLightAnimalRecord[]> {
   const user = await getCurrentUser();
   const userId = user?.id;
 
@@ -62,6 +66,14 @@ export async function listRegistryLightAnimals(): Promise<
 
   if (Object.keys(visibilityCondition).length > 0) {
     conditions.push(visibilityCondition);
+  }
+
+  if (options.statusFilter !== null && options.statusFilter !== undefined) {
+    conditions.push({
+      status: {
+        $in: registryStatusFilters[options.statusFilter],
+      },
+    });
   }
 
   const findCondition: Filter<AnimalDocument> =
@@ -125,6 +137,7 @@ export async function listRegistryLightAnimals(): Promise<
 type ListRegistryLightAnimalsPageOptions = {
   limit?: number;
   offset?: number;
+  statusFilter?: RegistryStatusFilter | null;
 };
 
 export async function listRegistryLightAnimalsPage(
@@ -135,7 +148,9 @@ export async function listRegistryLightAnimalsPage(
     Math.min(options.limit ?? REGISTRY_LIGHT_ANIMALS_BATCH_SIZE, 100),
   );
   const offset = Math.max(0, options.offset ?? 0);
-  const animals = await listRegistryLightAnimals();
+  const animals = await listRegistryLightAnimals({
+    statusFilter: options.statusFilter,
+  });
   const paginatedAnimals = animals.slice(offset, offset + limit);
 
   return {

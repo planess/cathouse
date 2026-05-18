@@ -1,4 +1,5 @@
 import type { AnimalSpecies, AnimalStatus } from '@app/models/animal';
+import type { RegistryStatusFilter } from '@app/(general)/registry/helpers/registry-status-filter';
 
 export interface RegistryLightAnimalRecord {
   id: string;
@@ -21,4 +22,5 @@ export interface RegistryLightAnimalsPage {
 
 export interface RegistryLightAnimalsProps {
   initialPage: RegistryLightAnimalsPage;
+  statusFilter: RegistryStatusFilter | null;
 }

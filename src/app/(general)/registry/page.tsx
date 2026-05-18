@@ -9,17 +9,24 @@ import RegistryLightContent from '../registry-light/components/registry-light-co
 
 import { PlusIcon } from './[animalId]/components/icons';
 import List from './components/list/list';
+import { parseRegistryStatusFilter } from './helpers/registry-status-filter';
 
 import type { Metadata } from 'next';
 
-export default async function History() {
+export default async function History({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const t = await getTranslations('historypage');
   const canReadRegistryMap = await hasPermission(
     SYSTEM_PERMISSIONS.REGISTRY_MAP_READ,
   );
 
   if (!canReadRegistryMap) {
-    return <RegistryLightContent />;
+    const statusFilter = parseRegistryStatusFilter((await searchParams).status);
+
+    return <RegistryLightContent statusFilter={statusFilter} />;
   }
 
   const canCreate = await createHistoryGranted();
