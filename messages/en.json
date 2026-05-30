@@ -161,6 +161,155 @@
       "checkboxLabel": "I consent to the processing of my personal data"
     }
   },
+  "adoptionprocesspage": {
+    "title": "Adoption Process",
+    "hero": {
+      "eyebrow": "Adoption guidelines",
+      "title": "Adoption is a responsible process",
+      "description": "Our goal is to place every animal in conditions that are safe, realistic, and sustainable. That is why the adoption path is thorough, sometimes lengthy, and designed to protect animals from impulsive decisions while preserving clear medical and identification records.",
+      "primaryCta": "View available animals",
+      "secondaryCta": "Contact the team",
+      "noteLabel": "Important note",
+      "prototypeNote": "A person may independently bring a cat home from the street, but official transfer of the veterinary passport and microchip data happens only after review, approval, and a signed agreement with the foundation.",
+      "summaryLabel": "What official adoption includes",
+      "summaryIntro": "The formal handover process remains consistent even when the animal is already familiar to a neighborhood or a potential adopter.",
+      "summary": {
+        "review": "We review the home environment, daily routine, and the adopter's readiness before any documents are transferred.",
+        "transfer": "If conditions are suitable, we sign an adoption agreement and re-register the veterinary passport and chip data.",
+        "refusal": "If the conditions do not protect the animal's welfare, we refuse the official transfer even when interest is genuine."
+      }
+    },
+    "highlightsLabel": "Non-negotiable principles",
+    "highlights": {
+      "care": "Animal welfare comes before speed, convenience, or emotional pressure.",
+      "review": "Each request goes through a staged review instead of an informal handover.",
+      "handover": "Documents and long-term responsibility are transferred only after a formal agreement."
+    },
+    "considerations": {
+      "eyebrow": "Before you apply",
+      "title": "Important considerations",
+      "description": "Three situations that require especially honest discussion before a permanent home is approved.",
+      "cards": {
+        "street": {
+          "title": "Street and community cats",
+          "description": "Cats that have lived outdoors can be fearful, territorial, or slow to adapt to indoor routines. Even animals that were once domestic may need time, patience, and carefully managed transition support."
+        },
+        "firstTime": {
+          "title": "First-time adopters",
+          "description": "Life with a cat is not frictionless. Sleep disruption, litter issues, damaged furniture, medical follow-up, and slow bonding are realistic parts of care that require patience and routine."
+        },
+        "currentPets": {
+          "title": "Homes with other animals",
+          "description": "If you already have pets, you must plan the introduction carefully and keep attention on every animal in the household. Safe integration is part of the review, not an afterthought."
+        }
+      }
+    },
+    "policy": {
+      "eyebrow": "Our policy",
+      "title": "We do not catch cats \"on demand\"",
+      "paragraph1": "Our primary goal is to control the stray population, not to provide free cats to anyone who asks. We sterilize, vaccinate, and microchip animals within the TNR program and keep records for their welfare.",
+      "paragraph2": "After treatment, many cats return to their familiar territory under community supervision. The foundation is not a shelter store and does not hand out processed animals as ready-made goods.",
+      "quote": "\"Foundation expenses for one cat, including catching, sterilization, medication, microchip, and passport, are covered by charitable funds. Our duty is to protect the animal as much as possible, not to hand it over to the first person who wants to avoid these costs.\""
+    },
+    "officialTransfer": {
+      "eyebrow": "Permanent-home milestones",
+      "title": "Milestones to Permanent Home",
+      "description": "We follow a structured procedure to ensure successful adoptions. Every milestone is critical for the safety and happiness of the animal.",
+      "items": {
+        "availableCats": {
+          "title": "Available Cats",
+          "description": "We only offer cats that are currently undergoing medical treatment or rehabilitation, or cats already on the street that are tame and easily approachable. Catching scared cats is contraindicated because it traumatizes them further and makes home adaptation extremely difficult. This is about helping animals, not entertainment."
+        },
+        "discussion": {
+          "title": "Discussion & Planning",
+          "description": "We discuss the specific conditions where the cat will live, the required care, diet, and how much time the cat will spend alone. We conduct a thorough conversation and agree on a concrete care plan."
+        },
+        "agreement": {
+          "title": "Agreement & Trial Period",
+          "description": "We draft an individual agreement describing the best conditions for the animal. The cat is then transferred for a trial period. During this time, we retain the animal's official documents."
+        },
+        "finalTransfer": {
+          "title": "Final Document Transfer",
+          "description": "If the trial period is successful and the animal continues to thrive in the new family, we officially hand over the veterinary passport and microchip documents."
+        }
+      }
+    },
+    "conflictAlert": {
+      "title": "Zero tolerance for conflict",
+      "description": "If a person insists on their demands or escalates into conflict, we record the incident, may suggest alternative options, and do not lower the review standard for the animal's safety."
+    },
+    "timeline": {
+      "eyebrow": "Detailed route",
+      "title": "A fuller five-step handover timeline",
+      "description": "The blocks above explain the policy and decision rules from the mockup. The five-step timeline below keeps the broader operational route available as a detailed guide for status, early contact, screening, review, and agreement."
+    },
+    "stepLabel": "Step",
+    "resourcesLabel": "Related resources",
+    "noVisualAvailable": "No visual available",
+    "steps": {
+      "status": {
+        "title": "Current animal status",
+        "description": {
+          "1": "Some animals still remain in their familiar outdoor territory while volunteers monitor location, condition, feeding, and community context. The organization keeps medical notes, records, and supporting documents in order at the same time.",
+          "2": "This stage explains what is already known before any transfer discussion begins, including health history, identification, sterilization or vaccination status, and current supervision."
+        },
+        "quote": "Every community animal deserves steady observation, even before a permanent home is found.",
+        "visualLabel": "Community monitoring and basic records",
+        "resources": {
+          "1": "Public animal registry"
+        }
+      },
+      "intent": {
+        "title": "Direct contact and intent",
+        "description": {
+          "1": "If a person wants to take responsibility for an animal, the first requirement is a direct message or phone call to the organization. Early communication helps pause conflicting arrangements and clarifies next steps.",
+          "2": "This stage also sets expectations for response times, current treatment status, and whether temporary care or urgent medical needs are already affecting the timeline."
+        },
+        "quote": "Fast communication protects both the animal and the people already involved in care.",
+        "visualLabel": "Immediate contact and intent confirmation",
+        "resources": {
+          "1": "Contact information"
+        }
+      },
+      "vetting": {
+        "title": "Vetting process",
+        "description": {
+          "1": "Potential adopters can be screened through an application, interview, and home-environment review. The exact criteria can be adjusted later for different animal types, ages, or medical needs.",
+          "2": "This block is a good place to describe references, prior experience, household expectations, and whether the organization reserves the right to conduct a visit or request extra clarification."
+        },
+        "quote": "A careful match is part of animal protection, not administrative overhead.",
+        "visualLabel": "Application review and home suitability checks",
+        "resources": {
+          "1": "Support options",
+          "2": "Interview contact"
+        }
+      },
+      "review": {
+        "title": "Review and decision",
+        "description": {
+          "1": "After screening, the organization reviews whether the proposed home matches the animal's specific welfare needs and whether any risks require refusal, delay, or extra follow-up.",
+          "2": "This is where the process stays consistent: decisions are documented, responsibility is clear, and emotional pressure or conflict does not replace welfare-based judgment."
+        },
+        "quote": "Decisions should be consistent, documented, and centered on the specific needs of the animal.",
+        "visualLabel": "Internal review and final welfare check",
+        "resources": {
+          "1": "Support policy overview"
+        }
+      },
+      "agreement": {
+        "title": "Final agreement",
+        "description": {
+          "1": "Once approved, the handover is completed through a formal agreement that transfers responsibility and confirms the adopter's obligations. Medical history, the veterinary passport, and chip re-registration can be attached here.",
+          "2": "This final block can also define follow-up communication, return conditions, and the list of documents or care instructions handed over with the animal."
+        },
+        "quote": "The agreement marks the start of long-term responsibility, not the end of the process.",
+        "visualLabel": "Document signing and responsibility transfer",
+        "resources": {
+          "1": "Privacy and legal references"
+        }
+      }
+    }
+  },
   "contactspage": {
     "title": "Contact",
     "aboutus": "We're a small, passionate team dedicated to animal welfare. While we don't have a physical shelter, we partner with veterinary clinics to provide treatment and temporary housing for animals in need as they wait for their forever homes.",
@@ -1797,6 +1946,7 @@
       "privacy": "Privacy Policy",
       "legal": "Legal information",
       "fundWork": "Fund work",
+      "adoption": "Adoption",
       "payments": "Support the fund",
       "offer": "Public offer",
       "reports": "Reports"
