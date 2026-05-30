@@ -69,8 +69,8 @@ export default function RegistryLightCard({
       href={`/registry/${animal.id}`}
       className="block h-full focus-visible:outline-none"
     >
-      <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-[#dce7e1] bg-white shadow-[0_16px_40px_rgba(55,84,72,0.12)] transition-transform duration-300 hover:-translate-y-1">
-        <div className="relative aspect-4/3 overflow-hidden bg-stone-100">
+      <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-[#dce7e1] dark:border-[#2d4a3e] bg-white dark:bg-[#1a2e27] shadow-[0_16px_40px_rgba(55,84,72,0.12)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.30)] transition-[transform,colors] duration-300 hover:-translate-y-1">
+        <div className="relative aspect-4/3 overflow-hidden bg-stone-100 dark:bg-stone-800">
           <Image
             src={animal.previewImage}
             alt={nameText}
@@ -80,7 +80,7 @@ export default function RegistryLightCard({
           />
           <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
             {age !== null && age !== '' && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-sm font-semibold text-[#243935] shadow-[0_2px_8px_rgba(36,57,53,0.12)]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white dark:bg-[#1a2e27] px-3 py-1 text-sm font-semibold text-[#243935] dark:text-[#c8ddd8] shadow-[0_2px_8px_rgba(36,57,53,0.12)]">
                 <SpeciesIcon />
                 {age}
               </span>
@@ -100,18 +100,18 @@ export default function RegistryLightCard({
 
         <div className="flex flex-1 flex-col gap-5 p-5 md:p-6">
           <div className="space-y-3">
-            <h2 className="text-xl font-semibold tracking-[-0.04em] text-[#122926]">
+            <h2 className="text-xl font-semibold tracking-[-0.04em] text-[#122926] dark:text-[#e0ede9] transition-colors">
               {nameText}
             </h2>
-            <p className="text-sm leading-6 text-[#516d68]">
+            <p className="text-sm leading-6 text-[#516d68] dark:text-[#8aa9a1] transition-colors">
               {descriptionText}
             </p>
           </div>
 
-          <div className="mt-auto border-t border-[#dfe8e2] pt-4 text-[11px] text-[#6a827d]">
+          <div className="mt-auto border-t border-[#dfe8e2] dark:border-[#2d4a3e] pt-4 text-[11px] text-[#6a827d] dark:text-[#6a9088] transition-colors">
             <div className="flex items-center gap-2">
               <CalendarIcon />
-              <div className="flex flex-col gap-1 font-semibold uppercase tracking-[0.12em] text-[#8aa09b]">
+              <div className="flex flex-col gap-1 font-semibold uppercase tracking-[0.12em] text-[#8aa09b] dark:text-[#6a9088]">
                 <span>{seenLabel}:</span>
                 <span>{seenValue}</span>
               </div>

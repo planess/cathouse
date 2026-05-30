@@ -153,12 +153,12 @@ export default function RegistryLightAnimals({
       {(isLoading || loadError !== null) && (
         <div className="flex justify-center">
           {loadError === null ? (
-            <p className="rounded-full border border-[#d7e5df] bg-white/90 px-4 py-2 text-sm font-medium text-[#516d68] shadow-[0_10px_24px_rgba(55,84,72,0.08)]">
+            <p className="rounded-full border border-[#d7e5df] dark:border-[#2d4a3e] bg-white/90 dark:bg-[#1a2e27]/90 px-4 py-2 text-sm font-medium text-[#516d68] dark:text-[#8aa9a1] shadow-[0_10px_24px_rgba(55,84,72,0.08)] transition-colors">
               {t('loadingMore')}
             </p>
           ) : (
-            <div className="flex flex-col items-center gap-3 rounded-3xl border border-[#f0d4d4] bg-white/95 px-5 py-4 text-center shadow-[0_10px_24px_rgba(55,84,72,0.08)]">
-              <p className="text-sm text-[#8b4b4b]">{t('loadMoreError')}</p>
+            <div className="flex flex-col items-center gap-3 rounded-3xl border border-[#f0d4d4] dark:border-[#4a2a2a] bg-white/95 dark:bg-[#2a1a1a]/95 px-5 py-4 text-center shadow-[0_10px_24px_rgba(55,84,72,0.08)] transition-colors">
+              <p className="text-sm text-[#8b4b4b] dark:text-[#d4a0a0]">{t('loadMoreError')}</p>
               <button
                 type="button"
                 onClick={() => {
