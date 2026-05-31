@@ -99,9 +99,7 @@ export default function Card({ data }: Props) {
 
         <div className="flex flex-1 flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h3 className={nameClassName}>
-              {nameText}
-            </h3>
+            <h3 className={nameClassName}>{nameText}</h3>
 
             <div className="flex gap-x-2 text-sm text-slate-600 dark:text-slate-300 transition-colors">
               <span className="font-semibold">
