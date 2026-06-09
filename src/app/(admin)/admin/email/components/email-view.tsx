@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-import { sendFoundationEmail } from '../../../../actions/email.server';
 import {
   EmailFormState,
   EmailRecipient,
@@ -22,14 +21,16 @@ const defaultFormState: EmailFormState = {
   body: '',
 };
 
+type EmailResponse = {
+  success: boolean;
+  message: string;
+};
+
 export function EmailView({ userEmail: _userEmail }: EmailViewProps) {
   const [form, setForm] = useState<EmailFormState>(defaultFormState);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
-  const [result, setResult] = useState<{
-    success: boolean;
-    message: string;
-  } | null>(null);
+  const [result, setResult] = useState<EmailResponse | null>(null);
 
   const handleChange = (field: keyof EmailFormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -59,14 +60,27 @@ export function EmailView({ userEmail: _userEmail }: EmailViewProps) {
       formData.append('attachments', file);
     }
 
-    const response = await sendFoundationEmail(formData);
+    try {
+      const response = await fetch('/api/admin/email', {
+        body: formData,
+        method: 'POST',
+      });
 
-    setSending(false);
-    setResult(response);
+      const payload = (await response.json()) as EmailResponse;
 
-    if (response.success) {
-      setForm(defaultFormState);
-      setAttachments([]);
+      setResult(payload);
+
+      if (response.ok && payload.success) {
+        setForm(defaultFormState);
+        setAttachments([]);
+      }
+    } catch {
+      setResult({
+        success: false,
+        message: 'Failed to send email.',
+      });
+    } finally {
+      setSending(false);
     }
   };
 
