@@ -1,4 +1,125 @@
 {
+  "volunteerpage": {
+    "title": "Volunteer",
+    "fallbackName": "Volunteer",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "emailState": {
+      "verified": "Verified email",
+      "unverified": "Email not verified"
+    },
+    "sex": {
+      "male": "Male",
+      "female": "Female",
+      "unspecified": "Not specified"
+    },
+    "labels": {
+      "about": "About {name}",
+      "emailState": "Email status",
+      "joined": "Joined",
+      "sex": "Sex"
+    },
+    "summary": {
+      "withSex": "{name} joined the platform on {date}, uses {email} for communication, currently has {roles}, and is marked as {status}. Profile sex: {sex}.",
+      "withoutSex": "{name} joined the platform on {date}, uses {email} for communication, currently has {roles}, and is marked as {status}."
+    },
+    "roleCount": "{count, plural, =0 {No roles assigned} one {# role assigned} other {# roles assigned}}"
+  },
+  "volunteerinfopage": {
+    "title": "Volunteers",
+    "who": {
+      "sectionLabel": "Foundation volunteers",
+      "title": "People who give their time and strength for animals",
+      "description": "Foundation volunteers work without financial reward. They give their time, experience, patience, and energy so an animal is not left alone with illness, danger, or the street.",
+      "expenses": "The foundation has many ongoing costs: treatment, sterilization, transport, food, medicine, equipment, and support programs. That is why we especially value people who choose to be part of this work not for payment, but for real results.",
+      "points": {
+        "fieldWork": {
+          "title": "Field work has risks.",
+          "description": "Capture, transport, and street work require attention, endurance, and respect for safety rules."
+        },
+        "skill": {
+          "title": "Helping animals takes skill.",
+          "description": "Patience, experience, responsible handling, and the ability to act calmly often determine the result."
+        },
+        "roles": {
+          "title": "Every role matters.",
+          "description": "Capture, care, transport, treatment, communication, photos, records, storage, and finding homes are all parts of one system."
+        },
+        "team": {
+          "title": "Results are created by a team.",
+          "description": "One person cannot change the world alone. But together we can change the lives of specific animals every day."
+        }
+      }
+    },
+    "badge": {
+      "sectionLabel": "Identification",
+      "title": "Example of the official volunteer badge",
+      "description": "Every active volunteer should carry an identification badge. It confirms identity, outlines what the holder is allowed to do, and makes verification easier for the public.",
+      "foundation": "Periphery",
+      "cardLabel": "Volunteer badge",
+      "sample": {
+        "name": "Iryna Melnyk",
+        "role": "Official volunteer",
+        "idLabel": "ID number",
+        "idValue": "VOL-08472",
+        "validLabel": "Valid thru",
+        "validValue": "12/2026"
+      },
+      "front": {
+        "title": "Front side: about the volunteer",
+        "items": {
+          "volunteerQr": {
+            "title": "Volunteer profile QR",
+            "description": "The QR code opens the individual volunteer page so identity, role, and active status can be checked immediately."
+          },
+          "expiration": {
+            "title": "Badge expiration date",
+            "description": "The visible expiration date shows whether the badge is still valid and when the volunteer status must be renewed."
+          },
+          "badgeColor": {
+            "title": "Responsibility color",
+            "description": "Badge color marks the role level: red for new members, yellow for general members, blue for extended responsibility, and green for leaders."
+          }
+        }
+      },
+      "back": {
+        "title": "Back side: about the foundation",
+        "officialMandate": "Official mandate",
+        "mandateText": "\"The bearer of this card is an official representative of the foundation for activities related to animal welfare and coordinated response.\"",
+        "authorizedActions": "Authorized actions",
+        "actions": {
+          "capture": "Authorized to participate in safe capture and transport of stray animals.",
+          "vetCare": "Authorized to request urgent veterinary assistance within foundation workflows.",
+          "abuse": "Authorized to document and escalate reports of animal abuse or immediate danger."
+        },
+        "verifyTitle": "Verify this badge:",
+        "verifyUrl": "periphery.org/verify",
+        "verifyPhone": "+380 000 000 000",
+        "items": {
+          "registryQr": {
+            "title": "Official verification QR codes",
+            "description": "QR codes point to the Unified State Register and our official site so people can confirm that the foundation is real."
+          },
+          "contacts": {
+            "title": "Support contacts",
+            "description": "Phone and messenger contacts give residents, clinics, and partners a direct way to write or call for support."
+          },
+          "directorSignature": {
+            "title": "Director signature",
+            "description": "The mandatory director signature confirms that the badge was issued by the foundation and approved for active use."
+          }
+        }
+      }
+    },
+    "support": {
+      "sectionLabel": "Support matters",
+      "title": "Volunteers cannot carry this alone",
+      "description": "Our volunteers try very hard every day: they answer messages, go to difficult locations, coordinate treatment, transport animals, document cases, and stay present when a situation is messy or emotionally heavy.",
+      "help": "We need every kind of help and support around them: time, transport, supplies, temporary care, donations, professional advice, calm communication, and simple human encouragement."
+    }
+  },
   "yes": "Yes",
   "no": "No",
   "cookieConsent": {
@@ -159,6 +280,18 @@
     "modal": {
       "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Peryferiia”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
       "checkboxLabel": "I consent to the processing of my personal data"
+    }
+  },
+  "adoptionpage": {
+    "title": "Adoption",
+    "eyebrow": "Find your companion",
+    "heading": "Who are you looking for?",
+    "description": "Choose an animal type to learn about the adoption process and browse available animals.",
+    "categories": {
+      "cat": {
+        "label": "Cats",
+        "description": "Browse cats looking for a permanent home"
+      }
     }
   },
   "adoptionprocesspage": {
@@ -1947,6 +2080,7 @@
       "legal": "Legal information",
       "fundWork": "Fund work",
       "adoption": "Adoption",
+      "volunteer": "Volunteers",
       "payments": "Support the fund",
       "offer": "Public offer",
       "reports": "Reports"

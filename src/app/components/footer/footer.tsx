@@ -14,11 +14,12 @@ const linkBlock = [
     { href: '/privacy-policy', labelKey: 'links.privacy' },
     { href: '/legal-info', labelKey: 'links.legal' },
     { href: '/work', labelKey: 'links.fundWork' },
+    { href: '/offer', labelKey: 'links.offer' },
   ],
   [
     { href: '/adoption', labelKey: 'links.adoption' },
+    { href: '/volunteers', labelKey: 'links.volunteer' },
     { href: '/payments', labelKey: 'links.payments' },
-    { href: '/offer', labelKey: 'links.offer' },
     { href: '/reports', labelKey: 'links.reports' },
   ],
 ];
