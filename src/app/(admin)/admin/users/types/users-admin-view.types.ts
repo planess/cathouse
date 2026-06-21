@@ -15,6 +15,7 @@ export type RoleOption = {
 };
 
 export type UserFormState = {
+  profilePhoto: File | null;
   email: string;
   emailVerified: boolean;
   isActive: boolean;

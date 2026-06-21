@@ -10,6 +10,7 @@ const DEFAULT_MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB per asset
 
 type UploadOptions = {
   folder?: string;
+  fileName?: string;
   fileNameBase?: string;
   metadata?: Record<string, string>;
 };
@@ -68,12 +69,19 @@ export class R2Service extends Singleton {
       const checksum = createHash('sha256').update(buffer).digest('hex');
       const normalizedName = this.normalizeName(file.name);
       const extension = this.getExtension(normalizedName);
+      const normalizedOptionFileName =
+        typeof options.fileName === 'string'
+          ? this.normalizeName(options.fileName)
+          : '';
       const hasFileNameBase =
         typeof options.fileNameBase === 'string' &&
         options.fileNameBase.trim() !== '';
-      const fileName = hasFileNameBase
-        ? `${options.fileNameBase}-${Date.now()}-${index + 1}${extension}`
-        : `${Date.now()}-${randomUUID()}-${normalizedName}`;
+      const fileName =
+        normalizedOptionFileName !== ''
+          ? normalizedOptionFileName
+          : hasFileNameBase
+            ? `${options.fileNameBase}-${Date.now()}-${index + 1}${extension}`
+            : `${Date.now()}-${randomUUID()}-${normalizedName}`;
       const key = [sanitizedFolder, fileName].filter(Boolean).join('/');
 
       await this.client.send(

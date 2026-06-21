@@ -5,5 +5,6 @@ import { DB } from './db';
 export interface Profile extends DB {
   firstName: string;
   lastName: string;
+  profilePhoto?: string;
   sex: Sex;
 }

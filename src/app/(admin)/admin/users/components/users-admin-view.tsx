@@ -4,11 +4,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import {
-  createUser,
-  softDeleteUser,
-  updateUser,
-} from '@app/actions/users.server';
+import { softDeleteUser } from '@app/actions/users.server';
 import { useModal } from '@app/hooks/use-modal';
 
 import {
@@ -20,11 +16,52 @@ import {
 } from '../types/users-admin-view.types';
 
 const defaultFormState: UserFormState = {
+  profilePhoto: null,
   email: '',
   emailVerified: false,
   isActive: true,
   roles: [],
 };
+
+function buildUserFormData(state: UserFormState, id?: string) {
+  const formData = new FormData();
+
+  if (id) {
+    formData.set('id', id);
+  }
+
+  formData.set('email', state.email);
+  formData.set('emailVerified', String(state.emailVerified));
+  formData.set('isActive', String(state.isActive));
+  state.roles.forEach((role) => {
+    formData.append('roles', role);
+  });
+
+  if (state.profilePhoto) {
+    formData.set('profilePhoto', state.profilePhoto);
+  }
+
+  return formData;
+}
+
+async function submitUserRequest(
+  url: string,
+  method: 'POST' | 'PUT',
+  body: FormData,
+) {
+  const response = await fetch(url, {
+    method,
+    body,
+  });
+  const result = (await response.json()) as {
+    success?: boolean;
+    message?: string;
+  };
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message ?? 'Failed to save user.');
+  }
+}
 
 export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
   const router = useRouter();
@@ -69,12 +106,11 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
       initialState: defaultFormState,
       submitLabel: 'Create User',
       onSubmit: async (state) => {
-        await createUser({
-          email: state.email,
-          emailVerified: state.emailVerified,
-          isActive: state.isActive,
-          roles: state.roles,
-        });
+        await submitUserRequest(
+          '/api/admin/users',
+          'POST',
+          buildUserFormData(state),
+        );
       },
     });
   };
@@ -83,6 +119,7 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
     openUserModal({
       title: `Edit ${user.email}`,
       initialState: {
+        profilePhoto: null,
         email: user.email,
         emailVerified: user.emailVerified,
         isActive: user.isActive,
@@ -90,13 +127,11 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
       },
       submitLabel: 'Save Changes',
       onSubmit: async (state) => {
-        await updateUser({
-          id: user.id,
-          email: state.email,
-          emailVerified: state.emailVerified,
-          isActive: state.isActive,
-          roles: state.roles,
-        });
+        await submitUserRequest(
+          `/api/admin/users/${user.id}`,
+          'PUT',
+          buildUserFormData(state),
+        );
       },
     });
   };
@@ -313,6 +348,27 @@ function UserForm({ initialState, roleOptions, onChange }: UserFormProps) {
 
   return (
     <form className="space-y-4">
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-slate-600">
+          Profile Photo
+        </label>
+        <input
+          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-sky-700 focus:border-sky-400"
+          accept="image/*"
+          onChange={(event) =>
+            updateState({
+              ...formState,
+              profilePhoto: event.target.files?.[0] ?? null,
+            })
+          }
+          type="file"
+        />
+        {formState.profilePhoto && (
+          <p className="text-[11px] text-slate-400">
+            Selected: {formState.profilePhoto.name}
+          </p>
+        )}
+      </div>
       <div className="space-y-2">
         <label className="text-xs font-semibold text-slate-600">Email</label>
         <input
