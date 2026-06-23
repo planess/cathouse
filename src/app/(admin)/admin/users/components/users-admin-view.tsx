@@ -4,11 +4,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import {
-  createUser,
-  softDeleteUser,
-  updateUser,
-} from '@app/actions/users.server';
+import { softDeleteUser } from '@app/actions/users.server';
 import { useModal } from '@app/hooks/use-modal';
 
 import {
@@ -20,11 +16,60 @@ import {
 } from '../types/users-admin-view.types';
 
 const defaultFormState: UserFormState = {
+  profilePhoto: null,
+  alias: '',
   email: '',
+  about: '',
+  badgeValidUntil: '',
+  hiredOn: '',
   emailVerified: false,
   isActive: true,
   roles: [],
 };
+
+function buildUserFormData(state: UserFormState, id?: string) {
+  const formData = new FormData();
+
+  if (id) {
+    formData.set('id', id);
+  }
+
+  formData.set('alias', state.alias);
+  formData.set('email', state.email);
+  formData.set('about', state.about);
+  formData.set('badgeValidUntil', state.badgeValidUntil);
+  formData.set('hiredOn', state.hiredOn);
+  formData.set('emailVerified', String(state.emailVerified));
+  formData.set('isActive', String(state.isActive));
+  state.roles.forEach((role) => {
+    formData.append('roles', role);
+  });
+
+  if (state.profilePhoto) {
+    formData.set('profilePhoto', state.profilePhoto);
+  }
+
+  return formData;
+}
+
+async function submitUserRequest(
+  url: string,
+  method: 'POST' | 'PUT',
+  body: FormData,
+) {
+  const response = await fetch(url, {
+    method,
+    body,
+  });
+  const result = (await response.json()) as {
+    success?: boolean;
+    message?: string;
+  };
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message ?? 'Failed to save user.');
+  }
+}
 
 export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
   const router = useRouter();
@@ -69,12 +114,11 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
       initialState: defaultFormState,
       submitLabel: 'Create User',
       onSubmit: async (state) => {
-        await createUser({
-          email: state.email,
-          emailVerified: state.emailVerified,
-          isActive: state.isActive,
-          roles: state.roles,
-        });
+        await submitUserRequest(
+          '/api/admin/users',
+          'POST',
+          buildUserFormData(state),
+        );
       },
     });
   };
@@ -83,20 +127,23 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
     openUserModal({
       title: `Edit ${user.email}`,
       initialState: {
+        profilePhoto: null,
+        alias: user.alias,
         email: user.email,
+        about: user.about,
+        badgeValidUntil: user.badgeValidUntilInput,
+        hiredOn: user.hiredOnInput,
         emailVerified: user.emailVerified,
         isActive: user.isActive,
         roles: user.roleIds,
       },
       submitLabel: 'Save Changes',
       onSubmit: async (state) => {
-        await updateUser({
-          id: user.id,
-          email: state.email,
-          emailVerified: state.emailVerified,
-          isActive: state.isActive,
-          roles: state.roles,
-        });
+        await submitUserRequest(
+          `/api/admin/users/${user.id}`,
+          'PUT',
+          buildUserFormData(state),
+        );
       },
     });
   };
@@ -163,9 +210,12 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
               <tr>
                 <th className="px-6 py-4">ID</th>
                 <th className="px-6 py-4">Name</th>
-
+                <th className="px-6 py-4">Alias</th>
                 <th className="px-6 py-4">Email</th>
                 <th className="px-6 py-4">Roles</th>
+                <th className="px-6 py-4">About</th>
+                <th className="px-6 py-4">Badge Valid</th>
+                <th className="px-6 py-4">Hired</th>
                 <th className="px-6 py-4">Active</th>
                 <th className="px-6 py-4">Created</th>
                 <th className="px-6 py-4 text-right">Actions</th>
@@ -202,7 +252,11 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
                       </div>
                     </div>
                   </td>
-
+                  <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    {user.alias || (
+                      <span className="text-xs text-slate-400">N/A</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
                     <div className="flex flex-col items-center gap-1">
                       {!user.emailVerified && (
@@ -237,6 +291,19 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
                         <span className="text-xs text-slate-400">None</span>
                       )}
                     </div>
+                  </td>
+                  <td className="max-w-xs px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    {user.about ? (
+                      <span className="line-clamp-3">{user.about}</span>
+                    ) : (
+                      <span className="text-xs text-slate-400">N/A</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-xs text-slate-500">
+                    {user.badgeValidUntil}
+                  </td>
+                  <td className="px-6 py-4 text-xs text-slate-500">
+                    {user.hiredOn}
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -314,6 +381,39 @@ function UserForm({ initialState, roleOptions, onChange }: UserFormProps) {
   return (
     <form className="space-y-4">
       <div className="space-y-2">
+        <label className="text-xs font-semibold text-slate-600">
+          Profile Photo
+        </label>
+        <input
+          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-sky-700 focus:border-sky-400"
+          accept="image/*"
+          onChange={(event) =>
+            updateState({
+              ...formState,
+              profilePhoto: event.target.files?.[0] ?? null,
+            })
+          }
+          type="file"
+        />
+        {formState.profilePhoto && (
+          <p className="text-[11px] text-slate-400">
+            Selected: {formState.profilePhoto.name}
+          </p>
+        )}
+      </div>
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-slate-600">Alias</label>
+        <input
+          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
+          value={formState.alias}
+          onChange={(event) =>
+            updateState({ ...formState, alias: event.target.value })
+          }
+          type="text"
+          placeholder="Volunteer alias"
+        />
+      </div>
+      <div className="space-y-2">
         <label className="text-xs font-semibold text-slate-600">Email</label>
         <input
           className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
@@ -324,6 +424,46 @@ function UserForm({ initialState, roleOptions, onChange }: UserFormProps) {
           type="email"
           placeholder="user@cathouse.org"
         />
+      </div>
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-slate-600">About</label>
+        <textarea
+          className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
+          value={formState.about}
+          onChange={(event) =>
+            updateState({ ...formState, about: event.target.value })
+          }
+          placeholder="Short profile description"
+        />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-slate-600">
+            Badge Valid
+          </label>
+          <input
+            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
+            value={formState.badgeValidUntil}
+            onChange={(event) =>
+              updateState({
+                ...formState,
+                badgeValidUntil: event.target.value,
+              })
+            }
+            type="date"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-slate-600">Hired</label>
+          <input
+            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
+            value={formState.hiredOn}
+            onChange={(event) =>
+              updateState({ ...formState, hiredOn: event.target.value })
+            }
+            type="date"
+          />
+        </div>
       </div>
       <div className="space-y-2">
         <label className="text-xs font-semibold text-slate-600">Roles</label>

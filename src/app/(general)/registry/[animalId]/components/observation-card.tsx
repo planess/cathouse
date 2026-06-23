@@ -13,10 +13,14 @@ import {
 import { LocationIcon } from './icons';
 
 interface ObservationCardProps {
+  canReadRegistryMap: boolean;
   observation: AnimalObservation;
 }
 
-export function ObservationCard({ observation }: ObservationCardProps) {
+export function ObservationCard({
+  observation,
+  canReadRegistryMap,
+}: ObservationCardProps) {
   const dateLabel = formatDate(observation.date) ?? 'Unknown date';
   const locationAddress =
     observation.location?.address ?? 'Undisclosed location';
@@ -30,20 +34,21 @@ export function ObservationCard({ observation }: ObservationCardProps) {
       {locationAddress}
     </span>
   );
-  const location = observation.location?.address ? (
-    observation.location.coordinates ? (
-      <a
-        href={buildMapHref(observation.location) ?? undefined}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="text-blue-500 dark:text-sky-400 transition-colors"
-      >
-        {locationLabel}
-      </a>
-    ) : (
-      locationLabel
-    )
-  ) : null;
+  const location =
+    canReadRegistryMap && observation.location?.address ? (
+      observation.location.coordinates ? (
+        <a
+          href={buildMapHref(observation.location) ?? undefined}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="text-blue-500 dark:text-sky-400 transition-colors"
+        >
+          {locationLabel}
+        </a>
+      ) : (
+        locationLabel
+      )
+    ) : null;
   const title = (
     <span className="flex gap-3 text-sm">
       <span className="font-medium text-gray-900 dark:text-slate-200 transition-colors">

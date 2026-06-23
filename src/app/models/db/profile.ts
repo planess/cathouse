@@ -5,5 +5,10 @@ import { DB } from './db';
 export interface Profile extends DB {
   firstName: string;
   lastName: string;
+  profilePhoto?: string;
   sex: Sex;
+  about?: string;
+  alias?: string;
+  badgeValidUntil?: Date;
+  hiredOn?: Date;
 }

@@ -21,7 +21,7 @@ export default function SelectorField({
     'select',
     {
       ...config,
-      className: 'bg-stone-50 flex-auto py-1 px-2 rounded-md',
+      className: 'bg-stone-50 dark:bg-slate-700 dark:text-slate-100 flex-auto py-1 px-2 rounded-md transition-colors',
     },
     options.map(({ label, value }) =>
       createElement('option', { value, key: value }, label),

@@ -8,6 +8,8 @@ import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { publishHistoryGranted } from '@app/accessors/publish-history-granted';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { Sterilized } from '@app/models/db/sterilized';
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { hasPermission } from '@app/services/access-verification.service';
 
 import { resolveAnimalImage } from '../components/card/card.helpers';
 
@@ -45,7 +47,10 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
     notFound();
   }
 
-  const canEdit = await editHistoryGranted(animal?.createdBy);
+  const [canReadRegistryMap, canEdit] = await Promise.all([
+    hasPermission(SYSTEM_PERMISSIONS.REGISTRY_MAP_READ),
+    editHistoryGranted(animal.createdBy),
+  ]);
 
   if (!canEdit && animal.draft) {
     notFound();
@@ -123,6 +128,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
               sortedObservations={sortedObservations}
               animal={animal}
               canEdit={canEdit}
+              canReadRegistryMap={canReadRegistryMap}
               informatorOptions={informatorOptions}
             />
           </div>
@@ -161,6 +167,7 @@ export default async function AnimalHistoryPage({ params }: PageProps) {
                 sortedObservations={sortedObservations}
                 animal={animal}
                 canEdit={canEdit}
+                canReadRegistryMap={canReadRegistryMap}
                 informatorOptions={informatorOptions}
               />
             </div>

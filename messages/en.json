@@ -1,4 +1,123 @@
 {
+  "volunteerpage": {
+    "title": "Volunteer",
+    "fallbackName": "Volunteer",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "emailState": {
+      "verified": "Verified email",
+      "unverified": "Email not verified"
+    },
+    "sex": {
+      "male": "Male",
+      "female": "Female",
+      "unspecified": "Not specified"
+    },
+    "labels": {
+      "about": "About",
+      "backToInfo": "Back to information",
+      "joined": "Joined",
+      "until": "Valid until",
+      "roleTitle": "Official volunteer"
+    },
+    "officialStatement": "\"This person is an official representative of the foundation.\"",
+    "roleCount": "{count, plural, =0 {No roles assigned} one {# role assigned} other {# roles assigned}}"
+  },
+  "volunteerinfopage": {
+    "title": "Volunteers",
+    "who": {
+      "sectionLabel": "Foundation volunteers",
+      "title": "People who give their time and strength for animals",
+      "description": "Foundation volunteers work without financial reward. They give their time, experience, patience, and energy so an animal is not left alone with illness, danger, or the street.",
+      "expenses": "The foundation has many ongoing costs: treatment, sterilization, transport, food, medicine, equipment, and support programs. That is why we especially value people who choose to be part of this work not for payment, but for real results.",
+      "points": {
+        "fieldWork": {
+          "title": "Field work has risks.",
+          "description": "Capture, transport, and street work require attention, endurance, and respect for safety rules."
+        },
+        "skill": {
+          "title": "Helping animals takes skill.",
+          "description": "Patience, experience, responsible handling, and the ability to act calmly often determine the result."
+        },
+        "roles": {
+          "title": "Every role matters.",
+          "description": "Capture, care, transport, treatment, communication, photos, records, storage, and finding homes are all parts of one system."
+        },
+        "team": {
+          "title": "Results are created by a team.",
+          "description": "One person cannot change the world alone. But together we can change the lives of specific animals every day."
+        }
+      }
+    },
+    "badge": {
+      "sectionLabel": "Identification",
+      "title": "Example of the official volunteer badge",
+      "description": "Every active volunteer should carry an identification badge. It confirms identity, outlines what the holder is allowed to do, and makes verification easier for the public.",
+      "foundation": "Periphery",
+      "cardLabel": "Volunteer badge",
+      "sample": {
+        "name": "Iryna Melnyk",
+        "role": "Official volunteer",
+        "idLabel": "ID number",
+        "idValue": "VOL-08472",
+        "validLabel": "Valid thru",
+        "validValue": "12/2026"
+      },
+      "front": {
+        "title": "Front side: about the volunteer",
+        "items": {
+          "volunteerQr": {
+            "title": "Volunteer profile QR",
+            "description": "The QR code opens the individual volunteer page so identity, role, and active status can be checked immediately."
+          },
+          "expiration": {
+            "title": "Badge expiration date",
+            "description": "The visible expiration date shows whether the badge is still valid and when the volunteer status must be renewed."
+          },
+          "badgeColor": {
+            "title": "Responsibility color",
+            "description": "Badge color marks the role level: red for new members, yellow for general members, blue for extended responsibility, and green for leaders."
+          }
+        }
+      },
+      "back": {
+        "title": "Back side: about the foundation",
+        "officialMandate": "Official mandate",
+        "mandateText": "\"The bearer of this card is an official representative of the foundation for activities related to animal welfare and coordinated response.\"",
+        "authorizedActions": "Authorized actions",
+        "actions": {
+          "capture": "Authorized to participate in safe capture and transport of stray animals.",
+          "vetCare": "Authorized to request urgent veterinary assistance within foundation workflows.",
+          "abuse": "Authorized to document and escalate reports of animal abuse or immediate danger."
+        },
+        "verifyTitle": "Verify this badge:",
+        "verifyUrl": "periphery.org/verify",
+        "verifyPhone": "+380 000 000 000",
+        "items": {
+          "registryQr": {
+            "title": "Official verification QR codes",
+            "description": "QR codes point to the Unified State Register and our official site so people can confirm that the foundation is real."
+          },
+          "contacts": {
+            "title": "Support contacts",
+            "description": "Phone and messenger contacts give residents, clinics, and partners a direct way to write or call for support."
+          },
+          "directorSignature": {
+            "title": "Director signature",
+            "description": "The mandatory director signature confirms that the badge was issued by the foundation and approved for active use."
+          }
+        }
+      }
+    },
+    "support": {
+      "sectionLabel": "Support matters",
+      "title": "Volunteers cannot carry this alone",
+      "description": "Our volunteers try very hard every day: they answer messages, go to difficult locations, coordinate treatment, transport animals, document cases, and stay present when a situation is messy or emotionally heavy.",
+      "help": "We need every kind of help and support around them: time, transport, supplies, temporary care, donations, professional advice, calm communication, and simple human encouragement."
+    }
+  },
   "yes": "Yes",
   "no": "No",
   "cookieConsent": {
@@ -159,6 +278,167 @@
     "modal": {
       "gdpr": "<paragraph>Before submitting your message, please provide your consent for the processing of your personal data by the Charity Foundation “Peryferiia”.</paragraph><paragraph>We process only the information you voluntarily provide in this form (such as your name, contact details, and message content) solely for the purpose of reviewing your request and responding to you.</paragraph><paragraph>Your personal data will not be shared with third parties, except where required by law.</paragraph><paragraph>You have the right to access or modify your personal data at any time in accordance with applicable data protection laws.</paragraph>",
       "checkboxLabel": "I consent to the processing of my personal data"
+    }
+  },
+  "adoptionpage": {
+    "title": "Adoption",
+    "eyebrow": "Find your companion",
+    "heading": "Who are you looking for?",
+    "description": "Choose an animal type to learn about the adoption process and browse available animals.",
+    "categories": {
+      "cat": {
+        "label": "Cats",
+        "description": "Browse cats looking for a permanent home"
+      }
+    }
+  },
+  "adoptionprocesspage": {
+    "title": "Adoption Process",
+    "hero": {
+      "eyebrow": "Adoption guidelines",
+      "title": "Adoption is a responsible process",
+      "description": "Our goal is to place every animal in conditions that are safe, realistic, and sustainable. That is why the adoption path is thorough, sometimes lengthy, and designed to protect animals from impulsive decisions while preserving clear medical and identification records.",
+      "primaryCta": "View available animals",
+      "secondaryCta": "Contact the team",
+      "noteLabel": "Important note",
+      "prototypeNote": "A person may independently bring a cat home from the street, but official transfer of the veterinary passport and microchip data happens only after review, approval, and a signed agreement with the foundation.",
+      "summaryLabel": "What official adoption includes",
+      "summaryIntro": "The formal handover process remains consistent even when the animal is already familiar to a neighborhood or a potential adopter.",
+      "summary": {
+        "review": "We review the home environment, daily routine, and the adopter's readiness before any documents are transferred.",
+        "transfer": "If conditions are suitable, we sign an adoption agreement and re-register the veterinary passport and chip data.",
+        "refusal": "If the conditions do not protect the animal's welfare, we refuse the official transfer even when interest is genuine."
+      }
+    },
+    "highlightsLabel": "Non-negotiable principles",
+    "highlights": {
+      "care": "Animal welfare comes before speed, convenience, or emotional pressure.",
+      "review": "Each request goes through a staged review instead of an informal handover.",
+      "handover": "Documents and long-term responsibility are transferred only after a formal agreement."
+    },
+    "considerations": {
+      "eyebrow": "Before you apply",
+      "title": "Important considerations",
+      "description": "Three situations that require especially honest discussion before a permanent home is approved.",
+      "cards": {
+        "street": {
+          "title": "Street and community cats",
+          "description": "Cats that have lived outdoors can be fearful, territorial, or slow to adapt to indoor routines. Even animals that were once domestic may need time, patience, and carefully managed transition support."
+        },
+        "firstTime": {
+          "title": "First-time adopters",
+          "description": "Life with a cat is not frictionless. Sleep disruption, litter issues, damaged furniture, medical follow-up, and slow bonding are realistic parts of care that require patience and routine."
+        },
+        "currentPets": {
+          "title": "Homes with other animals",
+          "description": "If you already have pets, you must plan the introduction carefully and keep attention on every animal in the household. Safe integration is part of the review, not an afterthought."
+        }
+      }
+    },
+    "policy": {
+      "eyebrow": "Our policy",
+      "title": "We do not catch cats \"on demand\"",
+      "paragraph1": "Our primary goal is to control the stray population, not to provide free cats to anyone who asks. We sterilize, vaccinate, and microchip animals within the TNR program and keep records for their welfare.",
+      "paragraph2": "After treatment, many cats return to their familiar territory under community supervision. The foundation is not a shelter store and does not hand out processed animals as ready-made goods.",
+      "quote": "\"Foundation expenses for one cat, including catching, sterilization, medication, microchip, and passport, are covered by charitable funds. Our duty is to protect the animal as much as possible, not to hand it over to the first person who wants to avoid these costs.\""
+    },
+    "officialTransfer": {
+      "eyebrow": "Permanent-home milestones",
+      "title": "Milestones to Permanent Home",
+      "description": "We follow a structured procedure to ensure successful adoptions. Every milestone is critical for the safety and happiness of the animal.",
+      "items": {
+        "availableCats": {
+          "title": "Available Cats",
+          "description": "We only offer cats that are currently undergoing medical treatment or rehabilitation, or cats already on the street that are tame and easily approachable. Catching scared cats is contraindicated because it traumatizes them further and makes home adaptation extremely difficult. This is about helping animals, not entertainment."
+        },
+        "discussion": {
+          "title": "Discussion & Planning",
+          "description": "We discuss the specific conditions where the cat will live, the required care, diet, and how much time the cat will spend alone. We conduct a thorough conversation and agree on a concrete care plan."
+        },
+        "agreement": {
+          "title": "Agreement & Trial Period",
+          "description": "We draft an individual agreement describing the best conditions for the animal. The cat is then transferred for a trial period. During this time, we retain the animal's official documents."
+        },
+        "finalTransfer": {
+          "title": "Final Document Transfer",
+          "description": "If the trial period is successful and the animal continues to thrive in the new family, we officially hand over the veterinary passport and microchip documents."
+        }
+      }
+    },
+    "conflictAlert": {
+      "title": "Zero tolerance for conflict",
+      "description": "If a person insists on their demands or escalates into conflict, we record the incident, may suggest alternative options, and do not lower the review standard for the animal's safety."
+    },
+    "timeline": {
+      "eyebrow": "Detailed route",
+      "title": "A fuller five-step handover timeline",
+      "description": "The blocks above explain the policy and decision rules from the mockup. The five-step timeline below keeps the broader operational route available as a detailed guide for status, early contact, screening, review, and agreement."
+    },
+    "stepLabel": "Step",
+    "resourcesLabel": "Related resources",
+    "noVisualAvailable": "No visual available",
+    "steps": {
+      "status": {
+        "title": "Current animal status",
+        "description": {
+          "1": "Some animals still remain in their familiar outdoor territory while volunteers monitor location, condition, feeding, and community context. The organization keeps medical notes, records, and supporting documents in order at the same time.",
+          "2": "This stage explains what is already known before any transfer discussion begins, including health history, identification, sterilization or vaccination status, and current supervision."
+        },
+        "quote": "Every community animal deserves steady observation, even before a permanent home is found.",
+        "visualLabel": "Community monitoring and basic records",
+        "resources": {
+          "1": "Public animal registry"
+        }
+      },
+      "intent": {
+        "title": "Direct contact and intent",
+        "description": {
+          "1": "If a person wants to take responsibility for an animal, the first requirement is a direct message or phone call to the organization. Early communication helps pause conflicting arrangements and clarifies next steps.",
+          "2": "This stage also sets expectations for response times, current treatment status, and whether temporary care or urgent medical needs are already affecting the timeline."
+        },
+        "quote": "Fast communication protects both the animal and the people already involved in care.",
+        "visualLabel": "Immediate contact and intent confirmation",
+        "resources": {
+          "1": "Contact information"
+        }
+      },
+      "vetting": {
+        "title": "Vetting process",
+        "description": {
+          "1": "Potential adopters can be screened through an application, interview, and home-environment review. The exact criteria can be adjusted later for different animal types, ages, or medical needs.",
+          "2": "This block is a good place to describe references, prior experience, household expectations, and whether the organization reserves the right to conduct a visit or request extra clarification."
+        },
+        "quote": "A careful match is part of animal protection, not administrative overhead.",
+        "visualLabel": "Application review and home suitability checks",
+        "resources": {
+          "1": "Support options",
+          "2": "Interview contact"
+        }
+      },
+      "review": {
+        "title": "Review and decision",
+        "description": {
+          "1": "After screening, the organization reviews whether the proposed home matches the animal's specific welfare needs and whether any risks require refusal, delay, or extra follow-up.",
+          "2": "This is where the process stays consistent: decisions are documented, responsibility is clear, and emotional pressure or conflict does not replace welfare-based judgment."
+        },
+        "quote": "Decisions should be consistent, documented, and centered on the specific needs of the animal.",
+        "visualLabel": "Internal review and final welfare check",
+        "resources": {
+          "1": "Support policy overview"
+        }
+      },
+      "agreement": {
+        "title": "Final agreement",
+        "description": {
+          "1": "Once approved, the handover is completed through a formal agreement that transfers responsibility and confirms the adopter's obligations. Medical history, the veterinary passport, and chip re-registration can be attached here.",
+          "2": "This final block can also define follow-up communication, return conditions, and the list of documents or care instructions handed over with the animal."
+        },
+        "quote": "The agreement marks the start of long-term responsibility, not the end of the process.",
+        "visualLabel": "Document signing and responsibility transfer",
+        "resources": {
+          "1": "Privacy and legal references"
+        }
+      }
     }
   },
   "contactspage": {
@@ -635,6 +915,37 @@
         "vaccinated": "Vaccinated",
         "underTreatment": "Under treatment",
         "cured": "Cured"
+      }
+    }
+  },
+  "registryLightPage": {
+    "title": "Community Animal Directory",
+    "eyebrow": "Community animals",
+    "headline": "Meet the animals we <accent>care for</accent> together.",
+    "description": "We monitor and support community cats that require care and treatment.",
+    "privacy": "Slim mode keeps sensitive location data hidden while still showing who needs support right now.",
+    "cta": {
+      "sponsor": "Become a Sponsor",
+      "supplies": "Donate Supplies"
+    },
+    "empty": "No animals are listed right now.",
+    "loadingMore": "Loading more animals...",
+    "loadMoreError": "More animals could not be loaded right now.",
+    "retryLoadMore": "Try again",
+    "cards": {
+      "seenLabel": "Seen by volunteers",
+      "seenUnknown": "Recently updated",
+      "age": "{age} {age, plural, one {year} other {years}} old",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This week",
+      "privacyLabel": "Exact location is hidden in this view.",
+      "descriptionFallback": "This animal is part of the community registry and is being monitored by our team.",
+      "species": {
+        "cat": "Cat",
+        "dog": "Dog",
+        "bird": "Bird",
+        "other": "Animal"
       }
     }
   },
@@ -1766,6 +2077,8 @@
       "privacy": "Privacy Policy",
       "legal": "Legal information",
       "fundWork": "Fund work",
+      "adoption": "Adoption",
+      "volunteer": "Volunteers",
       "payments": "Support the fund",
       "offer": "Public offer",
       "reports": "Reports"

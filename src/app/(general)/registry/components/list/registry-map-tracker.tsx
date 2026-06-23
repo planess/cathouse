@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -40,6 +40,7 @@ import type { LayerGroup, Map as LeafletMap } from 'leaflet';
 import type { ChangeEvent } from 'react';
 
 const ONLY_DRAFT_FILTER_VALUE = 'only-draft';
+const ADOPTION_STATUS_FILTER_VALUE = 'adoption';
 const HOVER_MARKER_STROKE = '#f59e0b';
 const HOVER_MARKER_FILL = '#fef08a';
 const HOVER_MARKER_RADIUS = 8;
@@ -63,6 +64,14 @@ function parseBirthday(value: string | null): Date | undefined {
   return parsed;
 }
 
+function parseStatusFilter(value: string | null): string | null {
+  if (value === ADOPTION_STATUS_FILTER_VALUE) {
+    return value;
+  }
+
+  return null;
+}
+
 export default function RegistryMapTracker({
   isVolunteer,
 }: RegistryMapTrackerProps) {
@@ -70,6 +79,8 @@ export default function RegistryMapTracker({
   const tCard = useTranslations('historypage.card');
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const statusFilter = parseStatusFilter(searchParams.get('status'));
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -79,6 +90,7 @@ export default function RegistryMapTracker({
   const zoneByAnimalIdRef = useRef<Map<string, ZoneEntry>>(new Map());
   const highlightedAnimalIdRef = useRef<string | null>(null);
   const onlyOwnDraftRef = useRef(false);
+  const statusFilterRef = useRef<string | null>(statusFilter);
   const requestIdRef = useRef(0);
   const shouldReloadAfterMoveRef = useRef(false);
 
@@ -95,6 +107,10 @@ export default function RegistryMapTracker({
   useEffect(() => {
     onlyOwnDraftRef.current = isRenderOnlyDraftState;
   }, [isRenderOnlyDraftState]);
+
+  useEffect(() => {
+    statusFilterRef.current = statusFilter;
+  }, [statusFilter]);
 
   const loadAnimalsInViewport = useCallback(async () => {
     const map = mapRef.current;
@@ -116,6 +132,10 @@ export default function RegistryMapTracker({
 
     if (onlyOwnDraftRef.current) {
       query.set('onlyOwnDraft', 'true');
+    }
+
+    if (statusFilterRef.current !== null) {
+      query.set('status', statusFilterRef.current);
     }
 
     setIsLoading(true);
@@ -404,7 +424,7 @@ export default function RegistryMapTracker({
     }
 
     void loadAnimalsInViewport();
-  }, [isRenderOnlyDraftState, loadAnimalsInViewport]);
+  }, [isRenderOnlyDraftState, loadAnimalsInViewport, statusFilter]);
 
   const handleSearchChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {

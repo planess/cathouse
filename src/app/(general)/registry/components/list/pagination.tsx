@@ -28,35 +28,35 @@ export default async function Pagination({
       {hasPrev ? (
         <Link
           href={buildHref(safePage - 1)}
-          className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+          className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
           aria-label={t('pagination.previous')}
         >
           {t('pagination.previous')}
         </Link>
       ) : (
         <span
-          className="px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed select-none"
+          className="px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed select-none dark:border-slate-700 dark:text-slate-500"
           aria-disabled="true"
         >
           {t('pagination.previous')}
         </span>
       )}
 
-      <span className="text-gray-600">
+      <span className="text-gray-600 dark:text-slate-400 transition-colors">
         {t('pagination.summary', { page: safePage, total: totalPages })}
       </span>
 
       {hasNext ? (
         <Link
           href={buildHref(safePage + 1)}
-          className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+          className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
           aria-label={t('pagination.next')}
         >
           {t('pagination.next')}
         </Link>
       ) : (
         <span
-          className="px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed select-none"
+          className="px-3 py-1 rounded border border-gray-200 text-gray-400 cursor-not-allowed select-none dark:border-slate-700 dark:text-slate-500"
           aria-disabled="true"
         >
           {t('pagination.next')}
