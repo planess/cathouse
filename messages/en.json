@@ -16,15 +16,13 @@
       "unspecified": "Not specified"
     },
     "labels": {
-      "about": "About {name}",
-      "emailState": "Email status",
+      "about": "About",
+      "backToInfo": "Back to information",
       "joined": "Joined",
-      "sex": "Sex"
+      "until": "Valid until",
+      "roleTitle": "Official volunteer"
     },
-    "summary": {
-      "withSex": "{name} joined the platform on {date}, uses {email} for communication, currently has {roles}, and is marked as {status}. Profile sex: {sex}.",
-      "withoutSex": "{name} joined the platform on {date}, uses {email} for communication, currently has {roles}, and is marked as {status}."
-    },
+    "officialStatement": "\"This person is an official representative of the foundation.\"",
     "roleCount": "{count, plural, =0 {No roles assigned} one {# role assigned} other {# roles assigned}}"
   },
   "volunteerinfopage": {

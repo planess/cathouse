@@ -16,6 +16,10 @@ export type UserPayload = {
   roles: string[];
   isActive: boolean;
   profilePhoto?: File | null;
+  alias: string;
+  about: string;
+  badgeValidUntil: Date | null;
+  hiredOn: Date | null;
 };
 
 export type UserOperationResult = {
@@ -44,6 +48,16 @@ function parseBoolean(value: FormDataEntryValue | null, fallback: boolean) {
   return value === 'true';
 }
 
+function parseDate(value: FormDataEntryValue | null): Date | null {
+  if (typeof value !== 'string' || value.trim() === '') {
+    return null;
+  }
+
+  const date = new Date(`${value}T00:00:00.000Z`);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function parseUserPayload(payload: UserPayloadInput): UserPayload {
   if (!(payload instanceof FormData)) {
     return payload;
@@ -57,6 +71,10 @@ function parseUserPayload(payload: UserPayloadInput): UserPayload {
     emailVerified: parseBoolean(payload.get('emailVerified'), false),
     isActive: parseBoolean(payload.get('isActive'), true),
     roles: payload.getAll('roles').map((role) => role.toString()),
+    alias: payload.get('alias')?.toString() ?? '',
+    about: payload.get('about')?.toString() ?? '',
+    badgeValidUntil: parseDate(payload.get('badgeValidUntil')),
+    hiredOn: parseDate(payload.get('hiredOn')),
     profilePhoto:
       profilePhoto instanceof File && profilePhoto.size > 0
         ? profilePhoto
@@ -97,6 +115,45 @@ async function uploadProfilePhoto(userId: ObjectId, file?: File | null) {
   return uploadedPhoto?.key ?? null;
 }
 
+function buildProfileUpdate(payload: UserPayload) {
+  const $set: Record<string, string | Date> = {
+    alias: payload.alias.trim(),
+    about: payload.about.trim(),
+  };
+  const $unset: Record<string, string> = {};
+
+  if (payload.badgeValidUntil) {
+    $set.badgeValidUntil = payload.badgeValidUntil;
+  } else {
+    $unset.badgeValidUntil = '';
+  }
+
+  if (payload.hiredOn) {
+    $set.hiredOn = payload.hiredOn;
+  } else {
+    $unset.hiredOn = '';
+  }
+
+  return Object.keys($unset).length > 0 ? { $set, $unset } : { $set };
+}
+
+function buildProfileInsert(
+  userId: ObjectId,
+  payload: UserPayload,
+  profilePhoto: string | null,
+) {
+  return {
+    _id: userId,
+    ...(payload.alias.trim() ? { alias: payload.alias.trim() } : {}),
+    ...(payload.about.trim() ? { about: payload.about.trim() } : {}),
+    ...(payload.badgeValidUntil
+      ? { badgeValidUntil: payload.badgeValidUntil }
+      : {}),
+    ...(payload.hiredOn ? { hiredOn: payload.hiredOn } : {}),
+    ...(profilePhoto ? { profilePhoto } : {}),
+  };
+}
+
 export async function createUser(input: UserPayloadInput) {
   const payload = parseUserPayload(input);
   const email = normalizeEmail(payload.email);
@@ -131,10 +188,11 @@ export async function createUser(input: UserPayloadInput) {
     payload.profilePhoto,
   );
 
-  await db.collection(DbTables.profiles).insertOne({
-    _id: insertResult.insertedId,
-    ...(profilePhoto ? { profilePhoto } : {}),
-  });
+  await db
+    .collection(DbTables.profiles)
+    .insertOne(
+      buildProfileInsert(insertResult.insertedId, payload, profilePhoto),
+    );
 
   revalidatePath('/admin/users');
 
@@ -183,6 +241,12 @@ export async function updateUser(input: UserPayloadInput) {
       { upsert: true },
     );
   }
+
+  await db.collection(DbTables.profiles).updateOne(
+    { _id: userId },
+    buildProfileUpdate(payload),
+    { upsert: true },
+  );
 
   revalidatePath('/admin/users');
 

@@ -1,7 +1,10 @@
 import { type Filter } from 'mongodb';
 
 import { resolveAnimalImage } from '@app/(general)/registry/components/card/card.helpers';
-import { registryStatusFilters } from '@app/(general)/registry/helpers/registry-status-filter';
+import {
+  RegistryStatusFilter,
+  registryStatusFilters,
+} from '@app/(general)/registry/helpers/registry-status-filter';
 import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
@@ -12,7 +15,6 @@ import { hasPermission } from '@app/services/access-verification.service';
 import { REGISTRY_LIGHT_ANIMALS_BATCH_SIZE } from '../registry-light.constants';
 
 import type {
-  RegistryStatusFilter,
   RegistryLightAnimalRecord,
   RegistryLightAnimalsPage,
 } from '../types/registry-light.types';

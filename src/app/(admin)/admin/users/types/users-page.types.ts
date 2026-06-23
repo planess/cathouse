@@ -14,3 +14,11 @@ export type DbRole = {
   name: string;
   isActive?: boolean;
 };
+
+export type DbProfile = {
+  _id: ObjectId;
+  alias?: string;
+  about?: string;
+  badgeValidUntil?: Date | string;
+  hiredOn?: Date | string;
+};

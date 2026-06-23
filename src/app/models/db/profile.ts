@@ -7,4 +7,8 @@ export interface Profile extends DB {
   lastName: string;
   profilePhoto?: string;
   sex: Sex;
+  about?: string;
+  alias?: string;
+  badgeValidUntil?: Date;
+  hiredOn?: Date;
 }

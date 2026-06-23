@@ -1,10 +1,16 @@
 export type UserRow = {
   id: string;
   name: string;
+  alias: string;
   email: string;
   emailVerified: boolean;
   roles: string[];
   roleIds: string[];
+  about: string;
+  badgeValidUntil: string;
+  badgeValidUntilInput: string;
+  hiredOn: string;
+  hiredOnInput: string;
   isActive: boolean;
   createdAt: string;
 };
@@ -16,7 +22,11 @@ export type RoleOption = {
 
 export type UserFormState = {
   profilePhoto: File | null;
+  alias: string;
   email: string;
+  about: string;
+  badgeValidUntil: string;
+  hiredOn: string;
   emailVerified: boolean;
   isActive: boolean;
   roles: string[];

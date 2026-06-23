@@ -16,15 +16,13 @@
       "unspecified": "Не вказано"
     },
     "labels": {
-      "about": "Про {name}",
-      "emailState": "Статус email",
-      "joined": "У системі з",
-      "sex": "Стать"
+      "about": "Опис",
+      "backToInfo": "Назад до інформації",
+      "joined": "Долучився",
+      "until": "Актуально до",
+      "roleTitle": "Офіційний волонтер"
     },
-    "summary": {
-      "withSex": "{name} у системі з {date}, використовує {email} для зв'язку, наразі має {roles} та позначений як {status}. Стать у профілі: {sex}.",
-      "withoutSex": "{name} у системі з {date}, використовує {email} для зв'язку, наразі має {roles} та позначений як {status}."
-    },
+    "officialStatement": "\"Ця людина є офіційним представником фонду.\"",
     "roleCount": "{count, plural, =0 {Ролі не призначено} one {# роль призначено} few {# ролі призначено} other {# ролей призначено}}"
   },
   "volunteerinfopage": {

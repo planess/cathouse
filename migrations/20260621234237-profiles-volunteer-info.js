@@ -5,7 +5,53 @@ module.exports = {
    * @returns {Promise<void>}
    */
   async up(db, client) {
-    // append validation for column 'profilePhoto' to the 'profiles' collection
+    // add new field validations of schema
+    await db.command({
+      collMod: 'profiles',
+      validator: {
+        $jsonSchema: {
+          bsonType: 'object',
+          properties: {
+            firstName: {
+              bsonType: 'string',
+            },
+            lastName: {
+              bsonType: 'string',
+            },
+            alias: {
+              bsonType: 'string',
+            },
+            sex: {
+              bsonType: 'string',
+              enum: ['male', 'female'],
+            },
+            about: {
+              bsonType: 'string',
+            },
+            profilePhoto: {
+              bsonType: 'string',
+              description: "'profilePhoto' must be a string and is required",
+            },
+            badgeValidUntil: {
+              bsonType: 'date',
+            },
+            hiredOn: {
+              bsonType: 'date',
+            },
+          },
+        },
+      },
+      validationLevel: 'moderate',
+    });
+  },
+
+  /**
+   * @param db {import('mongodb').Db}
+   * @param client {import('mongodb').MongoClient}
+   * @returns {Promise<void>}
+   */
+  async down(db, client) {
+    // revert back the former schema validation
     await db.command({
       collMod: 'profiles',
       validator: {
@@ -30,36 +76,6 @@ module.exports = {
         },
       },
       validationLevel: 'moderate',
-    });
-  },
-
-  /**
-   * @param db {import('mongodb').Db}
-   * @param client {import('mongodb').MongoClient}
-   * @returns {Promise<void>}
-   */
-  async down(db, client) {
-    // remove validation for column 'profilePhoto' from the 'profiles' collection
-    await db.command({
-      collMod: 'profiles',
-      validator: {
-        $jsonSchema: {
-          bsonType: 'object',
-          properties: {
-            firstName: {
-              bsonType: 'string',
-            },
-            lastName: {
-              bsonType: 'string',
-            },
-            sex: {
-              bsonType: 'string',
-              enum: ['male', 'female'],
-            },
-          },
-        },
-      },
-      validationLevel: 'off',
     });
   },
 };
