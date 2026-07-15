@@ -87,12 +87,20 @@ export default async function AdminLayout({
                   Inventory
                 </Link>
                 {canSendEmail && (
-                  <Link
-                    href="/admin/email"
-                    className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
-                  >
-                    Email
-                  </Link>
+                  <>
+                    <Link
+                      href="/admin/email"
+                      className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                    >
+                      Email
+                    </Link>
+                    <Link
+                      href="/admin/email2"
+                      className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                    >
+                      Email2
+                    </Link>
+                  </>
                 )}
               </nav>
             </div>
