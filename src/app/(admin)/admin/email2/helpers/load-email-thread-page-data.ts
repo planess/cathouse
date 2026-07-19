@@ -1,0 +1,42 @@
+import { getCurrentUser } from '@app/hooks/get-user';
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { requirePermission } from '@app/services/access-verification.service';
+import { logDevelopmentError } from '@app/services/development-error-logger.service';
+import { emailService } from '@app/services/email.service';
+
+import type { EmailThreadPageData } from '../types/email-thread-page-data';
+import type { LoadEmailThreadPageDataOptions } from '../types/load-email-thread-page-data-options';
+
+export async function loadEmailThreadPageData({
+  mailboxId,
+  threadId,
+}: LoadEmailThreadPageDataOptions): Promise<EmailThreadPageData | null> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser?.id) {
+    return null;
+  }
+
+  await requirePermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
+
+  try {
+    const [thread, messages] = await Promise.all([
+      emailService.getThread(threadId),
+      emailService.listMessagesByThread(threadId),
+    ]);
+
+    return {
+      messages,
+      thread,
+    };
+  } catch (error) {
+    await logDevelopmentError('email2.threadPage.loadThreadMessages', error, {
+      mailboxId,
+      route: '/admin/email2/[mailboxId]/[threadId]',
+      threadId,
+      userId: currentUser.id.toString(),
+    });
+
+    throw error;
+  }
+}
