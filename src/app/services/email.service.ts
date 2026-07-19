@@ -1,376 +1,70 @@
-import { randomBytes } from 'node:crypto';
-
 import FormData from 'form-data';
 import Mailgun from 'mailgun.js';
-import { MailgunMessageData } from 'mailgun.js/definitions';
 import { ObjectId } from 'mongodb';
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
-import { EmailAddress } from '@app/models/email-address.model';
-import { EmailAttachmentReference } from '@app/models/email-attachment-reference.model';
-import { EmailMailbox } from '@app/models/email-mailbox.model';
-import { EmailMessage } from '@app/models/email-message.model';
-import { EmailThread } from '@app/models/email-thread.model';
+import type { EmailAddress } from '@app/models/email-address.model';
+import type { EmailMailbox } from '@app/models/email-mailbox.model';
 
-import { logDevelopmentError } from './development-error-logger.service';
+import {
+  EMAIL_MAILBOX_DOMAIN,
+  EMAIL_PREFIX_PATTERN,
+} from './email/constants';
+import { createMessageId } from './email/create-message-id';
+import { formatEmailAddress } from './email/format-email-address';
+import { getContactIds } from './email/get-contact-ids';
+import { getContactsById } from './email/get-contacts-by-id';
+import { getHeaderValue } from './email/get-header-value';
+import { getLastMessagesById } from './email/get-last-messages-by-id';
+import { getMailgunField } from './email/get-mailgun-field';
+import { logEmailServiceError } from './email/log-email-service-error';
+import { mapContact } from './email/map-contact';
+import { mapMailbox } from './email/map-mailbox';
+import { mapMessage } from './email/map-message';
+import { mapThread } from './email/map-thread';
+import { normalizeEmailPrefix } from './email/normalize-email-prefix';
+import { normalizeMessageId } from './email/normalize-message-id';
+import { parseAddressList } from './email/parse-address-list';
+import { parseContentIdMap } from './email/parse-content-id-map';
+import { parseEmailAddress } from './email/parse-email-address';
+import { parseHeaderDate } from './email/parse-header-date';
+import { parseIncomingMailboxRecipients } from './email/parse-incoming-mailbox-recipients';
+import { parseMailgunHeaders } from './email/parse-mailgun-headers';
+import { parseOptionalAddressList } from './email/parse-optional-address-list';
+import { parseReferences } from './email/parse-references';
+import { stripHtml } from './email/strip-html';
 import { Singleton } from './singleton';
 
-interface MessageResult {
-  status: number; // 200 for success
-}
+import type {
+  EmailAttachmentDocument,
+  EmailContactDocument,
+  EmailMessageDocument,
+  EmailThreadDocument,
+} from './email/document-types';
+import type { AttachmentFile } from './email/types/attachment-file';
+import type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
+import type { EmailMailboxThreadGroup } from './email/types/email-mailbox-thread-group';
+import type { EmailMessageSummary } from './email/types/email-message-summary';
+import type { EmailThreadSummary } from './email/types/email-thread-summary';
+import type { IncomingMailgunAttachment } from './email/types/incoming-mailgun-attachment';
+import type { IncomingMailgunEmailPayload } from './email/types/incoming-mailgun-email-payload';
+import type { IncomingMailgunEmailResult } from './email/types/incoming-mailgun-email-result';
+import type { InlineFile } from './email/types/inline-file';
+import type { MessageResult } from './email/types/message-result';
+import type { SendMailboxEmailPayload } from './email/types/send-mailbox-email-payload';
+import type { SendMailboxEmailResult } from './email/types/send-mailbox-email-result';
+import type { MailgunMessageData } from 'mailgun.js/definitions';
 
-interface AttachmentFile {
-  data: Buffer;
-  filename: string;
-}
-
-interface InlineFile {
-  data: Buffer;
-  filename: string;
-}
-
-export const EMAIL_MAILBOX_DOMAIN = 'perilines.com.ua';
-
-const EMAIL_PREFIX_PATTERN = /^[\w.-]+$/;
-
-type EmailThreadDocument = Omit<EmailThread, 'participants'> & {
-  participants: Array<ObjectId | EmailAddress>;
-};
-
-type EmailContactDocument = EmailAddress & {
-  _id: ObjectId;
-};
-
-type EmailMessageDocument = Omit<
-  EmailMessage,
-  'from' | 'sender' | 'replyTo' | 'to' | 'cc' | 'bcc' | 'attachments'
-> & {
-  from: ObjectId | EmailAddress;
-  sender?: ObjectId | EmailAddress;
-  replyTo?: Array<ObjectId | EmailAddress>;
-  to: Array<ObjectId | EmailAddress>;
-  cc?: Array<ObjectId | EmailAddress>;
-  bcc?: Array<ObjectId | EmailAddress>;
-  attachments?: Array<ObjectId | EmailAttachmentReference>;
-};
-
-export type EmailMailboxSummary = {
-  id: string;
-  address: string;
-  normalizedAddress: string;
-  displayName: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type EmailThreadSummary = {
-  id: string;
-  mailboxId: string;
-  subject: string;
-  participants: EmailAddressSummary[];
-  participantIds: string[];
-  messageCount: number;
-  preview: string;
-  attachmentsCount: number;
-  lastMessageId: string;
-  lastMessageDate: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type EmailAddressSummary = {
-  id?: string;
-  name?: string;
-  address: string;
-};
-
-export type EmailMessageSummary = {
-  id: string;
-  messageId: string;
-  threadId: string;
-  direction: 'incoming' | 'outgoing';
-  from: EmailAddressSummary;
-  sender?: EmailAddressSummary;
-  replyTo: EmailAddressSummary[];
-  to: EmailAddressSummary[];
-  cc: EmailAddressSummary[];
-  bcc: EmailAddressSummary[];
-  subject: string;
-  content: {
-    text?: string;
-    html?: string;
-  };
-  attachmentsCount: number;
-  headerDate: string;
-  createdAt: string;
-  receivedAt: string;
-  sentAt: string;
-};
-
-export type EmailMailboxThreadGroup = {
-  mailbox: EmailMailboxSummary;
-  threads: EmailThreadSummary[];
-};
-
-export type SendMailboxEmailPayload = {
-  mailboxId: string;
-  to: string;
-  cc: string;
-  bcc: string;
-  subject: string;
-  bodyHtml: string;
-};
-
-export type SendMailboxEmailResult = {
-  thread: EmailThreadSummary;
-};
-
-function toIsoString(value: Date | string): string {
-  const date = value instanceof Date ? value : new Date(value);
-
-  return Number.isNaN(date.getTime()) ? '' : date.toISOString();
-}
-
-function mapMailbox(mailbox: EmailMailbox): EmailMailboxSummary {
-  return {
-    id: mailbox._id.toString(),
-    address: mailbox.address,
-    normalizedAddress: mailbox.normalizedAddress,
-    displayName: mailbox.displayName ?? mailbox.address,
-    createdAt: toIsoString(mailbox.createdAt),
-    updatedAt: toIsoString(mailbox.updatedAt),
-  };
-}
-
-function isObjectId(value: unknown): value is ObjectId {
-  return value instanceof ObjectId;
-}
-
-function isEmailAddress(value: unknown): value is EmailAddress {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'address' in value &&
-    typeof (value as EmailAddress).address === 'string'
-  );
-}
-
-function mapContact(contact: EmailContactDocument): EmailAddressSummary {
-  return {
-    id: contact._id.toString(),
-    ...(contact.name !== undefined && contact.name.length > 0
-      ? { name: contact.name }
-      : {}),
-    address: contact.address,
-  };
-}
-
-function mapAddress(
-  value: ObjectId | EmailAddress | undefined,
-  contactsById: Map<string, EmailAddressSummary>,
-): EmailAddressSummary {
-  if (isObjectId(value)) {
-    return (
-      contactsById.get(value.toString()) ?? {
-        id: value.toString(),
-        address: value.toString(),
-      }
-    );
-  }
-
-  if (isEmailAddress(value)) {
-    return {
-      ...(value.name !== undefined && value.name.length > 0
-        ? { name: value.name }
-        : {}),
-      address: value.address,
-    };
-  }
-
-  return { address: 'Unknown' };
-}
-
-function getContactIds(values: Array<ObjectId | EmailAddress | undefined>) {
-  return values.filter(isObjectId).map((value) => value.toString());
-}
-
-function parseEmailAddress(value: string): EmailAddress {
-  const trimmed = value.trim();
-  const match = /^(.*?)\s*<([^>]+)>$/.exec(trimmed);
-  const name = match?.[1]?.trim();
-  const address = (match?.[2] ?? trimmed).trim();
-  const normalizedAddress = address.toLowerCase();
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedAddress)) {
-    throw new Error('Invalid recipient email.');
-  }
-
-  return {
-    ...(name !== undefined && name.length > 0 ? { name } : {}),
-    address,
-    normalizedAddress,
-  };
-}
-
-function parseAddressList(value: string): EmailAddress[] {
-  return value
-    .split(/[\n,;]/)
-    .map((entry) => entry.trim())
-    .filter((entry) => entry.length > 0)
-    .map(parseEmailAddress);
-}
-
-function formatEmailAddress(address: EmailAddress): string {
-  return address.name !== undefined && address.name.length > 0
-    ? `${address.name} <${address.address}>`
-    : address.address;
-}
-
-function stripHtml(value: string): string {
-  return value
-    .replaceAll(/<[^>]+>/g, ' ')
-    .replaceAll(/\s+/g, ' ')
-    .trim();
-}
-
-function getMessagePreview(message?: EmailMessageDocument): string {
-  if (message === undefined) {
-    return '';
-  }
-
-  return stripHtml(message.content.text ?? message.content.html ?? '');
-}
-
-function getMessageDate(message?: EmailMessageDocument): string {
-  if (message === undefined) {
-    return '';
-  }
-
-  return toIsoString(message.dates.headerDate ?? message.dates.createdAt);
-}
-
-function getMessageAttachmentsCount(message?: EmailMessageDocument): number {
-  return message?.attachments?.length ?? 0;
-}
-
-function createMessageId() {
-  return `<${randomBytes(16).toString('hex')}@${EMAIL_MAILBOX_DOMAIN}>`;
-}
-
-async function getContactsById(contactIds: string[]) {
-  const uniqueContactIds = [...new Set(contactIds)]
-    .filter((id) => ObjectId.isValid(id))
-    .map((id) => new ObjectId(id));
-
-  if (uniqueContactIds.length === 0) {
-    return new Map<string, EmailAddressSummary>();
-  }
-
-  const dbClient = await clientPromise;
-  const db = dbClient.db();
-  const contacts = await db
-    .collection<EmailContactDocument>(DbTables.emailContacts)
-    .find({ _id: { $in: uniqueContactIds } })
-    .toArray();
-
-  return new Map(
-    contacts.map((contact) => [contact._id.toString(), mapContact(contact)]),
-  );
-}
-
-function mapThread(
-  thread: EmailThreadDocument,
-  contactsById: Map<string, EmailAddressSummary>,
-  lastMessagesById = new Map<string, EmailMessageDocument>(),
-): EmailThreadSummary {
-  const participantIds = getContactIds(thread.participants);
-  const lastMessage = lastMessagesById.get(thread.lastMessageId.toString());
-
-  return {
-    id: thread._id.toString(),
-    mailboxId: thread.mailboxId.toString(),
-    subject: thread.subject,
-    participants: thread.participants.map((participant) =>
-      mapAddress(participant, contactsById),
-    ),
-    participantIds,
-    messageCount: thread.messageCount,
-    preview: getMessagePreview(lastMessage),
-    attachmentsCount: getMessageAttachmentsCount(lastMessage),
-    lastMessageId: thread.lastMessageId.toString(),
-    lastMessageDate:
-      getMessageDate(lastMessage) || toIsoString(thread.updatedAt),
-    createdAt: toIsoString(thread.createdAt),
-    updatedAt: toIsoString(thread.updatedAt),
-  };
-}
-
-function mapMessage(
-  message: EmailMessageDocument,
-  contactsById: Map<string, EmailAddressSummary>,
-): EmailMessageSummary {
-  const cc = message.cc ?? [];
-  const bcc = message.bcc ?? [];
-  const attachments = message.attachments ?? [];
-
-  return {
-    id: message._id.toString(),
-    messageId: message.messageId,
-    threadId: message.threadId.toString(),
-    direction: message.direction,
-    from: mapAddress(message.from, contactsById),
-    ...(message.sender !== undefined
-      ? { sender: mapAddress(message.sender, contactsById) }
-      : {}),
-    replyTo: (message.replyTo ?? []).map((address) =>
-      mapAddress(address, contactsById),
-    ),
-    to: message.to.map((address) => mapAddress(address, contactsById)),
-    cc: cc.map((address) => mapAddress(address, contactsById)),
-    bcc: bcc.map((address) => mapAddress(address, contactsById)),
-    subject: message.subject,
-    content: message.content,
-    attachmentsCount: attachments.length,
-    headerDate: toIsoString(
-      message.dates.headerDate ?? message.dates.createdAt,
-    ),
-    createdAt: toIsoString(message.dates.createdAt),
-    receivedAt: message.dates.receivedAt
-      ? toIsoString(message.dates.receivedAt)
-      : '',
-    sentAt: message.dates.sentAt ? toIsoString(message.dates.sentAt) : '',
-  };
-}
-
-function normalizeEmailPrefix(prefix: string): string {
-  return prefix.trim().toLowerCase();
-}
-
-async function logEmailServiceError(
-  scope: string,
-  error: unknown,
-  metadata: Record<string, boolean | number | string | null | undefined> = {},
-) {
-  await logDevelopmentError(`email.service.${scope}`, error, metadata);
-}
-
-async function getLastMessagesById(threads: EmailThreadDocument[]) {
-  const messageIds = threads.map((thread) => thread.lastMessageId);
-
-  if (messageIds.length === 0) {
-    return new Map<string, EmailMessageDocument>();
-  }
-
-  const dbClient = await clientPromise;
-  const db = dbClient.db();
-  const messages = await db
-    .collection<EmailMessageDocument>(DbTables.emailMessages)
-    .find({ _id: { $in: messageIds } })
-    .toArray();
-
-  return new Map(messages.map((message) => [message._id.toString(), message]));
-}
+export type { EmailAddressSummary } from './email/types/email-address-summary';
+export type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
+export type { EmailMailboxThreadGroup } from './email/types/email-mailbox-thread-group';
+export type { EmailMessageSummary } from './email/types/email-message-summary';
+export type { EmailThreadSummary } from './email/types/email-thread-summary';
+export type { IncomingMailgunEmailPayload } from './email/types/incoming-mailgun-email-payload';
+export type { IncomingMailgunEmailResult } from './email/types/incoming-mailgun-email-result';
+export type { SendMailboxEmailPayload } from './email/types/send-mailbox-email-payload';
+export type { SendMailboxEmailResult } from './email/types/send-mailbox-email-result';
 
 class EmailService extends Singleton {
   mailgun = new Mailgun(FormData);
@@ -390,7 +84,7 @@ class EmailService extends Singleton {
   ): Promise<MessageResult> {
     try {
       const messageParameters = {
-        from: `Periphery Foundation<${context}@perilines.com.ua>`,
+        from: `Periphery Foundation<${context}@${EMAIL_MAILBOX_DOMAIN}>`,
         to,
         subject,
         html: body, // todo: add text version
@@ -410,7 +104,7 @@ class EmailService extends Singleton {
         }));
       }
 
-      return this.client.messages.create('perilines.com.ua', messageParameters);
+      return this.client.messages.create(EMAIL_MAILBOX_DOMAIN, messageParameters);
     } catch (error) {
       await logEmailServiceError('sendEmail', error, {
         attachmentsCount: attachments.length,
@@ -448,7 +142,7 @@ class EmailService extends Singleton {
         messageParameters.bcc = bcc.map(formatEmailAddress);
       }
 
-      return this.client.messages.create('perilines.com.ua', messageParameters);
+      return this.client.messages.create(EMAIL_MAILBOX_DOMAIN, messageParameters);
     } catch (error) {
       await logEmailServiceError('sendEmailFromAddress', error, {
         bccCount: bcc.length,
@@ -530,7 +224,9 @@ class EmailService extends Singleton {
     }
   }
 
-  async createOrUpdateContact(address: EmailAddress) {
+  async createOrUpdateContact(
+    address: EmailAddress,
+  ): Promise<EmailContactDocument> {
     try {
       const dbClient = await clientPromise;
       const db = dbClient.db();
@@ -577,6 +273,350 @@ class EmailService extends Singleton {
         address: address.address,
         hasName: address.name !== undefined && address.name.length > 0,
         normalizedAddress: address.normalizedAddress,
+      });
+
+      throw error;
+    }
+  }
+
+  async getOrCreateMailboxForAddress(
+    address: EmailAddress,
+  ): Promise<EmailMailbox> {
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const existingMailbox = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOne({ normalizedAddress: address.normalizedAddress });
+
+      if (existingMailbox) {
+        return existingMailbox;
+      }
+
+      const now = new Date();
+      const mailbox: EmailMailbox = {
+        _id: new ObjectId(),
+        address: address.address,
+        normalizedAddress: address.normalizedAddress,
+        ...(address.name !== undefined && address.name.length > 0
+          ? { displayName: address.name }
+          : {}),
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .insertOne(mailbox);
+
+      return mailbox;
+    } catch (error) {
+      await logEmailServiceError('getOrCreateMailboxForAddress', error, {
+        address: address.address,
+        normalizedAddress: address.normalizedAddress,
+      });
+
+      throw error;
+    }
+  }
+
+  async createAttachmentReferences(
+    attachments: IncomingMailgunAttachment[],
+    contentIdsByAttachmentField: Map<string, string>,
+  ): Promise<EmailAttachmentDocument[]> {
+    try {
+      if (attachments.length === 0) {
+        return [];
+      }
+
+      const attachmentDocuments: EmailAttachmentDocument[] = attachments.map(
+        (attachment) => {
+          const contentId = contentIdsByAttachmentField.get(
+            attachment.fieldName,
+          );
+
+          return {
+            _id: new ObjectId(),
+            filename: attachment.fileName,
+            contentType: attachment.contentType,
+            sizeBytes: attachment.sizeBytes,
+            disposition: contentId === undefined ? 'attachment' : 'inline',
+            ...(contentId === undefined ? {} : { contentId }),
+          };
+        },
+      );
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+
+      await db
+        .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+        .insertMany(attachmentDocuments);
+
+      return attachmentDocuments;
+    } catch (error) {
+      await logEmailServiceError('createAttachmentReferences', error, {
+        attachmentsCount: attachments.length,
+      });
+
+      throw error;
+    }
+  }
+
+  async findThreadIdForIncomingReply(
+    inReplyTo: string | undefined,
+    references: string[],
+  ): Promise<ObjectId | null> {
+    const candidateMessageIds = [
+      ...(inReplyTo === undefined ? [] : [inReplyTo]),
+      ...references.toReversed(),
+    ];
+
+    if (candidateMessageIds.length === 0) {
+      return null;
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const messages = await db
+      .collection<EmailMessageDocument>(DbTables.emailMessages)
+      .find({ messageId: { $in: candidateMessageIds } })
+      .project<Pick<EmailMessageDocument, 'messageId' | 'threadId'>>({
+        messageId: 1,
+        threadId: 1,
+      })
+      .toArray();
+    const messagesByMessageId = new Map(
+      messages.map((message) => [message.messageId, message]),
+    );
+    const matchedMessage = candidateMessageIds
+      .map((messageId) => messagesByMessageId.get(messageId))
+      .find((message) => message !== undefined);
+
+    return matchedMessage?.threadId ?? null;
+  }
+
+  async processIncomingMailgunEmail(
+    payload: IncomingMailgunEmailPayload,
+  ): Promise<IncomingMailgunEmailResult> {
+    try {
+      const headers = parseMailgunHeaders(
+        getMailgunField(payload.fields, 'message-headers'),
+      );
+      const mailboxRecipients = parseIncomingMailboxRecipients(
+        payload.fields,
+        headers,
+      );
+      const mailboxes = await Promise.all(
+        mailboxRecipients.map((recipient) =>
+          this.getOrCreateMailboxForAddress(recipient),
+        ),
+      );
+      const mailbox = mailboxes[0];
+      const from = parseEmailAddress(
+        getMailgunField(payload.fields, 'from') ??
+          getHeaderValue(headers, 'From') ??
+          getMailgunField(payload.fields, 'sender') ??
+          '',
+      );
+      const senderField = getMailgunField(payload.fields, 'sender');
+      const sender =
+        senderField === undefined || senderField.trim().length === 0
+          ? undefined
+          : parseEmailAddress(senderField);
+      const to = parseOptionalAddressList(
+        getHeaderValue(headers, 'To') ?? getMailgunField(payload.fields, 'To'),
+      );
+      const cc = parseOptionalAddressList(
+        getHeaderValue(headers, 'Cc') ?? getMailgunField(payload.fields, 'Cc'),
+      );
+      const bcc = parseOptionalAddressList(
+        getHeaderValue(headers, 'Bcc') ?? getMailgunField(payload.fields, 'Bcc'),
+      );
+      const replyTo = parseOptionalAddressList(
+        getHeaderValue(headers, 'Reply-To') ??
+          getMailgunField(payload.fields, 'Reply-To'),
+      );
+      const normalizedTo =
+        to.length > 0
+          ? to
+          : mailboxRecipients;
+      const messageId = normalizeMessageId(
+        getHeaderValue(headers, 'Message-ID') ??
+          getHeaderValue(headers, 'Message-Id') ??
+          getMailgunField(payload.fields, 'Message-Id', 'Message-ID') ??
+          '',
+      );
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const existingMessage = await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .findOne({ messageId });
+
+      if (existingMessage) {
+        return {
+          messageId,
+          mailboxId: mailbox._id.toString(),
+          threadId: existingMessage.threadId.toString(),
+          messageDbId: existingMessage._id.toString(),
+          duplicate: true,
+        };
+      }
+
+      const inReplyToHeader = getHeaderValue(headers, 'In-Reply-To');
+      const inReplyTo =
+        inReplyToHeader === undefined
+          ? undefined
+          : normalizeMessageId(inReplyToHeader);
+      const references = parseReferences(getHeaderValue(headers, 'References'));
+      const attachmentDocuments = await this.createAttachmentReferences(
+        payload.attachments,
+        parseContentIdMap(getMailgunField(payload.fields, 'content-id-map')),
+      );
+      const contacts = await Promise.all(
+        [
+          from,
+          ...(sender === undefined ? [] : [sender]),
+          ...replyTo,
+          ...normalizedTo,
+          ...cc,
+          ...bcc,
+        ].map((address) => this.createOrUpdateContact(address)),
+      );
+      const fromContact = contacts[0];
+      const senderContact = sender === undefined ? undefined : contacts[1];
+      const replyToStart = sender === undefined ? 1 : 2;
+      const toStart = replyToStart + replyTo.length;
+      const ccStart = toStart + normalizedTo.length;
+      const bccStart = ccStart + cc.length;
+      const replyToContacts = contacts.slice(replyToStart, toStart);
+      const toContacts = contacts.slice(toStart, ccStart);
+      const ccContacts = contacts.slice(ccStart, bccStart);
+      const bccContacts = contacts.slice(bccStart);
+      const participantIds = [
+        ...new Map(
+          [
+            fromContact,
+            ...toContacts,
+            ...ccContacts,
+            ...bccContacts,
+          ].map((contact) => [contact._id.toString(), contact._id]),
+        ).values(),
+      ];
+      const now = new Date();
+      const messageObjectId = new ObjectId();
+      const existingThreadId = await this.findThreadIdForIncomingReply(
+        inReplyTo,
+        references,
+      );
+      const threadId = existingThreadId ?? new ObjectId();
+      const subject =
+        getMailgunField(payload.fields, 'subject') ??
+        getHeaderValue(headers, 'Subject') ??
+        '';
+      const textContent =
+        getMailgunField(payload.fields, 'stripped-text') ??
+        getMailgunField(payload.fields, 'body-plain') ??
+        '';
+      const htmlContent =
+        getMailgunField(payload.fields, 'stripped-html') ??
+        getMailgunField(payload.fields, 'body-html');
+      const message: EmailMessageDocument = {
+        _id: messageObjectId,
+        messageId,
+        threadId,
+        ...(inReplyTo === undefined ? {} : { inReplyTo }),
+        ...(references.length === 0 ? {} : { references }),
+        direction: 'incoming',
+        from: fromContact._id,
+        ...(senderContact === undefined ? {} : { sender: senderContact._id }),
+        ...(replyToContacts.length === 0
+          ? {}
+          : { replyTo: replyToContacts.map((contact) => contact._id) }),
+        to: toContacts.map((contact) => contact._id),
+        cc: ccContacts.map((contact) => contact._id),
+        bcc: bccContacts.map((contact) => contact._id),
+        subject,
+        content: {
+          ...(textContent.length > 0 ? { text: textContent } : {}),
+          ...(htmlContent !== undefined && htmlContent.length > 0
+            ? { html: htmlContent }
+            : {}),
+          ...(textContent.length === 0 &&
+          (htmlContent === undefined || htmlContent.length === 0)
+            ? { text: '' }
+            : {}),
+        },
+        attachments: attachmentDocuments.map((attachment) => attachment._id),
+        headers,
+        source: {
+          protocol: 'SMTP',
+          provider: 'mailgun',
+          ...(payload.remoteIp === undefined ? {} : { remoteIp: payload.remoteIp }),
+        },
+        dates: {
+          headerDate: parseHeaderDate(getHeaderValue(headers, 'Date')),
+          receivedAt: now,
+          createdAt: now,
+          updatedAt: now,
+        },
+      };
+
+      if (existingThreadId === null) {
+        const thread: EmailThreadDocument = {
+          _id: threadId,
+          mailboxId: mailbox._id,
+          subject,
+          participants: participantIds,
+          messageCount: 1,
+          lastMessageId: messageObjectId,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        await db
+          .collection<EmailThreadDocument>(DbTables.emailThreads)
+          .insertOne(thread);
+      } else {
+        await db.collection<EmailThreadDocument>(DbTables.emailThreads).updateOne(
+          { _id: threadId },
+          {
+            $addToSet: {
+              participants: {
+                $each: participantIds,
+              },
+            },
+            $inc: {
+              messageCount: 1,
+            },
+            $set: {
+              lastMessageId: messageObjectId,
+              updatedAt: now,
+            },
+          },
+        );
+      }
+
+      await db.collection<EmailMessageDocument>(DbTables.emailMessages).insertOne(message);
+
+      return {
+        messageId,
+        mailboxId: mailbox._id.toString(),
+        threadId: threadId.toString(),
+        messageDbId: messageObjectId.toString(),
+        duplicate: false,
+      };
+    } catch (error) {
+      await logEmailServiceError('processIncomingMailgunEmail', error, {
+        attachmentCount: payload.attachments.length,
+        fieldNames: Object.keys(payload.fields).join(','),
+        recipient: getMailgunField(payload.fields, 'recipient'),
+        recipientCount:
+          getMailgunField(payload.fields, 'recipient') === undefined
+            ? undefined
+            : (getMailgunField(payload.fields, 'recipient') ?? '')
+              .split(/[\n,;](?=(?:[^"]*"[^"]*")*[^"]*$)/)
+              .filter((entry) => entry.trim().length > 0).length,
+        subject: getMailgunField(payload.fields, 'subject'),
       });
 
       throw error;
@@ -705,14 +745,7 @@ class EmailService extends Singleton {
         },
       };
 
-      try {
-        await db.collection(DbTables.emailMessages).insertOne(message);
-      } catch (err) {
-         console.dir(err, { depth: null });
-
-         throw err;
-      }
-      
+      await db.collection(DbTables.emailMessages).insertOne(message);
 
       const contactsById = new Map(
         contacts.map((contact) => [
@@ -848,10 +881,10 @@ class EmailService extends Singleton {
       const threads =
         mailboxIds.length > 0
           ? await db
-              .collection<EmailThreadDocument>(DbTables.emailThreads)
-              .find({ mailboxId: { $in: mailboxIds } })
-              .sort({ updatedAt: -1 })
-              .toArray()
+            .collection<EmailThreadDocument>(DbTables.emailThreads)
+            .find({ mailboxId: { $in: mailboxIds } })
+            .sort({ updatedAt: -1 })
+            .toArray()
           : [];
       const threadsByMailboxId = new Map<string, EmailThreadSummary[]>();
       const contactsById = await getContactsById(

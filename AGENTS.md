@@ -23,7 +23,7 @@ Use TypeScript and React function components. ESLint enforces 2-space indentatio
 
 File names should be kebab-case unless an existing framework convention applies, such as `page.tsx`, `layout.tsx`, `route.ts`, or dynamic route folders like `[id]`.
 
-Prefer functions over classes. Independent functions and methods should be persisted in separate files within specific folders. Each file should contain only one type of code — either an interface, component, type, or constant. Keep files minimal; if code can be divided, it should be split into separate files. Independent helpers used inside components or other methods should be moved into separate files to keep file sizes as minimal as possible.
+Prefer functions over classes. Independent functions and methods should be persisted in separate files within specific folders. Each exported function must live in its own kebab-case file named after that function, and helper files should not collect multiple exported functions. Each exported interface or type alias must live in its own kebab-case file named after that interface or type. Each file should contain only one type of code — either an interface, component, type, function, or constant. Keep files minimal; if code can be divided, it should be split into separate files. Independent helpers used inside components or other methods should be moved into separate files to keep file sizes as minimal as possible.
 
 ## Testing Guidelines
 

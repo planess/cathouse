@@ -96,7 +96,7 @@ export interface EmailMessage {
   // };
 
   source: {
-    protocol: 'SMTP' | 'IMAP' | 'API' | 'internal';
+    protocol: 'SMTP' | 'IMAP' | 'POP3' | 'API';
     remoteIp?: string;
     provider?: string;
 
