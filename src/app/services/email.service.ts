@@ -54,6 +54,8 @@ import type { InlineFile } from './email/types/inline-file';
 import type { MessageResult } from './email/types/message-result';
 import type { SendMailboxEmailPayload } from './email/types/send-mailbox-email-payload';
 import type { SendMailboxEmailResult } from './email/types/send-mailbox-email-result';
+import type { SendMailboxThreadReplyPayload } from './email/types/send-mailbox-thread-reply-payload';
+import type { SendMailboxThreadReplyResult } from './email/types/send-mailbox-thread-reply-result';
 import type { MailgunMessageData } from 'mailgun.js/definitions';
 
 export type { EmailAddressSummary } from './email/types/email-address-summary';
@@ -65,6 +67,8 @@ export type { IncomingMailgunEmailPayload } from './email/types/incoming-mailgun
 export type { IncomingMailgunEmailResult } from './email/types/incoming-mailgun-email-result';
 export type { SendMailboxEmailPayload } from './email/types/send-mailbox-email-payload';
 export type { SendMailboxEmailResult } from './email/types/send-mailbox-email-result';
+export type { SendMailboxThreadReplyPayload } from './email/types/send-mailbox-thread-reply-payload';
+export type { SendMailboxThreadReplyResult } from './email/types/send-mailbox-thread-reply-result';
 
 class EmailService extends Singleton {
   mailgun = new Mailgun(FormData);
@@ -125,6 +129,8 @@ class EmailService extends Singleton {
     bcc: EmailAddress[],
     subject: string,
     body: string,
+    attachments: Array<AttachmentFile> = [],
+    headers: Record<string, string> = {},
   ): Promise<MessageResult> {
     try {
       const messageParameters = {
@@ -142,6 +148,17 @@ class EmailService extends Singleton {
         messageParameters.bcc = bcc.map(formatEmailAddress);
       }
 
+      if (attachments.length > 0) {
+        messageParameters.attachment = attachments.map((attachment) => ({
+          data: attachment.data,
+          filename: attachment.filename,
+        }));
+      }
+
+      for (const [headerName, headerValue] of Object.entries(headers)) {
+        messageParameters[`h:${headerName}`] = headerValue;
+      }
+
       return this.client.messages.create(EMAIL_MAILBOX_DOMAIN, messageParameters);
     } catch (error) {
       await logEmailServiceError('sendEmailFromAddress', error, {
@@ -149,6 +166,7 @@ class EmailService extends Singleton {
         ccCount: cc.length,
         from: from.address,
         subject,
+        attachmentsCount: attachments.length,
         toCount: to.length,
       });
 
@@ -768,6 +786,207 @@ class EmailService extends Singleton {
         ccLength: payload.cc.length,
         mailboxId: payload.mailboxId,
         subject: payload.subject,
+        toLength: payload.to.length,
+      });
+
+      throw error;
+    }
+  }
+
+  async sendMailboxThreadReply(
+    payload: SendMailboxThreadReplyPayload,
+  ): Promise<SendMailboxThreadReplyResult> {
+    try {
+      if (!ObjectId.isValid(payload.mailboxId)) {
+        throw new Error('Invalid mailbox id.');
+      }
+
+      if (!ObjectId.isValid(payload.threadId)) {
+        throw new Error('Invalid thread id.');
+      }
+
+      const bodyHtml = payload.bodyHtml.trim();
+
+      if (stripHtml(bodyHtml).length === 0) {
+        throw new Error('Email body is required.');
+      }
+
+      const to = parseAddressList(payload.to);
+      const cc = parseAddressList(payload.cc);
+      const bcc = parseAddressList(payload.bcc);
+
+      if (to.length === 0) {
+        throw new Error('At least one recipient email is required.');
+      }
+
+      const mailboxObjectId = new ObjectId(payload.mailboxId);
+      const threadObjectId = new ObjectId(payload.threadId);
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const [mailbox, thread] = await Promise.all([
+        db
+          .collection<EmailMailbox>(DbTables.emailMailboxes)
+          .findOne({ _id: mailboxObjectId }),
+        db
+          .collection<EmailThreadDocument>(DbTables.emailThreads)
+          .findOne({ _id: threadObjectId }),
+      ]);
+
+      if (!mailbox) {
+        throw new Error('Mailbox not found.');
+      }
+
+      if (!thread || !thread.mailboxId.equals(mailboxObjectId)) {
+        throw new Error('Thread not found.');
+      }
+
+      const subject = thread.subject;
+      const previousMessage = await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .findOne({ _id: thread.lastMessageId });
+      const from: EmailAddress = {
+        ...(mailbox.displayName !== undefined && mailbox.displayName.length > 0
+          ? { name: mailbox.displayName }
+          : {}),
+        address: mailbox.address,
+        normalizedAddress: mailbox.normalizedAddress,
+      };
+      const messageId = createMessageId();
+      const references = [
+        ...(previousMessage?.references ?? []),
+        ...(previousMessage === null || previousMessage === undefined
+          ? []
+          : [previousMessage.messageId]),
+      ];
+      const headers = {
+        'Message-ID': messageId,
+        ...(previousMessage === null || previousMessage === undefined
+          ? {}
+          : { 'In-Reply-To': previousMessage.messageId }),
+        ...(references.length === 0
+          ? {}
+          : { References: references.join(' ') }),
+      };
+      const result = await this.sendEmailFromAddress(
+        from,
+        to,
+        cc,
+        bcc,
+        subject,
+        bodyHtml,
+        payload.attachments,
+        headers,
+      );
+
+      if (result.status !== 200) {
+        throw new Error('Failed to send email.');
+      }
+
+      const attachmentDocuments: EmailAttachmentDocument[] =
+        payload.attachments.map((attachment) => ({
+          _id: new ObjectId(),
+          filename: attachment.filename,
+          contentType: 'application/octet-stream',
+          sizeBytes: attachment.data.length,
+          disposition: 'attachment',
+        }));
+
+      if (attachmentDocuments.length > 0) {
+        await db
+          .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+          .insertMany(attachmentDocuments);
+      }
+
+      const contacts = await Promise.all(
+        [from, ...to, ...cc, ...bcc].map((address) =>
+          this.createOrUpdateContact(address),
+        ),
+      );
+      const fromContact = contacts[0];
+      const toContacts = contacts.slice(1, 1 + to.length);
+      const ccContacts = contacts.slice(
+        1 + to.length,
+        1 + to.length + cc.length,
+      );
+      const bccContacts = contacts.slice(1 + to.length + cc.length);
+      const participantIds = [
+        ...new Map(
+          contacts.map((contact) => [contact._id.toString(), contact._id]),
+        ).values(),
+      ];
+      const now = new Date();
+      const messageObjectId = new ObjectId();
+      const message: EmailMessageDocument = {
+        _id: messageObjectId,
+        messageId,
+        threadId: threadObjectId,
+        ...(previousMessage === null || previousMessage === undefined
+          ? {}
+          : { inReplyTo: previousMessage.messageId }),
+        ...(references.length === 0 ? {} : { references }),
+        direction: 'outgoing',
+        from: fromContact._id,
+        to: toContacts.map((contact) => contact._id),
+        cc: ccContacts.map((contact) => contact._id),
+        bcc: bccContacts.map((contact) => contact._id),
+        subject,
+        content: {
+          text: stripHtml(bodyHtml),
+          html: bodyHtml,
+        },
+        attachments: attachmentDocuments.map((attachment) => attachment._id),
+        headers,
+        source: {
+          protocol: 'API',
+          provider: 'mailgun',
+        },
+        dates: {
+          headerDate: now,
+          sentAt: now,
+          createdAt: now,
+          updatedAt: now,
+        },
+      };
+
+      await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .insertOne(message);
+      await db.collection<EmailThreadDocument>(DbTables.emailThreads).updateOne(
+        { _id: threadObjectId },
+        {
+          $addToSet: {
+            participants: {
+              $each: participantIds,
+            },
+          },
+          $inc: {
+            messageCount: 1,
+          },
+          $set: {
+            lastMessageId: messageObjectId,
+            updatedAt: now,
+          },
+        },
+      );
+
+      const contactsById = new Map(
+        contacts.map((contact) => [
+          contact._id.toString(),
+          mapContact(contact),
+        ]),
+      );
+
+      return {
+        message: mapMessage(message, contactsById),
+      };
+    } catch (error) {
+      await logEmailServiceError('sendMailboxThreadReply', error, {
+        attachmentsCount: payload.attachments.length,
+        bccLength: payload.bcc.length,
+        bodyHtmlLength: payload.bodyHtml.length,
+        ccLength: payload.cc.length,
+        mailboxId: payload.mailboxId,
+        threadId: payload.threadId,
         toLength: payload.to.length,
       });
 
