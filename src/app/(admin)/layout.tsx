@@ -20,7 +20,7 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="flex min-h-screen">
         <AdminSidebar />
-        <main className="relative flex-1 overflow-hidden">
+        <main className="relative flex-1 overflow-x-hidden overflow-y-auto">
           <div className="absolute inset-0">
             <div className="absolute -top-32 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-[120px] dark:bg-sky-500/10" />
             <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-200/30 blur-[120px] dark:bg-emerald-500/10" />
