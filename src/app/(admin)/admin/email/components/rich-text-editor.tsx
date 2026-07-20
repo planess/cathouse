@@ -14,21 +14,96 @@ import { useState } from 'react';
 import { FontSize } from '../helpers/font-size-extension';
 
 interface RichTextEditorProps {
+  editorClassName?: string;
+  initialContent?: string;
   onChange: (html: string) => void;
 }
 
 const FONT_SIZES = [
-  '10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px',
+  '10px',
+  '12px',
+  '14px',
+  '16px',
+  '18px',
+  '20px',
+  '24px',
+  '28px',
+  '32px',
+  '36px',
+  '48px',
 ];
 
 const COLORS = [
-  '#000000', '#434343', '#666666', '#999999', '#b7b7b7', '#cccccc', '#d9d9d9', '#efefef', '#f3f3f3', '#ffffff',
-  '#980000', '#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#4a86e8', '#0000ff', '#9900ff', '#ff00ff',
-  '#e6b8af', '#f4cccc', '#fce5cd', '#fff2cc', '#d9ead3', '#d0e0e3', '#c9daf8', '#cfe2f3', '#d9d2e9', '#ead1dc',
-  '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9', '#a4c2f4', '#9fc5e8', '#b4a7d6', '#d5a6bd',
-  '#cc4125', '#e06666', '#f6b26b', '#ffd966', '#93c47d', '#76a5af', '#6d9eeb', '#6fa8dc', '#8e7cc3', '#c27ba0',
-  '#a61c00', '#cc0000', '#e69138', '#f1c232', '#6aa84f', '#45818e', '#3c78d8', '#3d85c6', '#674ea7', '#a64d79',
-  '#85200c', '#990000', '#b45f06', '#bf9000', '#38761d', '#134f5c', '#1155cc', '#0b5394', '#351c75', '#741b47',
+  '#000000',
+  '#434343',
+  '#666666',
+  '#999999',
+  '#b7b7b7',
+  '#cccccc',
+  '#d9d9d9',
+  '#efefef',
+  '#f3f3f3',
+  '#ffffff',
+  '#980000',
+  '#ff0000',
+  '#ff9900',
+  '#ffff00',
+  '#00ff00',
+  '#00ffff',
+  '#4a86e8',
+  '#0000ff',
+  '#9900ff',
+  '#ff00ff',
+  '#e6b8af',
+  '#f4cccc',
+  '#fce5cd',
+  '#fff2cc',
+  '#d9ead3',
+  '#d0e0e3',
+  '#c9daf8',
+  '#cfe2f3',
+  '#d9d2e9',
+  '#ead1dc',
+  '#dd7e6b',
+  '#ea9999',
+  '#f9cb9c',
+  '#ffe599',
+  '#b6d7a8',
+  '#a2c4c9',
+  '#a4c2f4',
+  '#9fc5e8',
+  '#b4a7d6',
+  '#d5a6bd',
+  '#cc4125',
+  '#e06666',
+  '#f6b26b',
+  '#ffd966',
+  '#93c47d',
+  '#76a5af',
+  '#6d9eeb',
+  '#6fa8dc',
+  '#8e7cc3',
+  '#c27ba0',
+  '#a61c00',
+  '#cc0000',
+  '#e69138',
+  '#f1c232',
+  '#6aa84f',
+  '#45818e',
+  '#3c78d8',
+  '#3d85c6',
+  '#674ea7',
+  '#a64d79',
+  '#85200c',
+  '#990000',
+  '#b45f06',
+  '#bf9000',
+  '#38761d',
+  '#134f5c',
+  '#1155cc',
+  '#0b5394',
+  '#351c75',
+  '#741b47',
 ];
 
 const btnBase =
@@ -40,7 +115,11 @@ function Separator() {
   return <div className="mx-0.5 h-6 w-px bg-slate-200 dark:bg-slate-700" />;
 }
 
-export function RichTextEditor({ onChange }: RichTextEditorProps) {
+export function RichTextEditor({
+  editorClassName = 'prose prose-sm dark:prose-invert max-w-none min-h-50 px-4 py-3 focus:outline-none',
+  initialContent = '',
+  onChange,
+}: RichTextEditorProps) {
   const [showFontSize, setShowFontSize] = useState(false);
   const [showFontColor, setShowFontColor] = useState(false);
   const [showBgColor, setShowBgColor] = useState(false);
@@ -54,6 +133,7 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
   };
 
   const editor = useEditor({
+    content: initialContent,
     immediatelyRender: false,
     extensions: [
       StarterKit,
@@ -63,13 +143,15 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
       Highlight.configure({ multicolor: true }),
       Image.configure({ inline: true, allowBase64: true }),
       FontSize,
-      Link.configure({ openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer nofollow' } }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: { rel: 'noopener noreferrer nofollow' },
+      }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     editorProps: {
       attributes: {
-        class:
-          'prose prose-sm dark:prose-invert max-w-none min-h-50 px-4 py-3 focus:outline-none',
+        class: editorClassName,
       },
     },
     onUpdate: ({ editor: ed }) => {
@@ -101,14 +183,21 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
     if (linkUrl.trim() === '') {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
     } else {
-      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: linkUrl })
+        .run();
     }
     setLinkUrl('');
     setShowLinkInput(false);
   };
 
   const openLinkInput = () => {
-    const existingHref = editor.getAttributes('link').href as string | undefined;
+    const existingHref = editor.getAttributes('link').href as
+      | string
+      | undefined;
     setLinkUrl(existingHref ?? '');
     closeAllDropdowns();
     setShowLinkInput(true);
@@ -126,9 +215,23 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
           title="Undo"
           type="button"
         >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path d="M3 10h10a5 5 0 015 5v0a5 5 0 01-5 5H8" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M7 14l-4-4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M3 10h10a5 5 0 015 5v0a5 5 0 01-5 5H8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M7 14l-4-4 4-4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
         <button
@@ -138,9 +241,23 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
           title="Redo"
           type="button"
         >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path d="M21 10H11a5 5 0 00-5 5v0a5 5 0 005 5h5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M17 14l4-4-4-4" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M21 10H11a5 5 0 00-5 5v0a5 5 0 005 5h5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M17 14l4-4-4-4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
 
@@ -148,24 +265,36 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
 
         {/* Heading dropdown-like buttons */}
         <button
-          className={editor.isActive('heading', { level: 1 }) ? btnActive : btnBase}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={
+            editor.isActive('heading', { level: 1 }) ? btnActive : btnBase
+          }
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
           title="Heading 1"
           type="button"
         >
           <span className="text-xs font-bold">H1</span>
         </button>
         <button
-          className={editor.isActive('heading', { level: 2 }) ? btnActive : btnBase}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={
+            editor.isActive('heading', { level: 2 }) ? btnActive : btnBase
+          }
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
           title="Heading 2"
           type="button"
         >
           <span className="text-xs font-bold">H2</span>
         </button>
         <button
-          className={editor.isActive('heading', { level: 3 }) ? btnActive : btnBase}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          className={
+            editor.isActive('heading', { level: 3 }) ? btnActive : btnBase
+          }
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
           title="Heading 3"
           type="button"
         >
@@ -231,8 +360,18 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
           >
             <span className="flex items-center gap-0.5 text-xs font-medium">
               Size
-              <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                className="h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 9l-7 7-7-7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </span>
           </button>
@@ -282,7 +421,8 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
                 className="mt-0.5 h-1 w-3.5 rounded-sm"
                 style={{
                   backgroundColor:
-                    (editor.getAttributes('textStyle').color as string) || '#000',
+                    (editor.getAttributes('textStyle').color as string) ||
+                    '#000',
                 }}
               />
             </span>
@@ -368,7 +508,9 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
 
         {/* Text alignment */}
         <button
-          className={editor.isActive({ textAlign: 'left' }) ? btnActive : btnBase}
+          className={
+            editor.isActive({ textAlign: 'left' }) ? btnActive : btnBase
+          }
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
           title="Align left"
           type="button"
@@ -378,7 +520,9 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
           </svg>
         </button>
         <button
-          className={editor.isActive({ textAlign: 'center' }) ? btnActive : btnBase}
+          className={
+            editor.isActive({ textAlign: 'center' }) ? btnActive : btnBase
+          }
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
           title="Align center"
           type="button"
@@ -388,7 +532,9 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
           </svg>
         </button>
         <button
-          className={editor.isActive({ textAlign: 'right' }) ? btnActive : btnBase}
+          className={
+            editor.isActive({ textAlign: 'right' }) ? btnActive : btnBase
+          }
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
           title="Align right"
           type="button"
@@ -459,9 +605,23 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
             title="Insert link"
             type="button"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
           {showLinkInput && (
@@ -489,7 +649,12 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
                 <button
                   className="rounded-md bg-rose-100 px-2 py-1 text-xs font-medium text-rose-600 hover:bg-rose-200 dark:bg-rose-900/40 dark:text-rose-400"
                   onClick={() => {
-                    editor.chain().focus().extendMarkRange('link').unsetLink().run();
+                    editor
+                      .chain()
+                      .focus()
+                      .extendMarkRange('link')
+                      .unsetLink()
+                      .run();
                     setShowLinkInput(false);
                   }}
                   type="button"
@@ -506,7 +671,13 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
           className={`${btnBase} relative cursor-pointer overflow-hidden`}
           title="Insert inline image"
         >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            viewBox="0 0 24 24"
+          >
             <rect height="18" rx="2" width="18" x="3" y="3" />
             <circle cx="8.5" cy="8.5" r="1.5" />
             <path d="M21 15l-5-5L5 21" />
@@ -524,13 +695,29 @@ export function RichTextEditor({ onChange }: RichTextEditorProps) {
         {/* Clear formatting */}
         <button
           className={btnBase}
-          onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+          onClick={() =>
+            editor.chain().focus().clearNodes().unsetAllMarks().run()
+          }
           title="Clear formatting"
           type="button"
         >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path d="M4 7h7m-2 9l3-9m6-3l-8 16" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M16 4l4 4m0-4l-4 4" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M4 7h7m-2 9l3-9m6-3l-8 16"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M16 4l4 4m0-4l-4 4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>

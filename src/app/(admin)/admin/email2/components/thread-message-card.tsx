@@ -11,51 +11,49 @@ type ThreadMessageCardProps = {
 
 export function ThreadMessageCard({ message }: ThreadMessageCardProps) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <header className="flex flex-col gap-4 border-b border-slate-200 px-6 py-5 dark:border-slate-800 md:flex-row md:items-start md:justify-between">
-        <div className="min-w-0 space-y-4">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            {message.subject}
-          </h2>
+    <article className="border-b border-slate-200 bg-slate-50/40 p-5 last:border-b-0 dark:border-slate-800 dark:bg-slate-900/30 md:p-6">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <h2 className="break-words text-xl font-bold leading-tight text-slate-950 dark:text-white">
+          {message.subject}
+        </h2>
 
-          <div className="grid gap-2 text-sm text-slate-700 dark:text-slate-300">
-            <div className="grid gap-2 sm:grid-cols-[3rem_minmax(0,1fr)]">
-              <span className="text-slate-500 dark:text-slate-400">
-                From:
-              </span>
-              <span className="font-medium">{formatAddress(message.from)}</span>
-            </div>
-            <div className="grid gap-2 sm:grid-cols-[3rem_minmax(0,1fr)]">
-              <span className="text-slate-500 dark:text-slate-400">To:</span>
-              <span className="font-medium">
-                {formatAddressList(message.to, 'No recipients')}
-              </span>
-            </div>
-            {message.cc.length > 0 && (
-              <div className="grid gap-2 sm:grid-cols-[3rem_minmax(0,1fr)]">
-                <span className="text-slate-500 dark:text-slate-400">
-                  Cc:
-                </span>
-                <span className="font-medium">
-                  {formatAddressList(message.cc, 'No recipients')}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <span className="shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+        <span className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300">
           {formatEmailDate(message.headerDate)}
         </span>
-      </header>
+      </div>
 
-      <div className="px-6 py-7">
-        <p className="whitespace-pre-wrap text-base leading-7 text-slate-700 dark:text-slate-200">
+      <div className="grid gap-x-4 gap-y-1.5 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-[auto_minmax(0,1fr)]">
+        <span className="font-medium text-slate-500 dark:text-slate-400 sm:text-right">
+          From:
+        </span>
+        <span className="min-w-0 break-words font-medium">
+          {formatAddress(message.from)}
+        </span>
+        <span className="font-medium text-slate-500 dark:text-slate-400 sm:text-right">
+          To:
+        </span>
+        <span className="min-w-0 break-words font-medium">
+          {formatAddressList(message.to, 'No recipients')}
+        </span>
+        {message.cc.length > 0 && (
+          <>
+            <span className="font-medium text-slate-500 dark:text-slate-400 sm:text-right">
+              Cc:
+            </span>
+            <span className="min-w-0 break-words font-medium">
+              {formatAddressList(message.cc, 'No recipients')}
+            </span>
+          </>
+        )}
+      </div>
+
+      <div className="pt-5">
+        <p className="whitespace-pre-wrap break-words text-base leading-7 text-slate-700 dark:text-slate-200">
           {getMessageBody(message)}
         </p>
 
         {message.attachmentsCount > 0 && (
-          <div className="mt-5 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+          <div className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700">
             {message.attachmentsCount} Attachments
           </div>
         )}
