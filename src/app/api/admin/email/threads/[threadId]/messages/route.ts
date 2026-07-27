@@ -4,6 +4,7 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
+import { parseEmailRecipientInputJson } from '@app/services/email/parse-email-recipient-input-json';
 import {
   EmailMessageSummary,
   SendMailboxThreadReplyPayload,
@@ -153,9 +154,9 @@ export async function POST(
     const payload: SendMailboxThreadReplyPayload = {
       mailboxId: (formData.get('mailboxId') as string | null) ?? '',
       threadId,
-      to: (formData.get('to') as string | null) ?? '',
-      cc: (formData.get('cc') as string | null) ?? '',
-      bcc: (formData.get('bcc') as string | null) ?? '',
+      to: parseEmailRecipientInputJson(formData.get('to')),
+      cc: parseEmailRecipientInputJson(formData.get('cc')),
+      bcc: parseEmailRecipientInputJson(formData.get('bcc')),
       bodyHtml: (formData.get('bodyHtml') as string | null) ?? '',
       attachments,
     };

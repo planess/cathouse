@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Tabs } from '@app/components/tabs';
 import type { TabItem } from '@app/components/tabs';
+import { Tabs } from '@app/components/tabs';
 import type {
   EmailMailboxSummary,
   EmailMailboxThreadGroup,
@@ -52,8 +52,9 @@ export function Email2MailboxTabs({
   const [composeForm, setComposeForm] =
     useState<ComposeFormState>(defaultComposeForm);
   const [composeSending, setComposeSending] = useState(false);
-  const [composeResult, setComposeResult] =
-    useState<SendEmailResponse | null>(null);
+  const [composeResult, setComposeResult] = useState<SendEmailResponse | null>(
+    null,
+  );
 
   useEffect(() => {
     if (selectedMailboxId === undefined) {
@@ -96,7 +97,10 @@ export function Email2MailboxTabs({
   }, []);
 
   const updateComposeField = useCallback(
-    (field: keyof ComposeFormState, value: string) => {
+    (
+      field: keyof ComposeFormState,
+      value: ComposeFormState[keyof ComposeFormState],
+    ) => {
       setComposeForm((currentForm) => ({
         ...currentForm,
         [field]: value,
@@ -118,93 +122,99 @@ export function Email2MailboxTabs({
     setComposeResult(null);
   }, []);
 
-  const handleSendEmail = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSendEmail = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    if (composeMailbox === null) {
-      return;
-    }
-
-    setComposeSending(true);
-    setComposeResult(null);
-
-    try {
-      const { ok, payload } = await sendMailboxEmailRequest(
-        composeMailbox.id,
-        composeForm,
-      );
-
-      setComposeResult(payload);
-
-      if (ok && payload.success && payload.thread !== undefined) {
-        const createdThread = payload.thread;
-
-        setGroups((currentGroups) =>
-          currentGroups.map((group) =>
-            group.mailbox.id === composeMailbox.id
-              ? {
-                ...group,
-                threads: [createdThread, ...group.threads],
-              }
-              : group,
-          ),
-        );
-        closeComposeModal();
+      if (composeMailbox === null) {
+        return;
       }
-    } catch {
-      setComposeResult({
-        success: false,
-        message: 'Failed to send email.',
-      });
-    } finally {
-      setComposeSending(false);
-    }
-  }, [closeComposeModal, composeForm, composeMailbox]);
 
-  const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+      setComposeSending(true);
+      setComposeResult(null);
 
-    const normalizedPrefix = prefix.trim();
-
-    if (normalizedPrefix.length === 0) {
-      setResult({
-        success: false,
-        message: 'Email prefix is required.',
-      });
-
-      return;
-    }
-
-    setSaving(true);
-    setResult(null);
-
-    try {
-      const { ok, payload } = await createMailboxRequest(
-        normalizedPrefix,
-        displayName,
-      );
-
-      setResult(payload);
-
-      if (ok && payload.success && payload.group !== undefined) {
-        const createdGroup = payload.group;
-
-        setGroups((currentGroups) =>
-          sortMailboxThreadGroups([...currentGroups, createdGroup]),
+      try {
+        const { ok, payload } = await sendMailboxEmailRequest(
+          composeMailbox.id,
+          composeForm,
         );
-        setPrefix('');
-        setDisplayName('');
-        handleActiveIdChange(getMailboxTabId(createdGroup.mailbox.id));
+
+        setComposeResult(payload);
+
+        if (ok && payload.success && payload.thread !== undefined) {
+          const createdThread = payload.thread;
+
+          setGroups((currentGroups) =>
+            currentGroups.map((group) =>
+              group.mailbox.id === composeMailbox.id
+                ? {
+                    ...group,
+                    threads: [createdThread, ...group.threads],
+                  }
+                : group,
+            ),
+          );
+          closeComposeModal();
+        }
+      } catch {
+        setComposeResult({
+          success: false,
+          message: 'Failed to send email.',
+        });
+      } finally {
+        setComposeSending(false);
       }
-    } catch {
-      setResult({
-        success: false,
-        message: 'Failed to create mailbox.',
-      });
-    } finally {
-      setSaving(false);
-    }
-  }, [displayName, handleActiveIdChange, prefix]);
+    },
+    [closeComposeModal, composeForm, composeMailbox],
+  );
+
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      const normalizedPrefix = prefix.trim();
+
+      if (normalizedPrefix.length === 0) {
+        setResult({
+          success: false,
+          message: 'Email prefix is required.',
+        });
+
+        return;
+      }
+
+      setSaving(true);
+      setResult(null);
+
+      try {
+        const { ok, payload } = await createMailboxRequest(
+          normalizedPrefix,
+          displayName,
+        );
+
+        setResult(payload);
+
+        if (ok && payload.success && payload.group !== undefined) {
+          const createdGroup = payload.group;
+
+          setGroups((currentGroups) =>
+            sortMailboxThreadGroups([...currentGroups, createdGroup]),
+          );
+          setPrefix('');
+          setDisplayName('');
+          handleActiveIdChange(getMailboxTabId(createdGroup.mailbox.id));
+        }
+      } catch {
+        setResult({
+          success: false,
+          message: 'Failed to create mailbox.',
+        });
+      } finally {
+        setSaving(false);
+      }
+    },
+    [displayName, handleActiveIdChange, prefix],
+  );
 
   const tabItems = useMemo<TabItem[]>(
     () => [

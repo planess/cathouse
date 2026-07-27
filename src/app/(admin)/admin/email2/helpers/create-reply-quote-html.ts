@@ -5,25 +5,25 @@ import { formatAddress } from './format-address';
 import { formatEmailDate } from './format-email-date';
 import { getMessageBody } from './get-message-body';
 
-export function createReplyQuoteHtml(
-  messages: EmailMessageSummary[],
-): string {
+export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
   if (messages.length === 0) {
     return '<p></p>';
   }
 
-  const historyHtml = messages
-    .toReversed()
-    .map((message) => {
-      const body = escapeHtml(getMessageBody(message)).replaceAll('\n', '<br>');
+  const message = messages.at(-1);
 
-      return [
-        `<p>On ${escapeHtml(formatEmailDate(message.headerDate))}, `,
-        `${escapeHtml(formatAddress(message.from))} wrote:</p>`,
-        `<p>${body}</p>`,
-      ].join('');
-    })
-    .join('<p><br></p>');
+  if (message === undefined) {
+    return '<p></p>';
+  }
 
-  return `<p></p><blockquote>${historyHtml}</blockquote>`;
+  const body =
+    message.content.html ??
+    `<p>${escapeHtml(getMessageBody(message)).replaceAll('\n', '<br>')}</p>`;
+
+  return [
+    '<p></p>',
+    `<p>On ${escapeHtml(formatEmailDate(message.headerDate))}, `,
+    `${escapeHtml(formatAddress(message.from))} wrote:</p>`,
+    `<blockquote>${body}</blockquote>`,
+  ].join('');
 }

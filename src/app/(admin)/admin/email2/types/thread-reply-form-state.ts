@@ -1,6 +1,8 @@
+import type { RecipientFormValue } from './recipient-form-value';
+
 export type ThreadReplyFormState = {
-  to: string;
-  cc: string;
-  bcc: string;
+  to: RecipientFormValue[];
+  cc: RecipientFormValue[];
+  bcc: RecipientFormValue[];
   bodyHtml: string;
 };

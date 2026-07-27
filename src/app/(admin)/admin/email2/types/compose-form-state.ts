@@ -1,7 +1,9 @@
+import type { RecipientFormValue } from './recipient-form-value';
+
 export type ComposeFormState = {
-  to: string;
-  cc: string;
-  bcc: string;
+  to: RecipientFormValue[];
+  cc: RecipientFormValue[];
+  bcc: RecipientFormValue[];
   subject: string;
   bodyHtml: string;
 };

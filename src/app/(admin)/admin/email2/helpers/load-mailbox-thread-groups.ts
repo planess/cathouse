@@ -2,8 +2,8 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { requirePermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
-import { emailService } from '@app/services/email.service';
 import type { EmailMailboxThreadGroup } from '@app/services/email.service';
+import { emailService } from '@app/services/email.service';
 
 import type { LoadMailboxThreadGroupsOptions } from '../types/load-mailbox-thread-groups-options';
 

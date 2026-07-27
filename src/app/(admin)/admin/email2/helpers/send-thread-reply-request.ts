@@ -17,19 +17,22 @@ export async function sendThreadReplyRequest(
   const formData = new FormData();
 
   formData.append('mailboxId', mailboxId);
-  formData.append('to', form.to);
-  formData.append('cc', form.cc);
-  formData.append('bcc', form.bcc);
+  formData.append('to', JSON.stringify(form.to));
+  formData.append('cc', JSON.stringify(form.cc));
+  formData.append('bcc', JSON.stringify(form.bcc));
   formData.append('bodyHtml', form.bodyHtml);
 
   for (const attachment of attachments) {
     formData.append('attachments', attachment);
   }
 
-  const response = await fetch(`/api/admin/email/threads/${threadId}/messages`, {
-    body: formData,
-    method: 'POST',
-  });
+  const response = await fetch(
+    `/api/admin/email/threads/${threadId}/messages`,
+    {
+      body: formData,
+      method: 'POST',
+    },
+  );
   const payload = (await response.json()) as SendThreadReplyResponse;
 
   return {

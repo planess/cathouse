@@ -3,8 +3,8 @@
 import { ChangeEvent, FormEvent } from 'react';
 
 import { RichTextEditor } from '../../email/components/rich-text-editor';
-import { inputClassName } from '../constants/input-class-name';
 
+import { RecipientFields } from './recipient-fields';
 import { StatusMessage } from './status-message';
 
 import type { SendEmailResponse } from '../types/send-email-response';
@@ -17,7 +17,10 @@ type ThreadReplyFormProps = {
   result: SendEmailResponse | null;
   sending: boolean;
   onAttachmentsChange: (attachments: File[]) => void;
-  onChange: (field: keyof ThreadReplyFormState, value: string) => void;
+  onChange: (
+    field: keyof ThreadReplyFormState,
+    value: ThreadReplyFormState[keyof ThreadReplyFormState],
+  ) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
@@ -32,7 +35,7 @@ export function ThreadReplyForm({
   onSubmit,
 }: ThreadReplyFormProps) {
   const canSend =
-    form.to.trim().length > 0 &&
+    form.to.some((recipient) => recipient.email.trim().length > 0) &&
     form.bodyHtml.trim().length > 0;
   const handleAddAttachments = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
@@ -46,8 +49,8 @@ export function ThreadReplyForm({
   };
   const handleRemoveAttachment = (index: number) => {
     onAttachmentsChange(
-      attachments.filter((_attachment, attachmentIndex) =>
-        attachmentIndex !== index,
+      attachments.filter(
+        (_attachment, attachmentIndex) => attachmentIndex !== index,
       ),
     );
   };
@@ -76,55 +79,30 @@ export function ThreadReplyForm({
 
       <form onSubmit={(event) => void onSubmit(event)}>
         <div className="space-y-3 p-4">
-          <div className="grid gap-3 lg:grid-cols-3">
-            <div>
-              <label
-                className="mb-1.5 block text-[0.68rem] font-semibold uppercase text-slate-500 dark:text-slate-400"
-                htmlFor="thread-reply-to"
-              >
-                To
-              </label>
-              <input
-                className={inputClassName}
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
+            <div className="pb-3">
+              <RecipientFields
                 id="thread-reply-to"
-                onChange={(event) => onChange('to', event.target.value)}
-                placeholder="recipient@example.com"
-                type="text"
-                value={form.to}
+                label="To"
+                onChange={(recipients) => onChange('to', recipients)}
+                recipients={form.to}
+                required
               />
             </div>
-
-            <div>
-              <label
-                className="mb-1.5 block text-[0.68rem] font-semibold uppercase text-slate-500 dark:text-slate-400"
-                htmlFor="thread-reply-cc"
-              >
-                Bc
-              </label>
-              <input
-                className={inputClassName}
+            <div className="py-3">
+              <RecipientFields
                 id="thread-reply-cc"
-                onChange={(event) => onChange('cc', event.target.value)}
-                placeholder="copy@example.com"
-                type="text"
-                value={form.cc}
+                label="Cc"
+                onChange={(recipients) => onChange('cc', recipients)}
+                recipients={form.cc}
               />
             </div>
-
-            <div>
-              <label
-                className="mb-1.5 block text-[0.68rem] font-semibold uppercase text-slate-500 dark:text-slate-400"
-                htmlFor="thread-reply-bcc"
-              >
-                Bcc
-              </label>
-              <input
-                className={inputClassName}
+            <div className="pt-3">
+              <RecipientFields
                 id="thread-reply-bcc"
-                onChange={(event) => onChange('bcc', event.target.value)}
-                placeholder="hidden@example.com"
-                type="text"
-                value={form.bcc}
+                label="Bcc"
+                onChange={(recipients) => onChange('bcc', recipients)}
+                recipients={form.bcc}
               />
             </div>
           </div>

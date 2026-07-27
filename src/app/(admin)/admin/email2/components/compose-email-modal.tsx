@@ -8,6 +8,7 @@ import { RichTextEditor } from '../../email/components/rich-text-editor';
 import { inputClassName } from '../constants/input-class-name';
 import { formatMailboxFrom } from '../helpers/format-mailbox-from';
 
+import { RecipientFields } from './recipient-fields';
 import { StatusMessage } from './status-message';
 
 import type { ComposeFormState } from '../types/compose-form-state';
@@ -18,7 +19,10 @@ type ComposeEmailModalProps = {
   mailbox: EmailMailboxSummary;
   result: SendEmailResponse | null;
   sending: boolean;
-  onChange: (field: keyof ComposeFormState, value: string) => void;
+  onChange: (
+    field: keyof ComposeFormState,
+    value: ComposeFormState[keyof ComposeFormState],
+  ) => void;
   onClose: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 };
@@ -79,55 +83,30 @@ export function ComposeEmailModal({
             />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <div>
-              <label
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                htmlFor="compose-to"
-              >
-                To
-              </label>
-              <input
-                className={inputClassName}
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
+            <div className="pb-4">
+              <RecipientFields
                 id="compose-to"
-                onChange={(event) => onChange('to', event.target.value)}
-                placeholder="recipient@example.com"
-                type="text"
-                value={form.to}
+                label="To"
+                onChange={(recipients) => onChange('to', recipients)}
+                recipients={form.to}
+                required
               />
             </div>
-
-            <div>
-              <label
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                htmlFor="compose-cc"
-              >
-                Bc
-              </label>
-              <input
-                className={inputClassName}
+            <div className="py-4">
+              <RecipientFields
                 id="compose-cc"
-                onChange={(event) => onChange('cc', event.target.value)}
-                placeholder="copy@example.com"
-                type="text"
-                value={form.cc}
+                label="Cc"
+                onChange={(recipients) => onChange('cc', recipients)}
+                recipients={form.cc}
               />
             </div>
-
-            <div>
-              <label
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                htmlFor="compose-bcc"
-              >
-                Bcc
-              </label>
-              <input
-                className={inputClassName}
+            <div className="pt-4">
+              <RecipientFields
                 id="compose-bcc"
-                onChange={(event) => onChange('bcc', event.target.value)}
-                placeholder="hidden@example.com"
-                type="text"
-                value={form.bcc}
+                label="Bcc"
+                onChange={(recipients) => onChange('bcc', recipients)}
+                recipients={form.bcc}
               />
             </div>
           </div>

@@ -12,14 +12,16 @@ import {
   EMAIL_PREFIX_PATTERN,
 } from './email/constants';
 import { createMessageId } from './email/create-message-id';
+import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
 import { formatEmailAddress } from './email/format-email-address';
 import { getContactIds } from './email/get-contact-ids';
 import { getContactsById } from './email/get-contacts-by-id';
+import { getExternalParticipantIds } from './email/get-external-participant-ids';
 import { getHeaderValue } from './email/get-header-value';
 import { getLastMessagesById } from './email/get-last-messages-by-id';
 import { getMailgunField } from './email/get-mailgun-field';
 import { logEmailServiceError } from './email/log-email-service-error';
-import { mapContact } from './email/map-contact';
+import { mapAddressReference } from './email/map-address-reference';
 import { mapMailbox } from './email/map-mailbox';
 import { mapMessage } from './email/map-message';
 import { mapThread } from './email/map-thread';
@@ -28,6 +30,7 @@ import { normalizeMessageId } from './email/normalize-message-id';
 import { parseAddressList } from './email/parse-address-list';
 import { parseContentIdMap } from './email/parse-content-id-map';
 import { parseEmailAddress } from './email/parse-email-address';
+import { parseEmailRecipientInputs } from './email/parse-email-recipient-inputs';
 import { parseHeaderDate } from './email/parse-header-date';
 import { parseIncomingMailboxRecipients } from './email/parse-incoming-mailbox-recipients';
 import { parseMailgunHeaders } from './email/parse-mailgun-headers';
@@ -38,6 +41,7 @@ import { Singleton } from './singleton';
 
 import type {
   EmailAttachmentDocument,
+  EmailAddressReferenceDocument,
   EmailContactDocument,
   EmailMessageDocument,
   EmailThreadDocument,
@@ -47,6 +51,7 @@ import type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
 import type { EmailMailboxThreadGroup } from './email/types/email-mailbox-thread-group';
 import type { EmailMessageSummary } from './email/types/email-message-summary';
 import type { EmailThreadSummary } from './email/types/email-thread-summary';
+import type { ForwardMailboxMessagePayload } from './email/types/forward-mailbox-message-payload';
 import type { IncomingMailgunAttachment } from './email/types/incoming-mailgun-attachment';
 import type { IncomingMailgunEmailPayload } from './email/types/incoming-mailgun-email-payload';
 import type { IncomingMailgunEmailResult } from './email/types/incoming-mailgun-email-result';
@@ -63,6 +68,7 @@ export type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
 export type { EmailMailboxThreadGroup } from './email/types/email-mailbox-thread-group';
 export type { EmailMessageSummary } from './email/types/email-message-summary';
 export type { EmailThreadSummary } from './email/types/email-thread-summary';
+export type { ForwardMailboxMessagePayload } from './email/types/forward-mailbox-message-payload';
 export type { IncomingMailgunEmailPayload } from './email/types/incoming-mailgun-email-payload';
 export type { IncomingMailgunEmailResult } from './email/types/incoming-mailgun-email-result';
 export type { SendMailboxEmailPayload } from './email/types/send-mailbox-email-payload';
@@ -244,10 +250,18 @@ class EmailService extends Singleton {
 
   async createOrUpdateContact(
     address: EmailAddress,
-  ): Promise<EmailContactDocument> {
+  ): Promise<EmailAddressReferenceDocument> {
     try {
       const dbClient = await clientPromise;
       const db = dbClient.db();
+      const mailbox = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOne({ normalizedAddress: address.normalizedAddress });
+
+      if (mailbox) {
+        return mailbox;
+      }
+
       const existingContact = await db
         .collection<EmailContactDocument>(DbTables.emailContacts)
         .findOne({ normalizedAddress: address.normalizedAddress });
@@ -510,16 +524,12 @@ class EmailService extends Singleton {
       const toContacts = contacts.slice(toStart, ccStart);
       const ccContacts = contacts.slice(ccStart, bccStart);
       const bccContacts = contacts.slice(bccStart);
-      const participantIds = [
-        ...new Map(
-          [
-            fromContact,
-            ...toContacts,
-            ...ccContacts,
-            ...bccContacts,
-          ].map((contact) => [contact._id.toString(), contact._id]),
-        ).values(),
-      ];
+      const participantIds = getExternalParticipantIds([
+        fromContact,
+        ...toContacts,
+        ...ccContacts,
+        ...bccContacts,
+      ]);
       const now = new Date();
       const messageObjectId = new ObjectId();
       const existingThreadId = await this.findThreadIdForIncomingReply(
@@ -660,9 +670,9 @@ class EmailService extends Singleton {
         throw new Error('Email body is required.');
       }
 
-      const to = parseAddressList(payload.to);
-      const cc = parseAddressList(payload.cc);
-      const bcc = parseAddressList(payload.bcc);
+      const to = parseEmailRecipientInputs(payload.to);
+      const cc = parseEmailRecipientInputs(payload.cc);
+      const bcc = parseEmailRecipientInputs(payload.bcc);
 
       if (to.length === 0) {
         throw new Error('At least one recipient email is required.');
@@ -710,11 +720,7 @@ class EmailService extends Singleton {
         1 + to.length + cc.length,
       );
       const bccContacts = contacts.slice(1 + to.length + cc.length);
-      const participantIds = [
-        ...new Map(
-          contacts.map((contact) => [contact._id.toString(), contact._id]),
-        ).values(),
-      ];
+      const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
       const threadId = new ObjectId();
       const messageObjectId = new ObjectId();
@@ -768,7 +774,7 @@ class EmailService extends Singleton {
       const contactsById = new Map(
         contacts.map((contact) => [
           contact._id.toString(),
-          mapContact(contact),
+          mapAddressReference(contact),
         ]),
       );
 
@@ -811,9 +817,9 @@ class EmailService extends Singleton {
         throw new Error('Email body is required.');
       }
 
-      const to = parseAddressList(payload.to);
-      const cc = parseAddressList(payload.cc);
-      const bcc = parseAddressList(payload.bcc);
+      const to = parseEmailRecipientInputs(payload.to);
+      const cc = parseEmailRecipientInputs(payload.cc);
+      const bcc = parseEmailRecipientInputs(payload.bcc);
 
       if (to.length === 0) {
         throw new Error('At least one recipient email is required.');
@@ -909,11 +915,7 @@ class EmailService extends Singleton {
         1 + to.length + cc.length,
       );
       const bccContacts = contacts.slice(1 + to.length + cc.length);
-      const participantIds = [
-        ...new Map(
-          contacts.map((contact) => [contact._id.toString(), contact._id]),
-        ).values(),
-      ];
+      const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
       const messageObjectId = new ObjectId();
       const message: EmailMessageDocument = {
@@ -972,7 +974,7 @@ class EmailService extends Singleton {
       const contactsById = new Map(
         contacts.map((contact) => [
           contact._id.toString(),
-          mapContact(contact),
+          mapAddressReference(contact),
         ]),
       );
 
@@ -988,6 +990,173 @@ class EmailService extends Singleton {
         mailboxId: payload.mailboxId,
         threadId: payload.threadId,
         toLength: payload.to.length,
+      });
+
+      throw error;
+    }
+  }
+
+  async forwardMailboxMessage(
+    payload: ForwardMailboxMessagePayload,
+  ): Promise<SendMailboxThreadReplyResult> {
+    try {
+      if (!ObjectId.isValid(payload.mailboxId)) {
+        throw new Error('Invalid mailbox id.');
+      }
+
+      if (!ObjectId.isValid(payload.messageId)) {
+        throw new Error('Invalid message id.');
+      }
+
+      const recipient = parseEmailAddress(payload.recipient);
+      const mailboxObjectId = new ObjectId(payload.mailboxId);
+      const messageObjectId = new ObjectId(payload.messageId);
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const [mailbox, sourceMessage] = await Promise.all([
+        db
+          .collection<EmailMailbox>(DbTables.emailMailboxes)
+          .findOne({ _id: mailboxObjectId }),
+        db
+          .collection<EmailMessageDocument>(DbTables.emailMessages)
+          .findOne({ _id: messageObjectId }),
+      ]);
+
+      if (!mailbox) {
+        throw new Error('Mailbox not found.');
+      }
+
+      if (!sourceMessage) {
+        throw new Error('Message not found.');
+      }
+
+      const thread = await db
+        .collection<EmailThreadDocument>(DbTables.emailThreads)
+        .findOne({
+          _id: sourceMessage.threadId,
+          mailboxId: mailboxObjectId,
+        });
+
+      if (!thread) {
+        throw new Error('Thread not found.');
+      }
+
+      const sourceContactsById = await getContactsById([
+        ...getContactIds([sourceMessage.from, sourceMessage.sender]),
+        ...getContactIds(sourceMessage.replyTo ?? []),
+        ...getContactIds(sourceMessage.to),
+        ...getContactIds(sourceMessage.cc ?? []),
+        ...getContactIds(sourceMessage.bcc ?? []),
+      ]);
+      const sourceSummary = mapMessage(sourceMessage, sourceContactsById);
+      const bodyHtml = createForwardedEmailHtml(sourceSummary);
+      const subject = /^fwd:/i.test(sourceMessage.subject)
+        ? sourceMessage.subject
+        : `Fwd: ${sourceMessage.subject}`;
+      const from: EmailAddress = {
+        ...(mailbox.displayName !== undefined && mailbox.displayName.length > 0
+          ? { name: mailbox.displayName }
+          : {}),
+        address: mailbox.address,
+        normalizedAddress: mailbox.normalizedAddress,
+      };
+      const messageId = createMessageId();
+      const references = [
+        ...(sourceMessage.references ?? []),
+        sourceMessage.messageId,
+      ];
+      const headers = {
+        'Message-ID': messageId,
+        'In-Reply-To': sourceMessage.messageId,
+        References: references.join(' '),
+      };
+      const result = await this.sendEmailFromAddress(
+        from,
+        [recipient],
+        [],
+        [],
+        subject,
+        bodyHtml,
+        [],
+        headers,
+      );
+
+      if (result.status !== 200) {
+        throw new Error('Failed to forward email.');
+      }
+
+      const recipientReference = await this.createOrUpdateContact(recipient);
+      const now = new Date();
+      const forwardedMessageObjectId = new ObjectId();
+      const forwardedMessage: EmailMessageDocument = {
+        _id: forwardedMessageObjectId,
+        messageId,
+        threadId: thread._id,
+        inReplyTo: sourceMessage.messageId,
+        references,
+        direction: 'outgoing',
+        from: mailbox._id,
+        to: [recipientReference._id],
+        cc: [],
+        bcc: [],
+        subject,
+        content: {
+          text: stripHtml(bodyHtml),
+          html: bodyHtml,
+        },
+        attachments: [],
+        headers,
+        source: {
+          protocol: 'API',
+          provider: 'mailgun',
+        },
+        dates: {
+          headerDate: now,
+          sentAt: now,
+          createdAt: now,
+          updatedAt: now,
+        },
+      };
+
+      await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .insertOne(forwardedMessage);
+      await db.collection<EmailThreadDocument>(DbTables.emailThreads).updateOne(
+        { _id: thread._id },
+        {
+          ...(getExternalParticipantIds([recipientReference]).length === 0
+            ? {}
+            : {
+              $addToSet: {
+                participants: recipientReference._id,
+              },
+            }),
+          $inc: {
+            messageCount: 1,
+          },
+          $set: {
+            lastMessageId: forwardedMessageObjectId,
+            updatedAt: now,
+          },
+        },
+      );
+
+      const referencesById = new Map([
+        [mailbox._id.toString(), mapAddressReference(mailbox)],
+        [
+          recipientReference._id.toString(),
+          mapAddressReference(recipientReference),
+        ],
+      ]);
+
+      return {
+        message: mapMessage(forwardedMessage, referencesById),
+      };
+    } catch (error) {
+      await logEmailServiceError('forwardMailboxMessage', error, {
+        mailboxId: payload.mailboxId,
+        messageId: payload.messageId,
+        recipient: payload.recipient,
       });
 
       throw error;

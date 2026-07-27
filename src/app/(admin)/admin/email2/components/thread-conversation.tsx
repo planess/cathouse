@@ -11,8 +11,10 @@ import type {
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 import { getInitialReplyForm } from '../helpers/get-initial-reply-form';
+import { sendForwardMessageRequest } from '../helpers/send-forward-message-request';
 import { sendThreadReplyRequest } from '../helpers/send-thread-reply-request';
 
+import { ForwardMessageModal } from './forward-message-modal';
 import { ThreadMessageList } from './thread-message-list';
 import { ThreadReplyForm } from './thread-reply-form';
 
@@ -32,16 +34,26 @@ export function ThreadConversation({
 }: ThreadConversationProps) {
   const [messages, setMessages] = useState(initialMessages);
   const initialForm = useMemo(
-    () => getInitialReplyForm(messages),
-    [messages],
+    () => getInitialReplyForm(messages, thread.participants),
+    [messages, thread.participants],
   );
   const [form, setForm] = useState<ThreadReplyFormState>(initialForm);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<SendEmailResponse | null>(null);
   const [editorKey, setEditorKey] = useState(0);
+  const [forwardMessage, setForwardMessage] =
+    useState<EmailMessageSummary | null>(null);
+  const [forwardRecipient, setForwardRecipient] = useState('');
+  const [forwardSending, setForwardSending] = useState(false);
+  const [forwardResult, setForwardResult] = useState<SendEmailResponse | null>(
+    null,
+  );
 
-  const handleChange = (field: keyof ThreadReplyFormState, value: string) => {
+  const handleChange = (
+    field: keyof ThreadReplyFormState,
+    value: ThreadReplyFormState[keyof ThreadReplyFormState],
+  ) => {
     setForm((currentForm) => ({ ...currentForm, [field]: value }));
     setResult(null);
   };
@@ -70,10 +82,10 @@ export function ThreadConversation({
         setMessages(nextMessages);
         setAttachments([]);
         setForm((currentForm) => ({
-          ...getInitialReplyForm(nextMessages),
+          ...getInitialReplyForm(nextMessages, thread.participants),
           to: currentForm.to,
-          cc: '',
-          bcc: '',
+          cc: [{ name: '', email: '' }],
+          bcc: [{ name: '', email: '' }],
         }));
         setEditorKey((currentKey) => currentKey + 1);
       }
@@ -84,6 +96,55 @@ export function ThreadConversation({
       });
     } finally {
       setSending(false);
+    }
+  };
+
+  const closeForwardModal = () => {
+    setForwardMessage(null);
+    setForwardRecipient('');
+    setForwardResult(null);
+  };
+  const handleForward = (message: EmailMessageSummary) => {
+    setForwardMessage(message);
+    setForwardRecipient('');
+    setForwardResult(null);
+  };
+  const handleForwardSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (forwardMessage === null) {
+      return;
+    }
+
+    setForwardSending(true);
+    setForwardResult(null);
+
+    try {
+      const response = await sendForwardMessageRequest(
+        forwardMessage.id,
+        mailboxId,
+        forwardRecipient,
+      );
+
+      if (response.ok && response.payload.success) {
+        if (response.payload.messageItem !== undefined) {
+          setMessages((currentMessages) => [
+            ...currentMessages,
+            response.payload.messageItem as EmailMessageSummary,
+          ]);
+        }
+
+        closeForwardModal();
+      } else {
+        setForwardResult(response.payload);
+      }
+    } catch {
+      setForwardResult({
+        success: false,
+        message: 'Failed to forward email.',
+      });
+    } finally {
+      setForwardSending(false);
     }
   };
 
@@ -125,7 +186,7 @@ export function ThreadConversation({
           className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950"
           data-email2-message-list
         >
-          <ThreadMessageList messages={messages} />
+          <ThreadMessageList messages={messages} onForward={handleForward} />
         </div>
 
         <ThreadReplyForm
@@ -138,6 +199,20 @@ export function ThreadConversation({
           onChange={handleChange}
           onSubmit={handleSubmit}
         />
+
+        {forwardMessage !== null && (
+          <ForwardMessageModal
+            onClose={closeForwardModal}
+            onRecipientChange={(recipient) => {
+              setForwardRecipient(recipient);
+              setForwardResult(null);
+            }}
+            onSubmit={handleForwardSubmit}
+            recipient={forwardRecipient}
+            result={forwardResult}
+            sending={forwardSending}
+          />
+        )}
       </div>
     </div>
   );

@@ -7,9 +7,13 @@ import { getMessageBody } from '../helpers/get-message-body';
 
 type ThreadMessageCardProps = {
   message: EmailMessageSummary;
+  onForward: (message: EmailMessageSummary) => void;
 };
 
-export function ThreadMessageCard({ message }: ThreadMessageCardProps) {
+export function ThreadMessageCard({
+  message,
+  onForward,
+}: ThreadMessageCardProps) {
   return (
     <article className="border-b border-slate-200 bg-slate-50/40 p-5 last:border-b-0 dark:border-slate-800 dark:bg-slate-900/30 md:p-6">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -17,9 +21,18 @@ export function ThreadMessageCard({ message }: ThreadMessageCardProps) {
           {message.subject}
         </h2>
 
-        <span className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300">
-          {formatEmailDate(message.headerDate)}
-        </span>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300">
+            {formatEmailDate(message.headerDate)}
+          </span>
+          <button
+            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
+            onClick={() => onForward(message)}
+            type="button"
+          >
+            Forward
+          </button>
+        </div>
       </div>
 
       <div className="grid gap-x-4 gap-y-1.5 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-[auto_minmax(0,1fr)]">

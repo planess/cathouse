@@ -4,25 +4,24 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
-import {
-  EmailThreadSummary,
-  SendMailboxEmailPayload,
-  emailService,
-} from '@app/services/email.service';
+import { EmailMessageSummary, emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
 
-type SendMailboxEmailResponse = {
+type ForwardMessageResponse = {
   success: boolean;
   message: string;
-  thread?: EmailThreadSummary;
+  messageItem?: EmailMessageSummary;
 };
 
-function json(body: SendMailboxEmailResponse, status = 200) {
+function json(body: ForwardMessageResponse, status = 200) {
   return NextResponse.json(body, { status });
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ messageId: string }> },
+) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser?.id) {
@@ -40,37 +39,38 @@ export async function POST(request: Request) {
   }
 
   try {
-    const payload = (await request.json()) as Partial<SendMailboxEmailPayload>;
-    const result = await emailService.sendMailboxEmail({
+    const { messageId } = await params;
+    const payload = (await request.json()) as {
+      mailboxId?: string;
+      recipient?: string;
+    };
+    const result = await emailService.forwardMailboxMessage({
       mailboxId: payload.mailboxId ?? '',
-      to: Array.isArray(payload.to) ? payload.to : [],
-      cc: Array.isArray(payload.cc) ? payload.cc : [],
-      bcc: Array.isArray(payload.bcc) ? payload.bcc : [],
-      subject: payload.subject ?? '',
-      bodyHtml: payload.bodyHtml ?? '',
+      messageId,
+      recipient: payload.recipient ?? '',
     });
 
     return json({
       success: true,
-      message: 'Email sent.',
-      thread: result.thread,
+      message: 'Email forwarded.',
+      messageItem: result.message,
     });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : 'Failed to send email.';
+      error instanceof Error ? error.message : 'Failed to forward email.';
     const status = [
       'Invalid mailbox id.',
-      'Mailbox not found.',
+      'Invalid message id.',
       'Invalid recipient email.',
-      'Subject is required.',
-      'Email body is required.',
-      'At least one recipient email is required.',
+      'Mailbox not found.',
+      'Message not found.',
+      'Thread not found.',
     ].includes(message)
       ? 400
       : 500;
 
-    await logDevelopmentError('email2.api.threads.create', error, {
-      route: '/api/admin/email/threads',
+    await logDevelopmentError('email2.api.messages.forward', error, {
+      route: '/api/admin/email/messages/[messageId]/forward',
       status,
       userId: currentUser.id.toString(),
     });
