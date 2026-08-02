@@ -136,7 +136,14 @@ export function RichTextEditor({
     content: initialContent,
     immediatelyRender: false,
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        blockquote: {
+          HTMLAttributes: {
+            style:
+              'margin: 16px 0 16px 16px; padding: 12px 16px; border-left: 4px solid #cbd5e1; background-color: #f8fafc; color: #475569; font-size: 14px; line-height: 1.6;',
+          },
+        },
+      }),
       TextStyle,
       Color,
       Underline,

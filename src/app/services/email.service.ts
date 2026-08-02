@@ -12,6 +12,7 @@ import {
   EMAIL_PREFIX_PATTERN,
 } from './email/constants';
 import { createMessageId } from './email/create-message-id';
+import { createEmailAttachmentFolder } from './email/create-email-attachment-folder';
 import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
 import { formatEmailAddress } from './email/format-email-address';
 import { getContactIds } from './email/get-contact-ids';
@@ -44,6 +45,7 @@ import type {
   EmailAddressReferenceDocument,
   EmailContactDocument,
   EmailMessageDocument,
+  EmailReadStateDocument,
   EmailThreadDocument,
 } from './email/document-types';
 import type { AttachmentFile } from './email/types/attachment-file';
@@ -427,6 +429,90 @@ class EmailService extends Singleton {
     return matchedMessage?.threadId ?? null;
   }
 
+  async getReadMessageIds(
+    messageIds: ObjectId[],
+    userId: string,
+  ): Promise<Set<string>> {
+    if (!ObjectId.isValid(userId)) {
+      throw new Error('Invalid user id.');
+    }
+
+    if (messageIds.length === 0) {
+      return new Set<string>();
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const readStates = await db
+      .collection<EmailReadStateDocument>(DbTables.emailRead)
+      .find({
+        userId: new ObjectId(userId),
+        messageId: { $in: messageIds },
+      })
+      .project<Pick<EmailReadStateDocument, 'messageId'>>({ messageId: 1 })
+      .toArray();
+
+    return new Set(
+      readStates.map((readState) => readState.messageId.toString()),
+    );
+  }
+
+  async markThreadMessagesAsRead(
+    threadId: string,
+    userId: string,
+  ): Promise<void> {
+    if (!ObjectId.isValid(threadId)) {
+      throw new Error('Invalid thread id.');
+    }
+
+    if (!ObjectId.isValid(userId)) {
+      throw new Error('Invalid user id.');
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const messages = await db
+      .collection<EmailMessageDocument>(DbTables.emailMessages)
+      .find({
+        threadId: new ObjectId(threadId),
+        direction: 'incoming',
+      })
+      .project<Pick<EmailMessageDocument, '_id'>>({ _id: 1 })
+      .toArray();
+
+    if (messages.length === 0) {
+      return;
+    }
+
+    const now = new Date();
+    const readUserId = new ObjectId(userId);
+
+    await db.collection<EmailReadStateDocument>(DbTables.emailRead).bulkWrite(
+      messages.map((message) => ({
+        updateOne: {
+          filter: {
+            messageId: message._id,
+            userId: readUserId,
+          },
+          update: {
+            $set: {
+              lastReadAt: now,
+              updatedAt: now,
+            },
+            $setOnInsert: {
+              _id: new ObjectId(),
+              messageId: message._id,
+              userId: readUserId,
+              firstReadAt: now,
+              createdAt: now,
+            },
+          },
+          upsert: true,
+        },
+      })),
+    );
+  }
+
   async processIncomingMailgunEmail(
     payload: IncomingMailgunEmailPayload,
   ): Promise<IncomingMailgunEmailResult> {
@@ -695,6 +781,23 @@ class EmailService extends Singleton {
         address: mailbox.address,
         normalizedAddress: mailbox.normalizedAddress,
       };
+      const threadId = new ObjectId();
+      const messageObjectId = new ObjectId();
+      const messageId = createMessageId();
+      const attachmentFolder = createEmailAttachmentFolder(threadId.toString());
+      const uploadedAttachments = payload.attachments.length === 0
+        ? []
+        : await (await import('./r2.service')).r2Service.uploadFiles(
+          payload.attachments,
+          { folder: attachmentFolder },
+        );
+      const emailAttachments = await Promise.all(
+        payload.attachments.map(async (attachment) => ({
+          data: Buffer.from(await attachment.arrayBuffer()),
+          filename: attachment.name,
+          contentType: attachment.type || 'application/octet-stream',
+        })),
+      );
       const result = await this.sendEmailFromAddress(
         from,
         to,
@@ -702,6 +805,7 @@ class EmailService extends Singleton {
         bcc,
         subject,
         bodyHtml,
+        emailAttachments,
       );
 
       if (result.status !== 200) {
@@ -722,9 +826,15 @@ class EmailService extends Singleton {
       const bccContacts = contacts.slice(1 + to.length + cc.length);
       const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
-      const threadId = new ObjectId();
-      const messageObjectId = new ObjectId();
-      const messageId = createMessageId();
+      const attachmentDocuments: EmailAttachmentDocument[] =
+        uploadedAttachments.map((attachment) => ({
+          _id: new ObjectId(),
+          filename: attachment.originalName,
+          contentType: attachment.mimeType || 'application/octet-stream',
+          sizeBytes: attachment.size,
+          disposition: 'attachment',
+          storageKey: attachment.key,
+        }));
       const thread: EmailThreadDocument = {
         _id: threadId,
         mailboxId: mailbox._id,
@@ -739,6 +849,11 @@ class EmailService extends Singleton {
       await db
         .collection<EmailThreadDocument>(DbTables.emailThreads)
         .insertOne(thread);
+      if (attachmentDocuments.length > 0) {
+        await db
+          .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+          .insertMany(attachmentDocuments);
+      }
       const message: EmailMessageDocument = {
         _id: messageObjectId,
         messageId,
@@ -753,7 +868,7 @@ class EmailService extends Singleton {
           text: stripHtml(bodyHtml),
           html: bodyHtml,
         },
-        attachments: [],
+        attachments: attachmentDocuments.map((attachment) => attachment._id),
         headers: {
           'Message-ID': messageId,
         },
@@ -787,6 +902,7 @@ class EmailService extends Singleton {
       };
     } catch (error) {
       await logEmailServiceError('sendMailboxEmail', error, {
+        attachmentsCount: payload.attachments.length,
         bccLength: payload.bcc.length,
         bodyHtmlLength: payload.bodyHtml.length,
         ccLength: payload.cc.length,
@@ -1223,7 +1339,10 @@ class EmailService extends Singleton {
     }
   }
 
-  async listMessagesByThread(threadId: string): Promise<EmailMessageSummary[]> {
+  async listMessagesByThread(
+    threadId: string,
+    userId: string,
+  ): Promise<EmailMessageSummary[]> {
     try {
       if (!ObjectId.isValid(threadId)) {
         throw new Error('Invalid thread id.');
@@ -1245,8 +1364,16 @@ class EmailService extends Singleton {
           ...getContactIds(message.bcc ?? []),
         ]),
       );
+      const readMessageIds = await this.getReadMessageIds(
+        messages
+          .filter((message) => message.direction === 'incoming')
+          .map((message) => message._id),
+        userId,
+      );
 
-      return messages.map((message) => mapMessage(message, contactsById));
+      return messages.map((message) =>
+        mapMessage(message, contactsById, readMessageIds),
+      );
     } catch (error) {
       await logEmailServiceError('listMessagesByThread', error, {
         threadId,
@@ -1256,7 +1383,9 @@ class EmailService extends Singleton {
     }
   }
 
-  async listMailboxThreadGroups(): Promise<EmailMailboxThreadGroup[]> {
+  async listMailboxThreadGroups(
+    userId: string,
+  ): Promise<EmailMailboxThreadGroup[]> {
     try {
       const dbClient = await clientPromise;
       const db = dbClient.db();
@@ -1279,12 +1408,36 @@ class EmailService extends Singleton {
         threads.flatMap((thread) => getContactIds(thread.participants)),
       );
       const lastMessagesById = await getLastMessagesById(threads);
+      const incomingMessages = threads.length > 0
+        ? await db
+          .collection<EmailMessageDocument>(DbTables.emailMessages)
+          .find({
+            threadId: { $in: threads.map((thread) => thread._id) },
+            direction: 'incoming',
+          })
+          .project<Pick<EmailMessageDocument, '_id' | 'threadId'>>({
+            _id: 1,
+            threadId: 1,
+          })
+          .toArray()
+        : [];
+      const readMessageIds = await this.getReadMessageIds(
+        incomingMessages.map((message) => message._id),
+        userId,
+      );
+      const unreadThreadIds = new Set(
+        incomingMessages
+          .filter((message) => !readMessageIds.has(message._id.toString()))
+          .map((message) => message.threadId.toString()),
+      );
 
       for (const thread of threads) {
         const mailboxId = thread.mailboxId.toString();
         const mailboxThreads = threadsByMailboxId.get(mailboxId) ?? [];
 
-        mailboxThreads.push(mapThread(thread, contactsById, lastMessagesById));
+        mailboxThreads.push(
+          mapThread(thread, contactsById, lastMessagesById, unreadThreadIds),
+        );
         threadsByMailboxId.set(mailboxId, mailboxThreads);
       }
 

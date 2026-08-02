@@ -7,6 +7,7 @@ export type EmailThreadSummary = {
   participants: EmailAddressSummary[];
   participantIds: string[];
   messageCount: number;
+  hasUnreadMessages: boolean;
   preview: string;
   attachmentsCount: number;
   lastMessageId: string;

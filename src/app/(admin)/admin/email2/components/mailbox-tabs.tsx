@@ -52,6 +52,7 @@ export function Email2MailboxTabs({
   const [composeForm, setComposeForm] =
     useState<ComposeFormState>(defaultComposeForm);
   const [composeSending, setComposeSending] = useState(false);
+  const [composeAttachments, setComposeAttachments] = useState<File[]>([]);
   const [composeResult, setComposeResult] = useState<SendEmailResponse | null>(
     null,
   );
@@ -113,12 +114,14 @@ export function Email2MailboxTabs({
   const openComposeModal = useCallback((mailbox: EmailMailboxSummary) => {
     setComposeMailbox(mailbox);
     setComposeForm(defaultComposeForm);
+    setComposeAttachments([]);
     setComposeResult(null);
   }, []);
 
   const closeComposeModal = useCallback(() => {
     setComposeMailbox(null);
     setComposeForm(defaultComposeForm);
+    setComposeAttachments([]);
     setComposeResult(null);
   }, []);
 
@@ -137,6 +140,7 @@ export function Email2MailboxTabs({
         const { ok, payload } = await sendMailboxEmailRequest(
           composeMailbox.id,
           composeForm,
+          composeAttachments,
         );
 
         setComposeResult(payload);
@@ -165,7 +169,7 @@ export function Email2MailboxTabs({
         setComposeSending(false);
       }
     },
-    [closeComposeModal, composeForm, composeMailbox],
+    [closeComposeModal, composeAttachments, composeForm, composeMailbox],
   );
 
   const handleSubmit = useCallback(
@@ -271,7 +275,9 @@ export function Email2MailboxTabs({
 
       {composeMailbox !== null && (
         <ComposeEmailModal
+          attachments={composeAttachments}
           form={composeForm}
+          onAttachmentsChange={setComposeAttachments}
           mailbox={composeMailbox}
           onChange={updateComposeField}
           onClose={closeComposeModal}

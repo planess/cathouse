@@ -2,7 +2,7 @@ import type { EmailMessageSummary } from '@app/services/email.service';
 
 import { escapeHtml } from './escape-html';
 import { formatAddress } from './format-address';
-import { formatEmailDate } from './format-email-date';
+import { formatReplyQuoteDate } from './format-reply-quote-date';
 import { getMessageBody } from './get-message-body';
 
 export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
@@ -22,8 +22,10 @@ export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
 
   return [
     '<p></p>',
-    `<p>On ${escapeHtml(formatEmailDate(message.headerDate))}, `,
-    `${escapeHtml(formatAddress(message.from))} wrote:</p>`,
+    '<p></p>',
+    '<p>↪ Відповідь на:<br>',
+    `${escapeHtml(formatAddress(message.from))}<br>`,
+    `${escapeHtml(formatReplyQuoteDate(message.headerDate))}</p>`,
     `<blockquote>${body}</blockquote>`,
   ].join('');
 }

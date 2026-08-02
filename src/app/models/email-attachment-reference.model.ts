@@ -5,4 +5,5 @@ export interface EmailAttachmentReference {
 
   disposition: 'attachment' | 'inline';
   contentId?: string;
+  storageKey?: string;
 }

@@ -4,6 +4,7 @@ import { formatAddress } from '../helpers/format-address';
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 import { getMessageBody } from '../helpers/get-message-body';
+import { getMessageBodyParts } from '../helpers/get-message-body-parts';
 
 type ThreadMessageCardProps = {
   message: EmailMessageSummary;
@@ -15,7 +16,15 @@ export function ThreadMessageCard({
   onForward,
 }: ThreadMessageCardProps) {
   return (
-    <article className="border-b border-slate-200 bg-slate-50/40 p-5 last:border-b-0 dark:border-slate-800 dark:bg-slate-900/30 md:p-6">
+    <article
+      className={`border-b border-slate-200 p-5 last:border-b-0 dark:border-slate-800 md:p-6 ${
+        message.direction === 'outgoing'
+          ? 'bg-sky-50/60 dark:bg-sky-950/20'
+          : message.isRead
+            ? 'bg-slate-50/40 dark:bg-slate-900/30'
+            : 'bg-amber-50/70 dark:bg-amber-950/20'
+      }`}
+    >
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <h2 className="break-words text-xl font-bold leading-tight text-slate-950 dark:text-white">
           {message.subject}
@@ -60,10 +69,31 @@ export function ThreadMessageCard({
         )}
       </div>
 
-      <div className="pt-5">
-        <p className="whitespace-pre-wrap break-words text-base leading-7 text-slate-700 dark:text-slate-200">
-          {getMessageBody(message)}
-        </p>
+      <div className="space-y-4 pt-5">
+        {message.content.html?.match(/<blockquote\b/i) === null ||
+        message.content.html === undefined ? (
+          <p className="whitespace-pre-wrap break-words text-base leading-7 text-slate-700 dark:text-slate-200">
+            {getMessageBody(message)}
+          </p>
+        ) : (
+          getMessageBodyParts(message).map(([isQuote, body], index) =>
+            isQuote ? (
+              <blockquote
+                className="ml-4 whitespace-pre-wrap break-words border-l-4 border-slate-300 bg-slate-100/80 px-4 py-3 text-sm leading-6 text-slate-600 dark:border-slate-600 dark:bg-slate-900/70 dark:text-slate-300"
+                key={`${message.id}-quote-${index}`}
+              >
+                {body}
+              </blockquote>
+            ) : (
+              <p
+                className="whitespace-pre-wrap break-words text-base leading-7 text-slate-700 dark:text-slate-200"
+                key={`${message.id}-body-${index}`}
+              >
+                {body}
+              </p>
+            ),
+          )
+        )}
 
         {message.attachmentsCount > 0 && (
           <div className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700">

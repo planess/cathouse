@@ -5,7 +5,6 @@ import type { EmailThreadSummary } from '@app/services/email.service';
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 
-
 type ThreadListItemProps = {
   mailboxId: string;
   thread: EmailThreadSummary;
@@ -19,14 +18,16 @@ export function ThreadListItem({
 }: ThreadListItemProps) {
   return (
     <button
-      className="block w-full border-b border-slate-100 px-5 py-5 text-left transition last:border-b-0 hover:bg-emerald-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 dark:border-slate-800 dark:hover:bg-emerald-950/20"
+      className={`block w-full border-b border-slate-100 px-5 py-5 text-left transition last:border-b-0 hover:bg-emerald-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 dark:border-slate-800 dark:hover:bg-emerald-950/20 ${
+        thread.hasUnreadMessages ? 'bg-amber-50/70 dark:bg-amber-950/20' : ''
+      }`}
       onClick={() => onSelect(mailboxId, thread.id)}
       type="button"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 space-y-2.5">
           <p className="truncate text-base font-bold text-slate-950 dark:text-white">
-            Participants: {formatAddressList(thread.participants)}
+            {formatAddressList(thread.participants)}
           </p>
           <h3 className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
             {thread.subject}

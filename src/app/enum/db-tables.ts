@@ -30,4 +30,5 @@ export enum DbTables {
   emailThreads = 'email_threads',
   emailMessages = 'email_messages',
   emailAttachments = 'email_attachments',
+  emailRead = 'email_read',
 }

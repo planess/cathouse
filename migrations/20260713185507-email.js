@@ -13,23 +13,23 @@ module.exports = {
           properties: {
             address: {
               bsonType: 'string',
-              description: 'Повна email-адреса',
+              description: 'Full email address',
             },
             normalizedAddress: {
               bsonType: 'string',
-              description: 'Нормалізована адреса для пошуку та унікальності',
+              description: 'Normalized address for search and uniqueness',
             },
             displayName: {
               bsonType: 'string',
-              description: 'Назва, яка відображається одержувачеві',
+              description: 'Name displayed to the recipient',
             },
             createdAt: {
               bsonType: 'date',
-              description: 'Дата створення',
+              description: 'Date of creation',
             },
             updatedAt: {
               bsonType: 'date',
-              description: 'Дата останнього оновлення',
+              description: 'Date of last update',
             },
           },
         },
@@ -44,15 +44,15 @@ module.exports = {
           properties: {
             name: {
               bsonType: 'string',
-              description: "Ім'я контакту",
+              description: 'Contact name',
             },
             address: {
               bsonType: 'string',
-              description: 'Email-адреса контакту',
+              description: 'Contact email address',
             },
             normalizedAddress: {
               bsonType: 'string',
-              description: 'Нормалізована адреса для пошуку та унікальності',
+              description: 'Normalized address for search and uniqueness',
             },
           },
         },
@@ -75,36 +75,36 @@ module.exports = {
           properties: {
             mailboxId: {
               bsonType: 'objectId',
-              description: 'ID поштової скриньки, до якої належить тред',
+              description: 'ID of the mailbox to which the thread belongs',
             },
             subject: {
               bsonType: 'string',
-              description: 'Тема першого повідомлення в треді',
+              description: 'Subject of the first message in the thread',
             },
             participants: {
               bsonType: 'array',
               items: {
                 bsonType: 'objectId',
-                description: 'ID учасника (контакту) в треді',
+                description: 'ID of participant (contact) in the thread',
               },
               description:
-                'Унікальний список всіх учасників у треді (from, to, cc, bcc)',
+                'Unique list of all participants in the thread (from, to, cc, bcc)',
             },
             messageCount: {
               bsonType: 'int',
-              description: 'Кількість повідомлень у треді',
+              description: 'Number of messages in the thread',
             },
             lastMessageId: {
               bsonType: 'objectId',
-              description: 'ID останнього повідомлення в треді',
+              description: 'ID of the last message in the thread',
             },
             createdAt: {
               bsonType: 'date',
-              description: 'Дата створення треду',
+              description: 'Date of thread creation',
             },
             updatedAt: {
               bsonType: 'date',
-              description: 'Дата останнього оновлення треду',
+              description: 'Date of last update of the thread',
             },
           },
         },
@@ -133,7 +133,7 @@ module.exports = {
             },
             threadId: {
               bsonType: 'objectId',
-              description: 'ID треду, до якого належить повідомлення',
+              description: 'ID of the thread to which the message belongs',
             },
             inReplyTo: {
               bsonType: 'string',
@@ -151,66 +151,65 @@ module.exports = {
             },
             direction: {
               bsonType: 'string',
-              description: 'Напрямок повідомлення (вхідне/вихідне)',
+              description: 'Message direction (incoming/outgoing)',
               enum: ['incoming', 'outgoing'],
             },
             from: {
               bsonType: 'objectId',
-              description: 'Відправник повідомлення',
+              description: 'Message sender',
             },
             sender: {
               bsonType: 'objectId',
-              description:
-                'Відправник повідомлення (якщо відрізняється від from)',
+              description: 'Message sender (if different from from)',
             },
             replyTo: {
               bsonType: 'array',
               items: {
                 bsonType: 'objectId',
-                description: 'ID контактів для Reply-To',
+                description: 'ID of contacts for Reply-To',
               },
-              description: 'Список контактів для Reply-To',
+              description: 'List of contacts for Reply-To',
             },
             to: {
               bsonType: 'array',
               items: {
                 bsonType: 'objectId',
-                description: 'ID контактів для To',
+                description: 'ID of contacts for To',
               },
-              description: 'Список контактів для To',
+              description: 'List of contacts for To',
             },
             cc: {
               bsonType: 'array',
               items: {
                 bsonType: 'objectId',
-                description: 'ID контактів для Cc',
+                description: 'ID of contacts for Cc',
               },
-              description: 'Список контактів для Cc',
+              description: 'List of contacts for Cc',
             },
             bcc: {
               bsonType: 'array',
               items: {
                 bsonType: 'objectId',
-                description: 'ID контактів для Bcc',
+                description: 'ID of contacts for Bcc',
               },
-              description: 'Список контактів для Bcc',
+              description: 'List of contacts for Bcc',
             },
             subject: {
               bsonType: 'string',
-              description: 'Тема повідомлення',
+              description: 'Message subject',
             },
             content: {
               bsonType: 'object',
-              description: 'Вміст повідомлення (текст, HTML, вкладення)',
+              description: 'Message content (text, HTML, attachments)',
               anyOf: [{ required: ['text'] }, { required: ['html'] }],
               properties: {
                 text: {
                   bsonType: 'string',
-                  description: 'Текстова версія повідомлення',
+                  description: 'Text version of the message',
                 },
                 html: {
                   bsonType: 'string',
-                  description: 'HTML версія повідомлення',
+                  description: 'HTML version of the message',
                 },
               },
             },
@@ -218,9 +217,9 @@ module.exports = {
               bsonType: 'array',
               items: {
                 bsonType: 'objectId',
-                description: 'ID вкладень, пов’язаних з повідомленням',
+                description: 'ID of attachments related to the message',
               },
-              description: 'Список ID вкладень, пов’язаних з повідомленням',
+              description: 'List of IDs of attachments related to the message',
             },
             headers: {
               bsonType: 'object',
@@ -230,7 +229,7 @@ module.exports = {
                   { bsonType: 'array', items: { bsonType: 'string' } },
                 ],
               },
-              description: 'Заголовки повідомлення у вигляді ключ-значення',
+              description: 'Message headers as key-value',
             },
             dates: {
               bsonType: 'object',
@@ -238,29 +237,29 @@ module.exports = {
               properties: {
                 headerDate: {
                   bsonType: 'date',
-                  description: 'Дата з заголовка повідомлення (Date header)',
+                  description: 'Date from message header (Date header)',
                 },
                 receivedAt: {
                   bsonType: 'date',
-                  description: 'Дата отримання повідомлення на сервері',
+                  description: 'Date the message was received on the server',
                 },
                 sentAt: {
                   bsonType: 'date',
-                  description: 'Дата відправлення повідомлення (якщо відома)',
+                  description: 'Date the message was sent (if known)',
                 },
                 deliveredAt: {
                   bsonType: 'date',
-                  description: 'Дата доставки повідомлення (якщо відома)',
+                  description: 'Date the message was delivered (if known)',
                 },
                 createdAt: {
                   bsonType: 'date',
                   description:
-                    'Дата створення запису повідомлення в базі даних',
+                    'Date of creation of the message record in the database',
                 },
                 updatedAt: {
                   bsonType: 'date',
                   description:
-                    'Дата останнього оновлення запису повідомлення в базі даних',
+                    'Date of last update of the message record in the database',
                 },
               },
             },
@@ -269,25 +268,24 @@ module.exports = {
               properties: {
                 protocol: {
                   bsonType: 'string',
-                  description: 'Протокол отримання/відправки',
+                  description: 'Protocol for receiving/sending',
                   enum: ['SMTP', 'IMAP', 'POP3', 'API'],
                 },
                 remoteIp: {
                   bsonType: 'string',
-                  description: 'IP-адреса відправника або сервера',
+                  description: 'IP address of sender or server',
                 },
                 provider: {
                   bsonType: 'string',
-                  description: 'Провайдер електронної пошти (якщо відомо)',
+                  description: 'Email provider (if known)',
                 },
                 rawMessageStorageKey: {
                   bsonType: 'string',
-                  description:
-                    'Ключ для зберігання сирого повідомлення (raw message)',
+                  description: 'Key for storing raw message (raw message)',
                 },
                 rawSizeBytes: {
                   bsonType: 'int',
-                  description: 'Розмір сирого повідомлення в байтах',
+                  description: 'Size of raw message in bytes',
                 },
               },
             },
@@ -300,30 +298,40 @@ module.exports = {
       validator: {
         $jsonSchema: {
           bsonType: 'object',
-          required: ['filename', 'contentType'],
+          required: ['filename', 'contentType', 'disposition', 'storageKey'],
           properties: {
             filename: {
               bsonType: 'string',
-              description: 'Ім’я файлу вкладення',
+              description: 'Name of the attachment file',
             },
             contentType: {
               bsonType: 'string',
-              description: 'MIME-тип вкладення',
+              description: 'MIME type of attachment',
             },
             sizeBytes: {
               bsonType: 'int',
-              description: 'Розмір вкладення в байтах',
+              description: 'Size of attachment in bytes',
             },
             disposition: {
               bsonType: 'string',
-              description: 'Disposition (inline або attachment)',
+              description: 'Disposition (inline or attachment)',
               enum: ['inline', 'attachment'],
             },
             contentId: {
               bsonType: 'string',
               description:
-                'Content-ID для inline-вкладень (якщо відомо, без кутових дужок)',
+                'Content-ID for inline attachments (if known, without angle brackets)',
             },
+            storageKey: {
+              bsonType: 'string',
+              description: 'Key for storing attachment content',
+            },
+          },
+          if: {
+            properties: { disposition: { const: 'inline' } },
+          },
+          then: {
+            required: ['contentId'],
           },
         },
       },

@@ -21,7 +21,9 @@ export async function loadMailboxThreadGroups({
   await requirePermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
 
   try {
-    return await emailService.listMailboxThreadGroups();
+    return await emailService.listMailboxThreadGroups(
+      currentUser.id.toString(),
+    );
   } catch (error) {
     await logDevelopmentError(scope, error, {
       mailboxId,

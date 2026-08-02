@@ -4,9 +4,9 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
+import { parseEmailRecipientInputJson } from '@app/services/email/parse-email-recipient-input-json';
 import {
   EmailThreadSummary,
-  SendMailboxEmailPayload,
   emailService,
 } from '@app/services/email.service';
 
@@ -40,14 +40,18 @@ export async function POST(request: Request) {
   }
 
   try {
-    const payload = (await request.json()) as Partial<SendMailboxEmailPayload>;
+    const formData = await request.formData();
+    const attachments = formData
+      .getAll('attachments')
+      .filter((entry): entry is File => entry instanceof File);
     const result = await emailService.sendMailboxEmail({
-      mailboxId: payload.mailboxId ?? '',
-      to: Array.isArray(payload.to) ? payload.to : [],
-      cc: Array.isArray(payload.cc) ? payload.cc : [],
-      bcc: Array.isArray(payload.bcc) ? payload.bcc : [],
-      subject: payload.subject ?? '',
-      bodyHtml: payload.bodyHtml ?? '',
+      mailboxId: (formData.get('mailboxId') as string | null) ?? '',
+      attachments,
+      to: parseEmailRecipientInputJson(formData.get('to')),
+      cc: parseEmailRecipientInputJson(formData.get('cc')),
+      bcc: parseEmailRecipientInputJson(formData.get('bcc')),
+      subject: (formData.get('subject') as string | null) ?? '',
+      bodyHtml: (formData.get('bodyHtml') as string | null) ?? '',
     });
 
     return json({
@@ -65,7 +69,7 @@ export async function POST(request: Request) {
       'Subject is required.',
       'Email body is required.',
       'At least one recipient email is required.',
-    ].includes(message)
+    ].includes(message) || message.includes('is too large.')
       ? 400
       : 500;
 

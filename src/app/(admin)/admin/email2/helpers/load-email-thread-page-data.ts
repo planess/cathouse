@@ -22,7 +22,7 @@ export async function loadEmailThreadPageData({
   try {
     const [thread, messages] = await Promise.all([
       emailService.getThread(threadId),
-      emailService.listMessagesByThread(threadId),
+      emailService.listMessagesByThread(threadId, currentUser.id.toString()),
     ]);
 
     return {

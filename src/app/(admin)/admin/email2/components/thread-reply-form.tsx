@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 import { RichTextEditor } from '../../email/components/rich-text-editor';
 
@@ -34,6 +34,17 @@ export function ThreadReplyForm({
   onChange,
   onSubmit,
 }: ThreadReplyFormProps) {
+  const [showCopyFields, setShowCopyFields] = useState(
+    () =>
+      form.cc.some(
+        (recipient) =>
+          recipient.name.trim().length > 0 || recipient.email.trim().length > 0,
+      ) ||
+      form.bcc.some(
+        (recipient) =>
+          recipient.name.trim().length > 0 || recipient.email.trim().length > 0,
+      ),
+  );
   const canSend =
     form.to.some((recipient) => recipient.email.trim().length > 0) &&
     form.bodyHtml.trim().length > 0;
@@ -88,23 +99,46 @@ export function ThreadReplyForm({
                 recipients={form.to}
                 required
               />
+              <button
+                aria-controls="thread-reply-copy-fields"
+                aria-expanded={showCopyFields}
+                className="mt-3 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100"
+                onClick={() => setShowCopyFields((visible) => !visible)}
+                type="button"
+              >
+                {showCopyFields ? 'Hide Cc and Bcc' : 'Cc and Bcc'}
+                <svg
+                  aria-hidden="true"
+                  className={`h-4 w-4 transition-transform ${
+                    showCopyFields ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
             </div>
-            <div className="py-3">
-              <RecipientFields
-                id="thread-reply-cc"
-                label="Cc"
-                onChange={(recipients) => onChange('cc', recipients)}
-                recipients={form.cc}
-              />
-            </div>
-            <div className="pt-3">
-              <RecipientFields
-                id="thread-reply-bcc"
-                label="Bcc"
-                onChange={(recipients) => onChange('bcc', recipients)}
-                recipients={form.bcc}
-              />
-            </div>
+            {showCopyFields && (
+              <div className="space-y-3 py-3" id="thread-reply-copy-fields">
+                <RecipientFields
+                  id="thread-reply-cc"
+                  label="Cc"
+                  onChange={(recipients) => onChange('cc', recipients)}
+                  recipients={form.cc}
+                />
+                <RecipientFields
+                  id="thread-reply-bcc"
+                  label="Bcc"
+                  onChange={(recipients) => onChange('bcc', recipients)}
+                  recipients={form.bcc}
+                />
+              </div>
+            )}
           </div>
 
           <div>
@@ -116,7 +150,7 @@ export function ThreadReplyForm({
             </label>
             <div id="thread-reply-body">
               <RichTextEditor
-                editorClassName="prose prose-sm dark:prose-invert max-w-none min-h-60 px-4 py-3 focus:outline-none"
+                editorClassName="prose prose-sm dark:prose-invert max-w-none min-h-60 px-4 py-3 focus:outline-none [&_blockquote]:my-4 [&_blockquote]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-slate-300 [&_blockquote]:bg-slate-50 [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:text-sm [&_blockquote]:text-slate-600 [&_blockquote_blockquote]:border-slate-400 dark:[&_blockquote]:border-slate-600 dark:[&_blockquote]:bg-slate-900 dark:[&_blockquote]:text-slate-300 dark:[&_blockquote_blockquote]:border-slate-500"
                 initialContent={form.bodyHtml}
                 key={editorKey}
                 onChange={(html) => onChange('bodyHtml', html)}

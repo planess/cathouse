@@ -8,6 +8,7 @@ import type { EmailMessageSummary } from './types/email-message-summary';
 export function mapMessage(
   message: EmailMessageDocument,
   contactsById: Map<string, EmailAddressSummary>,
+  readMessageIds = new Set<string>(),
 ): EmailMessageSummary {
   const cc = message.cc ?? [];
   const bcc = message.bcc ?? [];
@@ -18,6 +19,8 @@ export function mapMessage(
     messageId: message.messageId,
     threadId: message.threadId.toString(),
     direction: message.direction,
+    isRead:
+      message.direction === 'outgoing' || readMessageIds.has(message._id.toString()),
     from: mapAddress(message.from, contactsById),
     ...(message.sender !== undefined
       ? { sender: mapAddress(message.sender, contactsById) }

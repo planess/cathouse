@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 
 import type {
   EmailMessageSummary,
@@ -11,6 +11,7 @@ import type {
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 import { getInitialReplyForm } from '../helpers/get-initial-reply-form';
+import { markThreadMessagesReadRequest } from '../helpers/mark-thread-messages-read-request';
 import { sendForwardMessageRequest } from '../helpers/send-forward-message-request';
 import { sendThreadReplyRequest } from '../helpers/send-thread-reply-request';
 
@@ -49,6 +50,22 @@ export function ThreadConversation({
   const [forwardResult, setForwardResult] = useState<SendEmailResponse | null>(
     null,
   );
+
+  useEffect(() => {
+    if (!initialMessages.some((message) => !message.isRead)) {
+      return;
+    }
+
+    void markThreadMessagesReadRequest(thread.id).then((markedAsRead) => {
+      if (!markedAsRead) {
+        return;
+      }
+
+      setMessages((currentMessages) =>
+        currentMessages.map((message) => ({ ...message, isRead: true })),
+      );
+    });
+  }, [initialMessages, thread.id]);
 
   const handleChange = (
     field: keyof ThreadReplyFormState,

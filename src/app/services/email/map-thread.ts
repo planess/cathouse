@@ -16,6 +16,7 @@ export function mapThread(
   thread: EmailThreadDocument,
   contactsById: Map<string, EmailAddressSummary>,
   lastMessagesById = new Map<string, EmailMessageDocument>(),
+  unreadThreadIds = new Set<string>(),
 ): EmailThreadSummary {
   const participantIds = getContactIds(thread.participants);
   const lastMessage = lastMessagesById.get(thread.lastMessageId.toString());
@@ -29,6 +30,7 @@ export function mapThread(
     ),
     participantIds,
     messageCount: thread.messageCount,
+    hasUnreadMessages: unreadThreadIds.has(thread._id.toString()),
     preview: getMessagePreview(lastMessage),
     attachmentsCount: getMessageAttachmentsCount(lastMessage),
     lastMessageId: thread.lastMessageId.toString(),

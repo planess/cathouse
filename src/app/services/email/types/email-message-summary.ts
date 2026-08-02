@@ -5,6 +5,7 @@ export type EmailMessageSummary = {
   messageId: string;
   threadId: string;
   direction: 'incoming' | 'outgoing';
+  isRead: boolean;
   from: EmailAddressSummary;
   sender?: EmailAddressSummary;
   replyTo: EmailAddressSummary[];

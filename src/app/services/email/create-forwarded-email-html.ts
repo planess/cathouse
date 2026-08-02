@@ -24,12 +24,12 @@ export function createForwardedEmailHtml(message: EmailMessageSummary): string {
 
   return [
     '<p><br></p>',
-    '<p>---------- Forwarded message ----------</p>',
-    `<p><strong>From:</strong> ${escapeHtml(formatAddress(message.from))}<br>`,
-    `<strong>Date:</strong> ${escapeHtml(message.headerDate)}<br>`,
-    `<strong>Subject:</strong> ${escapeHtml(message.subject)}<br>`,
-    `<strong>To:</strong> ${escapeHtml(to)}`,
-    cc.length === 0 ? '</p>' : `<br><strong>Cc:</strong> ${escapeHtml(cc)}</p>`,
+    '<p>---------- Перенаправлена повідомлення ----------</p>',
+    `<p><strong>Від:</strong> ${escapeHtml(formatAddress(message.from))}<br>`,
+    `<strong>Дата:</strong> ${escapeHtml(message.headerDate)}<br>`,
+    `<strong>Тема:</strong> ${escapeHtml(message.subject)}<br>`,
+    `<strong>Кому:</strong> ${escapeHtml(to)}`,
+    cc.length === 0 ? '</p>' : `<br><strong>Копія:</strong> ${escapeHtml(cc)}</p>`,
     `<blockquote>${body}</blockquote>`,
   ].join('');
 }

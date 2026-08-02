@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 import type { EmailMailboxSummary } from '@app/services/email.service';
 
@@ -15,6 +15,7 @@ import type { ComposeFormState } from '../types/compose-form-state';
 import type { SendEmailResponse } from '../types/send-email-response';
 
 type ComposeEmailModalProps = {
+  attachments: File[];
   form: ComposeFormState;
   mailbox: EmailMailboxSummary;
   result: SendEmailResponse | null;
@@ -23,20 +24,51 @@ type ComposeEmailModalProps = {
     field: keyof ComposeFormState,
     value: ComposeFormState[keyof ComposeFormState],
   ) => void;
+  onAttachmentsChange: (attachments: File[]) => void;
   onClose: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
 export function ComposeEmailModal({
+  attachments,
   form,
   mailbox,
   result,
   sending,
   onChange,
+  onAttachmentsChange,
   onClose,
   onSubmit,
 }: ComposeEmailModalProps) {
   const mailboxFrom = formatMailboxFrom(mailbox);
+  const [showCopyFields, setShowCopyFields] = useState(
+    () =>
+      form.cc.some(
+        (recipient) =>
+          recipient.name.trim().length > 0 || recipient.email.trim().length > 0,
+      ) ||
+      form.bcc.some(
+        (recipient) =>
+          recipient.name.trim().length > 0 || recipient.email.trim().length > 0,
+      ),
+  );
+  const handleAddAttachments = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = event.target.files;
+
+    if (selectedFiles === null) {
+      return;
+    }
+
+    onAttachmentsChange([...attachments, ...selectedFiles]);
+    event.target.value = '';
+  };
+  const handleRemoveAttachment = (index: number) => {
+    onAttachmentsChange(
+      attachments.filter(
+        (_attachment, attachmentIndex) => attachmentIndex !== index,
+      ),
+    );
+  };
 
   return (
     <div
@@ -92,23 +124,46 @@ export function ComposeEmailModal({
                 recipients={form.to}
                 required
               />
+              <button
+                aria-controls="compose-copy-fields"
+                aria-expanded={showCopyFields}
+                className="mt-3 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100"
+                onClick={() => setShowCopyFields((visible) => !visible)}
+                type="button"
+              >
+                {showCopyFields ? 'Hide Cc and Bcc' : 'Cc and Bcc'}
+                <svg
+                  aria-hidden="true"
+                  className={`h-4 w-4 transition-transform ${
+                    showCopyFields ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
             </div>
-            <div className="py-4">
-              <RecipientFields
-                id="compose-cc"
-                label="Cc"
-                onChange={(recipients) => onChange('cc', recipients)}
-                recipients={form.cc}
-              />
-            </div>
-            <div className="pt-4">
-              <RecipientFields
-                id="compose-bcc"
-                label="Bcc"
-                onChange={(recipients) => onChange('bcc', recipients)}
-                recipients={form.bcc}
-              />
-            </div>
+            {showCopyFields && (
+              <div className="space-y-4 py-4" id="compose-copy-fields">
+                <RecipientFields
+                  id="compose-cc"
+                  label="Cc"
+                  onChange={(recipients) => onChange('cc', recipients)}
+                  recipients={form.cc}
+                />
+                <RecipientFields
+                  id="compose-bcc"
+                  label="Bcc"
+                  onChange={(recipients) => onChange('bcc', recipients)}
+                  recipients={form.bcc}
+                />
+              </div>
+            )}
           </div>
 
           <div>
@@ -133,6 +188,33 @@ export function ComposeEmailModal({
               Content
             </label>
             <RichTextEditor onChange={(html) => onChange('bodyHtml', html)} />
+          </div>
+
+          <div>
+            <label className="relative inline-flex cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+              Attach files
+              <input
+                className="absolute inset-0 cursor-pointer opacity-0"
+                multiple
+                onChange={handleAddAttachments}
+                type="file"
+              />
+            </label>
+
+            {attachments.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {attachments.map((attachment, index) => (
+                  <button
+                    className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 transition hover:bg-rose-50 hover:text-rose-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                    key={`${attachment.name}-${attachment.size}-${index}`}
+                    onClick={() => handleRemoveAttachment(index)}
+                    type="button"
+                  >
+                    {attachment.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {result !== null && (

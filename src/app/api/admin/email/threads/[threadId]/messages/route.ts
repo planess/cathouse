@@ -63,7 +63,10 @@ export async function GET(
 
   try {
     const { threadId } = await params;
-    const messages = await emailService.listMessagesByThread(threadId);
+    const messages = await emailService.listMessagesByThread(
+      threadId,
+      currentUser.id.toString(),
+    );
 
     return json({
       success: true,
