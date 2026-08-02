@@ -2,9 +2,9 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 
-import { RichTextEditor } from '../../email/components/rich-text-editor';
+import { RichTextEditor } from './rich-text-editor';
 
-import { RecipientFields } from './recipient-fields';
+import { RecipientFields } from './email-recipient-fields';
 import { StatusMessage } from './status-message';
 
 import type { SendEmailResponse } from '../types/send-email-response';
@@ -69,7 +69,7 @@ export function ThreadReplyForm({
   return (
     <section
       className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 dark:border-slate-800 dark:bg-slate-950"
-      data-email2-reply-form
+      data-email-reply-form
     >
       <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50/70 px-5 py-2.5 text-sm font-medium text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400">
         <svg

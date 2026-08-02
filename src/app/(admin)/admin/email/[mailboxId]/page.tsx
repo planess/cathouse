@@ -2,14 +2,29 @@ import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { requirePermission } from '@app/services/access-verification.service';
 
-import { EmailMailboxPage } from './components/email-mailbox-page';
+import { EmailMailboxPage } from '../components/email-mailbox-page';
 
 import type { Metadata } from 'next';
 
-export default async function EmailPage() {
+type EmailMailboxPageProps = {
+  params: Promise<{
+    mailboxId: string;
+  }>;
+};
+
+export default async function EmailMailboxRoutePage({
+  params,
+}: EmailMailboxPageProps) {
+  const { mailboxId } = await params;
+
   await requirePermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
 
-  return <EmailMailboxPage route="/admin/email" />;
+  return (
+    <EmailMailboxPage
+      route="/admin/email/[mailboxId]"
+      selectedMailboxId={mailboxId}
+    />
+  );
 }
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -69,7 +69,7 @@ export async function POST(
       ? 400
       : 500;
 
-    await logDevelopmentError('email2.api.messages.forward', error, {
+    await logDevelopmentError('email.api.messages.forward', error, {
       route: '/api/admin/email/messages/[messageId]/forward',
       status,
       userId: currentUser.id.toString(),

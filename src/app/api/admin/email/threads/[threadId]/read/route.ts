@@ -55,7 +55,7 @@ export async function POST(
       ? 400
       : 500;
 
-    await logDevelopmentError('email2.api.threadMessages.markRead', error, {
+    await logDevelopmentError('email.api.threadMessages.markRead', error, {
       route: '/api/admin/email/threads/[threadId]/read',
       status,
       userId: currentUser.id.toString(),

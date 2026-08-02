@@ -30,9 +30,9 @@ export async function loadEmailThreadPageData({
       thread,
     };
   } catch (error) {
-    await logDevelopmentError('email2.threadPage.loadThreadMessages', error, {
+    await logDevelopmentError('email.threadPage.loadThreadMessages', error, {
       mailboxId,
-      route: '/admin/email2/[mailboxId]/[threadId]',
+      route: '/admin/email/[mailboxId]/[threadId]',
       threadId,
       userId: currentUser.id.toString(),
     });

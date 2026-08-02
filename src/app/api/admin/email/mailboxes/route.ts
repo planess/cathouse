@@ -66,7 +66,7 @@ export async function POST(request: Request) {
           ? 400
           : 500;
 
-    await logDevelopmentError('email2.api.mailboxes.create', error, {
+    await logDevelopmentError('email.api.mailboxes.create', error, {
       route: '/api/admin/email/mailboxes',
       status,
       userId: currentUser.id.toString(),

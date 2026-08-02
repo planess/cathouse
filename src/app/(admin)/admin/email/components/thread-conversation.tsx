@@ -168,7 +168,7 @@ export function ThreadConversation({
   return (
     <div
       className="mx-auto max-w-4xl px-4 pb-1 md:px-8"
-      data-email2-thread-conversation
+      data-email-thread-conversation
     >
       <div>
         <header className="shrink-0 py-4">
@@ -176,7 +176,7 @@ export function ThreadConversation({
             <div className="min-w-0">
               <Link
                 className="mb-4 inline-flex h-8 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-emerald-500/40"
-                href={`/admin/email2/${mailboxId}`}
+                href={`/admin/email/${mailboxId}`}
               >
                 Back
               </Link>
@@ -201,7 +201,7 @@ export function ThreadConversation({
 
         <div
           className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950"
-          data-email2-message-list
+          data-email-message-list
         >
           <ThreadMessageList messages={messages} onForward={handleForward} />
         </div>

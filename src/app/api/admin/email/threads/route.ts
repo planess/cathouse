@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       ? 400
       : 500;
 
-    await logDevelopmentError('email2.api.threads.create', error, {
+    await logDevelopmentError('email.api.threads.create', error, {
       route: '/api/admin/email/threads',
       status,
       userId: currentUser.id.toString(),

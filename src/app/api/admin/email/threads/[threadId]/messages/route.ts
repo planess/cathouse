@@ -78,7 +78,7 @@ export async function GET(
       error instanceof Error ? error.message : 'Failed to load messages.';
     const status = message === 'Invalid thread id.' ? 400 : 500;
 
-    await logDevelopmentError('email2.api.threadMessages.list', error, {
+    await logDevelopmentError('email.api.threadMessages.list', error, {
       route: '/api/admin/email/threads/[threadId]/messages',
       status,
       userId: currentUser.id.toString(),
@@ -186,7 +186,7 @@ export async function POST(
       ? 400
       : 500;
 
-    await logDevelopmentError('email2.api.threadMessages.reply', error, {
+    await logDevelopmentError('email.api.threadMessages.reply', error, {
       route: '/api/admin/email/threads/[threadId]/messages',
       status,
       userId: currentUser.id.toString(),

@@ -1,23 +1,23 @@
 import { loadMailboxThreadGroups } from '../helpers/load-mailbox-thread-groups';
 
-import { Email2MailboxTabs } from './mailbox-tabs';
+import { EmailMailboxTabs } from './mailbox-tabs';
 
-type Email2MailboxPageProps = {
+type EmailMailboxPageProps = {
   route: string;
   selectedMailboxId?: string;
 };
 
-export async function Email2MailboxPage({
+export async function EmailMailboxPage({
   route,
   selectedMailboxId,
-}: Email2MailboxPageProps) {
+}: EmailMailboxPageProps) {
   const mailboxGroups = await loadMailboxThreadGroups({
     mailboxId: selectedMailboxId,
     route,
     scope:
       selectedMailboxId === undefined
-        ? 'email2.page.listMailboxThreadGroups'
-        : 'email2.mailboxPage.listMailboxThreadGroups',
+        ? 'email.page.listMailboxThreadGroups'
+        : 'email.mailboxPage.listMailboxThreadGroups',
   });
 
   if (mailboxGroups === null) {
@@ -43,7 +43,7 @@ export async function Email2MailboxPage({
       </header>
 
       <section className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
-        <Email2MailboxTabs
+        <EmailMailboxTabs
           mailboxGroups={mailboxGroups}
           selectedMailboxId={selectedMailboxId}
         />

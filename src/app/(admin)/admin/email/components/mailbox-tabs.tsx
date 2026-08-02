@@ -29,15 +29,15 @@ import type { ComposeFormState } from '../types/compose-form-state';
 import type { CreateMailboxResponse } from '../types/create-mailbox-response';
 import type { SendEmailResponse } from '../types/send-email-response';
 
-type Email2MailboxTabsProps = {
+type EmailMailboxTabsProps = {
   mailboxGroups: EmailMailboxThreadGroup[];
   selectedMailboxId?: string;
 };
 
-export function Email2MailboxTabs({
+export function EmailMailboxTabs({
   mailboxGroups,
   selectedMailboxId,
-}: Email2MailboxTabsProps) {
+}: EmailMailboxTabsProps) {
   const router = useRouter();
   const [groups, setGroups] = useState(mailboxGroups);
   const [activeId, setActiveId] = useState(() =>
@@ -70,19 +70,19 @@ export function Email2MailboxTabs({
       setActiveId(nextActiveId);
 
       if (nextActiveId === CREATE_MAILBOX_TAB_ID) {
-        router.push('/admin/email2');
+        router.push('/admin/email');
 
         return;
       }
 
-      router.push(`/admin/email2/${getMailboxIdFromTabId(nextActiveId)}`);
+      router.push(`/admin/email/${getMailboxIdFromTabId(nextActiveId)}`);
     },
     [router],
   );
 
   const handleThreadSelect = useCallback(
     (mailboxId: string, threadId: string) => {
-      router.push(`/admin/email2/${mailboxId}/${threadId}`);
+      router.push(`/admin/email/${mailboxId}/${threadId}`);
     },
     [router],
   );
