@@ -20,9 +20,11 @@ import {
 } from '../helpers/get-mailbox-tab-id';
 import { sendMailboxEmailRequest } from '../helpers/send-mailbox-email-request';
 import { sortMailboxThreadGroups } from '../helpers/sort-mailbox-thread-groups';
+import { updateMailboxDisplayNameRequest } from '../helpers/update-mailbox-display-name-request';
 
 import { ComposeEmailModal } from './compose-email-modal';
 import { CreateMailboxForm } from './create-mailbox-form';
+import { EditMailboxDisplayNameModal } from './edit-mailbox-display-name-modal';
 import { MailboxTabPanel } from './mailbox-tab-panel';
 
 import type { ComposeFormState } from '../types/compose-form-state';
@@ -54,6 +56,13 @@ export function EmailMailboxTabs({
   const [composeSending, setComposeSending] = useState(false);
   const [composeAttachments, setComposeAttachments] = useState<File[]>([]);
   const [composeResult, setComposeResult] = useState<SendEmailResponse | null>(
+    null,
+  );
+  const [editingMailbox, setEditingMailbox] =
+    useState<EmailMailboxSummary | null>(null);
+  const [editingDisplayName, setEditingDisplayName] = useState('');
+  const [editingSaving, setEditingSaving] = useState(false);
+  const [editingResult, setEditingResult] = useState<SendEmailResponse | null>(
     null,
   );
 
@@ -124,6 +133,58 @@ export function EmailMailboxTabs({
     setComposeAttachments([]);
     setComposeResult(null);
   }, []);
+
+  const openEditMailboxModal = useCallback((mailbox: EmailMailboxSummary) => {
+    setEditingMailbox(mailbox);
+    setEditingDisplayName(mailbox.displayName);
+    setEditingResult(null);
+  }, []);
+
+  const closeEditMailboxModal = useCallback(() => {
+    setEditingMailbox(null);
+    setEditingDisplayName('');
+    setEditingResult(null);
+  }, []);
+
+  const handleEditMailboxSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      if (editingMailbox === null) {
+        return;
+      }
+
+      setEditingSaving(true);
+      setEditingResult(null);
+
+      try {
+        const { ok, payload } = await updateMailboxDisplayNameRequest(
+          editingMailbox.id,
+          editingDisplayName,
+        );
+
+        setEditingResult(payload);
+
+        if (ok && payload.success && payload.mailbox !== undefined) {
+          setGroups((currentGroups) =>
+            currentGroups.map((group) =>
+              group.mailbox.id === payload.mailbox?.id
+                ? { ...group, mailbox: payload.mailbox }
+                : group,
+            ),
+          );
+          closeEditMailboxModal();
+        }
+      } catch {
+        setEditingResult({
+          success: false,
+          message: 'Failed to update sender name.',
+        });
+      } finally {
+        setEditingSaving(false);
+      }
+    }, [closeEditMailboxModal, editingDisplayName, editingMailbox],
+  );
 
   const handleSendEmail = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -229,6 +290,7 @@ export function EmailMailboxTabs({
           <MailboxTabPanel
             mailbox={mailbox}
             onCompose={openComposeModal}
+            onEditMailbox={openEditMailboxModal}
             onThreadSelect={handleThreadSelect}
             threads={threads}
           />
@@ -256,6 +318,7 @@ export function EmailMailboxTabs({
       handleSubmit,
       handleThreadSelect,
       openComposeModal,
+      openEditMailboxModal,
       prefix,
       result,
       saving,
@@ -284,6 +347,21 @@ export function EmailMailboxTabs({
           onSubmit={handleSendEmail}
           result={composeResult}
           sending={composeSending}
+        />
+      )}
+
+      {editingMailbox !== null && (
+        <EditMailboxDisplayNameModal
+          displayName={editingDisplayName}
+          mailbox={editingMailbox}
+          onClose={closeEditMailboxModal}
+          onDisplayNameChange={(displayName) => {
+            setEditingDisplayName(displayName);
+            setEditingResult(null);
+          }}
+          onSubmit={handleEditMailboxSubmit}
+          result={editingResult}
+          saving={editingSaving}
         />
       )}
     </>

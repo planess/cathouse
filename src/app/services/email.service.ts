@@ -250,6 +250,45 @@ class EmailService extends Singleton {
     }
   }
 
+  async updateMailboxDisplayName(
+    mailboxId: string,
+    displayName: string,
+  ): Promise<EmailMailboxSummary> {
+    try {
+      if (!ObjectId.isValid(mailboxId)) {
+        throw new Error('Invalid mailbox id.');
+      }
+
+      const normalizedDisplayName = displayName.trim();
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const result = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOneAndUpdate(
+          { _id: new ObjectId(mailboxId) },
+          {
+            ...(normalizedDisplayName.length === 0
+              ? { $unset: { displayName: '' } }
+              : { $set: { displayName: normalizedDisplayName } }),
+            $currentDate: { updatedAt: true },
+          },
+          { returnDocument: 'after' },
+        );
+
+      if (result === null) {
+        throw new Error('Mailbox not found.');
+      }
+
+      return mapMailbox(result);
+    } catch (error) {
+      await logEmailServiceError('updateMailboxDisplayName', error, {
+        mailboxId,
+      });
+
+      throw error;
+    }
+  }
+
   async createOrUpdateContact(
     address: EmailAddress,
   ): Promise<EmailAddressReferenceDocument> {
