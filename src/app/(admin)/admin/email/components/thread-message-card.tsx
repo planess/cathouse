@@ -95,9 +95,35 @@ export function ThreadMessageCard({
           )
         )}
 
-        {message.attachmentsCount > 0 && (
-          <div className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700">
-            {message.attachmentsCount} Attachments
+        {message.attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {message.attachments.map((attachment) => (
+              <div
+                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700"
+                key={attachment.id}
+              >
+                <span>{attachment.filename}</span>
+                {attachment.downloadUrl !== undefined && (
+                  <>
+                    <a
+                      className="font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
+                      href={attachment.downloadUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Open
+                    </a>
+                    <a
+                      className="font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
+                      download={attachment.filename}
+                      href={attachment.downloadUrl}
+                    >
+                      Download
+                    </a>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>

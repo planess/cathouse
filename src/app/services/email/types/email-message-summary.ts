@@ -18,6 +18,13 @@ export type EmailMessageSummary = {
     html?: string;
   };
   attachmentsCount: number;
+  attachments: Array<{
+    id: string;
+    filename: string;
+    contentType: string;
+    sizeBytes: number;
+    downloadUrl?: string;
+  }>;
   headerDate: string;
   createdAt: string;
   receivedAt: string;

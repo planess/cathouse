@@ -23,9 +23,7 @@ export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
   return [
     '<p></p>',
     '<p></p>',
-    '<p>↪ Відповідь на:<br>',
-    `${escapeHtml(formatAddress(message.from))}<br>`,
-    `${escapeHtml(formatReplyQuoteDate(message.headerDate))}</p>`,
+    `<p>↪ Відповідь до ${escapeHtml(formatAddress(message.from))} · ${escapeHtml(formatReplyQuoteDate(message.headerDate))}</p>`,
     `<blockquote>${body}</blockquote>`,
   ].join('');
 }

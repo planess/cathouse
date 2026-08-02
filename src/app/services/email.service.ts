@@ -1409,9 +1409,26 @@ class EmailService extends Singleton {
           .map((message) => message._id),
         userId,
       );
+      const attachmentIds = messages.flatMap((message) =>
+        (message.attachments ?? []).filter(
+          (attachment): attachment is ObjectId => attachment instanceof ObjectId,
+        ),
+      );
+      const attachmentDocuments = attachmentIds.length === 0
+        ? []
+        : await db
+          .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+          .find({ _id: { $in: attachmentIds } })
+          .toArray();
+      const attachmentsById = new Map(
+        attachmentDocuments.map((attachment) => [
+          attachment._id.toString(),
+          attachment,
+        ]),
+      );
 
       return messages.map((message) =>
-        mapMessage(message, contactsById, readMessageIds),
+        mapMessage(message, contactsById, readMessageIds, attachmentsById),
       );
     } catch (error) {
       await logEmailServiceError('listMessagesByThread', error, {

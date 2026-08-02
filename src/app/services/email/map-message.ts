@@ -1,7 +1,9 @@
 import { toIsoString } from './date-helpers';
 import { mapAddress } from './map-address';
 
-import type { EmailMessageDocument } from './document-types';
+import { ObjectId } from 'mongodb';
+
+import type { EmailAttachmentDocument, EmailMessageDocument } from './document-types';
 import type { EmailAddressSummary } from './types/email-address-summary';
 import type { EmailMessageSummary } from './types/email-message-summary';
 
@@ -9,6 +11,7 @@ export function mapMessage(
   message: EmailMessageDocument,
   contactsById: Map<string, EmailAddressSummary>,
   readMessageIds = new Set<string>(),
+  attachmentsById = new Map<string, EmailAttachmentDocument>(),
 ): EmailMessageSummary {
   const cc = message.cc ?? [];
   const bcc = message.bcc ?? [];
@@ -34,6 +37,25 @@ export function mapMessage(
     subject: message.subject,
     content: message.content,
     attachmentsCount: attachments.length,
+    attachments: attachments.flatMap((attachment) => {
+      if (!(attachment instanceof ObjectId)) {
+        return [];
+      }
+
+      const document = attachmentsById.get(attachment.toString());
+
+      return document === undefined
+        ? []
+        : [{
+            id: document._id.toString(),
+            filename: document.filename,
+            contentType: document.contentType,
+            sizeBytes: document.sizeBytes,
+            ...(document.storageKey === undefined
+              ? {}
+              : { downloadUrl: `/api/admin/email/attachments/${document._id}` }),
+          }];
+    }),
     headerDate: toIsoString(
       message.dates.headerDate ?? message.dates.createdAt,
     ),
