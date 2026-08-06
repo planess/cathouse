@@ -77,22 +77,27 @@ export function ThreadMessageCard({
         {message.attachments.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {message.attachments.map((attachment) => (
-              <div
-                className="inline-flex items-center gap-4 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700"
-                key={attachment.id}
-              >
-                <span>{attachment.filename}</span>
-                {attachment.downloadUrl !== undefined && (
-                  <a
-                    className="font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
-                    href={attachment.downloadUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
+              attachment.downloadUrl === undefined ? (
+                <div
+                  className="inline-flex items-center gap-4 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700"
+                  key={attachment.id}
+                >
+                  {attachment.filename}
+                </div>
+              ) : (
+                <a
+                  className="inline-flex items-center gap-4 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 transition hover:ring-emerald-400 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700 dark:hover:ring-emerald-500"
+                  href={attachment.downloadUrl}
+                  key={attachment.id}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <span>{attachment.filename}</span>
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                     Open
-                  </a>
-                )}
-              </div>
+                  </span>
+                </a>
+              )
             ))}
           </div>
         )}
