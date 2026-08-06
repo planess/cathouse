@@ -859,6 +859,18 @@ class EmailService extends Singleton {
         address: mailbox.address,
         normalizedAddress: mailbox.normalizedAddress,
       };
+      const contacts = await Promise.all(
+        [from, ...to, ...cc, ...bcc].map((address) =>
+          this.createOrUpdateContact(address),
+        ),
+      );
+      const fromContact = contacts[0];
+      const toContacts = contacts.slice(1, 1 + to.length);
+      const ccContacts = contacts.slice(
+        1 + to.length,
+        1 + to.length + cc.length,
+      );
+      const bccContacts = contacts.slice(1 + to.length + cc.length);
       const threadId = new ObjectId();
       const messageObjectId = new ObjectId();
       const messageId = createMessageId();
@@ -878,9 +890,9 @@ class EmailService extends Singleton {
       );
       const result = await this.sendEmailFromAddress(
         from,
-        to,
-        cc,
-        bcc,
+        toContacts,
+        ccContacts,
+        bccContacts,
         subject,
         bodyHtml,
         emailAttachments,
@@ -890,18 +902,6 @@ class EmailService extends Singleton {
         throw new Error('Failed to send email.');
       }
 
-      const contacts = await Promise.all(
-        [from, ...to, ...cc, ...bcc].map((address) =>
-          this.createOrUpdateContact(address),
-        ),
-      );
-      const fromContact = contacts[0];
-      const toContacts = contacts.slice(1, 1 + to.length);
-      const ccContacts = contacts.slice(
-        1 + to.length,
-        1 + to.length + cc.length,
-      );
-      const bccContacts = contacts.slice(1 + to.length + cc.length);
       const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
       const attachmentDocuments: EmailAttachmentDocument[] =
@@ -1051,6 +1051,18 @@ class EmailService extends Singleton {
         address: mailbox.address,
         normalizedAddress: mailbox.normalizedAddress,
       };
+      const contacts = await Promise.all(
+        [from, ...to, ...cc, ...bcc].map((address) =>
+          this.createOrUpdateContact(address),
+        ),
+      );
+      const fromContact = contacts[0];
+      const toContacts = contacts.slice(1, 1 + to.length);
+      const ccContacts = contacts.slice(
+        1 + to.length,
+        1 + to.length + cc.length,
+      );
+      const bccContacts = contacts.slice(1 + to.length + cc.length);
       const messageId = createMessageId();
       const attachmentFolder = createEmailAttachmentFolder(
         threadObjectId.toString(),
@@ -1078,9 +1090,9 @@ class EmailService extends Singleton {
       };
       const result = await this.sendEmailFromAddress(
         from,
-        to,
-        cc,
-        bcc,
+        toContacts,
+        ccContacts,
+        bccContacts,
         subject,
         bodyHtml,
         payload.attachments,
@@ -1107,18 +1119,6 @@ class EmailService extends Singleton {
           .insertMany(attachmentDocuments);
       }
 
-      const contacts = await Promise.all(
-        [from, ...to, ...cc, ...bcc].map((address) =>
-          this.createOrUpdateContact(address),
-        ),
-      );
-      const fromContact = contacts[0];
-      const toContacts = contacts.slice(1, 1 + to.length);
-      const ccContacts = contacts.slice(
-        1 + to.length,
-        1 + to.length + cc.length,
-      );
-      const bccContacts = contacts.slice(1 + to.length + cc.length);
       const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
       const messageObjectId = new ObjectId();
