@@ -3,4 +3,5 @@ export type IncomingMailgunAttachment = {
   contentType: string;
   sizeBytes: number;
   fieldName: string;
+  file?: File;
 };

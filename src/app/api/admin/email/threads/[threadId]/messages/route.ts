@@ -162,6 +162,7 @@ export async function POST(
       bcc: parseEmailRecipientInputJson(formData.get('bcc')),
       bodyHtml: (formData.get('bodyHtml') as string | null) ?? '',
       attachments,
+      attachmentFiles,
     };
     const result = await emailService.sendMailboxThreadReply(payload);
 

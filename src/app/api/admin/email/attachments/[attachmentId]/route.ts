@@ -46,7 +46,7 @@ export async function GET(
     return new NextResponse(null, { status: 404 });
   }
 
-  const publicBaseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL;
+  const publicBaseUrl = process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL;
   const endpoint = process.env.CLOUDFLARE_S3_ENDPOINT;
   const bucket = process.env.CLOUDFLARE_R2_BUCKET;
   const baseUrl = publicBaseUrl?.trim() || `${endpoint}/${bucket}`;

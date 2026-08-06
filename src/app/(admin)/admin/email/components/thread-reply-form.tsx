@@ -2,9 +2,8 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 
-import { RichTextEditor } from './rich-text-editor';
-
 import { RecipientFields } from './email-recipient-fields';
+import { RichTextEditor } from './rich-text-editor';
 import { StatusMessage } from './status-message';
 
 import type { SendEmailResponse } from '../types/send-email-response';
@@ -17,6 +16,7 @@ type ThreadReplyFormProps = {
   result: SendEmailResponse | null;
   sending: boolean;
   onAttachmentsChange: (attachments: File[]) => void;
+  onCollapse: () => void;
   onChange: (
     field: keyof ThreadReplyFormState,
     value: ThreadReplyFormState[keyof ThreadReplyFormState],
@@ -31,6 +31,7 @@ export function ThreadReplyForm({
   result,
   sending,
   onAttachmentsChange,
+  onCollapse,
   onChange,
   onSubmit,
 }: ThreadReplyFormProps) {
@@ -71,7 +72,11 @@ export function ThreadReplyForm({
       className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 dark:border-slate-800 dark:bg-slate-950"
       data-email-reply-form
     >
-      <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50/70 px-5 py-2.5 text-sm font-medium text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400">
+      <button
+        className="flex w-full items-center gap-2 border-b border-slate-200 bg-slate-50/70 px-5 py-2.5 text-left text-sm font-medium text-slate-500 transition hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:text-emerald-300"
+        onClick={onCollapse}
+        type="button"
+      >
         <svg
           aria-hidden="true"
           className="h-4 w-4"
@@ -86,7 +91,7 @@ export function ThreadReplyForm({
           <path d="M9 14 4 9l5-5" />
         </svg>
         <span>Reply to conversation</span>
-      </div>
+      </button>
 
       <form onSubmit={(event) => void onSubmit(event)}>
         <div className="space-y-3 p-4">

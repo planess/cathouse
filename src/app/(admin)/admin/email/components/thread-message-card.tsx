@@ -3,8 +3,7 @@ import type { EmailMessageSummary } from '@app/services/email.service';
 import { formatAddress } from '../helpers/format-address';
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
-import { getMessageBody } from '../helpers/get-message-body';
-import { getMessageBodyParts } from '../helpers/get-message-body-parts';
+import { getMessageBodyHtml } from '../helpers/get-message-body-html';
 
 type ThreadMessageCardProps = {
   message: EmailMessageSummary;
@@ -17,7 +16,7 @@ export function ThreadMessageCard({
 }: ThreadMessageCardProps) {
   return (
     <article
-      className={`border-b border-slate-200 p-5 last:border-b-0 dark:border-slate-800 md:p-6 ${
+      className={`border-b-2 border-indigo-200 border-dashed p-5 last:border-b-0 dark:border-slate-800 md:p-6 ${
         message.direction === 'outgoing'
           ? 'bg-sky-50/60 dark:bg-sky-950/20'
           : message.isRead
@@ -69,58 +68,29 @@ export function ThreadMessageCard({
         )}
       </div>
 
-      <div className="space-y-4 pt-5">
-        {message.content.html?.match(/<blockquote\b/i) === null ||
-        message.content.html === undefined ? (
-          <p className="whitespace-pre-wrap break-words text-base leading-7 text-slate-700 dark:text-slate-200">
-            {getMessageBody(message)}
-          </p>
-        ) : (
-          getMessageBodyParts(message).map(([isQuote, body], index) =>
-            isQuote ? (
-              <blockquote
-                className="ml-4 whitespace-pre-wrap break-words border-l-4 border-slate-300 bg-slate-100/80 px-4 py-3 text-sm leading-6 text-slate-600 dark:border-slate-600 dark:bg-slate-900/70 dark:text-slate-300"
-                key={`${message.id}-quote-${index}`}
-              >
-                {body}
-              </blockquote>
-            ) : (
-              <p
-                className="whitespace-pre-wrap break-words text-base leading-7 text-slate-700 dark:text-slate-200"
-                key={`${message.id}-body-${index}`}
-              >
-                {body}
-              </p>
-            ),
-          )
-        )}
+      <div className="space-y-4 pt-5 border-t border-slate-400 dark:border-slate-800 mt-3">
+        <div
+          className="break-words text-base leading-7 text-slate-700 [&_blockquote]:my-4 [&_blockquote]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-slate-300 [&_blockquote]:bg-slate-100/80 [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:text-sm [&_blockquote]:leading-6 [&_blockquote]:text-slate-600 [&_p]:my-3 dark:text-slate-200 dark:[&_blockquote]:border-slate-600 dark:[&_blockquote]:bg-slate-900/70 dark:[&_blockquote]:text-slate-300"
+          dangerouslySetInnerHTML={{ __html: getMessageBodyHtml(message) }}
+        />
 
         {message.attachments.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {message.attachments.map((attachment) => (
               <div
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700"
+                className="inline-flex items-center gap-4 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700"
                 key={attachment.id}
               >
                 <span>{attachment.filename}</span>
                 {attachment.downloadUrl !== undefined && (
-                  <>
-                    <a
-                      className="font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
-                      href={attachment.downloadUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      Open
-                    </a>
-                    <a
-                      className="font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
-                      download={attachment.filename}
-                      href={attachment.downloadUrl}
-                    >
-                      Download
-                    </a>
-                  </>
+                  <a
+                    className="font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
+                    href={attachment.downloadUrl}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Open
+                  </a>
                 )}
               </div>
             ))}

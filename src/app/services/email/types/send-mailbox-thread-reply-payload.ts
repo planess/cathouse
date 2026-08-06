@@ -9,4 +9,5 @@ export type SendMailboxThreadReplyPayload = {
   bcc: EmailRecipientInput[];
   bodyHtml: string;
   attachments: AttachmentFile[];
+  attachmentFiles: File[];
 };

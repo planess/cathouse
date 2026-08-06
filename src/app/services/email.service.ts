@@ -396,6 +396,7 @@ class EmailService extends Singleton {
   async createAttachmentReferences(
     attachments: IncomingMailgunAttachment[],
     contentIdsByAttachmentField: Map<string, string>,
+    storageKeysByAttachmentField = new Map<string, string>(),
   ): Promise<EmailAttachmentDocument[]> {
     try {
       if (attachments.length === 0) {
@@ -415,6 +416,9 @@ class EmailService extends Singleton {
             sizeBytes: attachment.sizeBytes,
             disposition: contentId === undefined ? 'attachment' : 'inline',
             ...(contentId === undefined ? {} : { contentId }),
+            ...(storageKeysByAttachmentField.has(attachment.fieldName)
+              ? { storageKey: storageKeysByAttachmentField.get(attachment.fieldName) }
+              : {}),
           };
         },
       );
@@ -625,10 +629,6 @@ class EmailService extends Singleton {
           ? undefined
           : normalizeMessageId(inReplyToHeader);
       const references = parseReferences(getHeaderValue(headers, 'References'));
-      const attachmentDocuments = await this.createAttachmentReferences(
-        payload.attachments,
-        parseContentIdMap(getMailgunField(payload.fields, 'content-id-map')),
-      );
       const contacts = await Promise.all(
         [
           from,
@@ -662,6 +662,27 @@ class EmailService extends Singleton {
         references,
       );
       const threadId = existingThreadId ?? new ObjectId();
+      const attachmentFiles = payload.attachments.flatMap((attachment) =>
+        attachment.file === undefined ? [] : [attachment.file],
+      );
+      const uploadedAttachments = attachmentFiles.length === 0
+        ? []
+        : await (await import('./r2.service')).r2Service.uploadFiles(
+          attachmentFiles,
+          { folder: createEmailAttachmentFolder(threadId.toString()) },
+        );
+      const storageKeysByAttachmentField = new Map(
+        payload.attachments.flatMap((attachment, index) =>
+          uploadedAttachments[index] === undefined
+            ? []
+            : [[attachment.fieldName, uploadedAttachments[index].key]],
+        ),
+      );
+      const attachmentDocuments = await this.createAttachmentReferences(
+        payload.attachments,
+        parseContentIdMap(getMailgunField(payload.fields, 'content-id-map')),
+        storageKeysByAttachmentField,
+      );
       const subject =
         getMailgunField(payload.fields, 'subject') ??
         getHeaderValue(headers, 'Subject') ??
@@ -673,6 +694,22 @@ class EmailService extends Singleton {
       const htmlContent =
         getMailgunField(payload.fields, 'stripped-html') ??
         getMailgunField(payload.fields, 'body-html');
+      const r2PublicBaseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL?.replace(
+        /\/$/,
+        '',
+      );
+      const htmlContentWithInlineAttachments = htmlContent?.replaceAll(
+        /cid:([^"'\s>]+)/gi,
+        (cidReference, rawContentId: string) => {
+          const attachment = attachmentDocuments.find(
+            (item) => item.contentId === rawContentId.replaceAll(/[<>]/g, ''),
+          );
+
+          return attachment?.storageKey === undefined || r2PublicBaseUrl === undefined
+            ? cidReference
+            : `${r2PublicBaseUrl}/${attachment.storageKey}`;
+        },
+      );
       const message: EmailMessageDocument = {
         _id: messageObjectId,
         messageId,
@@ -691,11 +728,13 @@ class EmailService extends Singleton {
         subject,
         content: {
           ...(textContent.length > 0 ? { text: textContent } : {}),
-          ...(htmlContent !== undefined && htmlContent.length > 0
-            ? { html: htmlContent }
+          ...(htmlContentWithInlineAttachments !== undefined &&
+          htmlContentWithInlineAttachments.length > 0
+            ? { html: htmlContentWithInlineAttachments }
             : {}),
           ...(textContent.length === 0 &&
-          (htmlContent === undefined || htmlContent.length === 0)
+          (htmlContentWithInlineAttachments === undefined ||
+            htmlContentWithInlineAttachments.length === 0)
             ? { text: '' }
             : {}),
         },
@@ -1013,6 +1052,15 @@ class EmailService extends Singleton {
         normalizedAddress: mailbox.normalizedAddress,
       };
       const messageId = createMessageId();
+      const attachmentFolder = createEmailAttachmentFolder(
+        threadObjectId.toString(),
+      );
+      const uploadedAttachments = payload.attachmentFiles.length === 0
+        ? []
+        : await (await import('./r2.service')).r2Service.uploadFiles(
+          payload.attachmentFiles,
+          { folder: attachmentFolder },
+        );
       const references = [
         ...(previousMessage?.references ?? []),
         ...(previousMessage === null || previousMessage === undefined
@@ -1044,12 +1092,13 @@ class EmailService extends Singleton {
       }
 
       const attachmentDocuments: EmailAttachmentDocument[] =
-        payload.attachments.map((attachment) => ({
+        uploadedAttachments.map((attachment) => ({
           _id: new ObjectId(),
-          filename: attachment.filename,
-          contentType: 'application/octet-stream',
-          sizeBytes: attachment.data.length,
+          filename: attachment.originalName,
+          contentType: attachment.mimeType || 'application/octet-stream',
+          sizeBytes: attachment.size,
           disposition: 'attachment',
+          storageKey: attachment.key,
         }));
 
       if (attachmentDocuments.length > 0) {
@@ -1134,7 +1183,17 @@ class EmailService extends Singleton {
       );
 
       return {
-        message: mapMessage(message, contactsById),
+        message: mapMessage(
+          message,
+          contactsById,
+          new Set(),
+          new Map(
+            attachmentDocuments.map((attachment) => [
+              attachment._id.toString(),
+              attachment,
+            ]),
+          ),
+        ),
       };
     } catch (error) {
       await logEmailServiceError('sendMailboxThreadReply', error, {

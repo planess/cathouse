@@ -1,9 +1,12 @@
+import { ObjectId } from 'mongodb';
+
 import { toIsoString } from './date-helpers';
 import { mapAddress } from './map-address';
 
-import { ObjectId } from 'mongodb';
-
-import type { EmailAttachmentDocument, EmailMessageDocument } from './document-types';
+import type {
+  EmailAttachmentDocument,
+  EmailMessageDocument,
+} from './document-types';
 import type { EmailAddressSummary } from './types/email-address-summary';
 import type { EmailMessageSummary } from './types/email-message-summary';
 
@@ -16,6 +19,10 @@ export function mapMessage(
   const cc = message.cc ?? [];
   const bcc = message.bcc ?? [];
   const attachments = message.attachments ?? [];
+  const r2PublicBaseUrl = process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL?.replace(
+    /\/$/,
+    '',
+  );
 
   return {
     id: message._id.toString(),
@@ -23,7 +30,8 @@ export function mapMessage(
     threadId: message.threadId.toString(),
     direction: message.direction,
     isRead:
-      message.direction === 'outgoing' || readMessageIds.has(message._id.toString()),
+      message.direction === 'outgoing' ||
+      readMessageIds.has(message._id.toString()),
     from: mapAddress(message.from, contactsById),
     ...(message.sender !== undefined
       ? { sender: mapAddress(message.sender, contactsById) }
@@ -46,15 +54,25 @@ export function mapMessage(
 
       return document === undefined
         ? []
-        : [{
-            id: document._id.toString(),
-            filename: document.filename,
-            contentType: document.contentType,
-            sizeBytes: document.sizeBytes,
-            ...(document.storageKey === undefined
-              ? {}
-              : { downloadUrl: `/api/admin/email/attachments/${document._id}` }),
-          }];
+        : [
+            {
+              id: document._id.toString(),
+              filename: document.filename,
+              contentType: document.contentType,
+              sizeBytes: document.sizeBytes,
+              ...(document.contentId === undefined
+                ? {}
+                : { contentId: document.contentId }),
+              ...(document.storageKey === undefined
+                ? {}
+                : {
+                    downloadUrl: `/api/admin/email/attachments/${document._id}`,
+                    ...(r2PublicBaseUrl === undefined
+                      ? {}
+                      : { url: `${r2PublicBaseUrl}/${document.storageKey}` }),
+                  }),
+            },
+          ];
     }),
     headerDate: toIsoString(
       message.dates.headerDate ?? message.dates.createdAt,

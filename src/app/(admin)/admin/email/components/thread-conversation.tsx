@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 import type {
   EmailMessageSummary,
@@ -34,11 +34,8 @@ export function ThreadConversation({
   thread,
 }: ThreadConversationProps) {
   const [messages, setMessages] = useState(initialMessages);
-  const initialForm = useMemo(
-    () => getInitialReplyForm(messages, thread.participants),
-    [messages, thread.participants],
-  );
-  const [form, setForm] = useState<ThreadReplyFormState>(initialForm);
+  const [form, setForm] = useState<ThreadReplyFormState | null>(null);
+  const [isReplyExpanded, setIsReplyExpanded] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<SendEmailResponse | null>(null);
@@ -71,12 +68,18 @@ export function ThreadConversation({
     field: keyof ThreadReplyFormState,
     value: ThreadReplyFormState[keyof ThreadReplyFormState],
   ) => {
-    setForm((currentForm) => ({ ...currentForm, [field]: value }));
+    setForm((currentForm) =>
+      currentForm === null ? null : { ...currentForm, [field]: value },
+    );
     setResult(null);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (form === null) {
+      return;
+    }
+
     setSending(true);
     setResult(null);
 
@@ -100,7 +103,7 @@ export function ThreadConversation({
         setAttachments([]);
         setForm((currentForm) => ({
           ...getInitialReplyForm(nextMessages, thread.participants),
-          to: currentForm.to,
+          to: currentForm?.to ?? form.to,
           cc: [{ name: '', email: '' }],
           bcc: [{ name: '', email: '' }],
         }));
@@ -114,6 +117,18 @@ export function ThreadConversation({
     } finally {
       setSending(false);
     }
+  };
+
+  const openReplyForm = () => {
+    setForm(getInitialReplyForm(messages, thread.participants));
+    setIsReplyExpanded(true);
+  };
+
+  const closeReplyForm = () => {
+    setIsReplyExpanded(false);
+    setForm(null);
+    setAttachments([]);
+    setResult(null);
   };
 
   const closeForwardModal = () => {
@@ -206,16 +221,28 @@ export function ThreadConversation({
           <ThreadMessageList messages={messages} onForward={handleForward} />
         </div>
 
-        <ThreadReplyForm
-          attachments={attachments}
-          editorKey={editorKey}
-          form={form}
-          result={result}
-          sending={sending}
-          onAttachmentsChange={setAttachments}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-        />
+        {isReplyExpanded && form !== null ? (
+          <ThreadReplyForm
+            attachments={attachments}
+            editorKey={editorKey}
+            form={form}
+            result={result}
+            sending={sending}
+            onAttachmentsChange={setAttachments}
+            onChange={handleChange}
+            onCollapse={closeReplyForm}
+            onSubmit={handleSubmit}
+          />
+        ) : (
+          <button
+            className="mt-4 flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-medium text-slate-500 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 dark:hover:border-emerald-500 dark:hover:text-emerald-300"
+            onClick={openReplyForm}
+            type="button"
+          >
+            <span aria-hidden="true">↩</span>
+            Reply to conversation
+          </button>
+        )}
 
         {forwardMessage !== null && (
           <ForwardMessageModal

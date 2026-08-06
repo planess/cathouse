@@ -23,7 +23,9 @@ export type EmailMessageSummary = {
     filename: string;
     contentType: string;
     sizeBytes: number;
+    contentId?: string;
     downloadUrl?: string;
+    url?: string;
   }>;
   headerDate: string;
   createdAt: string;
