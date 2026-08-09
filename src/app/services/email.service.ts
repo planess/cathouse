@@ -11,9 +11,9 @@ import {
   EMAIL_MAILBOX_DOMAIN,
   EMAIL_PREFIX_PATTERN,
 } from './email/constants';
-import { createMessageId } from './email/create-message-id';
 import { createEmailAttachmentFolder } from './email/create-email-attachment-folder';
 import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
+import { createMessageId } from './email/create-message-id';
 import { formatEmailAddress } from './email/format-email-address';
 import { getContactIds } from './email/get-contact-ids';
 import { getContactsById } from './email/get-contacts-by-id';
@@ -28,7 +28,6 @@ import { mapMessage } from './email/map-message';
 import { mapThread } from './email/map-thread';
 import { normalizeEmailPrefix } from './email/normalize-email-prefix';
 import { normalizeMessageId } from './email/normalize-message-id';
-import { parseAddressList } from './email/parse-address-list';
 import { parseContentIdMap } from './email/parse-content-id-map';
 import { parseEmailAddress } from './email/parse-email-address';
 import { parseEmailRecipientInputs } from './email/parse-email-recipient-inputs';
@@ -1407,6 +1406,43 @@ class EmailService extends Singleton {
     }
   }
 
+  async listThreadsPageByMailbox(
+    mailboxId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<{ items: EmailThreadSummary[]; totalItems: number }> {
+    if (!ObjectId.isValid(mailboxId)) {
+      throw new Error('Invalid mailbox id.');
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const safePage = Math.max(1, page);
+    const safePageSize = Math.max(1, pageSize);
+    const filter = { mailboxId: new ObjectId(mailboxId) };
+    const [totalItems, threads] = await Promise.all([
+      db.collection<EmailThreadDocument>(DbTables.emailThreads).countDocuments(filter),
+      db
+        .collection<EmailThreadDocument>(DbTables.emailThreads)
+        .find(filter)
+        .sort({ updatedAt: -1 })
+        .skip((safePage - 1) * safePageSize)
+        .limit(safePageSize)
+        .toArray(),
+    ]);
+    const contactsById = await getContactsById(
+      threads.flatMap((thread) => getContactIds(thread.participants)),
+    );
+    const lastMessagesById = await getLastMessagesById(threads);
+
+    return {
+      items: threads.map((thread) =>
+        mapThread(thread, contactsById, lastMessagesById),
+      ),
+      totalItems,
+    };
+  }
+
   async getThread(threadId: string): Promise<EmailThreadSummary | null> {
     try {
       if (!ObjectId.isValid(threadId)) {
@@ -1509,6 +1545,11 @@ class EmailService extends Singleton {
         .find({})
         .sort({ normalizedAddress: 1 })
         .toArray();
+      return mailboxes.map((mailbox) => ({
+        mailbox: mapMailbox(mailbox),
+        threads: [],
+      }));
+
       const mailboxIds = mailboxes.map((mailbox) => mailbox._id);
       const threads =
         mailboxIds.length > 0

@@ -76,9 +76,8 @@ export function EmailMailboxTabs({
 
   const handleActiveIdChange = useCallback(
     (nextActiveId: string) => {
-      setActiveId(nextActiveId);
-
       if (nextActiveId === CREATE_MAILBOX_TAB_ID) {
+        setActiveId(nextActiveId);
         router.push('/admin/email');
 
         return;
@@ -283,7 +282,7 @@ export function EmailMailboxTabs({
 
   const tabItems = useMemo<TabItem[]>(
     () => [
-      ...groups.map(({ mailbox, threads }) => ({
+      ...groups.map(({ mailbox }) => ({
         id: getMailboxTabId(mailbox.id),
         label: mailbox.address,
         content: (
@@ -292,7 +291,6 @@ export function EmailMailboxTabs({
             onCompose={openComposeModal}
             onEditMailbox={openEditMailboxModal}
             onThreadSelect={handleThreadSelect}
-            threads={threads}
           />
         ),
       })),
