@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { PAGE_THREAD_SIZE } from '@app/(admin)/admin/email/constants/page-thread-size';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+import { hasAnyPermission } from '@app/services/access-verification.service';
 import { emailService } from '@app/services/email.service';
 
 export async function GET(
@@ -18,7 +18,11 @@ export async function GET(
       { status: 401 },
     );
   if (
-    !(await hasPermission(SYSTEM_PERMISSIONS.EMAIL_SEND, undefined, user.id))
+    !(await hasAnyPermission(
+      [SYSTEM_PERMISSIONS.EMAIL_READ, SYSTEM_PERMISSIONS.EMAIL_SEND],
+      undefined,
+      user.id,
+    ))
   ) {
     return NextResponse.json(
       { message: 'Insufficient permissions.' },

@@ -1,6 +1,6 @@
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { requirePermission } from '@app/services/access-verification.service';
+import { requireAnyPermission } from '@app/services/access-verification.service';
 
 import { EmailMailboxPage } from '../components/email-mailbox-page';
 
@@ -17,7 +17,10 @@ export default async function EmailMailboxRoutePage({
 }: EmailMailboxPageProps) {
   const { mailboxId } = await params;
 
-  await requirePermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
+  await requireAnyPermission([
+    SYSTEM_PERMISSIONS.EMAIL_READ,
+    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  ]);
 
   return (
     <EmailMailboxPage

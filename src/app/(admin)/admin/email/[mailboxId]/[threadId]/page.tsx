@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { requirePermission } from '@app/services/access-verification.service';
+import { requireAnyPermission } from '@app/services/access-verification.service';
 
 import { ThreadConversation } from '../../components/thread-conversation';
 import { loadEmailThreadPageData } from '../../helpers/load-email-thread-page-data';
@@ -19,7 +19,10 @@ type EmailThreadPageProps = {
 export default async function EmailThreadPage({ params }: EmailThreadPageProps) {
   const { mailboxId, threadId } = await params;
 
-  await requirePermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
+  await requireAnyPermission([
+    SYSTEM_PERMISSIONS.EMAIL_READ,
+    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  ]);
 
   const pageData = await loadEmailThreadPageData({ mailboxId, threadId });
 

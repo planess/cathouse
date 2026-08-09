@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { requirePermission } from '@app/services/access-verification.service';
+import { requireAnyPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
 import type { EmailMailboxThreadGroup } from '@app/services/email.service';
 import { emailService } from '@app/services/email.service';
@@ -18,7 +18,10 @@ export async function loadMailboxThreadGroups({
     return null;
   }
 
-  await requirePermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
+  await requireAnyPermission([
+    SYSTEM_PERMISSIONS.EMAIL_READ,
+    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  ]);
 
   try {
     return await emailService.listMailboxThreadGroups(
