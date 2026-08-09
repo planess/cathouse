@@ -32,11 +32,13 @@ import type { CreateMailboxResponse } from '../types/create-mailbox-response';
 import type { SendEmailResponse } from '../types/send-email-response';
 
 type EmailMailboxTabsProps = {
+  canSend: boolean;
   mailboxGroups: EmailMailboxThreadGroup[];
   selectedMailboxId?: string;
 };
 
 export function EmailMailboxTabs({
+  canSend,
   mailboxGroups,
   selectedMailboxId,
 }: EmailMailboxTabsProps) {
@@ -77,6 +79,10 @@ export function EmailMailboxTabs({
   const handleActiveIdChange = useCallback(
     (nextActiveId: string) => {
       if (nextActiveId === CREATE_MAILBOX_TAB_ID) {
+        if (!canSend) {
+          return;
+        }
+
         setActiveId(nextActiveId);
         router.push('/admin/email');
 
@@ -85,7 +91,7 @@ export function EmailMailboxTabs({
 
       router.push(`/admin/email/${getMailboxIdFromTabId(nextActiveId)}`);
     },
-    [router],
+    [canSend, router],
   );
 
   const handleThreadSelect = useCallback(
@@ -120,11 +126,15 @@ export function EmailMailboxTabs({
   );
 
   const openComposeModal = useCallback((mailbox: EmailMailboxSummary) => {
+    if (!canSend) {
+      return;
+    }
+
     setComposeMailbox(mailbox);
     setComposeForm(defaultComposeForm);
     setComposeAttachments([]);
     setComposeResult(null);
-  }, []);
+  }, [canSend]);
 
   const closeComposeModal = useCallback(() => {
     setComposeMailbox(null);
@@ -134,10 +144,14 @@ export function EmailMailboxTabs({
   }, []);
 
   const openEditMailboxModal = useCallback((mailbox: EmailMailboxSummary) => {
+    if (!canSend) {
+      return;
+    }
+
     setEditingMailbox(mailbox);
     setEditingDisplayName(mailbox.displayName);
     setEditingResult(null);
-  }, []);
+  }, [canSend]);
 
   const closeEditMailboxModal = useCallback(() => {
     setEditingMailbox(null);
@@ -149,7 +163,7 @@ export function EmailMailboxTabs({
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      if (editingMailbox === null) {
+      if (!canSend || editingMailbox === null) {
         return;
       }
 
@@ -182,14 +196,14 @@ export function EmailMailboxTabs({
       } finally {
         setEditingSaving(false);
       }
-    }, [closeEditMailboxModal, editingDisplayName, editingMailbox],
+    }, [canSend, closeEditMailboxModal, editingDisplayName, editingMailbox],
   );
 
   const handleSendEmail = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      if (composeMailbox === null) {
+      if (!canSend || composeMailbox === null) {
         return;
       }
 
@@ -229,12 +243,16 @@ export function EmailMailboxTabs({
         setComposeSending(false);
       }
     },
-    [closeComposeModal, composeAttachments, composeForm, composeMailbox],
+    [canSend, closeComposeModal, composeAttachments, composeForm, composeMailbox],
   );
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      if (!canSend) {
+        return;
+      }
 
       const normalizedPrefix = prefix.trim();
 
@@ -277,7 +295,7 @@ export function EmailMailboxTabs({
         setSaving(false);
       }
     },
-    [displayName, handleActiveIdChange, prefix],
+    [canSend, displayName, handleActiveIdChange, prefix],
   );
 
   const tabItems = useMemo<TabItem[]>(
@@ -288,13 +306,14 @@ export function EmailMailboxTabs({
         content: (
           <MailboxTabPanel
             mailbox={mailbox}
+            canSend={canSend}
             onCompose={openComposeModal}
             onEditMailbox={openEditMailboxModal}
             onThreadSelect={handleThreadSelect}
           />
         ),
       })),
-      {
+      ...(canSend ? [{
         id: CREATE_MAILBOX_TAB_ID,
         label: '+',
         content: (
@@ -308,10 +327,11 @@ export function EmailMailboxTabs({
             saving={saving}
           />
         ),
-      },
+      }] : []),
     ],
     [
       displayName,
+      canSend,
       groups,
       handleSubmit,
       handleThreadSelect,

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+import { hasAnyPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
 import { emailService } from '@app/services/email.service';
 
@@ -27,13 +27,13 @@ export async function POST(
     return json({ success: false, message: 'User not authenticated.' }, 401);
   }
 
-  const canSendEmail = await hasPermission(
-    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  const canReadEmail = await hasAnyPermission(
+    [SYSTEM_PERMISSIONS.EMAIL_READ, SYSTEM_PERMISSIONS.EMAIL_SEND],
     undefined,
     currentUser.id,
   );
 
-  if (!canSendEmail) {
+  if (!canReadEmail) {
     return json({ success: false, message: 'Insufficient permissions.' }, 403);
   }
 

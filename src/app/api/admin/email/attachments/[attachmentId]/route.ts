@@ -5,7 +5,7 @@ import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+import { hasAnyPermission } from '@app/services/access-verification.service';
 import type { EmailAttachmentDocument } from '@app/services/email/document-types';
 
 export const runtime = 'nodejs';
@@ -20,13 +20,13 @@ export async function GET(
     return new NextResponse(null, { status: 401 });
   }
 
-  const canSendEmail = await hasPermission(
-    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  const canReadEmail = await hasAnyPermission(
+    [SYSTEM_PERMISSIONS.EMAIL_READ, SYSTEM_PERMISSIONS.EMAIL_SEND],
     undefined,
     currentUser.id,
   );
 
-  if (!canSendEmail) {
+  if (!canReadEmail) {
     return new NextResponse(null, { status: 403 });
   }
 

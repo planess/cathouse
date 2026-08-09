@@ -23,12 +23,14 @@ import type { SendEmailResponse } from '../types/send-email-response';
 import type { ThreadReplyFormState } from '../types/thread-reply-form-state';
 
 type ThreadConversationProps = {
+  canSend: boolean;
   mailboxId: string;
   initialMessages: EmailMessageSummary[];
   thread: EmailThreadSummary;
 };
 
 export function ThreadConversation({
+  canSend,
   mailboxId,
   initialMessages,
   thread,
@@ -76,7 +78,7 @@ export function ThreadConversation({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (form === null) {
+    if (!canSend || form === null) {
       return;
     }
 
@@ -120,6 +122,10 @@ export function ThreadConversation({
   };
 
   const openReplyForm = () => {
+    if (!canSend) {
+      return;
+    }
+
     setForm(getInitialReplyForm(messages, thread.participants));
     setIsReplyExpanded(true);
   };
@@ -137,6 +143,10 @@ export function ThreadConversation({
     setForwardResult(null);
   };
   const handleForward = (message: EmailMessageSummary) => {
+    if (!canSend) {
+      return;
+    }
+
     setForwardMessage(message);
     setForwardRecipient('');
     setForwardResult(null);
@@ -221,28 +231,29 @@ export function ThreadConversation({
           <ThreadMessageList messages={messages} onForward={handleForward} />
         </div>
 
-        {isReplyExpanded && form !== null ? (
-          <ThreadReplyForm
-            attachments={attachments}
-            editorKey={editorKey}
-            form={form}
-            result={result}
-            sending={sending}
-            onAttachmentsChange={setAttachments}
-            onChange={handleChange}
-            onCollapse={closeReplyForm}
-            onSubmit={handleSubmit}
-          />
-        ) : (
-          <button
-            className="mt-4 flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-medium text-slate-500 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 dark:hover:border-emerald-500 dark:hover:text-emerald-300"
-            onClick={openReplyForm}
-            type="button"
-          >
-            <span aria-hidden="true">↩</span>
-            Reply to conversation
-          </button>
-        )}
+        {canSend &&
+          (isReplyExpanded && form !== null ? (
+            <ThreadReplyForm
+              attachments={attachments}
+              editorKey={editorKey}
+              form={form}
+              result={result}
+              sending={sending}
+              onAttachmentsChange={setAttachments}
+              onChange={handleChange}
+              onCollapse={closeReplyForm}
+              onSubmit={handleSubmit}
+            />
+          ) : (
+            <button
+              className="mt-4 flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-medium text-slate-500 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 dark:hover:border-emerald-500 dark:hover:text-emerald-300"
+              onClick={openReplyForm}
+              type="button"
+            >
+              <span aria-hidden="true">↩</span>
+              Reply to conversation
+            </button>
+          ))}
 
         {forwardMessage !== null && (
           <ForwardMessageModal

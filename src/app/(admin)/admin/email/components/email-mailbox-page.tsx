@@ -1,3 +1,6 @@
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { hasPermission } from '@app/services/access-verification.service';
+
 import { loadMailboxThreadGroups } from '../helpers/load-mailbox-thread-groups';
 
 import { EmailMailboxTabs } from './mailbox-tabs';
@@ -23,6 +26,7 @@ export async function EmailMailboxPage({
   if (mailboxGroups === null) {
     return null;
   }
+  const canSend = await hasPermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -45,6 +49,7 @@ export async function EmailMailboxPage({
       <section className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
         <EmailMailboxTabs
           mailboxGroups={mailboxGroups}
+          canSend={canSend}
           selectedMailboxId={selectedMailboxId}
         />
       </section>

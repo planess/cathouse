@@ -2,7 +2,10 @@ import { NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+import {
+  hasAnyPermission,
+  hasPermission,
+} from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
 import { parseEmailRecipientInputJson } from '@app/services/email/parse-email-recipient-input-json';
 import {
@@ -44,13 +47,13 @@ export async function GET(
     );
   }
 
-  const canSendEmail = await hasPermission(
-    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  const canReadEmail = await hasAnyPermission(
+    [SYSTEM_PERMISSIONS.EMAIL_READ, SYSTEM_PERMISSIONS.EMAIL_SEND],
     undefined,
     currentUser.id,
   );
 
-  if (!canSendEmail) {
+  if (!canReadEmail) {
     return json(
       {
         success: false,

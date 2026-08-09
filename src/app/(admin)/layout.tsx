@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import {
-  hasPermission,
+  hasAnyPermission,
   requireAnyPermission,
 } from '@app/services/access-verification.service';
 
@@ -14,7 +14,10 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   await requireAnyPermission([SYSTEM_PERMISSIONS.ROLE_ASSIGN]);
-  const canSendEmail = await hasPermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
+  const canAccessEmail = await hasAnyPermission([
+    SYSTEM_PERMISSIONS.EMAIL_READ,
+    SYSTEM_PERMISSIONS.EMAIL_SEND,
+  ]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -86,7 +89,7 @@ export default async function AdminLayout({
                 >
                   Inventory
                 </Link>
-                {canSendEmail && (
+                {canAccessEmail && (
                   <Link
                     href="/admin/email"
                     className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"

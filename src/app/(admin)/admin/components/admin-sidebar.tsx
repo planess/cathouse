@@ -11,9 +11,12 @@ import {
 
 import { SidebarIconProps, SidebarNavItem } from './admin-sidebar.types';
 
-const navItems: Array<
-  SidebarNavItem & { requiredPermission?: SystemPermission }
-> = [
+type AdminSidebarNavItem = SidebarNavItem & {
+  anyOfPermissions?: SystemPermission[];
+  requiredPermission?: SystemPermission;
+};
+
+const navItems: AdminSidebarNavItem[] = [
   {
     href: '/admin',
     label: 'Overview',
@@ -243,7 +246,10 @@ const navItems: Array<
   {
     href: '/admin/email',
     label: 'Email',
-    requiredPermission: SYSTEM_PERMISSIONS.EMAIL_SEND,
+    anyOfPermissions: [
+      SYSTEM_PERMISSIONS.EMAIL_READ,
+      SYSTEM_PERMISSIONS.EMAIL_SEND,
+    ],
     Icon: function EmailIcon({ className }: SidebarIconProps) {
       return (
         <svg
@@ -276,9 +282,13 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const user = useCurrentUser();
   const visibleNavItems = navItems.filter(
-    ({ requiredPermission }) =>
-      requiredPermission === undefined ||
-      (user?.scopes.includes(requiredPermission) ?? false),
+    ({ anyOfPermissions, requiredPermission }) =>
+      (requiredPermission === undefined ||
+        (user?.scopes.includes(requiredPermission) ?? false)) &&
+      (anyOfPermissions === undefined ||
+        anyOfPermissions.some((permission) =>
+          user?.scopes.includes(permission),
+        )),
   );
 
   return (

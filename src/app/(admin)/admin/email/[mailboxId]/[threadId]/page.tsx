@@ -2,7 +2,10 @@ import { notFound } from 'next/navigation';
 
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { requireAnyPermission } from '@app/services/access-verification.service';
+import {
+  hasPermission,
+  requireAnyPermission,
+} from '@app/services/access-verification.service';
 
 import { ThreadConversation } from '../../components/thread-conversation';
 import { loadEmailThreadPageData } from '../../helpers/load-email-thread-page-data';
@@ -23,6 +26,7 @@ export default async function EmailThreadPage({ params }: EmailThreadPageProps) 
     SYSTEM_PERMISSIONS.EMAIL_READ,
     SYSTEM_PERMISSIONS.EMAIL_SEND,
   ]);
+  const canSend = await hasPermission(SYSTEM_PERMISSIONS.EMAIL_SEND);
 
   const pageData = await loadEmailThreadPageData({ mailboxId, threadId });
 
@@ -39,6 +43,7 @@ export default async function EmailThreadPage({ params }: EmailThreadPageProps) 
   return (
     <ThreadConversation
       initialMessages={messages}
+      canSend={canSend}
       mailboxId={mailboxId}
       thread={thread}
     />
