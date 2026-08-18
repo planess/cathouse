@@ -174,3 +174,42 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  if (!(await canManageMedia())) {
+    return NextResponse.json(
+      { error: 'Insufficient permissions.' },
+      { status: 403 },
+    );
+  }
+
+  const path = getSafePath(new URL(request.url).searchParams.get('path'));
+
+  if (path === null || path === '') {
+    return NextResponse.json(
+      { error: 'A file path is required.' },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const response = await fetch(`${MEDIA_API_BASE_URL}/delete/${path}`, {
+      cache: 'no-store',
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: 'Unable to delete the cloud file.' },
+        { status: response.status },
+      );
+    }
+
+    return new NextResponse(null, { status: 204 });
+  } catch {
+    return NextResponse.json(
+      { error: 'Unable to connect to cloud storage.' },
+      { status: 502 },
+    );
+  }
+}
