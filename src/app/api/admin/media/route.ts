@@ -225,6 +225,8 @@ type RenamePayload = {
   source?: unknown;
   target?: unknown;
   to?: unknown;
+  folderPath?: unknown;
+  newName?: unknown;
 };
 
 export async function PATCH(request: Request) {
@@ -244,6 +246,49 @@ export async function PATCH(request: Request) {
       { error: 'Invalid request body.' },
       { status: 400 },
     );
+  }
+
+  if (body.folderPath !== undefined || body.newName !== undefined) {
+    const folderPath = body.folderPath;
+    const newName = body.newName;
+
+    if (
+      !isSafeFilePath(folderPath) ||
+      typeof newName !== 'string' ||
+      newName.trim() === '' ||
+      newName === '.' ||
+      newName === '..' ||
+      newName.includes('/') ||
+      newName.includes('\\')
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid folder rename request.' },
+        { status: 400 },
+      );
+    }
+
+    try {
+      const response = await fetch(`${MEDIA_API_BASE_URL}/rename-folder`, {
+        body: JSON.stringify({ folderPath, newName: newName.trim() }),
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        return NextResponse.json(
+          { error: 'Unable to rename the cloud folder.' },
+          { status: response.status },
+        );
+      }
+
+      return NextResponse.json(await response.json());
+    } catch {
+      return NextResponse.json(
+        { error: 'Unable to connect to cloud storage.' },
+        { status: 502 },
+      );
+    }
   }
 
   const source = [

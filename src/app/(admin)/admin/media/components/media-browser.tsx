@@ -48,6 +48,12 @@ type SignedUploadResponse = {
   files: SignedUpload[];
 };
 
+type RenameFolderResponse = {
+  from: string;
+  renamedFiles: number;
+  to: string;
+};
+
 export function MediaBrowser() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [contents, setContents] = useState<
@@ -62,11 +68,16 @@ export function MediaBrowser() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<CloudFile | null>(null);
   const [fileToRename, setFileToRename] = useState<CloudFile | null>(null);
+  const [folderToRename, setFolderToRename] = useState<{
+    name: string;
+    path: string;
+  } | null>(null);
   const [newFolderName, setNewFolderName] = useState('');
   const [newFileName, setNewFileName] = useState('');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [isDeletingFolder, setIsDeletingFolder] = useState(false);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
+  const [isRenamingFolder, setIsRenamingFolder] = useState(false);
 
   const loadFolder = useCallback(async (path: string) => {
     const normalizedPath = normalizeFolderPath(path);
@@ -428,6 +439,98 @@ export function MediaBrowser() {
     setNewFileName(file.name);
   };
 
+  const handleRenameFolder = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+
+    if (folderToRename === null) {
+      return;
+    }
+
+    const newName = newFolderName.trim();
+
+    if (
+      newName === '' ||
+      newName === '.' ||
+      newName === '..' ||
+      newName.includes('/') ||
+      newName.includes('\\')
+    ) {
+      setError('Enter a valid folder name.');
+      return;
+    }
+
+    const parentPath = folderToRename.path.split('/').slice(0, -1).join('/');
+
+    setIsRenamingFolder(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/media', {
+        body: JSON.stringify({
+          folderPath: folderToRename.path,
+          newName,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json()) as { error?: string };
+
+        throw new Error(payload.error ?? 'Unable to rename the folder.');
+      }
+
+      const payload = (await response.json()) as RenameFolderResponse;
+      const fromPath = normalizeFolderPath(payload.from);
+      const toPath = normalizeFolderPath(payload.to);
+      const isSelectedBranch =
+        selectedPath === fromPath || selectedPath.startsWith(`${fromPath}/`);
+
+      setFolderToRename(null);
+      setNewFolderName('');
+      setContents((current) => {
+        const next = { ...current };
+
+        delete next[fromPath];
+
+        return next;
+      });
+      setExpandedPaths(
+        (current) =>
+          new Set(
+            [...current].map((path) =>
+              path === fromPath || path.startsWith(`${fromPath}/`)
+                ? path.replace(fromPath, toPath)
+                : path,
+            ),
+          ),
+      );
+      await loadFolder(parentPath);
+
+      if (isSelectedBranch) {
+        const nextSelectedPath = selectedPath.replace(fromPath, toPath);
+
+        setSelectedPath(nextSelectedPath);
+        await loadFolder(nextSelectedPath);
+      }
+    } catch (renameError) {
+      setError(
+        renameError instanceof Error
+          ? renameError.message
+          : 'Unable to rename the folder.',
+      );
+    } finally {
+      setIsRenamingFolder(false);
+    }
+  };
+
+  const openFolderRenameDialog = (path: string, name: string) => {
+    setFolderToRename({ name, path });
+    setNewFolderName(name);
+  };
+
   const selectedContents = contents[selectedPath];
   const visibleFiles =
     selectedContents?.files.filter((file) => file.name !== '.bzEmpty') ?? [];
@@ -461,6 +564,7 @@ export function MediaBrowser() {
             expandedPaths={expandedPaths}
             onSelect={selectFolder}
             onExpand={expandFolder}
+            onRename={openFolderRenameDialog}
             selectedPath={selectedPath}
           />
 
@@ -722,6 +826,45 @@ export function MediaBrowser() {
                 type="submit"
               >
                 {isRenamingFile ? 'Renaming...' : 'Rename'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {folderToRename && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
+          <form
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900"
+            onSubmit={(event) => void handleRenameFolder(event)}
+          >
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              Rename folder
+            </h2>
+            <label className="mt-4 block text-sm text-slate-600 dark:text-slate-300">
+              New folder name
+              <input
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                disabled={isRenamingFolder}
+                onChange={(event) => setNewFolderName(event.target.value)}
+                value={newFolderName}
+              />
+            </label>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                disabled={isRenamingFolder}
+                onClick={() => setFolderToRename(null)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="rounded-xl bg-sky-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-sky-600 disabled:opacity-50"
+                disabled={isRenamingFolder}
+                type="submit"
+              >
+                {isRenamingFolder ? 'Renaming...' : 'Rename'}
               </button>
             </div>
           </form>
