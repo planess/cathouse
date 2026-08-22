@@ -10,6 +10,10 @@ type Props = {
   isEmpty: boolean;
   onDelete: (file: CloudFile) => void;
   onRename: (file: CloudFile) => void;
+  onMoveStart: (file: CloudFile) => void;
+  onMoveEnd: () => void;
+  moveDestinations: Map<string, string>;
+  isMoveMode: boolean;
 };
 
 export function MediaBrowserFileTable({
@@ -17,6 +21,10 @@ export function MediaBrowserFileTable({
   isEmpty,
   onDelete,
   onRename,
+  onMoveStart,
+  onMoveEnd,
+  moveDestinations,
+  isMoveMode,
 }: Props) {
   return (
     <div className="overflow-x-auto">
@@ -36,7 +44,16 @@ export function MediaBrowserFileTable({
             <tr key={file.path}>
               <td className="px-3 py-3">
                 <div className="flex items-center gap-2 font-medium text-slate-700 dark:text-slate-200">
-                  <FileIcon />
+                  <button
+                    aria-label={`Move ${file.name}`}
+                    className="-ml-2 cursor-grab rounded bg-sky-100 p-2 text-sky-700 transition hover:bg-sky-200 active:cursor-grabbing dark:bg-sky-500/20 dark:text-sky-200 dark:hover:bg-sky-500/30"
+                    draggable
+                    onDragEnd={onMoveEnd}
+                    onDragStart={() => onMoveStart(file)}
+                    type="button"
+                  >
+                    <FileIcon />
+                  </button>
                   <span className="break-all">{file.name}</span>
                 </div>
               </td>
@@ -47,70 +64,78 @@ export function MediaBrowserFileTable({
                 {formatLastModified(file.lastModified)}
               </td>
               <td className="px-3 py-3 text-right">
-                <div className="flex justify-end gap-1">
-                  <a
-                    aria-label={`Download ${file.name}`}
-                    className="rounded-lg p-2 text-sky-700 transition hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-sky-500/10"
-                    href={`/api/admin/media?path=${encodeURIComponent(file.path)}&download=1`}
-                  >
-                    <svg
-                      aria-hidden="true"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                {isMoveMode ? (
+                  <span className="text-xs font-medium text-sky-700 dark:text-sky-300">
+                    →{' '}
+                    {(moveDestinations.get(file.path) ?? 'Select folder') ||
+                      'Root'}
+                  </span>
+                ) : (
+                  <div className="flex justify-end gap-1">
+                    <a
+                      aria-label={`Download ${file.name}`}
+                      className="rounded-lg p-2 text-sky-700 transition hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-sky-500/10"
+                      href={`/api/admin/media?path=${encodeURIComponent(file.path)}&download=1`}
                     >
-                      <path
-                        d="M12 4v10m0 0 3.5-3.5M12 14l-3.5-3.5M5 16.5v2a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-2"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                      />
-                    </svg>
-                  </a>
-                  <button
-                    aria-label={`Rename ${file.name}`}
-                    className="rounded-lg px-2 py-1 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                    onClick={() => onRename(file)}
-                    type="button"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                      <svg
+                        aria-hidden="true"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M12 4v10m0 0 3.5-3.5M12 14l-3.5-3.5M5 16.5v2a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-2"
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                        />
+                      </svg>
+                    </a>
+                    <button
+                      aria-label={`Rename ${file.name}`}
+                      className="rounded-lg px-2 py-1 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => onRename(file)}
+                      type="button"
                     >
-                      <path
-                        d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    aria-label={`Delete ${file.name}`}
-                    className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
-                    onClick={() => onDelete(file)}
-                    type="button"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                      <svg
+                        aria-hidden="true"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      aria-label={`Delete ${file.name}`}
+                      className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                      onClick={() => onDelete(file)}
+                      type="button"
                     >
-                      <path
-                        d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                      <svg
+                        aria-hidden="true"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </td>
             </tr>
           ))}

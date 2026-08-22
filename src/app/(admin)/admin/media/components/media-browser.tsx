@@ -66,6 +66,10 @@ export function MediaBrowser() {
   const [uploads, setUploads] = useState<UploadItem[]>([]);
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [folderToDelete, setFolderToDelete] = useState<{
+    name: string;
+    path: string;
+  } | null>(null);
   const [fileToDelete, setFileToDelete] = useState<CloudFile | null>(null);
   const [fileToRename, setFileToRename] = useState<CloudFile | null>(null);
   const [folderToRename, setFolderToRename] = useState<{
@@ -78,6 +82,10 @@ export function MediaBrowser() {
   const [isDeletingFolder, setIsDeletingFolder] = useState(false);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
   const [isRenamingFolder, setIsRenamingFolder] = useState(false);
+  const [moveDestinations, setMoveDestinations] = useState<Map<string, string>>(
+    new Map(),
+  );
+  const [draggedFile, setDraggedFile] = useState<CloudFile | null>(null);
 
   const loadFolder = useCallback(async (path: string) => {
     const normalizedPath = normalizeFolderPath(path);
@@ -308,12 +316,12 @@ export function MediaBrowser() {
   };
 
   const handleDeleteFolder = async () => {
-    if (selectedPath === '') {
+    if (folderToDelete === null) {
       return;
     }
 
-    const parentPath = selectedPath.split('/').slice(0, -1).join('/');
-    const markerPath = `${selectedPath}/.bzEmpty`;
+    const parentPath = folderToDelete.path.split('/').slice(0, -1).join('/');
+    const markerPath = `${folderToDelete.path}/.bzEmpty`;
 
     setIsDeletingFolder(true);
     setError('');
@@ -331,15 +339,23 @@ export function MediaBrowser() {
       }
 
       setIsDeleteDialogOpen(false);
-      setSelectedPath(parentPath);
+      setFolderToDelete(null);
       setExpandedPaths((current) => {
         const next = new Set(current);
 
-        next.delete(selectedPath);
+        next.delete(folderToDelete.path);
 
         return next;
       });
       await loadFolder(parentPath);
+
+      if (
+        selectedPath === folderToDelete.path ||
+        selectedPath.startsWith(`${folderToDelete.path}/`)
+      ) {
+        setSelectedPath(parentPath);
+        await loadFolder(parentPath);
+      }
     } catch (deleteError) {
       setError(
         deleteError instanceof Error
@@ -348,6 +364,75 @@ export function MediaBrowser() {
       );
     } finally {
       setIsDeletingFolder(false);
+    }
+  };
+
+  const openFolderDeleteDialog = (path: string, name: string) => {
+    setFolderToDelete({ name, path });
+    setIsDeleteDialogOpen(true);
+  };
+
+  const startMove = (file: CloudFile) => {
+    setDraggedFile(file);
+  };
+
+  const endMoveDrag = () => {
+    setDraggedFile(null);
+  };
+
+  const setMoveDestination = (destination: string) => {
+    if (draggedFile === null || destination === selectedPath) {
+      return;
+    }
+
+    setMoveDestinations((current) =>
+      new Map(current).set(draggedFile.path, destination),
+    );
+    setDraggedFile(null);
+  };
+
+  const cancelMove = () => {
+    setDraggedFile(null);
+    setMoveDestinations(new Map());
+  };
+
+  const applyMove = async () => {
+    const files = [...moveDestinations].map(([currentPath, destination]) => ({
+      currentPath,
+      newPath: [destination, currentPath.split('/').at(-1) ?? '']
+        .filter(Boolean)
+        .join('/'),
+    }));
+
+    if (files.length === 0) {
+      cancelMove();
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/media', {
+        body: JSON.stringify({ files }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT',
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json()) as { error?: string };
+        throw new Error(payload.error ?? 'Unable to move files.');
+      }
+
+      cancelMove();
+      await Promise.all(
+        [...new Set(['', selectedPath, ...moveDestinations.values()])].map(
+          (path) => loadFolder(path),
+        ),
+      );
+    } catch (moveError) {
+      setError(
+        moveError instanceof Error
+          ? moveError.message
+          : 'Unable to move files.',
+      );
     }
   };
 
@@ -540,10 +625,6 @@ export function MediaBrowser() {
     ({ status }) => status === 'requesting' || status === 'uploading',
   );
   const isEmpty = selectedContents !== undefined && visibleFiles.length === 0;
-  const canDeleteFolder =
-    selectedPath !== '' &&
-    visibleFiles.length === 0 &&
-    (selectedContents?.folders.length ?? 0) === 0;
 
   return (
     <div className="space-y-6">
@@ -564,74 +645,26 @@ export function MediaBrowser() {
             expandedPaths={expandedPaths}
             onSelect={selectFolder}
             onExpand={expandFolder}
+            onDelete={openFolderDeleteDialog}
+            onDropFile={setMoveDestination}
             onRename={openFolderRenameDialog}
+            isMoveMode={moveDestinations.size > 0}
             selectedPath={selectedPath}
           />
 
           <div className="min-w-0 p-4 sm:p-6">
-            {/* toolbar */}
             <MediaBrowserToolbar
-              canDeleteFolder={canDeleteFolder}
               fileInputRef={fileInputRef}
               isLoading={isLoading}
               isUploading={isUploading}
               onAddFolder={() => setIsFolderDialogOpen(true)}
-              onDeleteFolder={() => setIsDeleteDialogOpen(true)}
+              isMoveMode={moveDestinations.size > 0}
+              onApplyMove={() => void applyMove()}
+              onCancelMove={cancelMove}
               onFilesSelected={(event) => void handleFilesSelected(event)}
               onRefresh={() => void loadFolder(selectedPath)}
               selectedLabel={selectedLabel}
             />
-            {/*
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Current folder
-                </p>
-                <h2 className="truncate text-lg font-bold text-slate-900 dark:text-white">
-                  {selectedLabel}
-                </h2>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  className="sr-only"
-                  multiple
-                  onChange={(event) => void handleFilesSelected(event)}
-                  ref={fileInputRef}
-                  type="file"
-                />
-                <button
-                  className="rounded-xl bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm shadow-sky-500/30 transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={isUploading}
-                  onClick={() => fileInputRef.current?.click()}
-                  type="button"
-                >
-                  Upload
-                </button>
-                <button
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-sky-500 dark:hover:text-sky-200"
-                  disabled={isLoading}
-                  onClick={() => void loadFolder(selectedPath)}
-                  type="button"
-                >
-                  Refresh
-                </button>
-                <button
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-sky-500 dark:hover:text-sky-200"
-                  onClick={() => setIsFolderDialogOpen(true)}
-                  type="button"
-                >
-                  Add folder
-                </button>
-                <button
-                  className="rounded-xl bg-rose-600 px-3 py-2 text-xs font-semibold text-white shadow-sm shadow-rose-500/30 transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={!canDeleteFolder}
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                  type="button"
-                >
-                  Delete
-                </button>
-              </div>
-            </div> */}
 
             {error && (
               <p className="mb-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/40 dark:text-rose-200">
@@ -640,38 +673,6 @@ export function MediaBrowser() {
             )}
 
             <MediaUploadProgress uploads={uploads} />
-            {/* {uploads.length > 0 && (
-              <div className="mb-4 space-y-2 rounded-2xl border border-slate-200/70 bg-slate-50/70 p-3 dark:border-slate-800 dark:bg-slate-900/40">
-                {uploads.map((upload) => (
-                  <div key={upload.id}>
-                    <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                      <span className="truncate font-medium text-slate-700 dark:text-slate-200">
-                        {upload.path}
-                      </span>
-                      <span className="shrink-0 text-slate-500 dark:text-slate-400">
-                        {upload.status === 'completed'
-                          ? 'Uploaded'
-                          : upload.status === 'error'
-                            ? 'Failed'
-                            : `${upload.progress}%`}
-                      </span>
-                    </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                      <div
-                        className={`h-full rounded-full transition-all ${
-                          upload.status === 'error'
-                            ? 'bg-rose-500'
-                            : upload.status === 'completed'
-                              ? 'bg-emerald-500'
-                              : 'bg-sky-500'
-                        }`}
-                        style={{ width: `${upload.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )} */}
 
             {isLoading ? (
               <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
@@ -682,7 +683,11 @@ export function MediaBrowser() {
                 files={visibleFiles}
                 isEmpty={isEmpty}
                 onDelete={setFileToDelete}
+                onMoveEnd={endMoveDrag}
+                onMoveStart={startMove}
                 onRename={openRenameDialog}
+                moveDestinations={moveDestinations}
+                isMoveMode={moveDestinations.size > 0}
               />
             ) : (
               <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
@@ -733,14 +738,14 @@ export function MediaBrowser() {
         </div>
       )}
 
-      {isDeleteDialogOpen && (
+      {isDeleteDialogOpen && folderToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               Delete folder?
             </h2>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Delete the empty folder <b>{selectedLabel}</b>?
+              Delete the folder <b>{folderToDelete.name}</b>?
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button

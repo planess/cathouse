@@ -45,6 +45,17 @@ async function canManageMedia(): Promise<boolean> {
   );
 }
 
+/**
+ * GET handler for media management.
+ * Retrieves media files from cloud storage or provides temporary download URLs.
+ * Supports listing files in a directory or downloading individual files.
+ * Requires ROLE_ASSIGN permission.
+ *
+ * @param request - The incoming request with query parameters:
+ *   - `path`: File or directory path
+ *   - `download`: Set to '1' to download a file, omit to list directory contents
+ * @returns JSON response with file list or file download with appropriate headers
+ */
 export async function GET(request: Request) {
   if (!(await canManageMedia())) {
     return NextResponse.json(
@@ -116,6 +127,16 @@ function isSafeFilePath(path: unknown): path is string {
   return typeof path === 'string' && getSafePath(path) !== null;
 }
 
+/**
+ * POST handler for generating upload URLs.
+ * Generates temporary URLs for uploading files to cloud storage.
+ * Validates file paths and returns signed URLs with 5-minute expiration.
+ * Requires ROLE_ASSIGN permission.
+ *
+ * @param request - The incoming request with JSON body containing:
+ *   - `files`: Array of objects with `path` property specifying file upload destinations
+ * @returns JSON response with signed upload URLs or error message
+ */
 export async function POST(request: Request) {
   if (!(await canManageMedia())) {
     return NextResponse.json(
@@ -175,6 +196,15 @@ export async function POST(request: Request) {
   }
 }
 
+/**
+ * DELETE handler for removing files.
+ * Deletes a file from cloud storage by its path.
+ * Requires ROLE_ASSIGN permission.
+ *
+ * @param request - The incoming request with query parameter:
+ *   - `path`: The file path to delete
+ * @returns 204 No Content on success, or error JSON response on failure
+ */
 export async function DELETE(request: Request) {
   if (!(await canManageMedia())) {
     return NextResponse.json(
@@ -229,6 +259,19 @@ type RenamePayload = {
   newName?: unknown;
 };
 
+/**
+ * PATCH handler for renaming files and folders.
+ * Renames files or folders in cloud storage.
+ * Supports two operation types:
+ * - Folder rename: Updates `folderPath` and `newName`
+ * - File rename: Moves file from `path` to `newPath`
+ * Requires ROLE_ASSIGN permission.
+ *
+ * @param request - The incoming request with JSON body containing either:
+ *   - Folder rename: `folderPath` and `newName`
+ *   - File rename: source path (path/objectPath/key/from/source) and destination path (newPath/destination/destinationPath/to/target)
+ * @returns JSON response with rename operation result or error message
+ */
 export async function PATCH(request: Request) {
   if (!(await canManageMedia())) {
     return NextResponse.json(
@@ -321,6 +364,77 @@ export async function PATCH(request: Request) {
     if (!response.ok) {
       return NextResponse.json(
         { error: 'Unable to rename the cloud file.' },
+        { status: response.status },
+      );
+    }
+
+    return NextResponse.json(await response.json());
+  } catch {
+    return NextResponse.json(
+      { error: 'Unable to connect to cloud storage.' },
+      { status: 502 },
+    );
+  }
+}
+
+type MovePayload = {
+  files?: Array<{ currentPath?: unknown; newPath?: unknown }>;
+};
+
+/**
+ * PUT handler for moving files.
+ * Moves multiple files in cloud storage to new paths.
+ * Validates all file paths before processing the move operation.
+ * Requires ROLE_ASSIGN permission.
+ *
+ * @param request - The incoming request with JSON body containing:
+ *   - `files`: Array of objects with `currentPath` and `newPath` properties
+ * @returns JSON response with move operation result or error message
+ */
+export async function PUT(request: Request) {
+  if (!(await canManageMedia())) {
+    return NextResponse.json(
+      { error: 'Insufficient permissions.' },
+      { status: 403 },
+    );
+  }
+
+  let body: MovePayload;
+
+  try {
+    body = (await request.json()) as MovePayload;
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid request body.' },
+      { status: 400 },
+    );
+  }
+
+  if (
+    !Array.isArray(body.files) ||
+    body.files.length === 0 ||
+    body.files.some(
+      (file) =>
+        !isSafeFilePath(file.currentPath) || !isSafeFilePath(file.newPath),
+    )
+  ) {
+    return NextResponse.json(
+      { error: 'Invalid move request.' },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const response = await fetch(`${MEDIA_API_BASE_URL}/move`, {
+      body: JSON.stringify({ files: body.files }),
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: 'Unable to move cloud files.' },
         { status: response.status },
       );
     }
