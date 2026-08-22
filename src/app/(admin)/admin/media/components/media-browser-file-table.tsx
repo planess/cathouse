@@ -9,9 +9,15 @@ type Props = {
   files: CloudFile[];
   isEmpty: boolean;
   onDelete: (file: CloudFile) => void;
+  onRename: (file: CloudFile) => void;
 };
 
-export function MediaBrowserFileTable({ files, isEmpty, onDelete }: Props) {
+export function MediaBrowserFileTable({
+  files,
+  isEmpty,
+  onDelete,
+  onRename,
+}: Props) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[36rem] text-left text-sm">
@@ -43,17 +49,66 @@ export function MediaBrowserFileTable({ files, isEmpty, onDelete }: Props) {
               <td className="px-3 py-3 text-right">
                 <div className="flex justify-end gap-1">
                   <a
-                    className="inline-flex rounded-lg px-2 py-1 text-xs font-semibold text-sky-700 transition hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-sky-500/10"
+                    aria-label={`Download ${file.name}`}
+                    className="rounded-lg p-2 text-sky-700 transition hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-sky-500/10"
                     href={`/api/admin/media?path=${encodeURIComponent(file.path)}&download=1`}
                   >
-                    Download
+                    <svg
+                      aria-hidden="true"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 4v10m0 0 3.5-3.5M12 14l-3.5-3.5M5 16.5v2a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-2"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.5"
+                      />
+                    </svg>
                   </a>
                   <button
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                    aria-label={`Rename ${file.name}`}
+                    className="rounded-lg px-2 py-1 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    onClick={() => onRename(file)}
+                    type="button"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.5"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    aria-label={`Delete ${file.name}`}
+                    className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
                     onClick={() => onDelete(file)}
                     type="button"
                   >
-                    Delete
+                    <svg
+                      aria-hidden="true"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.5"
+                      />
+                    </svg>
                   </button>
                 </div>
               </td>

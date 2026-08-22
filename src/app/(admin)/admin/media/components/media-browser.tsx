@@ -61,9 +61,12 @@ export function MediaBrowser() {
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<CloudFile | null>(null);
+  const [fileToRename, setFileToRename] = useState<CloudFile | null>(null);
   const [newFolderName, setNewFolderName] = useState('');
+  const [newFileName, setNewFileName] = useState('');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [isDeletingFolder, setIsDeletingFolder] = useState(false);
+  const [isRenamingFile, setIsRenamingFile] = useState(false);
 
   const loadFolder = useCallback(async (path: string) => {
     const normalizedPath = normalizeFolderPath(path);
@@ -115,17 +118,13 @@ export function MediaBrowser() {
     }
   };
 
-  const toggleFolder = (path: string) => {
+  const expandFolder = (path: string) => {
     const normalizedPath = normalizeFolderPath(path);
 
     setExpandedPaths((current) => {
       const next = new Set(current);
 
-      if (next.has(normalizedPath)) {
-        next.delete(normalizedPath);
-      } else {
-        next.add(normalizedPath);
-      }
+      next.add(normalizedPath);
 
       return next;
     });
@@ -371,6 +370,64 @@ export function MediaBrowser() {
     }
   };
 
+  const handleRenameFile = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (fileToRename === null) {
+      return;
+    }
+
+    const fileName = newFileName.trim();
+
+    if (
+      fileName === '' ||
+      fileName === '.' ||
+      fileName === '..' ||
+      fileName.includes('/') ||
+      fileName.includes('\\')
+    ) {
+      setError('Enter a valid file name.');
+      return;
+    }
+
+    const parentPath = fileToRename.path.split('/').slice(0, -1).join('/');
+    const newPath = [parentPath, fileName].filter(Boolean).join('/');
+
+    setIsRenamingFile(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/media', {
+        body: JSON.stringify({ path: fileToRename.path, newPath }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json()) as { error?: string };
+
+        throw new Error(payload.error ?? 'Unable to rename the file.');
+      }
+
+      setFileToRename(null);
+      setNewFileName('');
+      await loadFolder(selectedPath);
+    } catch (renameError) {
+      setError(
+        renameError instanceof Error
+          ? renameError.message
+          : 'Unable to rename the file.',
+      );
+    } finally {
+      setIsRenamingFile(false);
+    }
+  };
+
+  const openRenameDialog = (file: CloudFile) => {
+    setFileToRename(file);
+    setNewFileName(file.name);
+  };
+
   const selectedContents = contents[selectedPath];
   const visibleFiles =
     selectedContents?.files.filter((file) => file.name !== '.bzEmpty') ?? [];
@@ -403,7 +460,7 @@ export function MediaBrowser() {
             contents={contents}
             expandedPaths={expandedPaths}
             onSelect={selectFolder}
-            onToggle={toggleFolder}
+            onExpand={expandFolder}
             selectedPath={selectedPath}
           />
 
@@ -521,6 +578,7 @@ export function MediaBrowser() {
                 files={visibleFiles}
                 isEmpty={isEmpty}
                 onDelete={setFileToDelete}
+                onRename={openRenameDialog}
               />
             ) : (
               <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
@@ -628,6 +686,45 @@ export function MediaBrowser() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {fileToRename && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
+          <form
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900"
+            onSubmit={(event) => void handleRenameFile(event)}
+          >
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              Rename file
+            </h2>
+            <label className="mt-4 block text-sm text-slate-600 dark:text-slate-300">
+              New file name
+              <input
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                disabled={isRenamingFile}
+                onChange={(event) => setNewFileName(event.target.value)}
+                value={newFileName}
+              />
+            </label>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                disabled={isRenamingFile}
+                onClick={() => setFileToRename(null)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="rounded-xl bg-sky-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-sky-600 disabled:opacity-50"
+                disabled={isRenamingFile}
+                type="submit"
+              >
+                {isRenamingFile ? 'Renaming...' : 'Rename'}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

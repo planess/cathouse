@@ -6,7 +6,7 @@ type Props = {
   contents: Partial<Record<string, FolderContents>>;
   expandedPaths: Set<string>;
   onSelect: (path: string) => void;
-  onToggle: (path: string) => void;
+  onExpand: (path: string) => void;
   selectedPath: string;
 };
 
@@ -14,7 +14,7 @@ export function MediaBrowserFolderTree({
   contents,
   expandedPaths,
   onSelect,
-  onToggle,
+  onExpand,
   selectedPath,
 }: Props) {
   const renderTree = (path: string, depth = 0): React.ReactNode =>
@@ -25,7 +25,7 @@ export function MediaBrowserFolderTree({
         <div key={folderPath}>
           <button
             className={`flex w-full items-center gap-2 rounded-lg py-2 pr-2 text-left text-sm transition ${selectedPath === folderPath ? 'bg-sky-500/10 text-sky-700 dark:bg-sky-500/20 dark:text-sky-200' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'}`}
-            onClick={() => onToggle(folderPath)}
+            onClick={() => onExpand(folderPath)}
             style={{ paddingLeft: `${depth * 16 + 10}px` }}
             type="button"
           >

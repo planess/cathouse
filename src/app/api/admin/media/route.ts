@@ -4,7 +4,7 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 
-const MEDIA_API_BASE_URL = 'https://r2.lairlines.com';
+const MEDIA_API_BASE_URL = 'http://127.0.0.1:8787';
 
 function getSafePath(value: string | null): string | null {
   if (value === null || value === '') {
@@ -206,6 +206,81 @@ export async function DELETE(request: Request) {
     }
 
     return new NextResponse(null, { status: 204 });
+  } catch {
+    return NextResponse.json(
+      { error: 'Unable to connect to cloud storage.' },
+      { status: 502 },
+    );
+  }
+}
+
+type RenamePayload = {
+  destination?: unknown;
+  destinationPath?: unknown;
+  from?: unknown;
+  key?: unknown;
+  objectPath?: unknown;
+  path?: unknown;
+  newPath?: unknown;
+  source?: unknown;
+  target?: unknown;
+  to?: unknown;
+};
+
+export async function PATCH(request: Request) {
+  if (!(await canManageMedia())) {
+    return NextResponse.json(
+      { error: 'Insufficient permissions.' },
+      { status: 403 },
+    );
+  }
+
+  let body: RenamePayload;
+
+  try {
+    body = (await request.json()) as RenamePayload;
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid request body.' },
+      { status: 400 },
+    );
+  }
+
+  const source = [
+    body.path,
+    body.objectPath,
+    body.key,
+    body.from,
+    body.source,
+  ].find(isSafeFilePath);
+  const destination = [
+    body.newPath,
+    body.destination,
+    body.destinationPath,
+    body.to,
+    body.target,
+  ].find(isSafeFilePath);
+
+  if (source === undefined || destination === undefined) {
+    return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
+  }
+
+  try {
+    const response = await fetch(`${MEDIA_API_BASE_URL}/rename`, {
+      body: JSON.stringify({ path: source, newPath: destination }),
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: 'Unable to rename the cloud file.' },
+        { status: response.status },
+      );
+    }
+
+    return NextResponse.json(await response.json());
   } catch {
     return NextResponse.json(
       { error: 'Unable to connect to cloud storage.' },
