@@ -4,8 +4,6 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 
-const MEDIA_API_BASE_URL = 'https://r2.lairlines.com';
-
 function getSafePath(value: string | null): string | null {
   if (value === null || value === '') {
     return '';
@@ -87,9 +85,12 @@ export async function GET(request: Request) {
   const endpoint = isDownload ? `file/${path}` : `files/${path}`;
 
   try {
-    const response = await fetch(`${MEDIA_API_BASE_URL}/${endpoint}`, {
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${process.env.R2_MEDIA_BASE_URL}/${endpoint}`,
+      {
+        cache: 'no-store',
+      },
+    );
 
     if (!response.ok) {
       return NextResponse.json(
@@ -171,7 +172,7 @@ export async function POST(request: Request) {
 
   try {
     const response = await fetch(
-      `${MEDIA_API_BASE_URL}/sign?expiresInSeconds=300`,
+      `${process.env.R2_MEDIA_BASE_URL}/sign?expiresInSeconds=300`,
       {
         body: JSON.stringify({ files: files.map((path) => ({ path })) }),
         cache: 'no-store',
@@ -223,10 +224,13 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    const response = await fetch(`${MEDIA_API_BASE_URL}/delete/${path}`, {
-      cache: 'no-store',
-      method: 'DELETE',
-    });
+    const response = await fetch(
+      `${process.env.R2_MEDIA_BASE_URL}/delete/${path}`,
+      {
+        cache: 'no-store',
+        method: 'DELETE',
+      },
+    );
 
     if (!response.ok) {
       return NextResponse.json(
@@ -311,12 +315,15 @@ export async function PATCH(request: Request) {
     }
 
     try {
-      const response = await fetch(`${MEDIA_API_BASE_URL}/rename-folder`, {
-        body: JSON.stringify({ folderPath, newName: newName.trim() }),
-        cache: 'no-store',
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-      });
+      const response = await fetch(
+        `${process.env.R2_MEDIA_BASE_URL}/rename-folder`,
+        {
+          body: JSON.stringify({ folderPath, newName: newName.trim() }),
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        },
+      );
 
       if (!response.ok) {
         return NextResponse.json(
@@ -354,7 +361,7 @@ export async function PATCH(request: Request) {
   }
 
   try {
-    const response = await fetch(`${MEDIA_API_BASE_URL}/rename`, {
+    const response = await fetch(`${process.env.R2_MEDIA_BASE_URL}/rename`, {
       body: JSON.stringify({ path: source, newPath: destination }),
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json' },
@@ -425,7 +432,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const response = await fetch(`${MEDIA_API_BASE_URL}/move`, {
+    const response = await fetch(`${process.env.R2_MEDIA_BASE_URL}/move`, {
       body: JSON.stringify({ files: body.files }),
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json' },
