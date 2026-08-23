@@ -1,7 +1,11 @@
+import clsx from 'clsx';
+
 import { EmptyFolderRow } from '../helpers/empty-folder-row';
 import { FileIcon } from '../helpers/file-icon';
 import { formatFileSize } from '../helpers/format-file-size';
 import { formatLastModified } from '../helpers/format-last-modified';
+import { imagePreviewUrl } from '../helpers/image-preview-url';
+import { isPreviewableFile } from '../helpers/is-previewable-file';
 
 import type { CloudFile } from './media-browser';
 
@@ -46,13 +50,25 @@ export function MediaBrowserFileTable({
                 <div className="flex items-center gap-2 font-medium text-slate-700 dark:text-slate-200">
                   <button
                     aria-label={`Move ${file.name}`}
-                    className="-ml-2 cursor-grab rounded bg-sky-100 p-2 text-sky-700 transition hover:bg-sky-200 active:cursor-grabbing dark:bg-sky-500/20 dark:text-sky-200 dark:hover:bg-sky-500/30"
+                    className={clsx(
+                      '-ml-2 cursor-grab rounded bg-sky-100 text-sky-700 transition hover:bg-sky-200 active:cursor-grabbing dark:bg-sky-500/20 dark:text-sky-200 dark:hover:bg-sky-500/30',
+                      'flex-none basis-[90px] flex items-center justify-center',
+                      { 'p-2': !isPreviewableFile(file.name) },
+                    )}
                     draggable
                     onDragEnd={onMoveEnd}
                     onDragStart={() => onMoveStart(file)}
                     type="button"
                   >
-                    <FileIcon />
+                    {isPreviewableFile(file.name) ? (
+                      <img
+                        alt=""
+                        className="h-16 w-[90px] rounded object-contain"
+                        src={imagePreviewUrl(file.path, 150)}
+                      />
+                    ) : (
+                      <FileIcon />
+                    )}
                   </button>
                   <span className="break-all">{file.name}</span>
                 </div>

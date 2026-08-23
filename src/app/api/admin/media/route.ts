@@ -4,7 +4,7 @@ import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 
-const MEDIA_API_BASE_URL = 'http://127.0.0.1:8787';
+const MEDIA_API_BASE_URL = 'https://r2.lairlines.com';
 
 function getSafePath(value: string | null): string | null {
   if (value === null || value === '') {
