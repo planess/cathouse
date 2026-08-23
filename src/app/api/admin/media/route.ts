@@ -171,7 +171,7 @@ export async function POST(request: Request) {
 
   try {
     const response = await fetch(
-      `${MEDIA_API_BASE_URL}/gate?expiresInSeconds=300`,
+      `${MEDIA_API_BASE_URL}/sign?expiresInSeconds=300`,
       {
         body: JSON.stringify({ files: files.map((path) => ({ path })) }),
         cache: 'no-store',
