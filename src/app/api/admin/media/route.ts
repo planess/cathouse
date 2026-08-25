@@ -30,24 +30,56 @@ function getFileName(path: string): string {
   return path.split('/').at(-1) ?? 'download';
 }
 
-async function canManageMedia(): Promise<boolean> {
+type MediaPermissions = {
+  canAccess: boolean;
+  canDelete: boolean;
+  canReview: boolean;
+  canUpload: boolean;
+};
+
+async function getMediaPermissions(): Promise<MediaPermissions> {
   const currentUser = await getCurrentUser();
 
-  return Boolean(
-    currentUser?.id &&
-    (await hasPermission(
-      SYSTEM_PERMISSIONS.ROLE_ASSIGN,
-      undefined,
-      currentUser.id,
-    )),
-  );
+  if (currentUser?.id === undefined) {
+    return {
+      canAccess: false,
+      canDelete: false,
+      canReview: false,
+      canUpload: false,
+    };
+  }
+
+  const [canReview, canUpload, canDelete] = await Promise.all([
+    hasPermission(SYSTEM_PERMISSIONS.MEDIA_REVIEW, undefined, currentUser.id),
+    hasPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD, undefined, currentUser.id),
+    hasPermission(SYSTEM_PERMISSIONS.MEDIA_DELETE, undefined, currentUser.id),
+  ]);
+
+  return {
+    canAccess: canReview || canUpload || canDelete,
+    canDelete,
+    canReview,
+    canUpload,
+  };
+}
+
+async function hasMediaPermission(
+  permission:
+    | typeof SYSTEM_PERMISSIONS.MEDIA_DELETE
+    | typeof SYSTEM_PERMISSIONS.MEDIA_UPLOAD,
+): Promise<boolean> {
+  const permissions = await getMediaPermissions();
+
+  return permission === SYSTEM_PERMISSIONS.MEDIA_DELETE
+    ? permissions.canDelete
+    : permissions.canUpload;
 }
 
 /**
  * GET handler for media management.
  * Retrieves media files from cloud storage or provides temporary download URLs.
  * Supports listing files in a directory or downloading individual files.
- * Requires ROLE_ASSIGN permission.
+ * Requires at least one media permission; file data requires MEDIA_REVIEW.
  *
  * @param request - The incoming request with query parameters:
  *   - `path`: File or directory path
@@ -55,7 +87,9 @@ async function canManageMedia(): Promise<boolean> {
  * @returns JSON response with file list or file download with appropriate headers
  */
 export async function GET(request: Request) {
-  if (!(await canManageMedia())) {
+  const permissions = await getMediaPermissions();
+
+  if (!permissions.canAccess) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       {
@@ -72,6 +106,13 @@ export async function GET(request: Request) {
   }
 
   const isDownload = searchParams.get('download') === '1';
+
+  if (isDownload && !permissions.canReview) {
+    return NextResponse.json(
+      { error: 'Insufficient permissions.' },
+      { status: 403 },
+    );
+  }
 
   if (isDownload && path === '') {
     return NextResponse.json(
@@ -100,7 +141,11 @@ export async function GET(request: Request) {
     }
 
     if (!isDownload) {
-      return NextResponse.json(await response.json());
+      const contents = (await response.json()) as Record<string, unknown>;
+
+      return NextResponse.json(
+        permissions.canReview ? contents : { ...contents, files: [] },
+      );
     }
 
     const contentType =
@@ -132,14 +177,14 @@ function isSafeFilePath(path: unknown): path is string {
  * POST handler for generating upload URLs.
  * Generates temporary URLs for uploading files to cloud storage.
  * Validates file paths and returns signed URLs with 5-minute expiration.
- * Requires ROLE_ASSIGN permission.
+ * Requires MEDIA_UPLOAD permission.
  *
  * @param request - The incoming request with JSON body containing:
  *   - `files`: Array of objects with `path` property specifying file upload destinations
  * @returns JSON response with signed upload URLs or error message
  */
 export async function POST(request: Request) {
-  if (!(await canManageMedia())) {
+  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
@@ -200,14 +245,14 @@ export async function POST(request: Request) {
 /**
  * DELETE handler for removing files.
  * Deletes a file from cloud storage by its path.
- * Requires ROLE_ASSIGN permission.
+ * Requires MEDIA_DELETE permission.
  *
  * @param request - The incoming request with query parameter:
  *   - `path`: The file path to delete
  * @returns 204 No Content on success, or error JSON response on failure
  */
 export async function DELETE(request: Request) {
-  if (!(await canManageMedia())) {
+  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_DELETE))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
@@ -269,7 +314,7 @@ type RenamePayload = {
  * Supports two operation types:
  * - Folder rename: Updates `folderPath` and `newName`
  * - File rename: Moves file from `path` to `newPath`
- * Requires ROLE_ASSIGN permission.
+ * Requires MEDIA_UPLOAD permission.
  *
  * @param request - The incoming request with JSON body containing either:
  *   - Folder rename: `folderPath` and `newName`
@@ -277,7 +322,7 @@ type RenamePayload = {
  * @returns JSON response with rename operation result or error message
  */
 export async function PATCH(request: Request) {
-  if (!(await canManageMedia())) {
+  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
@@ -392,14 +437,14 @@ type MovePayload = {
  * PUT handler for moving files.
  * Moves multiple files in cloud storage to new paths.
  * Validates all file paths before processing the move operation.
- * Requires ROLE_ASSIGN permission.
+ * Requires MEDIA_UPLOAD permission.
  *
  * @param request - The incoming request with JSON body containing:
  *   - `files`: Array of objects with `currentPath` and `newPath` properties
  * @returns JSON response with move operation result or error message
  */
 export async function PUT(request: Request) {
-  if (!(await canManageMedia())) {
+  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },

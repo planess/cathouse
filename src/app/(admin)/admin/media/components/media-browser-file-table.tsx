@@ -10,6 +10,9 @@ import { isPreviewableFile } from '../helpers/is-previewable-file';
 import type { CloudFile } from './media-browser';
 
 type Props = {
+  canDelete: boolean;
+  canMove: boolean;
+  canRename: boolean;
   files: CloudFile[];
   isEmpty: boolean;
   onDelete: (file: CloudFile) => void;
@@ -21,6 +24,9 @@ type Props = {
 };
 
 export function MediaBrowserFileTable({
+  canDelete,
+  canMove,
+  canRename,
   files,
   isEmpty,
   onDelete,
@@ -51,13 +57,18 @@ export function MediaBrowserFileTable({
                   <button
                     aria-label={`Move ${file.name}`}
                     className={clsx(
-                      '-ml-2 cursor-grab rounded bg-sky-100 text-sky-700 transition hover:bg-sky-200 active:cursor-grabbing dark:bg-sky-500/20 dark:text-sky-200 dark:hover:bg-sky-500/30',
+                      '-ml-2 rounded bg-sky-100 text-sky-700 transition dark:bg-sky-500/20 dark:text-sky-200',
                       'flex-none basis-[90px] flex items-center justify-center',
-                      { 'p-2': !isPreviewableFile(file.name) },
+                      {
+                        'cursor-grab hover:bg-sky-200 active:cursor-grabbing dark:hover:bg-sky-500/30':
+                          canMove,
+                        'cursor-default': !canMove,
+                        'p-2': !isPreviewableFile(file.name),
+                      },
                     )}
-                    draggable
-                    onDragEnd={onMoveEnd}
-                    onDragStart={() => onMoveStart(file)}
+                    draggable={canMove}
+                    onDragEnd={canMove ? onMoveEnd : undefined}
+                    onDragStart={canMove ? () => onMoveStart(file) : undefined}
                     type="button"
                   >
                     {isPreviewableFile(file.name) ? (
@@ -108,48 +119,52 @@ export function MediaBrowserFileTable({
                         />
                       </svg>
                     </a>
-                    <button
-                      aria-label={`Rename ${file.name}`}
-                      className="rounded-lg px-2 py-1 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                      onClick={() => onRename(file)}
-                      type="button"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                    {canRename && (
+                      <button
+                        aria-label={`Rename ${file.name}`}
+                        className="rounded-lg px-2 py-1 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        onClick={() => onRename(file)}
+                        type="button"
                       >
-                        <path
-                          d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      aria-label={`Delete ${file.name}`}
-                      className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
-                      onClick={() => onDelete(file)}
-                      type="button"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                        <svg
+                          aria-hidden="true"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.5"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        aria-label={`Delete ${file.name}`}
+                        className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                        onClick={() => onDelete(file)}
+                        type="button"
                       >
-                        <path
-                          d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          aria-hidden="true"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.5"
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 )}
               </td>

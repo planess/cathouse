@@ -3,6 +3,8 @@ import { FolderIcon } from '../helpers/folder-icon';
 import type { FolderContents } from './media-browser';
 
 type Props = {
+  canDelete: boolean;
+  canRename: boolean;
   contents: Partial<Record<string, FolderContents>>;
   expandedPaths: Set<string>;
   onSelect: (path: string) => void;
@@ -15,6 +17,8 @@ type Props = {
 };
 
 export function MediaBrowserFolderTree({
+  canDelete,
+  canRename,
   contents,
   expandedPaths,
   onSelect,
@@ -50,7 +54,7 @@ export function MediaBrowserFolderTree({
               <FolderIcon open={isExpanded} />
               <span className="truncate">{folder.name}</span>
             </button>
-            {!isMoveMode && (
+            {canRename && !isMoveMode && (
               <button
                 aria-label={`Rename ${folder.name}`}
                 className="mr-1 rounded-md p-1.5 hover:bg-slate-200/70 dark:hover:bg-slate-700/70"
@@ -73,7 +77,7 @@ export function MediaBrowserFolderTree({
                 </svg>
               </button>
             )}
-            {!isMoveMode && (
+            {canDelete && !isMoveMode && (
               <button
                 aria-label={`Delete ${folder.name}`}
                 className="mr-1 rounded-md p-1.5 text-rose-600 transition hover:bg-rose-100 dark:text-rose-300 dark:hover:bg-rose-500/20"

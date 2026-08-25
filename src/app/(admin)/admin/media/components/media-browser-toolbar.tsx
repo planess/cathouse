@@ -1,6 +1,7 @@
 import type { ChangeEvent, RefObject } from 'react';
 
 type Props = {
+  canUpload: boolean;
   fileInputRef: RefObject<HTMLInputElement | null>;
   isLoading: boolean;
   isUploading: boolean;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export function MediaBrowserToolbar({
+  canUpload,
   fileInputRef,
   isLoading,
   isUploading,
@@ -55,21 +57,25 @@ export function MediaBrowserToolbar({
           </>
         ) : (
           <>
-            <input
-              className="sr-only"
-              multiple
-              onChange={onFilesSelected}
-              ref={fileInputRef}
-              type="file"
-            />
-            <button
-              className="rounded-xl bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm shadow-sky-500/30 transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={isUploading}
-              onClick={() => fileInputRef.current?.click()}
-              type="button"
-            >
-              Upload
-            </button>
+            {canUpload && (
+              <>
+                <input
+                  className="sr-only"
+                  multiple
+                  onChange={onFilesSelected}
+                  ref={fileInputRef}
+                  type="file"
+                />
+                <button
+                  className="rounded-xl bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm shadow-sky-500/30 transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={isUploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                >
+                  Upload
+                </button>
+              </>
+            )}
             <button
               className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-sky-500 dark:hover:text-sky-200"
               disabled={isLoading}
@@ -78,13 +84,15 @@ export function MediaBrowserToolbar({
             >
               Refresh
             </button>
-            <button
-              className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700 dark:border-slate-700 dark:text-slate-300"
-              onClick={onAddFolder}
-              type="button"
-            >
-              Add folder
-            </button>
+            {canUpload && (
+              <button
+                className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-700 dark:border-slate-700 dark:text-slate-300"
+                onClick={onAddFolder}
+                type="button"
+              >
+                Add folder
+              </button>
+            )}
           </>
         )}
       </div>

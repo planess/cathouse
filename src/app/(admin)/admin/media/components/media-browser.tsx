@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useCurrentUser } from '@app/hooks/use-user';
+import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+
 import { normalizeFolderPath } from '../helpers/normalize-folder-path';
 import { uploadFile } from '../helpers/upload-file';
 
@@ -55,6 +58,7 @@ type RenameFolderResponse = {
 };
 
 export function MediaBrowser() {
+  const user = useCurrentUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [contents, setContents] = useState<
     Partial<Record<string, FolderContents>>
@@ -624,6 +628,12 @@ export function MediaBrowser() {
   const isUploading = uploads.some(
     ({ status }) => status === 'requesting' || status === 'uploading',
   );
+  const canReview =
+    user?.scopes.includes(SYSTEM_PERMISSIONS.MEDIA_REVIEW) === true;
+  const canUpload =
+    user?.scopes.includes(SYSTEM_PERMISSIONS.MEDIA_UPLOAD) === true;
+  const canDelete =
+    user?.scopes.includes(SYSTEM_PERMISSIONS.MEDIA_DELETE) === true;
   const isEmpty = selectedContents !== undefined && visibleFiles.length === 0;
 
   return (
@@ -641,6 +651,8 @@ export function MediaBrowser() {
       <section className="overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950/70">
         <div className="grid min-h-[32rem] lg:grid-cols-[17rem_minmax(0,1fr)]">
           <MediaBrowserFolderTree
+            canDelete={canDelete}
+            canRename={canUpload}
             contents={contents}
             expandedPaths={expandedPaths}
             onSelect={selectFolder}
@@ -654,6 +666,7 @@ export function MediaBrowser() {
 
           <div className="min-w-0 p-4 sm:p-6">
             <MediaBrowserToolbar
+              canUpload={canUpload}
               fileInputRef={fileInputRef}
               isLoading={isLoading}
               isUploading={isUploading}
@@ -678,8 +691,11 @@ export function MediaBrowser() {
               <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
                 Loading files…
               </p>
-            ) : selectedContents ? (
+            ) : selectedContents && canReview ? (
               <MediaBrowserFileTable
+                canDelete={canDelete}
+                canMove={canUpload}
+                canRename={canUpload}
                 files={visibleFiles}
                 isEmpty={isEmpty}
                 onDelete={setFileToDelete}
@@ -689,6 +705,10 @@ export function MediaBrowser() {
                 moveDestinations={moveDestinations}
                 isMoveMode={moveDestinations.size > 0}
               />
+            ) : !canReview ? (
+              <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+                You do not have permission to review files.
+              </p>
             ) : (
               <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
                 Choose a folder to view its contents.

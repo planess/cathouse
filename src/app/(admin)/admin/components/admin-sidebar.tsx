@@ -11,9 +11,12 @@ import {
 
 import { SidebarIconProps, SidebarNavItem } from './admin-sidebar.types';
 
-const navItems: Array<
-  SidebarNavItem & { requiredPermission?: SystemPermission }
-> = [
+type NavItem = SidebarNavItem & {
+  requiredAnyPermission?: SystemPermission[];
+  requiredPermission?: SystemPermission;
+};
+
+const navItems: NavItem[] = [
   {
     href: '/admin',
     label: 'Overview',
@@ -243,6 +246,11 @@ const navItems: Array<
   {
     href: '/admin/media',
     label: 'Media',
+    requiredAnyPermission: [
+      SYSTEM_PERMISSIONS.MEDIA_REVIEW,
+      SYSTEM_PERMISSIONS.MEDIA_UPLOAD,
+      SYSTEM_PERMISSIONS.MEDIA_DELETE,
+    ],
     Icon: function MediaIcon({ className }: SidebarIconProps) {
       return (
         <svg
@@ -308,9 +316,13 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const user = useCurrentUser();
   const visibleNavItems = navItems.filter(
-    ({ requiredPermission }) =>
-      requiredPermission === undefined ||
-      user?.scopes.includes(requiredPermission),
+    ({ requiredAnyPermission, requiredPermission }) =>
+      (requiredPermission === undefined ||
+        user?.scopes.includes(requiredPermission) === true) &&
+      (requiredAnyPermission === undefined ||
+        requiredAnyPermission.some(
+          (permission) => user?.scopes.includes(permission) === true,
+        )),
   );
 
   return (
