@@ -16,6 +16,7 @@ import { ThreadList } from './thread-list';
 type MailboxTabPanelProps = {
   canSend: boolean;
   mailbox: EmailMailboxSummary;
+  refreshToken: number;
   onCompose: (mailbox: EmailMailboxSummary) => void;
   onEditMailbox: (mailbox: EmailMailboxSummary) => void;
   onThreadSelect: (mailboxId: string, threadId: string) => void;
@@ -53,6 +54,7 @@ function loadThreadPage(mailboxId: string, page: number, forceRefresh = false) {
 export function MailboxTabPanel({
   canSend,
   mailbox,
+  refreshToken,
   onCompose,
   onEditMailbox,
   onThreadSelect,
@@ -69,12 +71,16 @@ export function MailboxTabPanel({
   const [isLoading, setIsLoading] = useState(true);
   const [refreshCount, setRefreshCount] = useState(0);
   const refreshRequestedRef = useRef(false);
+  const previousRefreshTokenRef = useRef(refreshToken);
 
   useEffect(() => {
     let isCurrent = true;
-    const forceRefresh = refreshRequestedRef.current;
+    const forceRefresh =
+      refreshRequestedRef.current ||
+      previousRefreshTokenRef.current !== refreshToken;
 
     refreshRequestedRef.current = false;
+    previousRefreshTokenRef.current = refreshToken;
     setIsLoading(true);
 
     void loadThreadPage(mailbox.id, currentPage, forceRefresh)
@@ -96,7 +102,7 @@ export function MailboxTabPanel({
     return () => {
       isCurrent = false;
     };
-  }, [currentPage, mailbox.id, refreshCount]);
+  }, [currentPage, mailbox.id, refreshCount, refreshToken]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());

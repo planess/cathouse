@@ -47,6 +47,9 @@ export function EmailMailboxTabs({
   const pathname = usePathname();
   const router = useRouter();
   const [groups, setGroups] = useState(mailboxGroups);
+  const [threadRefreshTokens, setThreadRefreshTokens] = useState<
+    Record<string, number>
+  >({});
   const [activeId, setActiveId] = useState(() =>
     showCreateMailboxForm
       ? CREATE_MAILBOX_TAB_ID
@@ -251,6 +254,10 @@ export function EmailMailboxTabs({
                 : group,
             ),
           );
+          setThreadRefreshTokens((currentTokens) => ({
+            ...currentTokens,
+            [composeMailbox.id]: (currentTokens[composeMailbox.id] ?? 0) + 1,
+          }));
           closeComposeModal();
         }
       } catch {
@@ -326,6 +333,7 @@ export function EmailMailboxTabs({
           <MailboxTabPanel
             mailbox={mailbox}
             canSend={canSend}
+            refreshToken={threadRefreshTokens[mailbox.id] ?? 0}
             onCompose={openComposeModal}
             onEditMailbox={openEditMailboxModal}
             onThreadSelect={handleThreadSelect}
