@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type {
   EmailMailboxSummary,
@@ -28,11 +28,11 @@ type ThreadPageResponse = {
 
 const threadPageRequests = new Map<string, Promise<ThreadPageResponse>>();
 
-function loadThreadPage(mailboxId: string, page: number) {
+function loadThreadPage(mailboxId: string, page: number, forceRefresh = false) {
   const key = `${mailboxId}:${page}`;
   const existingRequest = threadPageRequests.get(key);
 
-  if (existingRequest !== undefined) {
+  if (!forceRefresh && existingRequest !== undefined) {
     return existingRequest;
   }
 
@@ -67,12 +67,17 @@ export function MailboxTabPanel({
   const [pageThreads, setPageThreads] = useState<EmailThreadSummary[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshCount, setRefreshCount] = useState(0);
+  const refreshRequestedRef = useRef(false);
 
   useEffect(() => {
     let isCurrent = true;
+    const forceRefresh = refreshRequestedRef.current;
+
+    refreshRequestedRef.current = false;
     setIsLoading(true);
 
-    void loadThreadPage(mailbox.id, currentPage)
+    void loadThreadPage(mailbox.id, currentPage, forceRefresh)
       .then((payload) => {
         if (!isCurrent) {
           return;
@@ -91,7 +96,7 @@ export function MailboxTabPanel({
     return () => {
       isCurrent = false;
     };
-  }, [currentPage, mailbox.id]);
+  }, [currentPage, mailbox.id, refreshCount]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -106,22 +111,52 @@ export function MailboxTabPanel({
         <p className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
           {totalItems} Conversations
         </p>
-        {canSend && <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <button
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
-            onClick={() => onEditMailbox(mailbox)}
+            aria-label="Refresh threads"
+            className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-wait disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
+            disabled={isLoading}
+            onClick={() => {
+              refreshRequestedRef.current = true;
+              setRefreshCount((currentCount) => currentCount + 1);
+            }}
+            title="Refresh threads"
             type="button"
           >
-            Edit sender name
+            <svg
+              aria-hidden="true"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20 11a8 8 0 1 0 2 5.25M20 4v7h-7"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.8"
+              />
+            </svg>
           </button>
-          <button
-            className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
-            onClick={() => onCompose(mailbox)}
-            type="button"
-          >
-            Create new email
-          </button>
-        </div>}
+          {canSend && (
+            <>
+              <button
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
+                onClick={() => onEditMailbox(mailbox)}
+                type="button"
+              >
+                Edit sender name
+              </button>
+              <button
+                className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                onClick={() => onCompose(mailbox)}
+                type="button"
+              >
+                Create new email
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="relative min-h-36">
