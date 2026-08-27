@@ -12,11 +12,13 @@ export async function GET(
 ) {
   const user = await getCurrentUser();
 
-  if (!user?.id)
+  if (!user?.id) {
     return NextResponse.json(
       { message: 'User not authenticated.' },
       { status: 401 },
     );
+  }
+
   if (
     !(await hasAnyPermission(
       [SYSTEM_PERMISSIONS.EMAIL_READ, SYSTEM_PERMISSIONS.EMAIL_SEND],

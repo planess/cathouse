@@ -16,8 +16,9 @@ export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
     return '<p></p>';
   }
 
+  const fullMessageContent = message.content.html ?? message.content.text;
   const body =
-    message.content.html ??
+    fullMessageContent ??
     `<p>${escapeHtml(getMessageBody(message)).replaceAll('\n', '<br>')}</p>`;
 
   return [

@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+
 import type { EmailMessageSummary } from '@app/services/email.service';
 
 import { formatAddress } from '../helpers/format-address';
@@ -14,6 +18,15 @@ export function ThreadMessageCard({
   message,
   onForward,
 }: ThreadMessageCardProps) {
+  const [showFullMessage, setShowFullMessage] = useState(false);
+  const strippedContent =
+    message.content['stripped-html'] ?? message.content['stripped-text'];
+  const fullContent = message.content.html ?? message.content.text;
+  const canToggleFullMessage =
+    strippedContent !== undefined &&
+    fullContent !== undefined &&
+    strippedContent !== fullContent;
+
   return (
     <article
       className={`border-b-2 border-indigo-200 border-dashed p-5 last:border-b-0 dark:border-slate-800 md:p-6 ${
@@ -69,9 +82,23 @@ export function ThreadMessageCard({
       </div>
 
       <div className="space-y-4 pt-5 border-t border-slate-400 dark:border-slate-800 mt-3">
+        {canToggleFullMessage && (
+          <div className="flex justify-end">
+            <button
+              aria-expanded={showFullMessage}
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
+              onClick={() => setShowFullMessage((expanded) => !expanded)}
+              type="button"
+            >
+              {showFullMessage ? 'Collapse history' : 'Expand full email'}
+            </button>
+          </div>
+        )}
         <div
           className="break-words text-base leading-7 text-slate-700 [&_blockquote]:my-4 [&_blockquote]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-slate-300 [&_blockquote]:bg-slate-100/80 [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:text-sm [&_blockquote]:leading-6 [&_blockquote]:text-slate-600 [&_p]:my-3 dark:text-slate-200 dark:[&_blockquote]:border-slate-600 dark:[&_blockquote]:bg-slate-900/70 dark:[&_blockquote]:text-slate-300"
-          dangerouslySetInnerHTML={{ __html: getMessageBodyHtml(message) }}
+          dangerouslySetInnerHTML={{
+            __html: getMessageBodyHtml(message, showFullMessage),
+          }}
         />
 
         {message.attachments.length > 0 && (

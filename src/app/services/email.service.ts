@@ -686,18 +686,23 @@ class EmailService extends Singleton {
         getMailgunField(payload.fields, 'subject') ??
         getHeaderValue(headers, 'Subject') ??
         '';
-      const textContent =
-        getMailgunField(payload.fields, 'stripped-text') ??
+      const fullTextContent =
         getMailgunField(payload.fields, 'body-plain') ??
+        getMailgunField(payload.fields, 'stripped-text') ??
         '';
-      const htmlContent =
-        getMailgunField(payload.fields, 'stripped-html') ??
-        getMailgunField(payload.fields, 'body-html');
+      const strippedTextContent =
+        getMailgunField(payload.fields, 'stripped-text') ?? fullTextContent;
+      const fullHtmlContent =
+        getMailgunField(payload.fields, 'body-html') ??
+        getMailgunField(payload.fields, 'stripped-html');
+      const strippedHtmlContent =
+        getMailgunField(payload.fields, 'stripped-html') ?? fullHtmlContent;
       const r2PublicBaseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL?.replace(
         /\/$/,
         '',
       );
-      const htmlContentWithInlineAttachments = htmlContent?.replaceAll(
+      const resolveInlineAttachmentUrls = (content: string | undefined) =>
+        content?.replaceAll(
         /cid:([^"'\s>]+)/gi,
         (cidReference, rawContentId: string) => {
           const attachment = attachmentDocuments.find(
@@ -709,6 +714,11 @@ class EmailService extends Singleton {
             : `${r2PublicBaseUrl}/${attachment.storageKey}`;
         },
       );
+      const fullHtmlContentWithInlineAttachments = resolveInlineAttachmentUrls(
+        fullHtmlContent,
+      );
+      const strippedHtmlContentWithInlineAttachments =
+        resolveInlineAttachmentUrls(strippedHtmlContent);
       const message: EmailMessageDocument = {
         _id: messageObjectId,
         messageId,
@@ -726,14 +736,21 @@ class EmailService extends Singleton {
         bcc: bccContacts.map((contact) => contact._id),
         subject,
         content: {
-          ...(textContent.length > 0 ? { text: textContent } : {}),
-          ...(htmlContentWithInlineAttachments !== undefined &&
-          htmlContentWithInlineAttachments.length > 0
-            ? { html: htmlContentWithInlineAttachments }
+          ...(fullTextContent.length > 0 ? { text: fullTextContent } : {}),
+          ...(fullHtmlContentWithInlineAttachments !== undefined &&
+          fullHtmlContentWithInlineAttachments.length > 0
+            ? { html: fullHtmlContentWithInlineAttachments }
             : {}),
-          ...(textContent.length === 0 &&
-          (htmlContentWithInlineAttachments === undefined ||
-            htmlContentWithInlineAttachments.length === 0)
+          ...(strippedTextContent.length > 0
+            ? { 'stripped-text': strippedTextContent }
+            : {}),
+          ...(strippedHtmlContentWithInlineAttachments !== undefined &&
+          strippedHtmlContentWithInlineAttachments.length > 0
+            ? { 'stripped-html': strippedHtmlContentWithInlineAttachments }
+            : {}),
+          ...(fullTextContent.length === 0 &&
+          (fullHtmlContentWithInlineAttachments === undefined ||
+            fullHtmlContentWithInlineAttachments.length === 0)
             ? { text: '' }
             : {}),
         },

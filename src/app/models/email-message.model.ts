@@ -38,6 +38,8 @@ export interface EmailMessage {
   content: {
     text?: string;
     html?: string;
+    'stripped-text'?: string;
+    'stripped-html'?: string;
   };
 
   attachments: EmailAttachmentReference[];

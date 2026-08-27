@@ -2,9 +2,18 @@ import type { EmailMessageSummary } from '@app/services/email.service';
 
 import { decodeHtmlEntities } from './decode-html-entities';
 
-export function getMessageBodyHtml(message: EmailMessageSummary): string {
+export function getMessageBodyHtml(
+  message: EmailMessageSummary,
+  showFullMessage = false,
+): string {
+  const preferredHtml = showFullMessage
+    ? message.content.html ?? message.content.text
+    : message.content['stripped-html'] ??
+      message.content['stripped-text'] ??
+      message.content.html ??
+      message.content.text;
   const content = decodeHtmlEntities(
-    message.content.html ?? message.content.text ?? '',
+    preferredHtml ?? '',
   ).replaceAll(/cid:([^"'\s>]+)/gi, (reference, rawContentId: string) => {
     const contentId = rawContentId.replaceAll(/[<>]/g, '');
     const attachment = message.attachments.find(

@@ -16,6 +16,8 @@ export type EmailMessageSummary = {
   content: {
     text?: string;
     html?: string;
+    'stripped-text'?: string;
+    'stripped-html'?: string;
   };
   attachmentsCount: number;
   attachments: Array<{

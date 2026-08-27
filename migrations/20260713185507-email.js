@@ -211,6 +211,14 @@ module.exports = {
                   bsonType: 'string',
                   description: 'HTML version of the message',
                 },
+                'stripped-text': {
+                  bsonType: 'string',
+                  description: 'Text version of the message without quoted history',
+                },
+                'stripped-html': {
+                  bsonType: 'string',
+                  description: 'HTML version of the message without quoted history',
+                },
               },
             },
             attachments: {

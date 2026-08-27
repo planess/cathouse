@@ -7,5 +7,11 @@ export function getMessagePreview(message?: EmailMessageDocument): string {
     return '';
   }
 
-  return stripHtml(message.content.text ?? message.content.html ?? '');
+  return stripHtml(
+    message.content['stripped-text'] ??
+      message.content['stripped-html'] ??
+      message.content.text ??
+      message.content.html ??
+      '',
+  );
 }
