@@ -8,11 +8,13 @@ import { EmailMailboxTabs } from './mailbox-tabs';
 type EmailMailboxPageProps = {
   route: string;
   selectedMailboxId?: string;
+  showCreateMailboxForm?: boolean;
 };
 
 export async function EmailMailboxPage({
   route,
   selectedMailboxId,
+  showCreateMailboxForm = false,
 }: EmailMailboxPageProps) {
   const mailboxGroups = await loadMailboxThreadGroups({
     mailboxId: selectedMailboxId,
@@ -51,6 +53,7 @@ export async function EmailMailboxPage({
           mailboxGroups={mailboxGroups}
           canSend={canSend}
           selectedMailboxId={selectedMailboxId}
+          showCreateMailboxForm={showCreateMailboxForm}
         />
       </section>
     </div>

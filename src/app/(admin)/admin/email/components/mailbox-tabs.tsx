@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { TabItem } from '@app/components/tabs';
@@ -35,17 +35,22 @@ type EmailMailboxTabsProps = {
   canSend: boolean;
   mailboxGroups: EmailMailboxThreadGroup[];
   selectedMailboxId?: string;
+  showCreateMailboxForm: boolean;
 };
 
 export function EmailMailboxTabs({
   canSend,
   mailboxGroups,
   selectedMailboxId,
+  showCreateMailboxForm,
 }: EmailMailboxTabsProps) {
+  const pathname = usePathname();
   const router = useRouter();
   const [groups, setGroups] = useState(mailboxGroups);
   const [activeId, setActiveId] = useState(() =>
-    getInitialActiveMailboxTabId(mailboxGroups, selectedMailboxId),
+    showCreateMailboxForm
+      ? CREATE_MAILBOX_TAB_ID
+      : getInitialActiveMailboxTabId(mailboxGroups, selectedMailboxId),
   );
   const [prefix, setPrefix] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -69,12 +74,23 @@ export function EmailMailboxTabs({
   );
 
   useEffect(() => {
-    if (selectedMailboxId === undefined) {
+    if (showCreateMailboxForm) {
+      setActiveId(CREATE_MAILBOX_TAB_ID);
+
       return;
     }
 
-    setActiveId(getInitialActiveMailboxTabId(groups, selectedMailboxId));
-  }, [groups, selectedMailboxId]);
+    const mailboxFromPath = groups.find(
+      ({ mailbox }) => pathname === `/admin/email/${mailbox.id}`,
+    );
+
+    if (mailboxFromPath !== undefined) {
+      setActiveId(getMailboxTabId(mailboxFromPath.mailbox.id));
+
+      return;
+    }
+
+  }, [groups, pathname, showCreateMailboxForm]);
 
   const handleActiveIdChange = useCallback(
     (nextActiveId: string) => {
@@ -83,15 +99,18 @@ export function EmailMailboxTabs({
           return;
         }
 
+        window.history.pushState(null, '', '/admin/email/new');
         setActiveId(nextActiveId);
-        router.push('/admin/email');
 
         return;
       }
 
-      router.push(`/admin/email/${getMailboxIdFromTabId(nextActiveId)}`);
+      const mailboxId = getMailboxIdFromTabId(nextActiveId);
+
+      window.history.pushState(null, '', `/admin/email/${mailboxId}`);
+      setActiveId(nextActiveId);
     },
-    [canSend, router],
+    [canSend],
   );
 
   const handleThreadSelect = useCallback(
