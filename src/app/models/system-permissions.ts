@@ -51,6 +51,11 @@ export const SYSTEM_PERMISSIONS = {
   ROLE_ASSIGN: 'role:assign',
   ROLE_CREATE: 'role:create',
   ROLE_DELETE: 'role:delete',
+
+  // media
+  MEDIA_UPLOAD: 'media:upload',
+  MEDIA_DELETE: 'media:delete',
+  MEDIA_REVIEW: 'media:review',
 } as const;
 
 /**
