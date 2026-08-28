@@ -34,18 +34,18 @@ const ibanKeys = [
   {
     currency: 'UAH',
     edrpou: '45962629',
-    mfo: process.env.MONOBANK_MFO,
-    iban: process.env.MONOBANK_IBAN,
-    bank: process.env.MONOBANK_NAME,
-    recipient: process.env.MONOBANK_RECIPIENT,
+    mfo: '322001',
+    iban: 'UA88 322001 00000 2600 2700 0084 46',
+    bank: 'АТ "УНІВЕРСАЛ БАНК"',
+    recipient: 'БО "БФ "Периферія"',
   },
   {
     currency: 'UAH',
     edrpou: '45962629',
-    mfo: process.env.ABANK_MFO,
-    iban: process.env.ABANK_IBAN,
-    bank: process.env.ABANK_NAME,
-    recipient: process.env.ABANK_RECIPIENT,
+    mfo: '307770',
+    iban: 'UA63 307770 00000 2600 4111 2409 53',
+    bank: 'АТ "А - Банк"',
+    recipient: 'БО "БФ "Периферія"',
   },
 ] as IbanCardItem[];
 const ibanQuestions = [
