@@ -7,10 +7,7 @@ import clientPromise from '@app/ins/mongo-client';
 import type { EmailAddress } from '@app/models/email-address.model';
 import type { EmailMailbox } from '@app/models/email-mailbox.model';
 
-import {
-  EMAIL_MAILBOX_DOMAIN,
-  EMAIL_PREFIX_PATTERN,
-} from './email/constants';
+import { EMAIL_MAILBOX_DOMAIN, EMAIL_PREFIX_PATTERN } from './email/constants';
 import { createEmailAttachmentFolder } from './email/create-email-attachment-folder';
 import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
 import { formatEmailAddress } from './email/format-email-address';
@@ -20,6 +17,7 @@ import { getExternalParticipantIds } from './email/get-external-participant-ids'
 import { getHeaderValue } from './email/get-header-value';
 import { getLastMessagesById } from './email/get-last-messages-by-id';
 import { getMailgunField } from './email/get-mailgun-field';
+import { getMailgunMessageId } from './email/get-mailgun-message-id';
 import { logEmailServiceError } from './email/log-email-service-error';
 import { mapAddressReference } from './email/map-address-reference';
 import { mapMailbox } from './email/map-mailbox';
@@ -39,8 +37,8 @@ import { stripHtml } from './email/strip-html';
 import { Singleton } from './singleton';
 
 import type {
-  EmailAttachmentDocument,
   EmailAddressReferenceDocument,
+  EmailAttachmentDocument,
   EmailContactDocument,
   EmailMessageDocument,
   EmailReadStateDocument,
@@ -56,12 +54,14 @@ import type { IncomingMailgunAttachment } from './email/types/incoming-mailgun-a
 import type { IncomingMailgunEmailPayload } from './email/types/incoming-mailgun-email-payload';
 import type { IncomingMailgunEmailResult } from './email/types/incoming-mailgun-email-result';
 import type { InlineFile } from './email/types/inline-file';
-import type { MessageResult } from './email/types/message-result';
 import type { SendMailboxEmailPayload } from './email/types/send-mailbox-email-payload';
 import type { SendMailboxEmailResult } from './email/types/send-mailbox-email-result';
 import type { SendMailboxThreadReplyPayload } from './email/types/send-mailbox-thread-reply-payload';
 import type { SendMailboxThreadReplyResult } from './email/types/send-mailbox-thread-reply-result';
-import type { MailgunMessageData } from 'mailgun.js/definitions';
+import type {
+  MailgunMessageData,
+  MessagesSendResult,
+} from 'mailgun.js/definitions';
 
 export type { EmailAddressSummary } from './email/types/email-address-summary';
 export type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
@@ -91,7 +91,7 @@ class EmailService extends Singleton {
     context = 'info',
     attachments: Array<AttachmentFile> = [],
     inline: Array<InlineFile> = [],
-  ): Promise<MessageResult> {
+  ): Promise<MessagesSendResult> {
     try {
       const messageParameters = {
         from: `Periphery Foundation<${context}@${EMAIL_MAILBOX_DOMAIN}>`,
@@ -114,7 +114,10 @@ class EmailService extends Singleton {
         }));
       }
 
-      return this.client.messages.create(EMAIL_MAILBOX_DOMAIN, messageParameters);
+      return this.client.messages.create(
+        EMAIL_MAILBOX_DOMAIN,
+        messageParameters,
+      );
     } catch (error) {
       await logEmailServiceError('sendEmail', error, {
         attachmentsCount: attachments.length,
@@ -137,7 +140,7 @@ class EmailService extends Singleton {
     body: string,
     attachments: Array<AttachmentFile> = [],
     headers: Record<string, string> = {},
-  ): Promise<MessageResult> {
+  ): Promise<MessagesSendResult> {
     try {
       const messageParameters = {
         from: formatEmailAddress(from),
@@ -165,7 +168,10 @@ class EmailService extends Singleton {
         messageParameters[`h:${headerName}`] = headerValue;
       }
 
-      return this.client.messages.create(EMAIL_MAILBOX_DOMAIN, messageParameters);
+      return this.client.messages.create(
+        EMAIL_MAILBOX_DOMAIN,
+        messageParameters,
+      );
     } catch (error) {
       await logEmailServiceError('sendEmailFromAddress', error, {
         bccCount: bcc.length,
@@ -415,7 +421,11 @@ class EmailService extends Singleton {
             disposition: contentId === undefined ? 'attachment' : 'inline',
             ...(contentId === undefined ? {} : { contentId }),
             ...(storageKeysByAttachmentField.has(attachment.fieldName)
-              ? { storageKey: storageKeysByAttachmentField.get(attachment.fieldName) }
+              ? {
+                  storageKey: storageKeysByAttachmentField.get(
+                    attachment.fieldName,
+                  ),
+                }
               : {}),
           };
         },
@@ -589,16 +599,14 @@ class EmailService extends Singleton {
         getHeaderValue(headers, 'Cc') ?? getMailgunField(payload.fields, 'Cc'),
       );
       const bcc = parseOptionalAddressList(
-        getHeaderValue(headers, 'Bcc') ?? getMailgunField(payload.fields, 'Bcc'),
+        getHeaderValue(headers, 'Bcc') ??
+          getMailgunField(payload.fields, 'Bcc'),
       );
       const replyTo = parseOptionalAddressList(
         getHeaderValue(headers, 'Reply-To') ??
           getMailgunField(payload.fields, 'Reply-To'),
       );
-      const normalizedTo =
-        to.length > 0
-          ? to
-          : mailboxRecipients;
+      const normalizedTo = to.length > 0 ? to : mailboxRecipients;
       const messageId = normalizeMessageId(
         getHeaderValue(headers, 'Message-ID') ??
           getHeaderValue(headers, 'Message-Id') ??
@@ -663,12 +671,14 @@ class EmailService extends Singleton {
       const attachmentFiles = payload.attachments.flatMap((attachment) =>
         attachment.file === undefined ? [] : [attachment.file],
       );
-      const uploadedAttachments = attachmentFiles.length === 0
-        ? []
-        : await (await import('./r2.service')).r2Service.uploadFiles(
-          attachmentFiles,
-          { folder: createEmailAttachmentFolder(threadId.toString()) },
-        );
+      const uploadedAttachments =
+        attachmentFiles.length === 0
+          ? []
+          : await (
+              await import('./r2.service')
+            ).r2Service.uploadFiles(attachmentFiles, {
+              folder: createEmailAttachmentFolder(threadId.toString()),
+            });
       const storageKeysByAttachmentField = new Map(
         payload.attachments.flatMap((attachment, index) =>
           uploadedAttachments[index] === undefined
@@ -696,26 +706,24 @@ class EmailService extends Singleton {
         getMailgunField(payload.fields, 'stripped-html');
       const strippedHtmlContent =
         getMailgunField(payload.fields, 'stripped-html') ?? fullHtmlContent;
-      const r2PublicBaseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL?.replace(
-        /\/$/,
-        '',
-      );
+      const r2PublicBaseUrl =
+        process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL?.replace(/\/$/, '');
       const resolveInlineAttachmentUrls = (content: string | undefined) =>
         content?.replaceAll(
-        /cid:([^"'\s>]+)/gi,
-        (cidReference, rawContentId: string) => {
-          const attachment = attachmentDocuments.find(
-            (item) => item.contentId === rawContentId.replaceAll(/[<>]/g, ''),
-          );
+          /cid:([^\s"'>]+)/gi,
+          (cidReference, rawContentId: string) => {
+            const attachment = attachmentDocuments.find(
+              (item) => item.contentId === rawContentId.replaceAll(/[<>]/g, ''),
+            );
 
-          return attachment?.storageKey === undefined || r2PublicBaseUrl === undefined
-            ? cidReference
-            : `${r2PublicBaseUrl}/${attachment.storageKey}`;
-        },
-      );
-      const fullHtmlContentWithInlineAttachments = resolveInlineAttachmentUrls(
-        fullHtmlContent,
-      );
+            return attachment?.storageKey === undefined ||
+              r2PublicBaseUrl === undefined
+              ? cidReference
+              : `${r2PublicBaseUrl}/${attachment.storageKey}`;
+          },
+        );
+      const fullHtmlContentWithInlineAttachments =
+        resolveInlineAttachmentUrls(fullHtmlContent);
       const strippedHtmlContentWithInlineAttachments =
         resolveInlineAttachmentUrls(strippedHtmlContent);
       const message: EmailMessageDocument = {
@@ -758,7 +766,9 @@ class EmailService extends Singleton {
         source: {
           protocol: 'SMTP',
           provider: 'mailgun',
-          ...(payload.remoteIp === undefined ? {} : { remoteIp: payload.remoteIp }),
+          ...(payload.remoteIp === undefined
+            ? {}
+            : { remoteIp: payload.remoteIp }),
         },
         dates: {
           headerDate: parseHeaderDate(getHeaderValue(headers, 'Date')),
@@ -784,26 +794,30 @@ class EmailService extends Singleton {
           .collection<EmailThreadDocument>(DbTables.emailThreads)
           .insertOne(thread);
       } else {
-        await db.collection<EmailThreadDocument>(DbTables.emailThreads).updateOne(
-          { _id: threadId },
-          {
-            $addToSet: {
-              participants: {
-                $each: participantIds,
+        await db
+          .collection<EmailThreadDocument>(DbTables.emailThreads)
+          .updateOne(
+            { _id: threadId },
+            {
+              $addToSet: {
+                participants: {
+                  $each: participantIds,
+                },
+              },
+              $inc: {
+                messageCount: 1,
+              },
+              $set: {
+                lastMessageId: messageObjectId,
+                updatedAt: now,
               },
             },
-            $inc: {
-              messageCount: 1,
-            },
-            $set: {
-              lastMessageId: messageObjectId,
-              updatedAt: now,
-            },
-          },
-        );
+          );
       }
 
-      await db.collection<EmailMessageDocument>(DbTables.emailMessages).insertOne(message);
+      await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .insertOne(message);
 
       return {
         messageId,
@@ -821,8 +835,8 @@ class EmailService extends Singleton {
           getMailgunField(payload.fields, 'recipient') === undefined
             ? undefined
             : (getMailgunField(payload.fields, 'recipient') ?? '')
-              .split(/[\n,;](?=(?:[^"]*"[^"]*")*[^"]*$)/)
-              .filter((entry) => entry.trim().length > 0).length,
+                .split(/[\n,;](?=(?:[^"]*"[^"]*")*[^"]*$)/)
+                .filter((entry) => entry.trim().length > 0).length,
         subject: getMailgunField(payload.fields, 'subject'),
       });
 
@@ -889,12 +903,14 @@ class EmailService extends Singleton {
       const threadId = new ObjectId();
       const messageObjectId = new ObjectId();
       const attachmentFolder = createEmailAttachmentFolder(threadId.toString());
-      const uploadedAttachments = payload.attachments.length === 0
-        ? []
-        : await (await import('./r2.service')).r2Service.uploadFiles(
-          payload.attachments,
-          { folder: attachmentFolder },
-        );
+      const uploadedAttachments =
+        payload.attachments.length === 0
+          ? []
+          : await (
+              await import('./r2.service')
+            ).r2Service.uploadFiles(payload.attachments, {
+              folder: attachmentFolder,
+            });
       const emailAttachments = await Promise.all(
         payload.attachments.map(async (attachment) => ({
           data: Buffer.from(await attachment.arrayBuffer()),
@@ -916,7 +932,7 @@ class EmailService extends Singleton {
         throw new Error('Failed to send email.');
       }
 
-      const messageId = normalizeMessageId(result.id);
+      const messageId = getMailgunMessageId(result);
 
       const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
@@ -1082,12 +1098,14 @@ class EmailService extends Singleton {
       const attachmentFolder = createEmailAttachmentFolder(
         threadObjectId.toString(),
       );
-      const uploadedAttachments = payload.attachmentFiles.length === 0
-        ? []
-        : await (await import('./r2.service')).r2Service.uploadFiles(
-          payload.attachmentFiles,
-          { folder: attachmentFolder },
-        );
+      const uploadedAttachments =
+        payload.attachmentFiles.length === 0
+          ? []
+          : await (
+              await import('./r2.service')
+            ).r2Service.uploadFiles(payload.attachmentFiles, {
+              folder: attachmentFolder,
+            });
       const references = [
         ...(previousMessage?.references ?? []),
         ...(previousMessage === null || previousMessage === undefined
@@ -1117,7 +1135,7 @@ class EmailService extends Singleton {
         throw new Error('Failed to send email.');
       }
 
-      const messageId = normalizeMessageId(result.id);
+      const messageId = getMailgunMessageId(result);
       const headers = {
         'Message-ID': messageId,
         ...sendHeaders,
@@ -1317,7 +1335,7 @@ class EmailService extends Singleton {
         throw new Error('Failed to forward email.');
       }
 
-      const messageId = normalizeMessageId(result.id);
+      const messageId = getMailgunMessageId(result);
       const headers = {
         'Message-ID': messageId,
         ...sendHeaders,
@@ -1365,10 +1383,10 @@ class EmailService extends Singleton {
           ...(getExternalParticipantIds([recipientReference]).length === 0
             ? {}
             : {
-              $addToSet: {
-                participants: recipientReference._id,
-              },
-            }),
+                $addToSet: {
+                  participants: recipientReference._id,
+                },
+              }),
           $inc: {
             messageCount: 1,
           },
@@ -1446,7 +1464,9 @@ class EmailService extends Singleton {
     const safePageSize = Math.max(1, pageSize);
     const filter = { mailboxId: new ObjectId(mailboxId) };
     const [totalItems, threads] = await Promise.all([
-      db.collection<EmailThreadDocument>(DbTables.emailThreads).countDocuments(filter),
+      db
+        .collection<EmailThreadDocument>(DbTables.emailThreads)
+        .countDocuments(filter),
       db
         .collection<EmailThreadDocument>(DbTables.emailThreads)
         .find(filter)
@@ -1531,15 +1551,17 @@ class EmailService extends Singleton {
       );
       const attachmentIds = messages.flatMap((message) =>
         (message.attachments ?? []).filter(
-          (attachment): attachment is ObjectId => attachment instanceof ObjectId,
+          (attachment): attachment is ObjectId =>
+            attachment instanceof ObjectId,
         ),
       );
-      const attachmentDocuments = attachmentIds.length === 0
-        ? []
-        : await db
-          .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
-          .find({ _id: { $in: attachmentIds } })
-          .toArray();
+      const attachmentDocuments =
+        attachmentIds.length === 0
+          ? []
+          : await db
+              .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+              .find({ _id: { $in: attachmentIds } })
+              .toArray();
       const attachmentsById = new Map(
         attachmentDocuments.map((attachment) => [
           attachment._id.toString(),
@@ -1559,9 +1581,7 @@ class EmailService extends Singleton {
     }
   }
 
-  async listMailboxThreadGroups(
-    userId: string,
-  ): Promise<EmailMailboxThreadGroup[]> {
+  async listMailboxThreadGroups(): Promise<EmailMailboxThreadGroup[]> {
     try {
       const dbClient = await clientPromise;
       const db = dbClient.db();
@@ -1573,58 +1593,6 @@ class EmailService extends Singleton {
       return mailboxes.map((mailbox) => ({
         mailbox: mapMailbox(mailbox),
         threads: [],
-      }));
-
-      const mailboxIds = mailboxes.map((mailbox) => mailbox._id);
-      const threads =
-        mailboxIds.length > 0
-          ? await db
-            .collection<EmailThreadDocument>(DbTables.emailThreads)
-            .find({ mailboxId: { $in: mailboxIds } })
-            .sort({ updatedAt: -1 })
-            .toArray()
-          : [];
-      const threadsByMailboxId = new Map<string, EmailThreadSummary[]>();
-      const contactsById = await getContactsById(
-        threads.flatMap((thread) => getContactIds(thread.participants)),
-      );
-      const lastMessagesById = await getLastMessagesById(threads);
-      const incomingMessages = threads.length > 0
-        ? await db
-          .collection<EmailMessageDocument>(DbTables.emailMessages)
-          .find({
-            threadId: { $in: threads.map((thread) => thread._id) },
-            direction: 'incoming',
-          })
-          .project<Pick<EmailMessageDocument, '_id' | 'threadId'>>({
-            _id: 1,
-            threadId: 1,
-          })
-          .toArray()
-        : [];
-      const readMessageIds = await this.getReadMessageIds(
-        incomingMessages.map((message) => message._id),
-        userId,
-      );
-      const unreadThreadIds = new Set(
-        incomingMessages
-          .filter((message) => !readMessageIds.has(message._id.toString()))
-          .map((message) => message.threadId.toString()),
-      );
-
-      for (const thread of threads) {
-        const mailboxId = thread.mailboxId.toString();
-        const mailboxThreads = threadsByMailboxId.get(mailboxId) ?? [];
-
-        mailboxThreads.push(
-          mapThread(thread, contactsById, lastMessagesById, unreadThreadIds),
-        );
-        threadsByMailboxId.set(mailboxId, mailboxThreads);
-      }
-
-      return mailboxes.map((mailbox) => ({
-        mailbox: mapMailbox(mailbox),
-        threads: threadsByMailboxId.get(mailbox._id.toString()) ?? [],
       }));
     } catch (error) {
       await logEmailServiceError('listMailboxThreadGroups', error);
