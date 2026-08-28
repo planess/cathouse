@@ -213,11 +213,13 @@ module.exports = {
                 },
                 'stripped-text': {
                   bsonType: 'string',
-                  description: 'Text version of the message without quoted history',
+                  description:
+                    'Text version of the message without quoted history',
                 },
                 'stripped-html': {
                   bsonType: 'string',
-                  description: 'HTML version of the message without quoted history',
+                  description:
+                    'HTML version of the message without quoted history',
                 },
               },
             },
@@ -304,44 +306,53 @@ module.exports = {
 
     db.createCollection('email_attachments', {
       validator: {
-        $jsonSchema: {
-          bsonType: 'object',
-          required: ['filename', 'contentType', 'disposition', 'storageKey'],
-          properties: {
-            filename: {
-              bsonType: 'string',
-              description: 'Name of the attachment file',
-            },
-            contentType: {
-              bsonType: 'string',
-              description: 'MIME type of attachment',
-            },
-            sizeBytes: {
-              bsonType: 'int',
-              description: 'Size of attachment in bytes',
-            },
-            disposition: {
-              bsonType: 'string',
-              description: 'Disposition (inline or attachment)',
-              enum: ['inline', 'attachment'],
-            },
-            contentId: {
-              bsonType: 'string',
-              description:
-                'Content-ID for inline attachments (if known, without angle brackets)',
-            },
-            storageKey: {
-              bsonType: 'string',
-              description: 'Key for storing attachment content',
+        $and: [
+          {
+            $jsonSchema: {
+              bsonType: 'object',
+              required: [
+                'filename',
+                'contentType',
+                'disposition',
+                'storageKey',
+              ],
+              properties: {
+                filename: {
+                  bsonType: 'string',
+                  description: 'Name of the attachment file',
+                },
+                contentType: {
+                  bsonType: 'string',
+                  description: 'MIME type of attachment',
+                },
+                sizeBytes: {
+                  bsonType: 'int',
+                  description: 'Size of attachment in bytes',
+                },
+                disposition: {
+                  bsonType: 'string',
+                  description: 'Disposition (inline or attachment)',
+                  enum: ['inline', 'attachment'],
+                },
+                contentId: {
+                  bsonType: 'string',
+                  description:
+                    'Content-ID for inline attachments (if known, without angle brackets)',
+                },
+                storageKey: {
+                  bsonType: 'string',
+                  description: 'Key for storing attachment content',
+                },
+              },
             },
           },
-          if: {
-            properties: { disposition: { const: 'inline' } },
+          {
+            $or: [
+              { disposition: { $ne: 'inline' } },
+              { contentId: { $exists: true } },
+            ],
           },
-          then: {
-            required: ['contentId'],
-          },
-        },
+        ],
       },
     });
 

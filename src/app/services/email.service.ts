@@ -13,7 +13,6 @@ import {
 } from './email/constants';
 import { createEmailAttachmentFolder } from './email/create-email-attachment-folder';
 import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
-import { createMessageId } from './email/create-message-id';
 import { formatEmailAddress } from './email/format-email-address';
 import { getContactIds } from './email/get-contact-ids';
 import { getContactsById } from './email/get-contacts-by-id';
@@ -889,7 +888,6 @@ class EmailService extends Singleton {
       const bccContacts = contacts.slice(1 + to.length + cc.length);
       const threadId = new ObjectId();
       const messageObjectId = new ObjectId();
-      const messageId = createMessageId();
       const attachmentFolder = createEmailAttachmentFolder(threadId.toString());
       const uploadedAttachments = payload.attachments.length === 0
         ? []
@@ -917,6 +915,8 @@ class EmailService extends Singleton {
       if (result.status !== 200) {
         throw new Error('Failed to send email.');
       }
+
+      const messageId = normalizeMessageId(result.id);
 
       const participantIds = getExternalParticipantIds(contacts);
       const now = new Date();
@@ -1079,7 +1079,6 @@ class EmailService extends Singleton {
         1 + to.length + cc.length,
       );
       const bccContacts = contacts.slice(1 + to.length + cc.length);
-      const messageId = createMessageId();
       const attachmentFolder = createEmailAttachmentFolder(
         threadObjectId.toString(),
       );
@@ -1095,8 +1094,7 @@ class EmailService extends Singleton {
           ? []
           : [previousMessage.messageId]),
       ];
-      const headers = {
-        'Message-ID': messageId,
+      const sendHeaders = {
         ...(previousMessage === null || previousMessage === undefined
           ? {}
           : { 'In-Reply-To': previousMessage.messageId }),
@@ -1112,12 +1110,18 @@ class EmailService extends Singleton {
         subject,
         bodyHtml,
         payload.attachments,
-        headers,
+        sendHeaders,
       );
 
       if (result.status !== 200) {
         throw new Error('Failed to send email.');
       }
+
+      const messageId = normalizeMessageId(result.id);
+      const headers = {
+        'Message-ID': messageId,
+        ...sendHeaders,
+      };
 
       const attachmentDocuments: EmailAttachmentDocument[] =
         uploadedAttachments.map((attachment) => ({
@@ -1290,13 +1294,11 @@ class EmailService extends Singleton {
         address: mailbox.address,
         normalizedAddress: mailbox.normalizedAddress,
       };
-      const messageId = createMessageId();
       const references = [
         ...(sourceMessage.references ?? []),
         sourceMessage.messageId,
       ];
-      const headers = {
-        'Message-ID': messageId,
+      const sendHeaders = {
         'In-Reply-To': sourceMessage.messageId,
         References: references.join(' '),
       };
@@ -1308,12 +1310,18 @@ class EmailService extends Singleton {
         subject,
         bodyHtml,
         [],
-        headers,
+        sendHeaders,
       );
 
       if (result.status !== 200) {
         throw new Error('Failed to forward email.');
       }
+
+      const messageId = normalizeMessageId(result.id);
+      const headers = {
+        'Message-ID': messageId,
+        ...sendHeaders,
+      };
 
       const recipientReference = await this.createOrUpdateContact(recipient);
       const now = new Date();
