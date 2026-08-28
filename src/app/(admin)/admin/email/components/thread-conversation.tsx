@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { FormEvent, useEffect, useState, useTransition } from 'react';
 
 import type {
   EmailMessageSummary,
@@ -16,6 +16,7 @@ import { sendForwardMessageRequest } from '../helpers/send-forward-message-reque
 import { sendThreadReplyRequest } from '../helpers/send-thread-reply-request';
 
 import { ForwardMessageModal } from './forward-message-modal';
+import { NavigationLoadingOverlay } from './navigation-loading-overlay';
 import { ThreadMessageList } from './thread-message-list';
 import { ThreadReplyForm } from './thread-reply-form';
 
@@ -35,13 +36,14 @@ export function ThreadConversation({
   initialMessages,
   thread,
 }: ThreadConversationProps) {
+  const router = useRouter();
+  const [isBackNavigationPending, startBackNavigation] = useTransition();
   const [messages, setMessages] = useState(initialMessages);
   const [form, setForm] = useState<ThreadReplyFormState | null>(null);
   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<SendEmailResponse | null>(null);
-  const [editorKey, setEditorKey] = useState(0);
   const [forwardMessage, setForwardMessage] =
     useState<EmailMessageSummary | null>(null);
   const [forwardRecipient, setForwardRecipient] = useState('');
@@ -103,13 +105,9 @@ export function ThreadConversation({
 
         setMessages(nextMessages);
         setAttachments([]);
-        setForm((currentForm) => ({
-          ...getInitialReplyForm(nextMessages, thread.participants),
-          to: currentForm?.to ?? form.to,
-          cc: [{ name: '', email: '' }],
-          bcc: [{ name: '', email: '' }],
-        }));
-        setEditorKey((currentKey) => currentKey + 1);
+        setForm(null);
+        setIsReplyExpanded(false);
+        setResult(null);
       }
     } catch {
       setResult({
@@ -135,6 +133,12 @@ export function ThreadConversation({
     setForm(null);
     setAttachments([]);
     setResult(null);
+  };
+
+  const handleBack = () => {
+    startBackNavigation(() => {
+      router.push(`/admin/email/${mailboxId}`);
+    });
   };
 
   const closeForwardModal = () => {
@@ -199,12 +203,13 @@ export function ThreadConversation({
         <header className="shrink-0 py-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
-              <Link
+              <button
                 className="mb-4 inline-flex h-8 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-emerald-500/40"
-                href={`/admin/email/${mailboxId}`}
+                onClick={handleBack}
+                type="button"
               >
                 Back
-              </Link>
+              </button>
               <h1 className="truncate text-2xl font-bold text-slate-950 dark:text-white">
                 {thread.subject}
               </h1>
@@ -235,7 +240,6 @@ export function ThreadConversation({
           (isReplyExpanded && form !== null ? (
             <ThreadReplyForm
               attachments={attachments}
-              editorKey={editorKey}
               form={form}
               result={result}
               sending={sending}
@@ -267,6 +271,10 @@ export function ThreadConversation({
             result={forwardResult}
             sending={forwardSending}
           />
+        )}
+
+        {isBackNavigationPending && (
+          <NavigationLoadingOverlay label="Returning to mailbox..." />
         )}
       </div>
     </div>

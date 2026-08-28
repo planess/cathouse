@@ -1,7 +1,14 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 
 import type { TabItem } from '@app/components/tabs';
 import { Tabs } from '@app/components/tabs';
@@ -26,6 +33,7 @@ import { ComposeEmailModal } from './compose-email-modal';
 import { CreateMailboxForm } from './create-mailbox-form';
 import { EditMailboxDisplayNameModal } from './edit-mailbox-display-name-modal';
 import { MailboxTabPanel } from './mailbox-tab-panel';
+import { NavigationLoadingOverlay } from './navigation-loading-overlay';
 
 import type { ComposeFormState } from '../types/compose-form-state';
 import type { CreateMailboxResponse } from '../types/create-mailbox-response';
@@ -46,6 +54,7 @@ export function EmailMailboxTabs({
 }: EmailMailboxTabsProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isThreadNavigationPending, startThreadNavigation] = useTransition();
   const [groups, setGroups] = useState(mailboxGroups);
   const [threadRefreshTokens, setThreadRefreshTokens] = useState<
     Record<string, number>
@@ -118,9 +127,11 @@ export function EmailMailboxTabs({
 
   const handleThreadSelect = useCallback(
     (mailboxId: string, threadId: string) => {
-      router.push(`/admin/email/${mailboxId}/${threadId}`);
+      startThreadNavigation(() => {
+        router.push(`/admin/email/${mailboxId}/${threadId}`);
+      });
     },
-    [router],
+    [router, startThreadNavigation],
   );
 
   const updateCreateMailboxPrefix = useCallback((value: string) => {
@@ -380,6 +391,10 @@ export function EmailMailboxTabs({
         items={tabItems}
         onActiveIdChange={handleActiveIdChange}
       />
+
+      {isThreadNavigationPending && (
+        <NavigationLoadingOverlay label="Opening conversation..." />
+      )}
 
       {composeMailbox !== null && (
         <ComposeEmailModal

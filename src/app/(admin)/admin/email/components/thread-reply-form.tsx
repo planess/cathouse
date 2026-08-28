@@ -11,7 +11,6 @@ import type { ThreadReplyFormState } from '../types/thread-reply-form-state';
 
 type ThreadReplyFormProps = {
   attachments: File[];
-  editorKey: number;
   form: ThreadReplyFormState;
   result: SendEmailResponse | null;
   sending: boolean;
@@ -26,7 +25,6 @@ type ThreadReplyFormProps = {
 
 export function ThreadReplyForm({
   attachments,
-  editorKey,
   form,
   result,
   sending,
@@ -157,7 +155,6 @@ export function ThreadReplyForm({
               <RichTextEditor
                 editorClassName="prose prose-sm dark:prose-invert max-w-none min-h-60 px-4 py-3 focus:outline-none [&_blockquote]:my-4 [&_blockquote]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-slate-300 [&_blockquote]:bg-slate-50 [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:text-sm [&_blockquote]:text-slate-600 [&_blockquote_blockquote]:border-slate-400 dark:[&_blockquote]:border-slate-600 dark:[&_blockquote]:bg-slate-900 dark:[&_blockquote]:text-slate-300 dark:[&_blockquote_blockquote]:border-slate-500"
                 initialContent={form.bodyHtml}
-                key={editorKey}
                 onChange={(html) => onChange('bodyHtml', html)}
               />
             </div>
