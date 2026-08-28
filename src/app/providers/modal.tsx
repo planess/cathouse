@@ -158,9 +158,9 @@ export function ModalProvider({ children }: ModalProviderProps) {
       return current.map((modal, index) =>
         index === lastIndex
           ? {
-              ...modal,
-              status: 'closing',
-            }
+            ...modal,
+            status: 'closing',
+          }
           : modal,
       );
     });
@@ -568,16 +568,16 @@ function resolveModalOriginStyle(origin?: ModalOrigin | null): CSSProperties {
 
 function resolveToneClass(tone: ModalTone) {
   switch (tone) {
-    case 'primary':
-      return 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-sky-500 dark:text-slate-900 dark:hover:bg-sky-600';
-    case 'secondary':
-      return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
-    case 'danger':
-      return 'bg-rose-600 text-white hover:bg-rose-700';
-    case 'ghost':
-      return 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900';
-    default:
-      return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
+  case 'primary':
+    return 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-sky-500 dark:text-slate-900 dark:hover:bg-sky-600';
+  case 'secondary':
+    return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
+  case 'danger':
+    return 'bg-rose-600 text-white hover:bg-rose-700';
+  case 'ghost':
+    return 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+  default:
+    return 'bg-slate-100 text-slate-800 hover:bg-slate-200';
   }
 }
 

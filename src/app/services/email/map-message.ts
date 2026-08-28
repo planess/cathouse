@@ -55,24 +55,24 @@ export function mapMessage(
       return document === undefined
         ? []
         : [
-            {
-              id: document._id.toString(),
-              filename: document.filename,
-              contentType: document.contentType,
-              sizeBytes: document.sizeBytes,
-              ...(document.contentId === undefined
-                ? {}
-                : { contentId: document.contentId }),
-              ...(document.storageKey === undefined
-                ? {}
-                : {
-                    downloadUrl: `/api/admin/email/attachments/${document._id}`,
-                    ...(r2PublicBaseUrl === undefined
-                      ? {}
-                      : { url: `${r2PublicBaseUrl}/${document.storageKey}` }),
-                  }),
-            },
-          ];
+          {
+            id: document._id.toString(),
+            filename: document.filename,
+            contentType: document.contentType,
+            sizeBytes: document.sizeBytes,
+            ...(document.contentId === undefined
+              ? {}
+              : { contentId: document.contentId }),
+            ...(document.storageKey === undefined
+              ? {}
+              : {
+                downloadUrl: `/api/admin/email/attachments/${document._id}`,
+                ...(r2PublicBaseUrl === undefined
+                  ? {}
+                  : { url: `${r2PublicBaseUrl}/${document.storageKey}` }),
+              }),
+          },
+        ];
     }),
     headerDate: toIsoString(
       message.dates.headerDate ?? message.dates.createdAt,

@@ -14,7 +14,7 @@ export function getMessageBodyHtml(
       message.content.text;
   const content = decodeHtmlEntities(
     preferredHtml ?? '',
-  ).replaceAll(/cid:([^"'\s>]+)/gi, (reference, rawContentId: string) => {
+  ).replaceAll(/cid:([^\s"'>]+)/gi, (reference, rawContentId: string) => {
     const contentId = rawContentId.replaceAll(/[<>]/g, '');
     const attachment = message.attachments.find(
       (item) => item.contentId === contentId,

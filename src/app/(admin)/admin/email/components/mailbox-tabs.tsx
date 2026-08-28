@@ -259,9 +259,9 @@ export function EmailMailboxTabs({
             currentGroups.map((group) =>
               group.mailbox.id === composeMailbox.id
                 ? {
-                    ...group,
-                    threads: [createdThread, ...group.threads],
-                  }
+                  ...group,
+                  threads: [createdThread, ...group.threads],
+                }
                 : group,
             ),
           );

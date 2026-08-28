@@ -4,11 +4,11 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 
 import type { EmailMailboxSummary } from '@app/services/email.service';
 
-import { RichTextEditor } from './rich-text-editor';
 import { inputClassName } from '../constants/input-class-name';
 import { formatMailboxFrom } from '../helpers/format-mailbox-from';
 
 import { RecipientFields } from './email-recipient-fields';
+import { RichTextEditor } from './rich-text-editor';
 import { StatusMessage } from './status-message';
 
 import type { ComposeFormState } from '../types/compose-form-state';

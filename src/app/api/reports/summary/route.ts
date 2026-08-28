@@ -278,34 +278,34 @@ export async function GET(request: Request) {
 
   const sterilizedByMonth = loadImpact
     ? sterilizedTotals.map((item) => ({
-        month: item._id,
-        sterilized: item.total,
-      }))
+      month: item._id,
+      sterilized: item.total,
+    }))
     : [];
 
   const observationByMonth = loadImpact
     ? observationTotals.map((item) => ({
-        month: item._id,
-        locations: item.total,
-      }))
+      month: item._id,
+      locations: item.total,
+    }))
     : [];
 
   const statsMonths = loadImpact
     ? buildMonths(
-        sterilizedByMonth.map((item) => ({
-          month: item.month,
-          sterilized: item.sterilized,
-          locations:
+      sterilizedByMonth.map((item) => ({
+        month: item.month,
+        sterilized: item.sterilized,
+        locations:
             observationByMonth.find((entry) => entry.month === item.month)
               ?.locations ?? 0,
-        })),
-        (month) => ({
-          sterilized: 0,
-          locations:
+      })),
+      (month) => ({
+        sterilized: 0,
+        locations:
             observationByMonth.find((entry) => entry.month === month)
               ?.locations ?? 0,
-        }),
-      )
+      }),
+    )
     : [];
 
   const yearSterilized = loadImpact
@@ -371,18 +371,18 @@ export async function GET(request: Request) {
 
   const financeMonths = loadFinance
     ? buildMonths(
-        [...financeMap.entries()].map(([month, totals]) => ({
-          month,
-          incoming: totals.incoming,
-          outgoing: totals.outgoing,
-          breakdown: outgoingBreakdownByMonth.get(month) ?? [],
-        })),
-        (month) => ({
-          incoming: 0,
-          outgoing: 0,
-          breakdown: outgoingBreakdownByMonth.get(month) ?? [],
-        }),
-      )
+      [...financeMap.entries()].map(([month, totals]) => ({
+        month,
+        incoming: totals.incoming,
+        outgoing: totals.outgoing,
+        breakdown: outgoingBreakdownByMonth.get(month) ?? [],
+      })),
+      (month) => ({
+        incoming: 0,
+        outgoing: 0,
+        breakdown: outgoingBreakdownByMonth.get(month) ?? [],
+      }),
+    )
     : [];
 
   const yearIncoming = loadFinance
@@ -405,17 +405,17 @@ export async function GET(request: Request) {
     year,
     stats: loadImpact
       ? {
-          yearSterilized,
-          yearLocations,
-          months: statsMonths,
-        }
+        yearSterilized,
+        yearLocations,
+        months: statsMonths,
+      }
       : undefined,
     finance: loadFinance
       ? {
-          yearIncoming,
-          yearOutgoing,
-          months: financeMonths,
-        }
+        yearIncoming,
+        yearOutgoing,
+        months: financeMonths,
+      }
       : undefined,
     hasPrevious,
   });

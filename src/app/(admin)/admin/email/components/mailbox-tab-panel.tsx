@@ -92,7 +92,7 @@ export function MailboxTabPanel({
         setPageThreads(payload.items ?? []);
         setTotalItems(payload.totalItems ?? 0);
       })
-      .catch(() => undefined)
+      .catch(() => { /* return undefined */ })
       .finally(() => {
         if (isCurrent) {
           setIsLoading(false);

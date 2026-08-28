@@ -29,9 +29,9 @@ export function getInitialReplyForm(
       recipients.length === 0
         ? [{ name: '', email: '' }]
         : recipients.map((item) => ({
-            name: item.name ?? '',
-            email: item.address,
-          })),
+          name: item.name ?? '',
+          email: item.address,
+        })),
     cc: [{ name: '', email: '' }],
     bcc: [{ name: '', email: '' }],
     bodyHtml: createReplyQuoteHtml(messages),

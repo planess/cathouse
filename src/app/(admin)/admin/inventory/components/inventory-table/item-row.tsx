@@ -39,10 +39,10 @@ export function ItemRow({
     item.type === 'asset'
       ? `${typeLabel} • Total: ${item.entityCount}`
       : `${typeLabel} • Total: ${item.totalQuantity} ${
-          item.quantityUnit.length > 0
-            ? item.quantityUnit
-            : t('table.unitsLabel')
-        }`;
+        item.quantityUnit.length > 0
+          ? item.quantityUnit
+          : t('table.unitsLabel')
+      }`;
 
   return (
     <div className="border-b border-[#e0ebe7]/80 last:border-b-0 dark:border-slate-800">

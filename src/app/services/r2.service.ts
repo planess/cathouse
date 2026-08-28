@@ -181,7 +181,7 @@ export class R2Service extends Singleton {
     return key
       .trim()
       .toLowerCase()
-        .replaceAll(/[^\da-z-]+/g, '-')
+      .replaceAll(/[^\da-z-]+/g, '-')
       .replaceAll(/^-+|-+$/g, '');
   }
 

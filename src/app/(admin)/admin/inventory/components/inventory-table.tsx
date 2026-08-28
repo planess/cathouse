@@ -71,7 +71,7 @@ export function InventoryTable({
                 depth={0}
                 expandedRows={expandedRows}
                 onToggleRow={toggleRow}
-                  onOpenTransfer={openTransferForm}
+                onOpenTransfer={openTransferForm}
               />
             ))}
           </div>

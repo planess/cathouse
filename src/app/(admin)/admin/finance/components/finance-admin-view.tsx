@@ -817,31 +817,31 @@ export function FinanceAdminView({
                               report.categoryBalanceDelta > 0 &&
                               typeof report.categoryBalanceFrom === 'number' &&
                               typeof report.categoryBalanceTo === 'number' && (
-                                <p className="text-[10px] font-medium text-sky-600 whitespace-nowrap">
-                                  {currency.format(report.categoryBalanceFrom)}{' '}
-                                  {'->'}{' '}
-                                  {currency.format(report.categoryBalanceTo)}
-                                </p>
-                              )}
+                              <p className="text-[10px] font-medium text-sky-600 whitespace-nowrap">
+                                {currency.format(report.categoryBalanceFrom)}{' '}
+                                {'->'}{' '}
+                                {currency.format(report.categoryBalanceTo)}
+                              </p>
+                            )}
                             {report.type === 'outgoing' &&
                               (report.categoryWithdrawals?.length ?? 0) > 0 && (
-                                <div className="mt-0.5 space-y-0.5">
-                                  {report.categoryWithdrawals?.map(
-                                    (withdrawal, index) => (
-                                      <p
-                                        key={`${report.id}-withdrawal-${index}`}
-                                        className="text-[10px] font-medium text-sky-600 whitespace-nowrap"
-                                      >
-                                        {withdrawal.categoryName
-                                          ? `${withdrawal.categoryName}: `
-                                          : ''}
-                                        {currency.format(withdrawal.from)}{' '}
-                                        {'->'} {currency.format(withdrawal.to)}
-                                      </p>
-                                    ),
-                                  )}
-                                </div>
-                              )}
+                              <div className="mt-0.5 space-y-0.5">
+                                {report.categoryWithdrawals?.map(
+                                  (withdrawal, index) => (
+                                    <p
+                                      key={`${report.id}-withdrawal-${index}`}
+                                      className="text-[10px] font-medium text-sky-600 whitespace-nowrap"
+                                    >
+                                      {withdrawal.categoryName
+                                        ? `${withdrawal.categoryName}: `
+                                        : ''}
+                                      {currency.format(withdrawal.from)}{' '}
+                                      {'->'} {currency.format(withdrawal.to)}
+                                    </p>
+                                  ),
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
                       </td>
@@ -896,59 +896,59 @@ export function FinanceAdminView({
                     </tr>
                     {report.details.length > 0 &&
                       expandedReportIds[report.id] && (
-                        <tr className="bg-zinc-200/20 border-x border-x-slate-400">
-                          <td colSpan={4} className="px-6 py-3">
-                            <div className="space-y-2">
-                              {report.details.map((detail, index) => {
-                                const categoryLabel =
+                      <tr className="bg-zinc-200/20 border-x border-x-slate-400">
+                        <td colSpan={4} className="px-6 py-3">
+                          <div className="space-y-2">
+                            {report.details.map((detail, index) => {
+                              const categoryLabel =
                                   detail.categoryName?.trim() ?? '';
 
-                                return (
-                                  <div
-                                    key={`${report.id}-detail-label-${index}`}
-                                    className="text-xs text-slate-500"
-                                  >
-                                    <p className="font-semibold text-slate-700">
-                                      {detail.description}
+                              return (
+                                <div
+                                  key={`${report.id}-detail-label-${index}`}
+                                  className="text-xs text-slate-500"
+                                >
+                                  <p className="font-semibold text-slate-700">
+                                    {detail.description}
+                                  </p>
+                                  {categoryLabel ? (
+                                    <p className="text-[10px] uppercase text-slate-400">
+                                      {categoryLabel}
                                     </p>
-                                    {categoryLabel ? (
-                                      <p className="text-[10px] uppercase text-slate-400">
-                                        {categoryLabel}
-                                      </p>
-                                    ) : null}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </td>
-                          <td className="px-6 py-3 text-right">
-                            <div className="space-y-2 text-xs">
-                              {report.details.map((detail, index) => {
-                                const categoryLabel =
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </td>
+                        <td className="px-6 py-3 text-right">
+                          <div className="space-y-2 text-xs">
+                            {report.details.map((detail, index) => {
+                              const categoryLabel =
                                   detail.categoryName?.trim() ?? '';
 
-                                return (
-                                  <div
-                                    key={`${report.id}-detail-value-${index}`}
+                              return (
+                                <div
+                                  key={`${report.id}-detail-value-${index}`}
+                                >
+                                  <p
+                                    className={clsx(
+                                      'font-bold text-rose-500',
+                                      {
+                                        'mb-[calc(10px/.75)]': categoryLabel,
+                                      },
+                                    )}
                                   >
-                                    <p
-                                      className={clsx(
-                                        'font-bold text-rose-500',
-                                        {
-                                          'mb-[calc(10px/.75)]': categoryLabel,
-                                        },
-                                      )}
-                                    >
-                                      -{currency.format(detail.amount)}
-                                    </p>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </td>
-                          <td colSpan={3} />
-                        </tr>
-                      )}
+                                    -{currency.format(detail.amount)}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </td>
+                        <td colSpan={3} />
+                      </tr>
+                    )}
                   </Fragment>
                 ))
               )}

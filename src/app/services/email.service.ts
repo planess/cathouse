@@ -422,10 +422,10 @@ class EmailService extends Singleton {
             ...(contentId === undefined ? {} : { contentId }),
             ...(storageKeysByAttachmentField.has(attachment.fieldName)
               ? {
-                  storageKey: storageKeysByAttachmentField.get(
-                    attachment.fieldName,
-                  ),
-                }
+                storageKey: storageKeysByAttachmentField.get(
+                  attachment.fieldName,
+                ),
+              }
               : {}),
           };
         },
@@ -675,10 +675,10 @@ class EmailService extends Singleton {
         attachmentFiles.length === 0
           ? []
           : await (
-              await import('./r2.service')
-            ).r2Service.uploadFiles(attachmentFiles, {
-              folder: createEmailAttachmentFolder(threadId.toString()),
-            });
+            await import('./r2.service')
+          ).r2Service.uploadFiles(attachmentFiles, {
+            folder: createEmailAttachmentFolder(threadId.toString()),
+          });
       const storageKeysByAttachmentField = new Map(
         payload.attachments.flatMap((attachment, index) =>
           uploadedAttachments[index] === undefined
@@ -835,8 +835,8 @@ class EmailService extends Singleton {
           getMailgunField(payload.fields, 'recipient') === undefined
             ? undefined
             : (getMailgunField(payload.fields, 'recipient') ?? '')
-                .split(/[\n,;](?=(?:[^"]*"[^"]*")*[^"]*$)/)
-                .filter((entry) => entry.trim().length > 0).length,
+              .split(/[\n,;](?=(?:[^"]*"[^"]*")*[^"]*$)/)
+              .filter((entry) => entry.trim().length > 0).length,
         subject: getMailgunField(payload.fields, 'subject'),
       });
 
@@ -907,10 +907,10 @@ class EmailService extends Singleton {
         payload.attachments.length === 0
           ? []
           : await (
-              await import('./r2.service')
-            ).r2Service.uploadFiles(payload.attachments, {
-              folder: attachmentFolder,
-            });
+            await import('./r2.service')
+          ).r2Service.uploadFiles(payload.attachments, {
+            folder: attachmentFolder,
+          });
       const emailAttachments = await Promise.all(
         payload.attachments.map(async (attachment) => ({
           data: Buffer.from(await attachment.arrayBuffer()),
@@ -1102,10 +1102,10 @@ class EmailService extends Singleton {
         payload.attachmentFiles.length === 0
           ? []
           : await (
-              await import('./r2.service')
-            ).r2Service.uploadFiles(payload.attachmentFiles, {
-              folder: attachmentFolder,
-            });
+            await import('./r2.service')
+          ).r2Service.uploadFiles(payload.attachmentFiles, {
+            folder: attachmentFolder,
+          });
       const references = [
         ...(previousMessage?.references ?? []),
         ...(previousMessage === null || previousMessage === undefined
@@ -1383,10 +1383,10 @@ class EmailService extends Singleton {
           ...(getExternalParticipantIds([recipientReference]).length === 0
             ? {}
             : {
-                $addToSet: {
-                  participants: recipientReference._id,
-                },
-              }),
+              $addToSet: {
+                participants: recipientReference._id,
+              },
+            }),
           $inc: {
             messageCount: 1,
           },
@@ -1559,9 +1559,9 @@ class EmailService extends Singleton {
         attachmentIds.length === 0
           ? []
           : await db
-              .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
-              .find({ _id: { $in: attachmentIds } })
-              .toArray();
+            .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+            .find({ _id: { $in: attachmentIds } })
+            .toArray();
       const attachmentsById = new Map(
         attachmentDocuments.map((attachment) => [
           attachment._id.toString(),

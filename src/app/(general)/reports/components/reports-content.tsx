@@ -563,27 +563,27 @@ export function ReportsContent({ initialYear }: { initialYear: number }) {
 
                           {getYearBreakdown(yearData.finance.months).length >
                           0 ? (
-                            <div className="border-t border-[#e7ebf4] pt-3 text-[12px] dark:border-[#2d3a52]">
+                              <div className="border-t border-[#e7ebf4] pt-3 text-[12px] dark:border-[#2d3a52]">
                               <div className="mb-2 text-[9px] font-bold uppercase tracking-widest text-[#49659c]">
-                                {t('finance.yearCategories')}
-                              </div>
+                                  {t('finance.yearCategories')}
+                                </div>
                               <div className="flex flex-wrap gap-2">
-                                {getYearBreakdown(yearData.finance.months).map(
-                                  (entry) => (
-                                    <div
-                                      key={`year-${yearData.year}-${entry.name}`}
-                                      className="flex items-center gap-2 rounded-full border border-[#e7ebf4] bg-[#f8fafc] px-3 py-1 text-[11px] font-semibold text-[#49659c] dark:border-[#2d3a52] dark:bg-[#253247] dark:text-zinc-200"
-                                    >
-                                      <span>{entry.name}</span>
-                                      <span className="font-bold text-[#0d121c] dark:text-zinc-100">
-                                        {currency.format(entry.amount)}
-                                      </span>
-                                    </div>
-                                  ),
-                                )}
-                              </div>
+                                  {getYearBreakdown(yearData.finance.months).map(
+                                    (entry) => (
+                                      <div
+                                        key={`year-${yearData.year}-${entry.name}`}
+                                        className="flex items-center gap-2 rounded-full border border-[#e7ebf4] bg-[#f8fafc] px-3 py-1 text-[11px] font-semibold text-[#49659c] dark:border-[#2d3a52] dark:bg-[#253247] dark:text-zinc-200"
+                                      >
+                                        <span>{entry.name}</span>
+                                        <span className="font-bold text-[#0d121c] dark:text-zinc-100">
+                                          {currency.format(entry.amount)}
+                                        </span>
+                                      </div>
+                                    ),
+                                  )}
+                                </div>
                             </div>
-                          ) : null}
+                            ) : null}
                         </div>
                       </div>
                     </>

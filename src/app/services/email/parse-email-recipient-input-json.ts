@@ -11,7 +11,7 @@ export function parseEmailRecipientInputJson(
     const recipients = JSON.parse(value) as unknown;
 
     if (!Array.isArray(recipients)) {
-      throw new Error('Invalid recipient email.');
+      throw new TypeError('Invalid recipient email.');
     }
 
     return recipients.map((recipient) => {

@@ -10,10 +10,10 @@ export default async function List() {
   const isVolunteer =
     user?.id !== null && user?.id !== undefined
       ? await hasPermission(
-          SYSTEM_PERMISSIONS.HISTORY_CREATE,
-          undefined,
-          user.id,
-        )
+        SYSTEM_PERMISSIONS.HISTORY_CREATE,
+        undefined,
+        user.id,
+      )
       : false;
 
   return <RegistryMapTracker isVolunteer={isVolunteer} />;
