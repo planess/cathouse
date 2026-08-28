@@ -1,0 +1,86 @@
+import { ObjectId } from 'mongodb';
+
+import { toIsoString } from './date-helpers';
+import { mapAddress } from './map-address';
+
+import type {
+  EmailAttachmentDocument,
+  EmailMessageDocument,
+} from './document-types';
+import type { EmailAddressSummary } from './types/email-address-summary';
+import type { EmailMessageSummary } from './types/email-message-summary';
+
+export function mapMessage(
+  message: EmailMessageDocument,
+  contactsById: Map<string, EmailAddressSummary>,
+  readMessageIds = new Set<string>(),
+  attachmentsById = new Map<string, EmailAttachmentDocument>(),
+): EmailMessageSummary {
+  const cc = message.cc ?? [];
+  const bcc = message.bcc ?? [];
+  const attachments = message.attachments ?? [];
+  const r2PublicBaseUrl = process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL?.replace(
+    /\/$/,
+    '',
+  );
+
+  return {
+    id: message._id.toString(),
+    messageId: message.messageId,
+    threadId: message.threadId.toString(),
+    direction: message.direction,
+    isRead:
+      message.direction === 'outgoing' ||
+      readMessageIds.has(message._id.toString()),
+    from: mapAddress(message.from, contactsById),
+    ...(message.sender !== undefined
+      ? { sender: mapAddress(message.sender, contactsById) }
+      : {}),
+    replyTo: (message.replyTo ?? []).map((address) =>
+      mapAddress(address, contactsById),
+    ),
+    to: message.to.map((address) => mapAddress(address, contactsById)),
+    cc: cc.map((address) => mapAddress(address, contactsById)),
+    bcc: bcc.map((address) => mapAddress(address, contactsById)),
+    subject: message.subject,
+    content: message.content,
+    attachmentsCount: attachments.length,
+    attachments: attachments.flatMap((attachment) => {
+      if (!(attachment instanceof ObjectId)) {
+        return [];
+      }
+
+      const document = attachmentsById.get(attachment.toString());
+
+      return document === undefined
+        ? []
+        : [
+            {
+              id: document._id.toString(),
+              filename: document.filename,
+              contentType: document.contentType,
+              sizeBytes: document.sizeBytes,
+              ...(document.contentId === undefined
+                ? {}
+                : { contentId: document.contentId }),
+              ...(document.storageKey === undefined
+                ? {}
+                : {
+                    downloadUrl: `/api/admin/email/attachments/${document._id}`,
+                    ...(r2PublicBaseUrl === undefined
+                      ? {}
+                      : { url: `${r2PublicBaseUrl}/${document.storageKey}` }),
+                  }),
+            },
+          ];
+    }),
+    headerDate: toIsoString(
+      message.dates.headerDate ?? message.dates.createdAt,
+    ),
+    createdAt: toIsoString(message.dates.createdAt),
+    receivedAt: message.dates.receivedAt
+      ? toIsoString(message.dates.receivedAt)
+      : '',
+    sentAt: message.dates.sentAt ? toIsoString(message.dates.sentAt) : '',
+  };
+}

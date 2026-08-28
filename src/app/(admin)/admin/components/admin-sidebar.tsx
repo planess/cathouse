@@ -283,7 +283,10 @@ const navItems: NavItem[] = [
   {
     href: '/admin/email',
     label: 'Email',
-    requiredPermission: SYSTEM_PERMISSIONS.EMAIL_SEND,
+    requiredAnyPermission: [
+      SYSTEM_PERMISSIONS.EMAIL_READ,
+      SYSTEM_PERMISSIONS.EMAIL_SEND,
+    ],
     Icon: function EmailIcon({ className }: SidebarIconProps) {
       return (
         <svg

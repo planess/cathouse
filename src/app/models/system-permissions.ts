@@ -45,6 +45,7 @@ export const SYSTEM_PERMISSIONS = {
   EQUIPMENT_TRANSFER: 'equipment:transfer',
 
   // foundation email
+  EMAIL_READ: 'email:read',
   EMAIL_SEND: 'email:send',
 
   // admin management
