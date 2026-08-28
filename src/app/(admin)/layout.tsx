@@ -89,6 +89,12 @@ export default async function AdminLayout({
                 >
                   Inventory
                 </Link>
+                <Link
+                  href="/admin/media"
+                  className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-slate-900"
+                >
+                  Media
+                </Link>
                 {canAccessEmail && (
                   <Link
                     href="/admin/email"

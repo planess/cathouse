@@ -11,12 +11,12 @@ import {
 
 import { SidebarIconProps, SidebarNavItem } from './admin-sidebar.types';
 
-type AdminSidebarNavItem = SidebarNavItem & {
-  anyOfPermissions?: SystemPermission[];
+type NavItem = SidebarNavItem & {
+  requiredAnyPermission?: SystemPermission[];
   requiredPermission?: SystemPermission;
 };
 
-const navItems: AdminSidebarNavItem[] = [
+const navItems: NavItem[] = [
   {
     href: '/admin',
     label: 'Overview',
@@ -244,9 +244,46 @@ const navItems: AdminSidebarNavItem[] = [
     },
   },
   {
+    href: '/admin/media',
+    label: 'Media',
+    requiredAnyPermission: [
+      SYSTEM_PERMISSIONS.MEDIA_REVIEW,
+      SYSTEM_PERMISSIONS.MEDIA_UPLOAD,
+      SYSTEM_PERMISSIONS.MEDIA_DELETE,
+    ],
+    Icon: function MediaIcon({ className }: SidebarIconProps) {
+      return (
+        <svg
+          aria-hidden="true"
+          className={className}
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <rect
+            height="14.5"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            width="17"
+            x="3.5"
+            y="4.75"
+          />
+          <path
+            d="m6.5 16 3.25-3.25 2.5 2.5 2.25-2.25 3 3"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <circle cx="15.75" cy="9" r="1.25" fill="currentColor" />
+        </svg>
+      );
+    },
+  },
+  {
     href: '/admin/email',
     label: 'Email',
-    anyOfPermissions: [
+    requiredAnyPermission: [
       SYSTEM_PERMISSIONS.EMAIL_READ,
       SYSTEM_PERMISSIONS.EMAIL_SEND,
     ],
@@ -282,12 +319,12 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const user = useCurrentUser();
   const visibleNavItems = navItems.filter(
-    ({ anyOfPermissions, requiredPermission }) =>
+    ({ requiredAnyPermission, requiredPermission }) =>
       (requiredPermission === undefined ||
-        (user?.scopes.includes(requiredPermission) ?? false)) &&
-      (anyOfPermissions === undefined ||
-        anyOfPermissions.some((permission) =>
-          user?.scopes.includes(permission),
+        user?.scopes.includes(requiredPermission) === true) &&
+      (requiredAnyPermission === undefined ||
+        requiredAnyPermission.some(
+          (permission) => user?.scopes.includes(permission) === true,
         )),
   );
 

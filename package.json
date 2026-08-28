@@ -20,7 +20,8 @@
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",
     "migrate:status": "migrate-mongo status",
-    "migrate:create": "migrate-mongo create"
+    "migrate:create": "migrate-mongo create",
+    "proxy": "cmd /c \"_temp\\tunnel.bat\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.958.0",
