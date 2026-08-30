@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { useId, useState } from 'react';
 
-import { RadioGroupProps } from './radio-group.types';
+import type { RadioGroupProps } from '@app/models/radio-group-props.model';
 
 export function RadioGroup({
   options,

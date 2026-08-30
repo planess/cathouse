@@ -126,9 +126,9 @@ async function parseEquipments(formData: FormData): Promise<{
     const uploadedMedia =
       files.length > 0
         ? await r2Service.uploadFiles(files, {
-            folder: 'acts/equipment-media',
-            fileNameBase: `act-equipment-${i + 1}`,
-          })
+          folder: 'acts/equipment-media',
+          fileNameBase: `act-equipment-${i + 1}`,
+        })
         : [];
 
     rows.push({

@@ -22,9 +22,9 @@ export async function deactivateAccount(accountId: string) {
 
   await (isUsed
     ? collection.updateOne(
-        { _id: new ObjectId(accountId) },
-        { $set: { isActive: false } },
-      )
+      { _id: new ObjectId(accountId) },
+      { $set: { isActive: false } },
+    )
     : collection.deleteOne({ _id: new ObjectId(accountId) }));
 
   revalidatePath('/admin/finance');

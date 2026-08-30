@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-
+import { createJsonResponse } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
@@ -16,20 +15,11 @@ const ALLOWED_CONTEXT_PATTERN = /^[\w.-]+$/;
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024; // 10MB per file
 const MAX_ATTACHMENTS = 10;
 
-type EmailResponse = {
-  success: boolean;
-  message: string;
-};
-
-function json(body: EmailResponse, status = 200) {
-  return NextResponse.json(body, { status });
-}
-
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser?.id) {
-    return json({ success: false, message: 'User not authenticated.' }, 401);
+    return createJsonResponse({ success: false, message: 'User not authenticated.' }, 401);
   }
 
   const canSendEmail = await hasPermission(
@@ -39,7 +29,7 @@ export async function POST(request: Request) {
   );
 
   if (!canSendEmail) {
-    return json({ success: false, message: 'Insufficient permissions.' }, 403);
+    return createJsonResponse({ success: false, message: 'Insufficient permissions.' }, 403);
   }
 
   try {
@@ -52,11 +42,11 @@ export async function POST(request: Request) {
     const body = (formData.get('body') as string)?.trim();
 
     if (!ALLOWED_CONTEXT_PATTERN.test(senderContext)) {
-      return json({ success: false, message: 'Invalid sender context.' }, 400);
+      return createJsonResponse({ success: false, message: 'Invalid sender context.' }, 400);
     }
 
     if (recipientsRaw === null || typeof recipientsRaw !== 'string') {
-      return json({ success: false, message: 'Recipients are required.' }, 400);
+      return createJsonResponse({ success: false, message: 'Recipients are required.' }, 400);
     }
 
     let recipients: EmailRecipient[];
@@ -64,7 +54,7 @@ export async function POST(request: Request) {
     try {
       recipients = JSON.parse(recipientsRaw) as EmailRecipient[];
     } catch {
-      return json({ success: false, message: 'Invalid recipients data.' }, 400);
+      return createJsonResponse({ success: false, message: 'Invalid recipients data.' }, 400);
     }
 
     const validRecipients = recipients.filter((recipient) =>
@@ -72,7 +62,7 @@ export async function POST(request: Request) {
     );
 
     if (validRecipients.length === 0) {
-      return json(
+      return createJsonResponse(
         {
           success: false,
           message: 'At least one recipient email is required.',
@@ -82,11 +72,11 @@ export async function POST(request: Request) {
     }
 
     if (!subject) {
-      return json({ success: false, message: 'Subject is required.' }, 400);
+      return createJsonResponse({ success: false, message: 'Subject is required.' }, 400);
     }
 
     if (!body) {
-      return json({ success: false, message: 'Email body is required.' }, 400);
+      return createJsonResponse({ success: false, message: 'Email body is required.' }, 400);
     }
 
     const attachmentFiles = formData
@@ -94,7 +84,7 @@ export async function POST(request: Request) {
       .filter((entry): entry is File => entry instanceof File);
 
     if (attachmentFiles.length > MAX_ATTACHMENTS) {
-      return json(
+      return createJsonResponse(
         {
           success: false,
           message: `Maximum ${MAX_ATTACHMENTS} attachments allowed.`,
@@ -133,20 +123,20 @@ export async function POST(request: Request) {
     );
 
     if (result.status !== 200) {
-      return json({ success: false, message: 'Failed to send email.' }, 502);
+      return createJsonResponse({ success: false, message: 'Failed to send email.' }, 502);
     }
 
-    return json({ success: true, message: 'Email sent successfully.' });
+    return createJsonResponse({ success: true, message: 'Email sent successfully.' });
   } catch (error) {
     if (
       error instanceof Error &&
       error.message.includes('exceeds 10MB limit')
     ) {
-      return json({ success: false, message: error.message }, 400);
+      return createJsonResponse({ success: false, message: error.message }, 400);
     }
 
     console.error('Failed to send admin email:', error);
 
-    return json({ success: false, message: 'Failed to send email.' }, 500);
+    return createJsonResponse({ success: false, message: 'Failed to send email.' }, 500);
   }
 }

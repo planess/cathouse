@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef } from 'react';
 
-import type { SerializedObservation } from '@app/api/registry/[animalId]/observations/route';
+import type { SerializedObservation } from '@app/(general)/registry/server/serialize-observation';
 import { useModal } from '@app/hooks/use-modal';
 
 import Btn from './btn';

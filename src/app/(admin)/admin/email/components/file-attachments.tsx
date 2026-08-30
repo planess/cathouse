@@ -1,6 +1,7 @@
 'use client';
 
 interface FileAttachmentsProps {
+  addLabel?: string;
   files: File[];
   onChange: (files: File[]) => void;
 }
@@ -15,7 +16,11 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function FileAttachments({ files, onChange }: FileAttachmentsProps) {
+export function FileAttachments({
+  addLabel = '+ Add file',
+  files,
+  onChange,
+}: FileAttachmentsProps) {
   const handleAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files;
     if (!selected) {
@@ -36,7 +41,7 @@ export function FileAttachments({ files, onChange }: FileAttachmentsProps) {
           Attachments
         </span>
         <label className="relative cursor-pointer overflow-hidden rounded-lg bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
-          + Add file
+          {addLabel}
           <input
             className="absolute inset-0 cursor-pointer opacity-0"
             multiple

@@ -30,7 +30,7 @@ export class R2Service extends Singleton {
     const secretAccessKey = this.requireEnv('CLOUDFLARE_ACCESS_KEY_ID_SECRET');
 
     this.bucket = this.requireEnv('CLOUDFLARE_R2_BUCKET');
-    this.publicBaseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL;
+    this.publicBaseUrl = this.requireEnv('CLOUDFLARE_R2_ANIMAL_IMAGE_URL');
     this.maxFileSizeBytes = Number(
       process.env.CLOUDFLARE_R2_MAX_FILE_BYTES ?? DEFAULT_MAX_FILE_SIZE_BYTES,
     );
@@ -181,7 +181,7 @@ export class R2Service extends Singleton {
     return key
       .trim()
       .toLowerCase()
-        .replaceAll(/[^\da-z-]+/g, '-')
+      .replaceAll(/[^\da-z-]+/g, '-')
       .replaceAll(/^-+|-+$/g, '');
   }
 

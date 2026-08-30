@@ -3,12 +3,13 @@ import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { serializeObservation } from '@app/(general)/registry/server/serialize-observation';
 import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { DbTables } from '@app/enum/db-tables';
 import { getUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument, AnimalObservation } from '@app/models/animal';
-import type { MediaAsset } from '@app/models/media-asset';
+import { MediaAsset } from '@app/models/media-asset';
 
 import { uploadAnimalMedia } from '../../../../(general)/registry/server/upload-animal-media';
 
@@ -81,27 +82,6 @@ const payloadSchema = z.object({
       return value.trim();
     }),
 });
-
-type SerializedMediaAsset = Omit<MediaAsset, 'uploadedAt'> & {
-  uploadedAt: string;
-};
-
-export type SerializedObservation = {
-  date: string;
-  note?: string;
-  location?: {
-    address: string;
-    coordinates: {
-      latitude: number;
-      longitude: number;
-    };
-  };
-  assets?: SerializedMediaAsset[];
-  informator?: string;
-  health?: number;
-  createdBy: string;
-  createdAt: string;
-};
 
 export async function POST(
   request: NextRequest,
@@ -423,31 +403,4 @@ export async function POST(
     success: true,
     observation: serialized,
   });
-}
-
-function serializeObservation(
-  observation: AnimalObservation,
-  userId: ObjectId,
-): SerializedObservation {
-  return {
-    date: observation.date?.toISOString() ?? new Date().toISOString(),
-    note: observation.note ?? undefined,
-    location: observation.location
-      ? {
-          address: observation.location.address,
-          coordinates: {
-            latitude: observation.location.coordinates.latitude,
-            longitude: observation.location.coordinates.longitude,
-          },
-        }
-      : undefined,
-    assets: observation.assets?.map((asset) => ({
-      ...asset,
-      uploadedAt: asset.uploadedAt?.toISOString() ?? new Date().toISOString(),
-    })),
-    informator: observation.informator?.toHexString(),
-    health: observation.health,
-    createdBy: (observation.createdBy ?? userId).toHexString(),
-    createdAt: observation.createdAt?.toISOString() ?? new Date().toISOString(),
-  };
 }

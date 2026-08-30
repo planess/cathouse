@@ -45,12 +45,18 @@ export const SYSTEM_PERMISSIONS = {
   EQUIPMENT_TRANSFER: 'equipment:transfer',
 
   // foundation email
+  EMAIL_READ: 'email:read',
   EMAIL_SEND: 'email:send',
 
   // admin management
   ROLE_ASSIGN: 'role:assign',
   ROLE_CREATE: 'role:create',
   ROLE_DELETE: 'role:delete',
+
+  // media
+  MEDIA_UPLOAD: 'media:upload',
+  MEDIA_DELETE: 'media:delete',
+  MEDIA_REVIEW: 'media:review',
 } as const;
 
 /**

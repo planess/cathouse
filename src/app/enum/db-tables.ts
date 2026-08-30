@@ -25,4 +25,10 @@ export enum DbTables {
   reportsInventory = 'reports_inventory',
   volunteerActs = 'volunteer_acts',
   volunteerCategories = 'volunteer_category',
+  emailMailboxes = 'email_mailboxes',
+  emailContacts = 'email_contacts',
+  emailThreads = 'email_threads',
+  emailMessages = 'email_messages',
+  emailAttachments = 'email_attachments',
+  emailRead = 'email_read',
 }

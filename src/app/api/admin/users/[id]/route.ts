@@ -1,15 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-import {
-  type UserOperationResult,
-  updateUser,
-} from '@app/services/admin-users.service';
+import { createJsonResponse } from '@app/helpers/create-json-response';
+import { updateUser } from '@app/services/admin-users.service';
 
 export const runtime = 'nodejs';
-
-function json(body: UserOperationResult, status = 200) {
-  return NextResponse.json(body, { status });
-}
 
 export async function PUT(
   request: NextRequest,
@@ -22,10 +16,13 @@ export async function PUT(
 
     const result = await updateUser(formData);
 
-    return json(result, result.success ? 200 : 400);
+    return createJsonResponse(result, result.success ? 200 : 400);
   } catch (error) {
     console.error('Error updating user:', error);
 
-    return json({ success: false, message: 'Failed to update user.' }, 500);
+    return createJsonResponse(
+      { success: false, message: 'Failed to update user.' },
+      500,
+    );
   }
 }

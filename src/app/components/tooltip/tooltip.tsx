@@ -5,7 +5,6 @@ import {
   cloneElement,
   isValidElement,
   ReactElement,
-  ReactNode,
   useEffect,
   useId,
   useLayoutEffect,
@@ -13,6 +12,8 @@ import {
   useState,
   type PointerEvent,
 } from 'react';
+
+import type { TooltipProps } from '@app/models/tooltip-props.model';
 
 type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -25,15 +26,6 @@ const positionClassMap: Record<TooltipPlacement, string> = {
   left: 'right-full top-1/2 mr-2 -translate-y-1/2',
   right: 'left-full top-1/2 ml-2 -translate-y-1/2',
 };
-
-export interface TooltipProps {
-  text: string;
-  children: ReactNode;
-  placement?: TooltipPlacement;
-  containerClassName?: string;
-  panelClassName?: string;
-  targetClassName?: string;
-}
 
 type TooltipTriggerElement = ReactElement<{ 'aria-describedby'?: string }>;
 

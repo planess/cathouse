@@ -2,19 +2,14 @@ import { type Document, type Filter } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { resolveAnimalImage } from '@app/(general)/registry/components/card/card.helpers';
+import { parseRegistryMapBounds } from '@app/(general)/registry/server/parse-registry-map-bounds';
+import { parseRegistryStatusFilter } from '@app/(general)/registry/server/parse-registry-status-filter';
 import { DbTables } from '@app/enum/db-tables';
 import { getCurrentUser } from '@app/hooks/get-user';
 import clientPromise from '@app/ins/mongo-client';
 import { AnimalStatus, type AnimalDocument } from '@app/models/animal';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
-
-type Bounds = {
-  north: number;
-  south: number;
-  east: number;
-  west: number;
-};
 
 type RawRegistryAnimalRecord = {
   id: string;
@@ -35,76 +30,11 @@ const REGISTRY_STATUS_FILTERS = {
   adoption: [AnimalStatus.underTreatment, AnimalStatus.sheltered],
 } as const;
 
-type RegistryStatusFilter = keyof typeof REGISTRY_STATUS_FILTERS;
-
-function parseStatusFilter(value: string | null): RegistryStatusFilter | null {
-  if (value === 'adoption') {
-    return value;
-  }
-
-  return null;
-}
-
-function parseBounds(request: NextRequest): {
-  bounds: Bounds | null;
-  hasInvalidBounds: boolean;
-} {
-  const northRaw = request.nextUrl.searchParams.get('north');
-  const southRaw = request.nextUrl.searchParams.get('south');
-  const eastRaw = request.nextUrl.searchParams.get('east');
-  const westRaw = request.nextUrl.searchParams.get('west');
-
-  const presentValues = [northRaw, southRaw, eastRaw, westRaw].filter(
-    (value) => value !== null,
-  );
-
-  if (presentValues.length === 0) {
-    return {
-      bounds: null,
-      hasInvalidBounds: false,
-    };
-  }
-
-  if (presentValues.length !== 4) {
-    return {
-      bounds: null,
-      hasInvalidBounds: true,
-    };
-  }
-
-  const north = Number.parseFloat(northRaw ?? '');
-  const south = Number.parseFloat(southRaw ?? '');
-  const east = Number.parseFloat(eastRaw ?? '');
-  const west = Number.parseFloat(westRaw ?? '');
-
-  if (
-    !Number.isFinite(north) ||
-    !Number.isFinite(south) ||
-    !Number.isFinite(east) ||
-    !Number.isFinite(west)
-  ) {
-    return {
-      bounds: null,
-      hasInvalidBounds: true,
-    };
-  }
-
-  return {
-    bounds: {
-      north: Math.max(north, south),
-      south: Math.min(north, south),
-      east: Math.max(east, west),
-      west: Math.min(east, west),
-    },
-    hasInvalidBounds: false,
-  };
-}
-
 export async function GET(request: NextRequest) {
-  const { bounds, hasInvalidBounds } = parseBounds(request);
+  const { bounds, hasInvalidBounds } = parseRegistryMapBounds(request);
   const shouldLoadOnlyOwnDraft =
     request.nextUrl.searchParams.get('onlyOwnDraft') === 'true';
-  const statusFilter = parseStatusFilter(
+  const statusFilter = parseRegistryStatusFilter(
     request.nextUrl.searchParams.get('status'),
   );
 

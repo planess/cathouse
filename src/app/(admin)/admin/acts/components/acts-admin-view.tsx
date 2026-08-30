@@ -197,8 +197,8 @@ function VolunteerSection({ group }: { group: VolunteerGroup }) {
                       >
                         {act.documents.length > 0
                           ? t('table.filesCount', {
-                              count: act.documents.length,
-                            })
+                            count: act.documents.length,
+                          })
                           : t('table.noFiles')}
                       </span>
                     </td>

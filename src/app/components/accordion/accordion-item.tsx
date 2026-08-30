@@ -9,63 +9,13 @@ import {
   useRef,
   useState,
   type ButtonHTMLAttributes,
-  type ReactNode,
 } from 'react';
 
 import { ChevronIcon } from '@app/(general)/registry/[animalId]/components/icons';
 import { Rate } from '@app/enum/rate';
-
-export type AccordionRenderState = {
-  isOpen: boolean;
-  toggle: () => void;
-  toggleButtonProps: ButtonHTMLAttributes<HTMLButtonElement>;
-  chevron: ReactNode;
-};
-
-export type AccordionRenderable =
-  | ReactNode
-  | ((state: AccordionRenderState) => ReactNode);
-
-export type AccordionItemProps = {
-  /**
-   * Content that always stays visible – usually the summary row.
-   */
-  summary: AccordionRenderable;
-  /**
-   * Collapsible content shown only when the accordion item is opened.
-   */
-  details: AccordionRenderable;
-
-  title: AccordionRenderable;
-  /**
-   * Optional controlled open state. When provided the component becomes controlled.
-   */
-  isOpen?: boolean;
-  /**
-   * Default open state for uncontrolled mode.
-   */
-  defaultOpen?: boolean;
-  /**
-   * Fires whenever the open state changes (both controlled and uncontrolled modes).
-   */
-  onToggle?: (nextIsOpen: boolean) => void;
-  /**
-   * Disables the toggle button.
-   */
-  disabled?: boolean;
-  /**
-   * Tailwind utility classes applied to the outer wrapper.
-   */
-  className?: string;
-  /**
-   * Tailwind utility classes applied to the collapsible body container.
-   */
-  bodyClassName?: string;
-  /**
-   * Optional accent variant controlling default colors.
-   */
-  rate?: Rate;
-};
+import type { AccordionItemProps } from '@app/models/accordion-item-props.model';
+import type { AccordionRenderState } from '@app/models/accordion-render-state.model';
+import type { AccordionRenderable } from '@app/models/accordion-renderable.model';
 
 const theme = {
   [Rate.ok]: {

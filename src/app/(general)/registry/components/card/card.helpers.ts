@@ -111,12 +111,12 @@ export function getAgeLabel(birthday?: Date, t?: TranslateFn): string {
 
 export function formatSexLabel(sex: AnimalSex, t?: TranslateFn) {
   switch (sex) {
-    case AnimalSex.male:
-      return t?.('sex.male') ?? 'Male';
-    case AnimalSex.female:
-      return t?.('sex.female') ?? 'Female';
-    default:
-      return t?.('labels.unknown') ?? 'Unknown';
+  case AnimalSex.male:
+    return t?.('sex.male') ?? 'Male';
+  case AnimalSex.female:
+    return t?.('sex.female') ?? 'Female';
+  default:
+    return t?.('labels.unknown') ?? 'Unknown';
   }
 }
 

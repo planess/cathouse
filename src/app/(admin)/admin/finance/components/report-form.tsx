@@ -170,27 +170,27 @@ export default function ReportForm({
             },
           ]}
           onChange={(value) =>
-            {
-              const nextType = value as ReportFormState['type'];
-              const shouldClearFiles = nextType === 'incoming';
+          {
+            const nextType = value as ReportFormState['type'];
+            const shouldClearFiles = nextType === 'incoming';
 
-              if (shouldClearFiles && pendingFiles.length > 0) {
-                setPendingFiles([]);
-                onPendingFilesChange([]);
-              }
+            if (shouldClearFiles && pendingFiles.length > 0) {
+              setPendingFiles([]);
+              onPendingFilesChange([]);
+            }
 
-              updateState({
-                ...formState,
-                type: nextType,
-                accountId:
+            updateState({
+              ...formState,
+              type: nextType,
+              accountId:
                   nextType === 'outgoing' &&
                   (accountById.get(formState.accountId)?.balance ?? 0) <= 0
                     ? ''
                     : formState.accountId,
-                categoryId: '',
-                documents: shouldClearFiles ? [] : formState.documents,
-              });
-            }
+              categoryId: '',
+              documents: shouldClearFiles ? [] : formState.documents,
+            });
+          }
           }
         />
       </div>

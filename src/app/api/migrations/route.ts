@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { serverMigrationRunner } from '../../services/migration-runner.server';
+import { getErrorMessage } from '@app/helpers/get-error-message';
 
-const getErrorMessage = (error: unknown) =>
-  error instanceof Error ? error.message : String(error);
+import { serverMigrationRunner } from '../../services/migration-runner.server';
 
 /**
  * API route for managing database migrations

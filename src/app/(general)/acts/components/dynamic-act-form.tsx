@@ -80,12 +80,12 @@ export default function DynamicActForm({
       prev.map((row) =>
         row.key === key
           ? {
-              ...row,
-              mediaInputs: [
-                ...row.mediaInputs,
-                `media-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-              ],
-            }
+            ...row,
+            mediaInputs: [
+              ...row.mediaInputs,
+              `media-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+            ],
+          }
           : row,
       ),
     );

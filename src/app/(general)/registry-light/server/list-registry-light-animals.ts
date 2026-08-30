@@ -44,13 +44,13 @@ export async function listRegistryLightAnimals(
   const [isModerator, isVolunteer] =
     userId !== null && userId !== undefined
       ? await Promise.all([
-          hasPermission(
-            SYSTEM_PERMISSIONS.HISTORY_UPDATE_ANY,
-            undefined,
-            userId,
-          ),
-          hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE, undefined, userId),
-        ])
+        hasPermission(
+          SYSTEM_PERMISSIONS.HISTORY_UPDATE_ANY,
+          undefined,
+          userId,
+        ),
+        hasPermission(SYSTEM_PERMISSIONS.HISTORY_CREATE, undefined, userId),
+      ])
       : [false, false];
 
   const conditions: Filter<AnimalDocument>[] = [];
@@ -114,9 +114,9 @@ export async function listRegistryLightAnimals(
         (animal.vetMarkers?.virusVaccination?.length ?? 0) > 0,
       age: animal.birthday
         ? Math.floor(
-            (Date.now() - animal.birthday.getTime()) /
+          (Date.now() - animal.birthday.getTime()) /
               (1000 * 60 * 60 * 24 * 365),
-          )
+        )
         : null,
     };
   });
