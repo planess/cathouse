@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-
+import { createJsonResponse as json } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
@@ -7,16 +6,6 @@ import { logDevelopmentError } from '@app/services/development-error-logger.serv
 import { emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
-
-type UpdateMailboxResponse = {
-  success: boolean;
-  message: string;
-  mailbox?: Awaited<ReturnType<typeof emailService.updateMailboxDisplayName>>;
-};
-
-function json(body: UpdateMailboxResponse, status = 200) {
-  return NextResponse.json(body, { status });
-}
 
 export async function PATCH(
   request: Request,

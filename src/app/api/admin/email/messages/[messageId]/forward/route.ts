@@ -1,22 +1,11 @@
-import { NextResponse } from 'next/server';
-
+import { createJsonResponse as json } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
-import { EmailMessageSummary, emailService } from '@app/services/email.service';
+import { emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
-
-type ForwardMessageResponse = {
-  success: boolean;
-  message: string;
-  messageItem?: EmailMessageSummary;
-};
-
-function json(body: ForwardMessageResponse, status = 200) {
-  return NextResponse.json(body, { status });
-}
 
 export async function POST(
   request: Request,

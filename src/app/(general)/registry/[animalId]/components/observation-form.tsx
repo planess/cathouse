@@ -12,7 +12,7 @@ import {
   type ChangeEvent,
 } from 'react';
 
-import type { SerializedObservation } from '@app/api/registry/[animalId]/observations/route';
+import type { SerializedObservation } from '@app/(general)/registry/server/serialize-observation';
 import { useModal } from '@app/hooks/use-modal';
 
 import {

@@ -1,25 +1,11 @@
-import { NextResponse } from 'next/server';
-
+import { createJsonResponse as json } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
-import {
-  EmailMailboxThreadGroup,
-  emailService,
-} from '@app/services/email.service';
+import { emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
-
-type CreateMailboxResponse = {
-  success: boolean;
-  message: string;
-  group?: EmailMailboxThreadGroup;
-};
-
-function json(body: CreateMailboxResponse, status = 200) {
-  return NextResponse.json(body, { status });
-}
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();

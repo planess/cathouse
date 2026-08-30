@@ -1,26 +1,12 @@
-import { NextResponse } from 'next/server';
-
+import { createJsonResponse as json } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
 import { parseEmailRecipientInputJson } from '@app/services/email/parse-email-recipient-input-json';
-import {
-  EmailThreadSummary,
-  emailService,
-} from '@app/services/email.service';
+import { emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
-
-type SendMailboxEmailResponse = {
-  success: boolean;
-  message: string;
-  thread?: EmailThreadSummary;
-};
-
-function json(body: SendMailboxEmailResponse, status = 200) {
-  return NextResponse.json(body, { status });
-}
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -62,16 +48,17 @@ export async function POST(request: Request) {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Failed to send email.';
-    const status = [
-      'Invalid mailbox id.',
-      'Mailbox not found.',
-      'Invalid recipient email.',
-      'Subject is required.',
-      'Email body is required.',
-      'At least one recipient email is required.',
-    ].includes(message) || message.includes('is too large.')
-      ? 400
-      : 500;
+    const status =
+      [
+        'Invalid mailbox id.',
+        'Mailbox not found.',
+        'Invalid recipient email.',
+        'Subject is required.',
+        'Email body is required.',
+        'At least one recipient email is required.',
+      ].includes(message) || message.includes('is too large.')
+        ? 400
+        : 500;
 
     await logDevelopmentError('email.api.threads.create', error, {
       route: '/api/admin/email/threads',

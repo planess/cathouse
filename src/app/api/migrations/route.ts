@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { serverMigrationRunner } from '../../services/migration-runner.server';
+import { getErrorMessage } from '@app/helpers/get-error-message';
 
-const getErrorMessage = (error: unknown) =>
-  error instanceof Error ? error.message : String(error);
+import { serverMigrationRunner } from '../../services/migration-runner.server';
 
 /**
  * API route for managing database migrations
@@ -16,16 +15,16 @@ export async function GET() {
 
     return result.success
       ? NextResponse.json({
-        success: true,
-        status: result.status,
-      })
+          success: true,
+          status: result.status,
+        })
       : NextResponse.json(
-        {
-          success: false,
-          error: result.status,
-        },
-        { status: 500 },
-      );
+          {
+            success: false,
+            error: result.status,
+          },
+          { status: 500 },
+        );
   } catch (error) {
     return NextResponse.json(
       {
@@ -43,42 +42,42 @@ export async function POST(request: NextRequest) {
     const { action, migrationName } = body;
 
     switch (action) {
-    case 'run': {
-      const result = await serverMigrationRunner.runMigrations();
+      case 'run': {
+        const result = await serverMigrationRunner.runMigrations();
 
-      return NextResponse.json(result);
-    }
+        return NextResponse.json(result);
+      }
 
-    case 'force': {
-      const forceResult = await serverMigrationRunner.forceRunMigrations();
+      case 'force': {
+        const forceResult = await serverMigrationRunner.forceRunMigrations();
 
-      return NextResponse.json(forceResult);
-    }
+        return NextResponse.json(forceResult);
+      }
 
-    case 'create': {
-      if (!migrationName) {
+      case 'create': {
+        if (!migrationName) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Migration name is required',
+            },
+            { status: 400 },
+          );
+        }
+        const createResult =
+          await serverMigrationRunner.createMigration(migrationName);
+
+        return NextResponse.json(createResult);
+      }
+
+      default:
         return NextResponse.json(
           {
             success: false,
-            error: 'Migration name is required',
+            error: 'Invalid action. Use: run, force, or create',
           },
           { status: 400 },
         );
-      }
-      const createResult =
-          await serverMigrationRunner.createMigration(migrationName);
-
-      return NextResponse.json(createResult);
-    }
-
-    default:
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid action. Use: run, force, or create',
-        },
-        { status: 400 },
-      );
     }
   } catch (error) {
     return NextResponse.json(

@@ -1,4 +1,3 @@
-
 import type { IncomingMailgunEmailPayload } from '@app/services/email.service';
 
 import { getRemoteIp } from './get-remote-ip';

@@ -1,12 +1,11 @@
+import { createJsonResponse } from '@app/helpers/create-json-response';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
+import { assertPayloadHasMailgunFields } from '@app/services/email/receive/assert-payload-has-mailgun-fields';
+import { getPayloadLogMetadata } from '@app/services/email/receive/get-payload-log-metadata';
+import { getRouteErrorResponse } from '@app/services/email/receive/get-route-error-response';
+import { parseIncomingPayload } from '@app/services/email/receive/parse-incoming-payload';
 import { emailService } from '@app/services/email.service';
 import type { IncomingMailgunEmailPayload } from '@app/services/email.service';
-
-import { assertPayloadHasMailgunFields } from './assert-payload-has-mailgun-fields';
-import { getPayloadLogMetadata } from './get-payload-log-metadata';
-import { getRouteErrorResponse } from './get-route-error-response';
-import { jsonMailgunReceiveResponse } from './json-mailgun-receive-response';
-import { parseIncomingPayload } from './parse-incoming-payload';
 
 import type { NextRequest } from 'next/server';
 
@@ -27,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const response = getRouteErrorResponse(error, 'Invalid Mailgun payload.');
 
-    return jsonMailgunReceiveResponse(
+    return createJsonResponse(
       { success: false, message: response.message },
       response.status,
     );
@@ -36,7 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const result = await emailService.processIncomingMailgunEmail(payload);
 
-    return jsonMailgunReceiveResponse({
+    return createJsonResponse({
       success: true,
       message: result.duplicate
         ? 'Message already received.'
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     const response = getRouteErrorResponse(error, 'Failed to receive email.');
 
-    return jsonMailgunReceiveResponse(
+    return createJsonResponse(
       { success: false, message: response.message },
       response.status,
     );

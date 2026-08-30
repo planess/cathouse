@@ -1,79 +1,11 @@
 import { NextResponse } from 'next/server';
 
-import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
-
-function getSafePath(value: string | null): string | null {
-  if (value === null || value === '') {
-    return '';
-  }
-
-  const segments = value.split('/');
-
-  if (
-    segments.some(
-      (segment) =>
-        segment === '' ||
-        segment === '.' ||
-        segment === '..' ||
-        segment.includes('\\'),
-    )
-  ) {
-    return null;
-  }
-
-  return segments.map(encodeURIComponent).join('/');
-}
-
-function getFileName(path: string): string {
-  return path.split('/').at(-1) ?? 'download';
-}
-
-type MediaPermissions = {
-  canAccess: boolean;
-  canDelete: boolean;
-  canReview: boolean;
-  canUpload: boolean;
-};
-
-async function getMediaPermissions(): Promise<MediaPermissions> {
-  const currentUser = await getCurrentUser();
-
-  if (currentUser?.id === undefined) {
-    return {
-      canAccess: false,
-      canDelete: false,
-      canReview: false,
-      canUpload: false,
-    };
-  }
-
-  const [canReview, canUpload, canDelete] = await Promise.all([
-    hasPermission(SYSTEM_PERMISSIONS.MEDIA_REVIEW, undefined, currentUser.id),
-    hasPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD, undefined, currentUser.id),
-    hasPermission(SYSTEM_PERMISSIONS.MEDIA_DELETE, undefined, currentUser.id),
-  ]);
-
-  return {
-    canAccess: canReview || canUpload || canDelete,
-    canDelete,
-    canReview,
-    canUpload,
-  };
-}
-
-async function hasMediaPermission(
-  permission:
-    | typeof SYSTEM_PERMISSIONS.MEDIA_DELETE
-    | typeof SYSTEM_PERMISSIONS.MEDIA_UPLOAD,
-): Promise<boolean> {
-  const permissions = await getMediaPermissions();
-
-  return permission === SYSTEM_PERMISSIONS.MEDIA_DELETE
-    ? permissions.canDelete
-    : permissions.canUpload;
-}
+import { getMediaFileName } from '@app/services/media/get-media-file-name';
+import { getMediaPermissions } from '@app/services/media/get-media-permissions';
+import { getSafeMediaPath } from '@app/services/media/get-safe-media-path';
+import { hasMediaPermission } from '@app/services/media/has-media-permission';
+import { isSafeMediaFilePath } from '@app/services/media/is-safe-media-file-path';
 
 /**
  * GET handler for media management.
@@ -99,7 +31,7 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const path = getSafePath(searchParams.get('path'));
+  const path = getSafeMediaPath(searchParams.get('path'));
 
   if (path === null) {
     return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
@@ -153,7 +85,7 @@ export async function GET(request: Request) {
 
     return new NextResponse(response.body, {
       headers: {
-        'Content-Disposition': `attachment; filename="${getFileName(path)}"`,
+        'Content-Disposition': `attachment; filename="${getMediaFileName(path)}"`,
         'Content-Type': contentType,
       },
     });
@@ -168,10 +100,6 @@ export async function GET(request: Request) {
 type GateRequest = {
   files?: Array<{ path?: unknown }>;
 };
-
-function isSafeFilePath(path: unknown): path is string {
-  return typeof path === 'string' && getSafePath(path) !== null;
-}
 
 /**
  * POST handler for generating upload URLs.
@@ -211,7 +139,7 @@ export async function POST(request: Request) {
 
   const files = body.files.map((file) => file.path);
 
-  if (!files.every(isSafeFilePath)) {
+  if (!files.every(isSafeMediaFilePath)) {
     return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
   }
 
@@ -259,7 +187,7 @@ export async function DELETE(request: Request) {
     );
   }
 
-  const path = getSafePath(new URL(request.url).searchParams.get('path'));
+  const path = getSafeMediaPath(new URL(request.url).searchParams.get('path'));
 
   if (path === null || path === '') {
     return NextResponse.json(
@@ -345,7 +273,7 @@ export async function PATCH(request: Request) {
     const newName = body.newName;
 
     if (
-      !isSafeFilePath(folderPath) ||
+      !isSafeMediaFilePath(folderPath) ||
       typeof newName !== 'string' ||
       newName.trim() === '' ||
       newName === '.' ||
@@ -392,14 +320,14 @@ export async function PATCH(request: Request) {
     body.key,
     body.from,
     body.source,
-  ].find(isSafeFilePath);
+  ].find(isSafeMediaFilePath);
   const destination = [
     body.newPath,
     body.destination,
     body.destinationPath,
     body.to,
     body.target,
-  ].find(isSafeFilePath);
+  ].find(isSafeMediaFilePath);
 
   if (source === undefined || destination === undefined) {
     return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
@@ -467,7 +395,7 @@ export async function PUT(request: Request) {
     body.files.length === 0 ||
     body.files.some(
       (file) =>
-        !isSafeFilePath(file.currentPath) || !isSafeFilePath(file.newPath),
+        !isSafeMediaFilePath(file.currentPath) || !isSafeMediaFilePath(file.newPath),
     )
   ) {
     return NextResponse.json(

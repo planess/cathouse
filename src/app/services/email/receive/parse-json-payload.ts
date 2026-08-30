@@ -1,4 +1,3 @@
-
 import type { IncomingMailgunEmailPayload } from '@app/services/email.service';
 
 import { getRemoteIp } from './get-remote-ip';
@@ -31,30 +30,30 @@ export async function parseJsonPayload(
   );
   const attachments = Array.isArray(rawAttachments)
     ? rawAttachments
-      .map((attachment, index) => {
-        if (typeof attachment !== 'object' || attachment === null) {
-          return null;
-        }
+        .map((attachment, index) => {
+          if (typeof attachment !== 'object' || attachment === null) {
+            return null;
+          }
 
-        const record = attachment as Record<string, unknown>;
-        const fileName = stringifyFieldValue(
-          record.filename ?? record.name ?? `attachment-${index + 1}`,
-        );
-        const contentType = stringifyFieldValue(
-          record['content-type'] ??
+          const record = attachment as Record<string, unknown>;
+          const fileName = stringifyFieldValue(
+            record.filename ?? record.name ?? `attachment-${index + 1}`,
+          );
+          const contentType = stringifyFieldValue(
+            record['content-type'] ??
               record.contentType ??
               'application/octet-stream',
-        );
-        const sizeBytes = Number(record.size ?? record.sizeBytes ?? 0);
+          );
+          const sizeBytes = Number(record.size ?? record.sizeBytes ?? 0);
 
-        return {
-          fileName,
-          contentType,
-          sizeBytes: Number.isFinite(sizeBytes) ? sizeBytes : 0,
-          fieldName: `attachment-${index + 1}`,
-        };
-      })
-      .filter(isIncomingAttachment)
+          return {
+            fileName,
+            contentType,
+            sizeBytes: Number.isFinite(sizeBytes) ? sizeBytes : 0,
+            fieldName: `attachment-${index + 1}`,
+          };
+        })
+        .filter(isIncomingAttachment)
     : [];
 
   return {

@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 
+import { buildMonths } from '@app/(general)/reports/server/build-months';
+import { getYearRange } from '@app/(general)/reports/server/get-year-range';
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 
@@ -11,29 +13,6 @@ type OutgoingCategoryDocument = {
   _id: ObjectId;
   name: string;
 };
-
-function getYearRange(year: number) {
-  const start = new Date(year, 0, 1);
-  const end = new Date(year + 1, 0, 1);
-
-  return { start, end };
-}
-
-function buildMonths<T extends { month: number }>(
-  totals: T[],
-  factory: (month: number) => Omit<T, 'month'>,
-): T[] {
-  return Array.from({ length: 12 }, (_, index) => {
-    const month = index + 1;
-    const found = totals.find((item) => item.month === month);
-
-    if (found) {
-      return found;
-    }
-
-    return { month, ...factory(month) } as T;
-  });
-}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

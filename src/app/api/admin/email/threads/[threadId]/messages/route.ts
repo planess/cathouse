@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-
+import { createJsonResponse as json } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import {
@@ -9,26 +8,14 @@ import {
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
 import { parseEmailRecipientInputJson } from '@app/services/email/parse-email-recipient-input-json';
 import {
-  EmailMessageSummary,
   SendMailboxThreadReplyPayload,
   emailService,
 } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
 
-type MessagesResponse = {
-  success: boolean;
-  message: string;
-  messages: EmailMessageSummary[];
-  messageItem?: EmailMessageSummary;
-};
-
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;
 const MAX_ATTACHMENTS = 10;
-
-function json(body: MessagesResponse, status = 200) {
-  return NextResponse.json(body, { status });
-}
 
 export async function GET(
   _request: Request,
