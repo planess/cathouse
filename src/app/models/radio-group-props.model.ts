@@ -1,13 +1,5 @@
-import { ReactNode } from 'react';
-
-export type RadioGroupDirection = 'horizontal' | 'vertical';
-
-export interface RadioGroupOption {
-  value: string;
-  label: ReactNode;
-  description?: ReactNode;
-  disabled?: boolean;
-}
+import type { RadioGroupDirection } from './radio-group-direction.model';
+import type { RadioGroupOption } from './radio-group-option.model';
 
 export interface RadioGroupProps {
   options: RadioGroupOption[];

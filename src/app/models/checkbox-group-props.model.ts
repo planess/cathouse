@@ -1,13 +1,5 @@
-import { ReactNode } from 'react';
-
-export type CheckboxGroupDirection = 'horizontal' | 'vertical';
-
-export interface CheckboxGroupOption {
-  value: string;
-  label: ReactNode;
-  description?: ReactNode;
-  disabled?: boolean;
-}
+import type { CheckboxGroupDirection } from './checkbox-group-direction.model';
+import type { CheckboxGroupOption } from './checkbox-group-option.model';
 
 export interface CheckboxGroupProps {
   options: CheckboxGroupOption[];

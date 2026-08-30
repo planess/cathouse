@@ -1,14 +1,9 @@
 'use client';
 
 import clsx from 'clsx';
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-export type TabItem = {
-  id: string;
-  label: string;
-  badge?: string | number;
-  content?: ReactNode;
-};
+import type { TabItem } from '@app/models/tab-item.model';
 
 type TabsProps = {
   items: TabItem[];

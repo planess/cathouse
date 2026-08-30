@@ -1,11 +1,4 @@
-import { NavigationItem } from './navigation-item.type';
-
-export interface OfferNavigationProps {
-  title: string;
-  subtitle: string;
-  items: NavigationItem[];
-  children?: React.ReactNode;
-}
+import type { OfferNavigationProps } from '@app/models/offer-navigation-props.model';
 
 export default function OfferNavigation({
   title,

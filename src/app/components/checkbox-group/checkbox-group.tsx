@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { useId, useState } from 'react';
 
-import { CheckboxGroupProps } from './checkbox-group.types';
+import type { CheckboxGroupProps } from '@app/models/checkbox-group-props.model';
 
 export function CheckboxGroup({
   options,

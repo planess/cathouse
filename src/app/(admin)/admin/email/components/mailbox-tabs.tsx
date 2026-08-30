@@ -10,8 +10,8 @@ import {
   useTransition,
 } from 'react';
 
-import type { TabItem } from '@app/components/tabs';
 import { Tabs } from '@app/components/tabs';
+import type { TabItem } from '@app/models/tab-item.model';
 import type {
   EmailMailboxSummary,
   EmailMailboxThreadGroup,

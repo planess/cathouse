@@ -3,16 +3,7 @@
 import clsx from 'clsx';
 import { useId, useState } from 'react';
 
-export interface CheckboxProps {
-  checked?: boolean;
-  defaultChecked?: boolean;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
-  name?: string;
-  id?: string;
-  onChange?: (checked: boolean) => void;
-}
+import type { CheckboxProps } from '@app/models/checkbox-props.model';
 
 export function Checkbox({
   checked,

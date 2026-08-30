@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import type { MapCoordinates } from '@app/(admin)/admin/inventory/types/inventory.types';
+import { normalizeCoordinate } from '@app/helpers/normalize-coordinate';
 
 import type { Icon, Map as LeafletMap, Marker } from 'leaflet';
 
@@ -145,8 +146,4 @@ export function MapPicker({
       ) : null}
     </div>
   );
-}
-
-function normalizeCoordinate(value: number) {
-  return Math.round(value * 100000) / 100000;
 }
