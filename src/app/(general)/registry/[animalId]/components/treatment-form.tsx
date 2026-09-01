@@ -14,6 +14,7 @@ import {
   type PointerEvent,
 } from 'react';
 
+import { PlusIcon } from '@app/components/icons/registry-animal-p-lu-si-co-n';
 import { useModal } from '@app/hooks/use-modal';
 
 import { formatDate as formatDisplayDate } from '../../components/card/card.helpers';
@@ -24,7 +25,6 @@ import {
   CreateClinicForm,
   type CreateClinicFormHandle,
 } from './create-clinic-form';
-import { PlusIcon } from './icons';
 
 import type {
   ClinicOption,

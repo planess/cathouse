@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 
+import { PlusIcon } from '@app/components/icons/registry-animal-p-lu-si-co-n';
 import { useModal } from '@app/hooks/use-modal';
 
 import { updateAnimalInfo } from '../server/update-animal-info';
@@ -29,7 +30,6 @@ import {
   CreateInformatorForm,
   type CreateInformatorFormHandle,
 } from './create-informator-form';
-import { PlusIcon } from './icons';
 
 export type EditInfoFormHandle = {
   submit: () => Promise<'updated'>;

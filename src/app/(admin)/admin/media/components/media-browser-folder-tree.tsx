@@ -1,4 +1,6 @@
-import { FolderIcon } from '../helpers/folder-icon';
+import { AdminAdminMediaComponentsMediaBrowserFolderTreeIcon01 } from '@app/components/icons/admin-admin-media-components-media-browser-folder-tree-icon-01';
+import { AdminAdminMediaComponentsMediaBrowserFolderTreeIcon02 } from '@app/components/icons/admin-admin-media-components-media-browser-folder-tree-icon-02';
+import { FolderIcon } from '@app/components/icons/media-folder-icon';
 
 import type { FolderContents } from './media-browser';
 
@@ -61,20 +63,12 @@ export function MediaBrowserFolderTree({
                 onClick={() => onRename(folderPath, folder.name)}
                 type="button"
               >
-                <svg
+                <AdminAdminMediaComponentsMediaBrowserFolderTreeIcon01
                   aria-hidden="true"
                   className="h-3.5 w-3.5"
                   fill="none"
                   viewBox="0 0 24 24"
-                >
-                  <path
-                    d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
+                />
               </button>
             )}
             {canDelete && !isMoveMode && (
@@ -84,20 +78,12 @@ export function MediaBrowserFolderTree({
                 onClick={() => onDelete(folderPath, folder.name)}
                 type="button"
               >
-                <svg
+                <AdminAdminMediaComponentsMediaBrowserFolderTreeIcon02
                   aria-hidden="true"
                   className="h-3.5 w-3.5"
                   fill="none"
                   viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
+                />
               </button>
             )}
           </div>

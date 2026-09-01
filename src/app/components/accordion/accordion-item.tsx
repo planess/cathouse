@@ -11,7 +11,7 @@ import {
   type ButtonHTMLAttributes,
 } from 'react';
 
-import { ChevronIcon } from '@app/(general)/registry/[animalId]/components/icons';
+import { ChevronIcon } from '@app/components/icons/registry-animal-c-he-vr-on-ic-on';
 import { Rate } from '@app/enum/rate';
 import type { AccordionItemProps } from '@app/models/accordion-item-props.model';
 import type { AccordionRenderState } from '@app/models/accordion-render-state.model';

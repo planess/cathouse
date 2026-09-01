@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 
+import { AdminAdminEmailComponentsComposeEmailModalIcon01 } from '@app/components/icons/admin-admin-email-components-compose-email-modal-icon-01';
 import type { EmailMailboxSummary } from '@app/services/email.service';
 
 import { inputClassName } from '../constants/input-class-name';
@@ -132,7 +133,7 @@ export function ComposeEmailModal({
                 type="button"
               >
                 {showCopyFields ? 'Hide Cc and Bcc' : 'Cc and Bcc'}
-                <svg
+                <AdminAdminEmailComponentsComposeEmailModalIcon01
                   aria-hidden="true"
                   className={`h-4 w-4 transition-transform ${
                     showCopyFields ? 'rotate-180' : ''
@@ -143,9 +144,7 @@ export function ComposeEmailModal({
                   strokeLinejoin="round"
                   strokeWidth={2}
                   viewBox="0 0 24 24"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
+                />
               </button>
             </div>
             {showCopyFields && (

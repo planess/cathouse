@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
+import { ClockIcon } from '@app/components/icons/registry-animal-c-lo-ck-ic-on';
 import { AnimalDocument } from '@app/models/animal';
 import { Sterilized } from '@app/models/db/sterilized';
 
@@ -13,7 +14,6 @@ import {
 } from '../types';
 
 import EditInfo from './edit-info';
-import { ClockIcon } from './icons';
 
 interface InfoSectionProps {
   animal: AnimalDocument;

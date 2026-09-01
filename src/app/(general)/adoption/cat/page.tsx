@@ -1,13 +1,10 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
+import { BookOpenIcon } from '@app/components/icons/adoption-b-oo-ko-pe-ni-co-n';
+import { HomeIcon } from '@app/components/icons/adoption-h-om-ei-co-n';
+import { ShieldAlertIcon } from '@app/components/icons/adoption-s-hi-el-da-le-rt-ic-on';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
-
-import {
-  BookOpenIcon,
-  HomeIcon,
-  ShieldAlertIcon,
-} from '../components/icons';
 
 import type { Metadata } from 'next';
 

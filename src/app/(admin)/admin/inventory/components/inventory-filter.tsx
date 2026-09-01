@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 
-import { FilterSvg } from './filter-svg';
-import { MagnifierGlassSvg } from './magnifier-glass-svg';
+import { FilterSvg } from '@app/components/icons/filter-icon';
+import { MagnifierGlassSvg } from '@app/components/icons/magnifier-glass-icon';
 
 export default function InventoryFilter() {
   const t = useTranslations('adminInventory');

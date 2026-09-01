@@ -1,3 +1,4 @@
+/** Renders the File icon. */
 export function FileIcon() {
   return (
     <svg

@@ -3,6 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { AdminAdminComponentsAdminSidebarIcon01 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-01';
+import { AdminAdminComponentsAdminSidebarIcon02 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-02';
+import { AdminAdminComponentsAdminSidebarIcon03 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-03';
+import { AdminAdminComponentsAdminSidebarIcon04 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-04';
+import { AdminAdminComponentsAdminSidebarIcon05 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-05';
+import { AdminAdminComponentsAdminSidebarIcon06 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-06';
+import { AdminAdminComponentsAdminSidebarIcon07 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-07';
+import { AdminAdminComponentsAdminSidebarIcon08 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-08';
+import { AdminAdminComponentsAdminSidebarIcon09 } from '@app/components/icons/admin-admin-components-admin-sidebar-icon-09';
 import { useCurrentUser } from '@app/hooks/use-user';
 import {
   SYSTEM_PERMISSIONS,
@@ -22,20 +31,12 @@ const navItems: NavItem[] = [
     label: 'Overview',
     Icon: function DashboardIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon01
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M4 13.5V6.75a.75.75 0 0 1 .75-.75h5.5v7.5H4.75a.75.75 0 0 1-.75-.75Zm0 4.75v-1.5a.75.75 0 0 1 .75-.75h5.5v4H4.75a.75.75 0 0 1-.75-.75Zm10-4.75V4.75a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 .75.75v8.75a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75Zm0 6.5v-3.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 .75.75v3.25a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -44,27 +45,12 @@ const navItems: NavItem[] = [
     label: 'Migrations',
     Icon: function MigrationsIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon02
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M7.5 6.25h9a1.25 1.25 0 0 1 1.25 1.25v9a1.25 1.25 0 0 1-1.25 1.25h-9A1.25 1.25 0 0 1 6.25 16.5v-9A1.25 1.25 0 0 1 7.5 6.25Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M9 10h6M9 13.5h6"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -73,34 +59,12 @@ const navItems: NavItem[] = [
     label: 'Users',
     Icon: function UsersIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon03
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M16 19.5v-1.25a3.25 3.25 0 0 0-3.25-3.25h-5.5A3.25 3.25 0 0 0 4 18.25v1.25"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M10 12a3.25 3.25 0 1 0 0-6.5A3.25 3.25 0 0 0 10 12Zm8.5 3.5v-1a2.5 2.5 0 0 0-2.5-2.5h-2"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M16 6.5a2.5 2.5 0 0 1 0 5"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -109,34 +73,12 @@ const navItems: NavItem[] = [
     label: 'Roles',
     Icon: function RolesIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon04
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M12 4.5 4.5 8.25 12 12l7.5-3.75L12 4.5Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M4.5 12 12 15.75 19.5 12"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M4.5 15.75 12 19.5l7.5-3.75"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -145,34 +87,12 @@ const navItems: NavItem[] = [
     label: 'Acts',
     Icon: function ActsIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon05
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M9 12l2 2 4-4"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -182,27 +102,12 @@ const navItems: NavItem[] = [
     label: 'Finance',
     Icon: function FinanceIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon06
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M4.75 7.25h14.5a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M6.75 12h4.5M13 12h4.25"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -212,34 +117,12 @@ const navItems: NavItem[] = [
     label: 'Inventory',
     Icon: function InventoryIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon07
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M4.5 7.75h15a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V8.75a1 1 0 0 1 1-1Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M7 7.75V6.5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1.25"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M8 12h8"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },
@@ -253,30 +136,12 @@ const navItems: NavItem[] = [
     ],
     Icon: function MediaIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon08
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <rect
-            height="14.5"
-            rx="1.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            width="17"
-            x="3.5"
-            y="4.75"
-          />
-          <path
-            d="m6.5 16 3.25-3.25 2.5 2.5 2.25-2.25 3 3"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <circle cx="15.75" cy="9" r="1.25" fill="currentColor" />
-        </svg>
+        />
       );
     },
   },
@@ -289,27 +154,12 @@ const navItems: NavItem[] = [
     ],
     Icon: function EmailIcon({ className }: SidebarIconProps) {
       return (
-        <svg
+        <AdminAdminComponentsAdminSidebarIcon09
           aria-hidden="true"
           className={className}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M3.75 7.5l8.25 5.25L20.25 7.5"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M4.75 6.75h14.5a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-8.5a1 1 0 0 1 1-1Z"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       );
     },
   },

@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import { AdminAdminActsComponentsActsAdminViewIcon01 } from '@app/components/icons/admin-admin-acts-components-acts-admin-view-icon-01';
+
 import {
   ACT_STATUS_LABELS,
   ActsAdminViewProps,
@@ -122,7 +124,7 @@ function VolunteerSection({ group }: { group: VolunteerGroup }) {
             </p>
           </div>
         </div>
-        <svg
+        <AdminAdminActsComponentsActsAdminViewIcon01
           aria-hidden="true"
           className={clsx(
             'h-5 w-5 text-slate-400 transition-transform',
@@ -130,15 +132,7 @@ function VolunteerSection({ group }: { group: VolunteerGroup }) {
           )}
           fill="none"
           viewBox="0 0 24 24"
-        >
-          <path
-            d="M6 9l6 6 6-6"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </svg>
+        />
       </button>
 
       {expanded && (

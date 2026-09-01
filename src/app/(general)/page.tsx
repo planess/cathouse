@@ -4,23 +4,21 @@ import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import Alert from '@app/components/alert/alert';
+import { GeneralPageIcon01 } from '@app/components/icons/general-page-icon-01';
+import { CaptureIcon } from '@app/components/icons/registry-animal-c-ap-tu-re-ic-on';
+import { CheckRoundIcon } from '@app/components/icons/registry-animal-c-he-ck-ro-un-di-co-n';
+import { CommunityLove } from '@app/components/icons/registry-animal-c-om-mu-ni-ty-lo-ve';
+import { HomeCareIcon } from '@app/components/icons/registry-animal-h-om-ec-ar-ei-co-n';
+import { MedicalAssistanceIcon } from '@app/components/icons/registry-animal-m-ed-ic-al-as-si-st-an-ce-ic-on';
+import { MedicalBoxIcon } from '@app/components/icons/registry-animal-m-ed-ic-al-bo-xi-co-n';
+import { PetsIcon } from '@app/components/icons/registry-animal-p-et-si-co-n';
+import { SearchIcon } from '@app/components/icons/registry-animal-s-ea-rc-hi-co-n';
+import { TrendingDownIcon } from '@app/components/icons/registry-animal-t-re-nd-in-gd-ow-ni-co-n';
+import { VaccinesIcon } from '@app/components/icons/registry-animal-v-ac-ci-ne-si-co-n';
+import { VisibilityIcon } from '@app/components/icons/registry-animal-v-is-ib-il-it-yi-co-n';
 import { ReportDialogTrigger } from '@app/components/report-dialog';
 import { Tooltip } from '@app/components/tooltip';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
-
-import {
-  CaptureIcon,
-  CheckRoundIcon,
-  CommunityLove,
-  HomeCareIcon,
-  MedicalAssistanceIcon,
-  MedicalBoxIcon,
-  PetsIcon,
-  SearchIcon,
-  TrendingDownIcon,
-  VaccinesIcon,
-  VisibilityIcon,
-} from './registry/[animalId]/components/icons';
 
 import type { Metadata } from 'next';
 
@@ -140,18 +138,14 @@ export default function Home() {
               <div className="absolute bottom-6 left-6 right-6 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm py-2 px-4 rounded-xl border border-white/50 dark:border-stone-700 shadow-lg flex items-center gap-4 pointer-events-none">
                 <div className="bg-blue-100 dark:bg-blue-200 p-2 rounded-lg text-sky-500 dark:text-blue-900 transition-colors">
                   <span>
-                    <svg
+                    <GeneralPageIcon01
                       aria-hidden="true"
                       className="h-6 w-6"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.8"
-                    >
-                      <path d="M12 5v14" />
-                      <path d="M5 12h14" />
-                      <circle cx="12" cy="12" r="9" />
-                    </svg>
+                    />
                   </span>
                 </div>
                 <div>

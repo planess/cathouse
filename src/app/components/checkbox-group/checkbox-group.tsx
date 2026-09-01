@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { useId, useState } from 'react';
 
+import { ComponentsCheckboxGroupCheckboxGroupIcon01 } from '@app/components/icons/components-checkbox-group-checkbox-group-icon-01';
 import type { CheckboxGroupProps } from '@app/models/checkbox-group-props.model';
 
 export function CheckboxGroup({
@@ -113,22 +114,13 @@ export function CheckboxGroup({
                     : 'border-slate-300 bg-transparent',
                 )}
               >
-                <svg
+                <ComponentsCheckboxGroupCheckboxGroupIcon01
                   viewBox="0 0 20 20"
                   className={clsx(
                     'h-3 w-3 text-white transition-opacity',
                     isChecked ? 'opacity-100' : 'opacity-0',
                   )}
-                >
-                  <path
-                    d="M5 10.5L8.5 14 15 7"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                />
               </span>
             </div>
           </label>

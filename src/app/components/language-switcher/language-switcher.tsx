@@ -4,7 +4,8 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-import { GlobeIcon } from '@app/(general)/registry/[animalId]/components/icons';
+import { ComponentsLanguageSwitcherLanguageSwitcherIcon01 } from '@app/components/icons/components-language-switcher-language-switcher-icon-01';
+import { GlobeIcon } from '@app/components/icons/registry-animal-g-lo-be-ic-on';
 
 const LOCALES = [
   { code: 'en', label: 'English', short: 'EN' },
@@ -61,21 +62,14 @@ export default function LanguageSwitcher({
         </span>
         {selected.short}
         <span className="flex-none basis-4">
-          <svg
+          <ComponentsLanguageSwitcherLanguageSwitcherIcon01
             className={clsx('w-4 h-4 transition-transform duration-200', {
               'rotate-180': isOpen,
             })}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+          />
         </span>
       </button>
 

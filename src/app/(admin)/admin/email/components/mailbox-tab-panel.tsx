@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { AdminAdminEmailComponentsMailboxTabPanelIcon01 } from '@app/components/icons/admin-admin-email-components-mailbox-tab-panel-icon-01';
 import type {
   EmailMailboxSummary,
   EmailThreadSummary,
@@ -129,20 +130,12 @@ export function MailboxTabPanel({
             title="Refresh threads"
             type="button"
           >
-            <svg
+            <AdminAdminEmailComponentsMailboxTabPanelIcon01
               aria-hidden="true"
               className="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
-            >
-              <path
-                d="M20 11a8 8 0 1 0 2 5.25M20 4v7h-7"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.8"
-              />
-            </svg>
+            />
           </button>
           {canSend && (
             <>

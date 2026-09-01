@@ -2,6 +2,9 @@
 
 import { ChangeEvent, FormEvent, useState } from 'react';
 
+import { AdminAdminEmailComponentsThreadReplyFormIcon01 } from '@app/components/icons/admin-admin-email-components-thread-reply-form-icon-01';
+import { AdminAdminEmailComponentsThreadReplyFormIcon02 } from '@app/components/icons/admin-admin-email-components-thread-reply-form-icon-02';
+
 import { RecipientFields } from './email-recipient-fields';
 import { RichTextEditor } from './rich-text-editor';
 import { StatusMessage } from './status-message';
@@ -75,7 +78,7 @@ export function ThreadReplyForm({
         onClick={onCollapse}
         type="button"
       >
-        <svg
+        <AdminAdminEmailComponentsThreadReplyFormIcon01
           aria-hidden="true"
           className="h-4 w-4"
           fill="none"
@@ -84,10 +87,7 @@ export function ThreadReplyForm({
           strokeLinejoin="round"
           strokeWidth={2}
           viewBox="0 0 24 24"
-        >
-          <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
-          <path d="M9 14 4 9l5-5" />
-        </svg>
+        />
         <span>Reply to conversation</span>
       </button>
 
@@ -110,7 +110,7 @@ export function ThreadReplyForm({
                 type="button"
               >
                 {showCopyFields ? 'Hide Cc and Bcc' : 'Cc and Bcc'}
-                <svg
+                <AdminAdminEmailComponentsThreadReplyFormIcon02
                   aria-hidden="true"
                   className={`h-4 w-4 transition-transform ${
                     showCopyFields ? 'rotate-180' : ''
@@ -121,9 +121,7 @@ export function ThreadReplyForm({
                   strokeLinejoin="round"
                   strokeWidth={2}
                   viewBox="0 0 24 24"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
+                />
               </button>
             </div>
             {showCopyFields && (

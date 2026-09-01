@@ -1,3 +1,4 @@
+/** Renders the Folder icon. */
 export function FolderIcon({ open = false }: { open?: boolean }) {
   return (
     <svg

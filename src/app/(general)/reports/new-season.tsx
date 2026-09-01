@@ -1,9 +1,7 @@
 import { useTranslations } from 'next-intl';
 
-import {
-  FolderIcon,
-  Search2Icon,
-} from '../registry/[animalId]/components/icons';
+import { FolderIcon } from '@app/components/icons/registry-animal-f-ol-de-ri-co-n';
+import { Search2Icon } from '@app/components/icons/registry-animal-s-ea-rc-h2-ic-on';
 
 import Section from './section';
 

@@ -1,11 +1,9 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
-import {
-  ClockIcon,
-  PencilIcon,
-  TrashIcon,
-} from '../../../../../(general)/registry/[animalId]/components/icons';
+import { ClockIcon } from '@app/components/icons/registry-animal-c-lo-ck-ic-on';
+import { PencilIcon } from '@app/components/icons/registry-animal-p-en-ci-li-co-n';
+import { TrashIcon } from '@app/components/icons/registry-animal-t-ra-sh-ic-on';
 
 import { displayValue, formatTransactionType } from './table-helpers';
 import {

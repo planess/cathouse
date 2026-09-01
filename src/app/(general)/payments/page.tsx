@@ -2,14 +2,12 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
-import {
-  BankIcon,
-  DogBowlIcon,
-  HealthInterventionIcon,
-  MedicalKitIcon,
-} from '../registry/[animalId]/components/icons';
+import { BankIcon } from '@app/components/icons/registry-animal-b-an-ki-co-n';
+import { DogBowlIcon } from '@app/components/icons/registry-animal-d-og-bo-wl-ic-on';
+import { HealthInterventionIcon } from '@app/components/icons/registry-animal-h-ea-lt-hi-nt-er-ve-nt-io-ni-co-n';
+import { MedicalKitIcon } from '@app/components/icons/registry-animal-m-ed-ic-al-ki-ti-co-n';
+import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import { AutoPayment } from './components/auto-payment';
 import IbanCards, { IbanCardItem } from './components/iban-cards';

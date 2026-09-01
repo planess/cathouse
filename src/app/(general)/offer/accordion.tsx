@@ -1,4 +1,4 @@
-import { ChevronIcon } from '../registry/[animalId]/components/icons';
+import { ChevronIcon } from '@app/components/icons/registry-animal-c-he-vr-on-ic-on';
 
 import Section from './section';
 

@@ -1,4 +1,4 @@
-import { PencilIcon } from './icons';
+import { PencilIcon } from '@app/components/icons/registry-animal-p-en-ci-li-co-n';
 
 type HtmlTag = keyof HTMLElementTagNameMap;
 type PropsOf<T extends HtmlTag> = React.ComponentPropsWithoutRef<T>;

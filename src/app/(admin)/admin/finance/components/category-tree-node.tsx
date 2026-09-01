@@ -1,6 +1,9 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import { AdminAdminFinanceComponentsCategoryTreeNodeIcon01 } from '@app/components/icons/admin-admin-finance-components-category-tree-node-icon-01';
+import { AdminAdminFinanceComponentsCategoryTreeNodeIcon02 } from '@app/components/icons/admin-admin-finance-components-category-tree-node-icon-02';
+
 import { CategoryTreeNodeProps } from '../models/props/category-tree-props';
 
 export default function CategoryTreeNode({
@@ -50,49 +53,26 @@ export default function CategoryTreeNode({
             title={t('categories.editAria', { name: node.name })}
             onClick={() => onEdit(node.id)}
           >
-            <svg
+            <AdminAdminFinanceComponentsCategoryTreeNodeIcon01
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
               className="h-3.5 w-3.5"
-            >
-              <path
-                d="M12 20h9"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="m16.5 3.5 4 4L8 20H4v-4z"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            />
           </button>
           <button
             className="text-xs font-semibold text-rose-500"
             type="button"
             onClick={() => onDelete(node.id)}
           >
-            <svg
+            <AdminAdminFinanceComponentsCategoryTreeNodeIcon02
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
               className="h-3.5 w-3.5"
-            >
-              <path
-                d="M4 7h16M10 11v6m4-6v6M5 7l1.5 12a2 2 0 002 2h5a2 2 0 002-2L19 7M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            />
           </button>
         </div>
       </div>

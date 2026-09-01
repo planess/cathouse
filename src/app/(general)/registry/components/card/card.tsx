@@ -3,13 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
+import { ClockIcon } from '@app/components/icons/registry-animal-c-lo-ck-ic-on';
+import { ExternalLinkIcon } from '@app/components/icons/registry-animal-e-xt-er-na-ll-in-ki-co-n';
+import { LocationIcon } from '@app/components/icons/registry-animal-l-oc-at-io-ni-co-n';
 import type { AnimalDocument } from '@app/models/animal';
-
-import {
-  ClockIcon,
-  ExternalLinkIcon,
-  LocationIcon,
-} from '../../[animalId]/components/icons';
 
 import {
   badgeTone,

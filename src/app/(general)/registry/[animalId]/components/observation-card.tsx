@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import { AccordionItem } from '@app/components/accordion';
+import { LocationIcon } from '@app/components/icons/registry-animal-l-oc-at-io-ni-co-n';
 import { Rate } from '@app/enum/rate';
 import type { AnimalObservation } from '@app/models/animal';
 
@@ -10,7 +11,6 @@ import {
   resolveAnimalImage,
 } from '../../components/card/card.helpers';
 
-import { LocationIcon } from './icons';
 
 interface ObservationCardProps {
   canReadRegistryMap: boolean;

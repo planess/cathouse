@@ -1,3 +1,4 @@
+/** Renders the MagnifierGlass icon. */
 export function MagnifierGlassSvg() {
   return (
     <svg

@@ -1,26 +1,24 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+
+import { AnalyticsIcon } from '@app/components/icons/registry-animal-a-na-ly-ti-cs-ic-on';
+import { CatchIcon } from '@app/components/icons/registry-animal-c-at-ch-ic-on';
+import { CreditCardSecureIcon } from '@app/components/icons/registry-animal-c-re-di-tc-ar-ds-ec-ur-ei-co-n';
+import { DisasterIcon } from '@app/components/icons/registry-animal-d-is-as-te-ri-co-n';
+import { GavelIcon } from '@app/components/icons/registry-animal-g-av-el-ic-on';
+import { GuaranteeIcon } from '@app/components/icons/registry-animal-g-ua-ra-nt-ee-ic-on';
+import { InfoIcon } from '@app/components/icons/registry-animal-i-nf-oi-co-n';
+import { MealIcon } from '@app/components/icons/registry-animal-m-ea-li-co-n';
+import { MedicalKitIcon } from '@app/components/icons/registry-animal-m-ed-ic-al-ki-ti-co-n';
+import { PaymentBitcoinIcon } from '@app/components/icons/registry-animal-p-ay-me-nt-bi-tc-oi-ni-co-n';
+import { PetsIcon } from '@app/components/icons/registry-animal-p-et-si-co-n';
+import { ReceiptIcon } from '@app/components/icons/registry-animal-r-ec-ei-pt-ic-on';
+import { RefundIcon } from '@app/components/icons/registry-animal-r-ef-un-di-co-n';
+import { VolunteerHeartIcon } from '@app/components/icons/registry-animal-v-ol-un-te-er-he-ar-ti-co-n';
+import { WalletMinusIcon } from '@app/components/icons/registry-animal-w-al-le-tm-in-us-ic-on';
 import OfferNavigation from '@app/components/offer-navigation/offer-navigation';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
-
-import {
-  AnalyticsIcon,
-  CatchIcon,
-  CreditCardSecureIcon,
-  DisasterIcon,
-  GavelIcon,
-  GuaranteeIcon,
-  InfoIcon,
-  MealIcon,
-  MedicalKitIcon,
-  PaymentBitcoinIcon,
-  PetsIcon,
-  ReceiptIcon,
-  RefundIcon,
-  VolunteerHeartIcon,
-  WalletMinusIcon,
-} from '../registry/[animalId]/components/icons';
 
 import { Accordion } from './accordion';
 import Section from './section';

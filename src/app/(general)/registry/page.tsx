@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
+import { PlusIcon } from '@app/components/icons/registry-animal-p-lu-si-co-n';
+
 import { createHistoryGranted } from '../../accessors/create-history-granted';
 import { composeMetadataTitle, getSiteTitle } from '../../helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '../../models/system-permissions';
 import { hasPermission } from '../../services/access-verification.service';
 import RegistryLightContent from '../registry-light/components/registry-light-content';
 
-import { PlusIcon } from './[animalId]/components/icons';
 import List from './components/list/list';
 import { parseRegistryStatusFilter } from './helpers/registry-status-filter';
 

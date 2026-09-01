@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { editHistoryGranted } from '@app/accessors/edit-history-granted';
 import { publishHistoryGranted } from '@app/accessors/publish-history-granted';
+import { ArrowIcon } from '@app/components/icons/registry-animal-a-rr-ow-ic-on';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { Sterilized } from '@app/models/db/sterilized';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
@@ -17,7 +18,6 @@ import AvatarSocialsSection from './components/avatar-socials.section';
 import AvatarSection from './components/avatar.section';
 import Divider from './components/divider';
 import FeatureSection from './components/feature.section';
-import { ArrowIcon } from './components/icons';
 import InfoSection from './components/info.section';
 import ObservationSection from './components/observation.section';
 import PublishButton from './components/publish-button';

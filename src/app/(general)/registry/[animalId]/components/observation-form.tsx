@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 import type { SerializedObservation } from '@app/(general)/registry/server/serialize-observation';
+import { PlusIcon } from '@app/components/icons/registry-animal-p-lu-si-co-n';
 import { useModal } from '@app/hooks/use-modal';
 
 import {
@@ -20,7 +21,6 @@ import {
   type CreateInformatorFormHandle,
 } from './create-informator-form';
 import { HealthSlider } from './health-slider';
-import { PlusIcon } from './icons';
 import { LocationField, type LocationValue } from './location-field';
 
 import type { InformatorOption } from '../types';

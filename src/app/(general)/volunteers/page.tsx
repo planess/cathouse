@@ -2,6 +2,10 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { GeneralVolunteersPageIcon01 } from '@app/components/icons/general-volunteers-page-icon-01';
+import { GeneralVolunteersPageIcon02 } from '@app/components/icons/general-volunteers-page-icon-02';
+import { GeneralVolunteersPageIcon03 } from '@app/components/icons/general-volunteers-page-icon-03';
+import { GeneralVolunteersPageIcon04 } from '@app/components/icons/general-volunteers-page-icon-04';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import type { Metadata } from 'next';
@@ -23,90 +27,49 @@ function Dot({ className }: { className: string }) {
 
 function CheckIcon() {
   return (
-    <svg
+    <GeneralVolunteersPageIcon01
       aria-hidden="true"
       className="h-5 w-5 shrink-0 text-emerald-500"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="m5 12 4.2 4.2L19 6.5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
-    </svg>
+    />
   );
 }
 
 function UsersIcon() {
   return (
-    <svg
+    <GeneralVolunteersPageIcon02
       aria-hidden="true"
       className="h-6 w-6"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M16 19a4 4 0 0 0-8 0M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7 7a3 3 0 0 0-3-3m0-4a2.5 2.5 0 1 0 0-5M5 19a3 3 0 0 1 3-3m-3-4a2.5 2.5 0 1 1 0-5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
+    />
   );
 }
 
 function HeartIcon() {
   return (
-    <svg
+    <GeneralVolunteersPageIcon03
       aria-hidden="true"
       className="h-6 w-6"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 20s-7.5-4.4-9.2-9.2C1.8 7.9 3.7 5.5 6.5 5.5c1.7 0 3.2.9 4 2.2.8-1.3 2.3-2.2 4-2.2 2.8 0 4.7 2.4 3.7 5.3C19.5 15.6 12 20 12 20Z"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
+    />
   );
 }
 
 function IdCardIcon() {
   return (
-    <svg
+    <GeneralVolunteersPageIcon04
       aria-hidden="true"
       className="h-32 w-32"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        height="14"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        width="20"
-        x="2"
-        y="5"
-      />
-      <circle cx="8" cy="11" r="2.2" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M5.5 16c.8-1.5 2-2.2 3.5-2.2s2.7.7 3.5 2.2M14 10h4M14 13h4M14 16h3"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-    </svg>
+    />
   );
 }
 

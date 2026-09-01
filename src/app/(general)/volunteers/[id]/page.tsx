@@ -3,6 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
+import { GeneralVolunteersIdPageIcon01 } from '@app/components/icons/general-volunteers-id-page-icon-01';
+import { GeneralVolunteersIdPageIcon02 } from '@app/components/icons/general-volunteers-id-page-icon-02';
+import { GeneralVolunteersIdPageIcon03 } from '@app/components/icons/general-volunteers-id-page-icon-03';
+import { GeneralVolunteersIdPageIcon04 } from '@app/components/icons/general-volunteers-id-page-icon-04';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import { loadVolunteer } from './server/load-volunteer';
@@ -76,81 +80,49 @@ function getProfilePhotoUrl(profilePhoto: string | null | undefined) {
 
 function ArrowLeftIcon() {
   return (
-    <svg
+    <GeneralVolunteersIdPageIcon01
       aria-hidden="true"
       className="h-4 w-4 transition-transform group-hover:-translate-x-1"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M19 12H5m0 0 6-6m-6 6 6 6"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
+    />
   );
 }
 
 function CalendarIcon() {
   return (
-    <svg
+    <GeneralVolunteersIdPageIcon02
       aria-hidden="true"
       className="h-4 w-4"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v12a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V6a1 1 0 0 1 1-1Z"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
+    />
   );
 }
 
 function CheckCircleIcon() {
   return (
-    <svg
+    <GeneralVolunteersIdPageIcon03
       aria-hidden="true"
       className="h-4 w-4"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M9 12.4 11.1 14.5 15.5 9.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
+    />
   );
 }
 
 function ShieldIcon() {
   return (
-    <svg
+    <GeneralVolunteersIdPageIcon04
       aria-hidden="true"
       className="h-5 w-5"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 3 5 6v5c0 4.97 2.96 8.86 7 10 4.04-1.14 7-5.03 7-10V6l-7-3Z"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
+    />
   );
 }
 

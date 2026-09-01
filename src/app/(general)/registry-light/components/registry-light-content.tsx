@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
 import type { RegistryStatusFilter } from '@app/(general)/registry/helpers/registry-status-filter';
+import { HandHeartIcon } from '@app/components/icons/registry-light-h-an-dh-ea-rt-ic-on';
+import { WrenchLeafIcon } from '@app/components/icons/registry-light-w-re-nc-hl-ea-fi-co-n';
 
 import { listRegistryLightAnimalsPage } from '../server/list-registry-light-animals';
 
-import { HandHeartIcon, WrenchLeafIcon } from './icons';
 import RegistryLightAnimals from './registry-light-animals';
 
 export default async function RegistryLightContent({

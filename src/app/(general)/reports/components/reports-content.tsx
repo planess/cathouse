@@ -4,16 +4,14 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  BarChartIcon,
-  CalendarIcon,
-  ChevronIcon,
-  LocationIcon,
-  PetsIcon,
-  ReceiptIcon,
-  TrendingDownIcon,
-  TrendingUpIcon,
-} from '@app/(general)/registry/[animalId]/components/icons';
+import { BarChartIcon } from '@app/components/icons/registry-animal-b-ar-ch-ar-ti-co-n';
+import { CalendarIcon } from '@app/components/icons/registry-animal-c-al-en-da-ri-co-n';
+import { ChevronIcon } from '@app/components/icons/registry-animal-c-he-vr-on-ic-on';
+import { LocationIcon } from '@app/components/icons/registry-animal-l-oc-at-io-ni-co-n';
+import { PetsIcon } from '@app/components/icons/registry-animal-p-et-si-co-n';
+import { ReceiptIcon } from '@app/components/icons/registry-animal-r-ec-ei-pt-ic-on';
+import { TrendingDownIcon } from '@app/components/icons/registry-animal-t-re-nd-in-gd-ow-ni-co-n';
+import { TrendingUpIcon } from '@app/components/icons/registry-animal-t-re-nd-in-gu-pi-co-n';
 
 import NewSeasonReport from '../new-season';
 import PreparationComponent from '../preparation';

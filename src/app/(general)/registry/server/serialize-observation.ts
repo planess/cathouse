@@ -30,12 +30,12 @@ export function serializeObservation(
     note: observation.note ?? undefined,
     location: observation.location
       ? {
-          address: observation.location.address,
-          coordinates: {
-            latitude: observation.location.coordinates.latitude,
-            longitude: observation.location.coordinates.longitude,
-          },
-        }
+        address: observation.location.address,
+        coordinates: {
+          latitude: observation.location.coordinates.latitude,
+          longitude: observation.location.coordinates.longitude,
+        },
+      }
       : undefined,
     assets: observation.assets?.map((asset) => ({
       ...asset,
