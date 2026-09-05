@@ -20,6 +20,7 @@ import { getMailgunField } from './email/get-mailgun-field';
 import { getMailgunMessageId } from './email/get-mailgun-message-id';
 import { logEmailServiceError } from './email/log-email-service-error';
 import { mapAddressReference } from './email/map-address-reference';
+import { mapContact } from './email/map-contact';
 import { mapMailbox } from './email/map-mailbox';
 import { mapMessage } from './email/map-message';
 import { mapThread } from './email/map-thread';
@@ -45,6 +46,7 @@ import type {
   EmailThreadDocument,
 } from './email/document-types';
 import type { AttachmentFile } from './email/types/attachment-file';
+import type { EmailAddressSummary } from './email/types/email-address-summary';
 import type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
 import type { EmailMailboxThreadGroup } from './email/types/email-mailbox-thread-group';
 import type { EmailMessageSummary } from './email/types/email-message-summary';
@@ -408,6 +410,50 @@ class EmailService extends Singleton {
         address: address.address,
         hasName: address.name !== undefined && address.name.length > 0,
         normalizedAddress: address.normalizedAddress,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Finds email contacts whose name or address contains the search text.
+   *
+   * @param query Name or email fragment to find.
+   * @param limit Maximum number of suggestions to return.
+   */
+  async searchEmailContacts(
+    query: string,
+    limit = 8,
+  ): Promise<EmailAddressSummary[]> {
+    const normalizedQuery = query.trim();
+
+    if (normalizedQuery.length === 0) {
+      return [];
+    }
+
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const escapedQuery = normalizedQuery.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+      const queryPattern = new RegExp(escapedQuery, 'i');
+      const safeLimit = Math.min(Math.max(1, limit), 20);
+      const contacts = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .find({
+          $or: [{ name: queryPattern }, { normalizedAddress: queryPattern }],
+        })
+        .sort({ name: 1, normalizedAddress: 1 })
+        .limit(safeLimit)
+        .toArray();
+
+      return contacts.map(mapContact);
+    } catch (error) {
+      await logEmailServiceError('searchEmailContacts', error, {
+        queryLength: normalizedQuery.length,
       });
 
       throw error;

@@ -78,6 +78,7 @@ export function ComposeEmailModal({
       role="dialog"
     >
       <form
+        autoComplete="off"
         className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950"
         onSubmit={(event) => void onSubmit(event)}
       >
