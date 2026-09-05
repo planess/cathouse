@@ -5,7 +5,28 @@ export function AdminAdminEmailComponentsMailboxTabPanelIcon01(props: SvgIconPro
   return (
     <svg {...props}>
       <path
-        d="M20 11a8 8 0 1 0 2 5.25M20 4v7h-7"
+        d="M21 12a9 9 0 0 0-15.18-6.54L3 8"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M3 3v5h5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M3 12a9 9 0 0 0 15.18 6.54L21 16"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M16 16h5v5"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"

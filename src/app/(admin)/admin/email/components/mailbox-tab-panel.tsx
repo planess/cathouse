@@ -19,7 +19,6 @@ type MailboxTabPanelProps = {
   mailbox: EmailMailboxSummary;
   refreshToken: number;
   onCompose: (mailbox: EmailMailboxSummary) => void;
-  onEditMailbox: (mailbox: EmailMailboxSummary) => void;
   onThreadSelect: (mailboxId: string, threadId: string) => void;
 };
 
@@ -57,7 +56,6 @@ export function MailboxTabPanel({
   mailbox,
   refreshToken,
   onCompose,
-  onEditMailbox,
   onThreadSelect,
 }: MailboxTabPanelProps) {
   const pathname = usePathname();
@@ -139,13 +137,6 @@ export function MailboxTabPanel({
           </button>
           {canSend && (
             <>
-              <button
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
-                onClick={() => onEditMailbox(mailbox)}
-                type="button"
-              >
-                Edit sender name
-              </button>
               <button
                 className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
                 onClick={() => onCompose(mailbox)}
