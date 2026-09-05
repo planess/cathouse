@@ -139,7 +139,7 @@ export async function updateReport(payload: ReportPayload) {
 
   revalidatePath('/admin/finance');
   if (existing.type === 'debt' || payload.type === 'debt') {
-    revalidateTag('admin-finance-debts');
+    revalidateTag('admin-finance-debts', 'max');
   }
 
   return { success: true, message: 'Report updated.' };
