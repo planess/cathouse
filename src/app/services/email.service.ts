@@ -193,7 +193,7 @@ class EmailService extends Singleton {
       const mailboxes = await db
         .collection<EmailMailbox>(DbTables.emailMailboxes)
         .find({})
-        .sort({ normalizedAddress: 1 })
+        .sort({ order: 1, normalizedAddress: 1 })
         .toArray();
 
       return mailboxes.map(mapMailbox);
@@ -226,11 +226,16 @@ class EmailService extends Singleton {
         normalizedDisplayName.length > 0
           ? { displayName: normalizedDisplayName }
           : {}),
+        order: 0,
         createdAt: now,
         updatedAt: now,
       };
       const dbClient = await clientPromise;
       const db = dbClient.db();
+      const lastMailbox = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOne({}, { sort: { order: -1 } });
+      mailbox.order = (lastMailbox?.order ?? -1) + 1;
       const existingMailbox = await db
         .collection<EmailMailbox>(DbTables.emailMailboxes)
         .findOne({ normalizedAddress: mailbox.normalizedAddress });
@@ -287,6 +292,59 @@ class EmailService extends Singleton {
     } catch (error) {
       await logEmailServiceError('updateMailboxDisplayName', error, {
         mailboxId,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Persists the complete user-defined mailbox order.
+   *
+   * @param mailboxIds Mailbox identifiers in their desired display order.
+   */
+  async updateMailboxOrder(mailboxIds: string[]): Promise<void> {
+    try {
+      if (
+        mailboxIds.length === 0 ||
+        new Set(mailboxIds).size !== mailboxIds.length ||
+        mailboxIds.some((mailboxId) => !ObjectId.isValid(mailboxId))
+      ) {
+        throw new Error('Invalid mailbox order.');
+      }
+
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const mailboxCollection = db.collection<EmailMailbox>(
+        DbTables.emailMailboxes,
+      );
+      const mailboxObjectIds = mailboxIds.map(
+        (mailboxId) => new ObjectId(mailboxId),
+      );
+      const mailboxCount = await mailboxCollection.countDocuments({
+        _id: { $in: mailboxObjectIds },
+      });
+      const totalMailboxCount = await mailboxCollection.countDocuments({});
+
+      if (
+        mailboxCount !== mailboxIds.length ||
+        totalMailboxCount !== mailboxIds.length
+      ) {
+        throw new Error('Mailbox list changed. Refresh and try again.');
+      }
+
+      const now = new Date();
+      await mailboxCollection.bulkWrite(
+        mailboxObjectIds.map((mailboxId, order) => ({
+          updateOne: {
+            filter: { _id: mailboxId },
+            update: { $set: { order, updatedAt: now } },
+          },
+        })),
+      );
+    } catch (error) {
+      await logEmailServiceError('updateMailboxOrder', error, {
+        mailboxCount: mailboxIds.length,
       });
 
       throw error;
@@ -371,6 +429,9 @@ class EmailService extends Singleton {
       }
 
       const now = new Date();
+      const lastMailbox = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOne({}, { sort: { order: -1 } });
       const mailbox: EmailMailbox = {
         _id: new ObjectId(),
         address: address.address,
@@ -378,6 +439,7 @@ class EmailService extends Singleton {
         ...(address.name !== undefined && address.name.length > 0
           ? { displayName: address.name }
           : {}),
+        order: (lastMailbox?.order ?? -1) + 1,
         createdAt: now,
         updatedAt: now,
       };
@@ -1588,7 +1650,7 @@ class EmailService extends Singleton {
       const mailboxes = await db
         .collection<EmailMailbox>(DbTables.emailMailboxes)
         .find({})
-        .sort({ normalizedAddress: 1 })
+        .sort({ order: 1, normalizedAddress: 1 })
         .toArray();
       return mailboxes.map((mailbox) => ({
         mailbox: mapMailbox(mailbox),

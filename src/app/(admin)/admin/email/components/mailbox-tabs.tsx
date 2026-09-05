@@ -3,9 +3,11 @@
 import { usePathname, useRouter } from 'next/navigation';
 import {
   FormEvent,
+  PointerEvent,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from 'react';
@@ -28,6 +30,7 @@ import {
 import { sendMailboxEmailRequest } from '../helpers/send-mailbox-email-request';
 import { sortMailboxThreadGroups } from '../helpers/sort-mailbox-thread-groups';
 import { updateMailboxDisplayNameRequest } from '../helpers/update-mailbox-display-name-request';
+import { updateMailboxOrderRequest } from '../helpers/update-mailbox-order-request';
 
 import { ComposeEmailModal } from './compose-email-modal';
 import { CreateMailboxForm } from './create-mailbox-form';
@@ -84,6 +87,16 @@ export function EmailMailboxTabs({
   const [editingResult, setEditingResult] = useState<SendEmailResponse | null>(
     null,
   );
+  const [draggedMailboxId, setDraggedMailboxId] = useState<string | null>(null);
+  const [orderMessage, setOrderMessage] = useState('');
+  const [orderSaving, setOrderSaving] = useState(false);
+  const dragStartOrderRef = useRef<string[]>([]);
+  const groupsRef = useRef(groups);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    groupsRef.current = groups;
+  }, [groups]);
 
   useEffect(() => {
     if (showCreateMailboxForm) {
@@ -101,7 +114,6 @@ export function EmailMailboxTabs({
 
       return;
     }
-
   }, [groups, pathname, showCreateMailboxForm]);
 
   const handleActiveIdChange = useCallback(
@@ -134,6 +146,138 @@ export function EmailMailboxTabs({
     [router, startThreadNavigation],
   );
 
+  const activateMailboxDrag = useCallback(
+    (mailboxId: string) => {
+      dragStartOrderRef.current = groups.map(({ mailbox }) => mailbox.id);
+      setDraggedMailboxId(mailboxId);
+      setOrderMessage('');
+    },
+    [groups],
+  );
+
+  const handleMailboxPointerDown = useCallback(
+    (event: PointerEvent<HTMLButtonElement>, mailboxId: string) => {
+      if (!canSend || orderSaving) {
+        return;
+      }
+
+      event.currentTarget.setPointerCapture(event.pointerId);
+
+      if (event.pointerType === 'touch') {
+        longPressTimerRef.current = setTimeout(
+          () => activateMailboxDrag(mailboxId),
+          350,
+        );
+      } else {
+        activateMailboxDrag(mailboxId);
+      }
+    },
+    [activateMailboxDrag, canSend, orderSaving],
+  );
+
+  const handleMailboxPointerMove = useCallback(
+    (event: PointerEvent<HTMLButtonElement>) => {
+      if (draggedMailboxId === null) {
+        return;
+      }
+
+      const rows = Array.from(
+        event.currentTarget
+          .closest('[data-mailbox-list]')
+          ?.querySelectorAll<HTMLElement>('[data-mailbox-row]') ?? [],
+      );
+      const targetRow = rows.find((row) => {
+        const bounds = row.getBoundingClientRect();
+
+        return event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+      });
+      const targetMailboxId = targetRow?.dataset.mailboxRow;
+
+      if (
+        targetMailboxId === undefined ||
+        targetMailboxId === draggedMailboxId
+      ) {
+        return;
+      }
+
+      setGroups((currentGroups) => {
+        const nextGroups = [...currentGroups];
+        const draggedIndex = nextGroups.findIndex(
+          ({ mailbox }) => mailbox.id === draggedMailboxId,
+        );
+        const targetIndex = nextGroups.findIndex(
+          ({ mailbox }) => mailbox.id === targetMailboxId,
+        );
+
+        if (draggedIndex === -1 || targetIndex === -1) {
+          return currentGroups;
+        }
+
+        const [draggedGroup] = nextGroups.splice(draggedIndex, 1);
+        nextGroups.splice(targetIndex, 0, draggedGroup);
+        groupsRef.current = nextGroups;
+
+        return nextGroups;
+      });
+    },
+    [draggedMailboxId],
+  );
+
+  const finishMailboxDrag = useCallback(async () => {
+    if (longPressTimerRef.current !== null) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+
+    if (draggedMailboxId === null) {
+      return;
+    }
+
+    setDraggedMailboxId(null);
+    const mailboxIds = groupsRef.current.map(({ mailbox }) => mailbox.id);
+
+    if (mailboxIds.join() === dragStartOrderRef.current.join()) {
+      return;
+    }
+
+    setOrderSaving(true);
+
+    try {
+      const { ok, payload } = await updateMailboxOrderRequest(mailboxIds);
+
+      if (!ok || !payload.success) {
+        throw new Error(payload.message);
+      }
+
+      setGroups((currentGroups) =>
+        currentGroups.map((group, order) => ({
+          ...group,
+          mailbox: { ...group.mailbox, order },
+        })),
+      );
+      setOrderMessage('Mailbox order saved.');
+    } catch (error) {
+      const originalOrder = new Map(
+        dragStartOrderRef.current.map((mailboxId, order) => [mailboxId, order]),
+      );
+
+      setGroups((currentGroups) =>
+        [...currentGroups].sort(
+          (a, b) =>
+            (originalOrder.get(a.mailbox.id) ?? 0) -
+            (originalOrder.get(b.mailbox.id) ?? 0),
+        ),
+      );
+      setOrderMessage(
+        error instanceof Error
+          ? error.message
+          : 'Failed to save mailbox order.',
+      );
+    } finally {
+      setOrderSaving(false);
+    }
+  }, [draggedMailboxId]);
+
   const updateCreateMailboxPrefix = useCallback((value: string) => {
     setPrefix(value);
     setResult(null);
@@ -158,16 +302,19 @@ export function EmailMailboxTabs({
     [],
   );
 
-  const openComposeModal = useCallback((mailbox: EmailMailboxSummary) => {
-    if (!canSend) {
-      return;
-    }
+  const openComposeModal = useCallback(
+    (mailbox: EmailMailboxSummary) => {
+      if (!canSend) {
+        return;
+      }
 
-    setComposeMailbox(mailbox);
-    setComposeForm(defaultComposeForm);
-    setComposeAttachments([]);
-    setComposeResult(null);
-  }, [canSend]);
+      setComposeMailbox(mailbox);
+      setComposeForm(defaultComposeForm);
+      setComposeAttachments([]);
+      setComposeResult(null);
+    },
+    [canSend],
+  );
 
   const closeComposeModal = useCallback(() => {
     setComposeMailbox(null);
@@ -176,15 +323,18 @@ export function EmailMailboxTabs({
     setComposeResult(null);
   }, []);
 
-  const openEditMailboxModal = useCallback((mailbox: EmailMailboxSummary) => {
-    if (!canSend) {
-      return;
-    }
+  const openEditMailboxModal = useCallback(
+    (mailbox: EmailMailboxSummary) => {
+      if (!canSend) {
+        return;
+      }
 
-    setEditingMailbox(mailbox);
-    setEditingDisplayName(mailbox.displayName);
-    setEditingResult(null);
-  }, [canSend]);
+      setEditingMailbox(mailbox);
+      setEditingDisplayName(mailbox.displayName);
+      setEditingResult(null);
+    },
+    [canSend],
+  );
 
   const closeEditMailboxModal = useCallback(() => {
     setEditingMailbox(null);
@@ -229,7 +379,8 @@ export function EmailMailboxTabs({
       } finally {
         setEditingSaving(false);
       }
-    }, [canSend, closeEditMailboxModal, editingDisplayName, editingMailbox],
+    },
+    [canSend, closeEditMailboxModal, editingDisplayName, editingMailbox],
   );
 
   const handleSendEmail = useCallback(
@@ -259,9 +410,9 @@ export function EmailMailboxTabs({
             currentGroups.map((group) =>
               group.mailbox.id === composeMailbox.id
                 ? {
-                  ...group,
-                  threads: [createdThread, ...group.threads],
-                }
+                    ...group,
+                    threads: [createdThread, ...group.threads],
+                  }
                 : group,
             ),
           );
@@ -280,7 +431,13 @@ export function EmailMailboxTabs({
         setComposeSending(false);
       }
     },
-    [canSend, closeComposeModal, composeAttachments, composeForm, composeMailbox],
+    [
+      canSend,
+      closeComposeModal,
+      composeAttachments,
+      composeForm,
+      composeMailbox,
+    ],
   );
 
   const handleSubmit = useCallback(
@@ -336,32 +493,33 @@ export function EmailMailboxTabs({
   );
 
   const activeMailbox = useMemo(
-    () => groups.find(
-      ({ mailbox }) => getMailboxTabId(mailbox.id) === activeId,
-    )?.mailbox,
+    () =>
+      groups.find(({ mailbox }) => getMailboxTabId(mailbox.id) === activeId)
+        ?.mailbox,
     [activeId, groups],
   );
 
   const activeContent = useMemo(
-    () => activeId === CREATE_MAILBOX_TAB_ID ? (
-      <CreateMailboxForm
-        displayName={displayName}
-        onDisplayNameChange={updateCreateMailboxDisplayName}
-        onPrefixChange={updateCreateMailboxPrefix}
-        onSubmit={handleSubmit}
-        prefix={prefix}
-        result={result}
-        saving={saving}
-      />
-    ) : activeMailbox !== undefined ? (
-      <MailboxTabPanel
-        mailbox={activeMailbox}
-        canSend={canSend}
-        refreshToken={threadRefreshTokens[activeMailbox.id] ?? 0}
-        onCompose={openComposeModal}
-        onThreadSelect={handleThreadSelect}
-      />
-    ) : null,
+    () =>
+      activeId === CREATE_MAILBOX_TAB_ID ? (
+        <CreateMailboxForm
+          displayName={displayName}
+          onDisplayNameChange={updateCreateMailboxDisplayName}
+          onPrefixChange={updateCreateMailboxPrefix}
+          onSubmit={handleSubmit}
+          prefix={prefix}
+          result={result}
+          saving={saving}
+        />
+      ) : activeMailbox !== undefined ? (
+        <MailboxTabPanel
+          mailbox={activeMailbox}
+          canSend={canSend}
+          refreshToken={threadRefreshTokens[activeMailbox.id] ?? 0}
+          onCompose={openComposeModal}
+          onThreadSelect={handleThreadSelect}
+        />
+      ) : null,
     [
       activeId,
       activeMailbox,
@@ -383,7 +541,7 @@ export function EmailMailboxTabs({
   return (
     <>
       <div className="md:flex md:min-h-[34rem] md:gap-4">
-        <aside className="hidden w-72 shrink-0 self-start overflow-hidden md:sticky md:top-4 md:flex md:h-[calc(100vh-2rem)] md:flex-col md:rounded-2xl md:border md:border-slate-200/70 md:bg-white md:shadow-sm md:shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
+        <aside className="mb-4 flex max-h-80 w-full shrink-0 flex-col self-start overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 md:sticky md:top-4 md:mb-0 md:h-[calc(100vh-2rem)] md:max-h-none md:w-72 dark:border-slate-800 dark:bg-slate-950">
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-800">
             <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
               Mailboxes
@@ -408,7 +566,10 @@ export function EmailMailboxTabs({
               </button>
             )}
           </div>
-          <div className="flex-1 space-y-1 overflow-y-auto p-3">
+          <div
+            className="flex-1 space-y-1 overflow-y-auto p-3"
+            data-mailbox-list
+          >
             {groups.map(({ mailbox }) => {
               const mailboxTabId = getMailboxTabId(mailbox.id);
               const isActive = mailboxTabId === activeId;
@@ -416,12 +577,32 @@ export function EmailMailboxTabs({
               return (
                 <div
                   className={`group flex items-center gap-1 rounded-xl transition ${
+                    draggedMailboxId === mailbox.id ? 'opacity-50' : ''
+                  } ${
                     isActive
                       ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-200'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-emerald-200'
                   }`}
+                  data-mailbox-row={mailbox.id}
                   key={mailbox.id}
                 >
+                  {canSend && (
+                    <button
+                      aria-label={`Move ${mailbox.address}`}
+                      className="ml-1 cursor-grab touch-none select-none rounded-lg px-1.5 py-2 text-lg leading-none text-slate-400 active:cursor-grabbing dark:text-slate-500"
+                      disabled={orderSaving}
+                      onPointerCancel={() => void finishMailboxDrag()}
+                      onPointerDown={(event) =>
+                        handleMailboxPointerDown(event, mailbox.id)
+                      }
+                      onPointerMove={handleMailboxPointerMove}
+                      onPointerUp={() => void finishMailboxDrag()}
+                      title="Drag to reorder"
+                      type="button"
+                    >
+                      ⠿
+                    </button>
+                  )}
                   <button
                     aria-current={isActive ? 'page' : undefined}
                     className="min-w-0 flex-1 px-3 py-2.5 text-left text-sm font-medium"
@@ -430,7 +611,7 @@ export function EmailMailboxTabs({
                   >
                     <span className="block truncate">{mailbox.address}</span>
                     {mailbox.displayName.trim().length > 0 && (
-                      <span className="mt-0.5 block truncate text-xs font-normal text-slate-500 dark:text-slate-400">
+                      <span className="mt-0.5 block truncate text-xs font-bold text-slate-500 dark:text-slate-400">
                         {mailbox.displayName}
                       </span>
                     )}
@@ -458,56 +639,13 @@ export function EmailMailboxTabs({
                 </div>
               );
             })}
+            <p aria-live="polite" className="sr-only" role="status">
+              {orderMessage}
+            </p>
           </div>
         </aside>
 
         <div className="min-w-0 flex-1 md:overflow-hidden md:rounded-2xl md:border md:border-slate-200/70 md:bg-white md:shadow-sm md:shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
-          <div className="border-b border-slate-200 p-4 dark:border-slate-800 md:hidden">
-            <label
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-              htmlFor="email-mailbox-selector"
-            >
-              Mailbox
-            </label>
-            <div className="flex items-center gap-2">
-              <select
-                className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                id="email-mailbox-selector"
-                onChange={(event) => handleActiveIdChange(event.target.value)}
-                value={activeId}
-              >
-                {groups.map(({ mailbox }) => (
-                  <option key={mailbox.id} value={getMailboxTabId(mailbox.id)}>
-                    {mailbox.address}
-                  </option>
-                ))}
-                {canSend && (
-                  <option value={CREATE_MAILBOX_TAB_ID}>Add mailbox</option>
-                )}
-              </select>
-              {canSend && activeMailbox !== undefined && (
-                <button
-                  aria-label={`Edit sender name for ${activeMailbox.address}`}
-                  className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:text-emerald-200"
-                  onClick={() => openEditMailboxModal(activeMailbox)}
-                  title="Edit sender name"
-                  type="button"
-                >
-                  <EditIcon
-                    aria-hidden="true"
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                  />
-                </button>
-              )}
-            </div>
-          </div>
-
           {activeContent}
         </div>
       </div>
