@@ -10,6 +10,7 @@ import type {
 } from '@app/services/email.service';
 
 import { PAGE_THREAD_SIZE } from '../constants/page-thread-size';
+import { mergeMailboxThreadsRequest } from '../helpers/merge-mailbox-threads-request';
 
 import { Pagination } from './pagination';
 import { ThreadList } from './thread-list';
@@ -69,6 +70,8 @@ export function MailboxTabPanel({
   const [pageThreads, setPageThreads] = useState<EmailThreadSummary[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMerging, setIsMerging] = useState(false);
+  const [mergeMessage, setMergeMessage] = useState('');
   const [refreshCount, setRefreshCount] = useState(0);
   const refreshRequestedRef = useRef(false);
   const previousRefreshTokenRef = useRef(refreshToken);
@@ -120,6 +123,44 @@ export function MailboxTabPanel({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+  const handleThreadMerge = async (
+    sourceThreadId: string,
+    targetThreadId: string,
+  ) => {
+    if (!canSend || isMerging) {
+      return;
+    }
+
+    setIsMerging(true);
+    setMergeMessage('');
+
+    try {
+      const { ok, payload } = await mergeMailboxThreadsRequest(
+        mailbox.id,
+        sourceThreadId,
+        targetThreadId,
+      );
+
+      if (!ok || !payload.success) {
+        throw new Error(payload.message);
+      }
+
+      setPageThreads((currentThreads) =>
+        currentThreads.filter((thread) => thread.id !== sourceThreadId),
+      );
+      setTotalItems((currentTotal) => Math.max(0, currentTotal - 1));
+      setMergeMessage('Threads merged.');
+      refreshRequestedRef.current = true;
+      setRefreshCount((currentCount) => currentCount + 1);
+    } catch (error) {
+      setMergeMessage(
+        error instanceof Error ? error.message : 'Failed to merge threads.',
+      );
+    } finally {
+      setIsMerging(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-slate-800">
@@ -161,10 +202,27 @@ export function MailboxTabPanel({
 
       <div className="relative min-h-36">
         <ThreadList
+          canMerge={canSend && !isMerging}
           mailboxId={mailbox.id}
+          onThreadMerge={(sourceThreadId, targetThreadId) =>
+            void handleThreadMerge(sourceThreadId, targetThreadId)
+          }
           onThreadSelect={onThreadSelect}
           threads={pageThreads}
         />
+        {mergeMessage.length > 0 && (
+          <p
+            aria-live="polite"
+            className={`px-5 py-2 text-sm ${
+              mergeMessage === 'Threads merged.'
+                ? 'text-emerald-700 dark:text-emerald-300'
+                : 'text-red-700 dark:text-red-300'
+            }`}
+            role="status"
+          >
+            {mergeMessage}
+          </p>
+        )}
         <Pagination
           currentPage={currentPage}
           pageSize={PAGE_THREAD_SIZE}

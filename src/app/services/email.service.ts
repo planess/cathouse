@@ -1550,6 +1550,135 @@ class EmailService extends Singleton {
     };
   }
 
+  /**
+   * Moves every message from one thread into another thread in the same mailbox.
+   *
+   * @param mailboxId Mailbox that owns both threads.
+   * @param sourceThreadId Thread that will be removed after its messages move.
+   * @param targetThreadId Thread that will receive the moved messages.
+   */
+  async mergeMailboxThreads(
+    mailboxId: string,
+    sourceThreadId: string,
+    targetThreadId: string,
+  ): Promise<void> {
+    if (
+      !ObjectId.isValid(mailboxId) ||
+      !ObjectId.isValid(sourceThreadId) ||
+      !ObjectId.isValid(targetThreadId) ||
+      sourceThreadId === targetThreadId
+    ) {
+      throw new Error('Invalid thread merge.');
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const session = dbClient.startSession();
+    const mailboxObjectId = new ObjectId(mailboxId);
+    const sourceThreadObjectId = new ObjectId(sourceThreadId);
+    const targetThreadObjectId = new ObjectId(targetThreadId);
+
+    try {
+      await session.withTransaction(async () => {
+        const threadCollection = db.collection<EmailThreadDocument>(
+          DbTables.emailThreads,
+        );
+        const messageCollection = db.collection<EmailMessageDocument>(
+          DbTables.emailMessages,
+        );
+        const sourceThread = await threadCollection.findOne(
+          { _id: sourceThreadObjectId, mailboxId: mailboxObjectId },
+          { session },
+        );
+        const targetThread = await threadCollection.findOne(
+          { _id: targetThreadObjectId, mailboxId: mailboxObjectId },
+          { session },
+        );
+
+        if (!sourceThread || !targetThread) {
+          throw new Error('Thread not found.');
+        }
+
+        await messageCollection.updateMany(
+          { threadId: sourceThreadObjectId },
+          { $set: { threadId: targetThreadObjectId } },
+          { session },
+        );
+
+        const messageCount = await messageCollection.countDocuments(
+          { threadId: targetThreadObjectId },
+          { session },
+        );
+        const lastMessages = await messageCollection
+          .aggregate<EmailMessageDocument>(
+            [
+              { $match: { threadId: targetThreadObjectId } },
+              {
+                $set: {
+                  effectiveDate: {
+                    $ifNull: ['$dates.headerDate', '$dates.createdAt'],
+                  },
+                },
+              },
+              { $sort: { effectiveDate: -1, _id: -1 } },
+              { $limit: 1 },
+              { $unset: 'effectiveDate' },
+            ],
+            { session },
+          )
+          .toArray();
+        const [lastMessage] = lastMessages;
+
+        if (lastMessage === undefined) {
+          throw new Error('Merged thread has no messages.');
+        }
+
+        const participants = [
+          ...targetThread.participants,
+          ...sourceThread.participants,
+        ].filter(
+          (participant, index, values) =>
+            values.findIndex(
+              (value) =>
+                (value instanceof ObjectId
+                  ? value.toString()
+                  : value.normalizedAddress) ===
+                (participant instanceof ObjectId
+                  ? participant.toString()
+                  : participant.normalizedAddress),
+            ) === index,
+        );
+
+        await threadCollection.updateOne(
+          { _id: targetThreadObjectId },
+          {
+            $set: {
+              participants,
+              messageCount,
+              lastMessageId: lastMessage._id,
+              updatedAt: new Date(Math.max(targetThread.updatedAt.getTime(), sourceThread.updatedAt.getTime())),
+            },
+          },
+          { session },
+        );
+        await threadCollection.deleteOne(
+          { _id: sourceThreadObjectId },
+          { session },
+        );
+      });
+    } catch (error) {
+      await logEmailServiceError('mergeMailboxThreads', error, {
+        mailboxId,
+        sourceThreadId,
+        targetThreadId,
+      });
+
+      throw error;
+    } finally {
+      await session.endSession();
+    }
+  }
+
   async getThread(threadId: string): Promise<EmailThreadSummary | null> {
     try {
       if (!ObjectId.isValid(threadId)) {
