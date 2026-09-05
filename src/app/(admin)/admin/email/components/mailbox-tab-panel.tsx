@@ -28,6 +28,7 @@ type ThreadPageResponse = {
 };
 
 const threadPageRequests = new Map<string, Promise<ThreadPageResponse>>();
+const THREAD_LIST_REFRESH_INTERVAL_MS = 60_000;
 
 function loadThreadPage(mailboxId: string, page: number, forceRefresh = false) {
   const key = `${mailboxId}:${page}`;
@@ -71,6 +72,15 @@ export function MailboxTabPanel({
   const [refreshCount, setRefreshCount] = useState(0);
   const refreshRequestedRef = useRef(false);
   const previousRefreshTokenRef = useRef(refreshToken);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      refreshRequestedRef.current = true;
+      setRefreshCount((currentCount) => currentCount + 1);
+    }, THREAD_LIST_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [mailbox.id]);
 
   useEffect(() => {
     let isCurrent = true;
