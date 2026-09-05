@@ -146,6 +146,43 @@ const navItems: NavItem[] = [
     },
   },
   {
+    href: '/admin/media',
+    label: 'Media',
+    requiredAnyPermission: [
+      SYSTEM_PERMISSIONS.MEDIA_REVIEW,
+      SYSTEM_PERMISSIONS.MEDIA_UPLOAD,
+      SYSTEM_PERMISSIONS.MEDIA_DELETE,
+    ],
+    Icon: function MediaIcon({ className }: SidebarIconProps) {
+      return (
+        <svg
+          aria-hidden="true"
+          className={className}
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <rect
+            height="14.5"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            width="17"
+            x="3.5"
+            y="4.75"
+          />
+          <path
+            d="m6.5 16 3.25-3.25 2.5 2.5 2.25-2.25 3 3"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <circle cx="15.75" cy="9" r="1.25" fill="currentColor" />
+        </svg>
+      );
+    },
+  },
+  {
     href: '/admin/email',
     label: 'Email',
     requiredAnyPermission: [
