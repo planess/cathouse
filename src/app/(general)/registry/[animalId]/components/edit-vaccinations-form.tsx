@@ -11,10 +11,11 @@ import {
   useState,
 } from 'react';
 
+import { PlusIcon } from '@app/components/icons/registry-animal-p-lu-si-co-n';
+
 import { formatDate as formatDisplayDate } from '../../components/card/card.helpers';
 import { updateVaccinations } from '../server/update-vaccinations';
 
-import { PlusIcon } from './icons';
 
 import type { ClinicOption, VaccinationModalInitialValues } from '../types';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';

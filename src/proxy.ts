@@ -13,7 +13,7 @@ export const config = {
   matcher: ['/((?!api|_next|static|.*\\..*).*)'],
 };
 
-export default function middleware(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   // If user already has a valid cookie — do nothing.
   const existing = req.cookies.get(COOKIE_NAME)?.value;
 

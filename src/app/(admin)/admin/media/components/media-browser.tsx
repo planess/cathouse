@@ -325,41 +325,51 @@ export function MediaBrowser() {
     }
 
     const parentPath = folderToDelete.path.split('/').slice(0, -1).join('/');
-    const markerPath = `${folderToDelete.path}/.bzEmpty`;
+    const folderPath = folderToDelete.path;
+    const isSelectedBranch =
+      selectedPath === folderPath || selectedPath.startsWith(`${folderPath}/`);
 
     setIsDeletingFolder(true);
     setError('');
 
     try {
-      const response = await fetch(
-        `/api/admin/media?path=${encodeURIComponent(markerPath)}`,
-        { method: 'DELETE' },
-      );
+      const query = new URLSearchParams({ folderPath });
+      const response = await fetch(`/api/admin/media?${query.toString()}`, {
+        method: 'DELETE',
+      });
 
       if (!response.ok) {
-        const payload = (await response.json()) as { error?: string };
-
-        throw new Error(payload.error ?? 'Unable to delete the folder.');
+        throw new Error('Unable to delete the folder.');
       }
 
       setIsDeleteDialogOpen(false);
       setFolderToDelete(null);
       setExpandedPaths((current) => {
-        const next = new Set(current);
-
-        next.delete(folderToDelete.path);
-
-        return next;
+        return new Set(
+          [...current].filter(
+            (path) => path !== folderPath && !path.startsWith(`${folderPath}/`),
+          ),
+        );
       });
-      await loadFolder(parentPath);
+      setContents((current) =>
+        Object.fromEntries(
+          Object.entries(current).filter(
+            ([path]) => path !== folderPath && !path.startsWith(`${folderPath}/`),
+          ),
+        ),
+      );
 
-      if (
-        selectedPath === folderToDelete.path ||
-        selectedPath.startsWith(`${folderToDelete.path}/`)
-      ) {
+      if (isSelectedBranch) {
         setSelectedPath(parentPath);
-        await loadFolder(parentPath);
       }
+
+      await Promise.all(
+        [...new Set(['', parentPath, ...expandedPaths])]
+          .filter(
+            (path) => path !== folderPath && !path.startsWith(`${folderPath}/`),
+          )
+          .map((path) => loadFolder(path)),
+      );
     } catch (deleteError) {
       setError(
         deleteError instanceof Error

@@ -1,12 +1,10 @@
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import {
-  ArrowIcon,
-  ClockIcon,
-  PencilIcon,
-  TransferIcon,
-} from '../../../../../(general)/registry/[animalId]/components/icons';
+import { ArrowIcon } from '@app/components/icons/registry-animal-a-rr-ow-ic-on';
+import { ClockIcon } from '@app/components/icons/registry-animal-c-lo-ck-ic-on';
+import { PencilIcon } from '@app/components/icons/registry-animal-p-en-ci-li-co-n';
+import { TransferIcon } from '@app/components/icons/registry-animal-t-ra-ns-fe-ri-co-n';
 
 import {
   buildEntityAmount,

@@ -48,7 +48,7 @@ export async function EmailMailboxPage({
         />
       </header>
 
-      <section className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
+      <section className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950 md:overflow-visible md:border-0 md:bg-transparent md:shadow-none">
         <EmailMailboxTabs
           mailboxGroups={mailboxGroups}
           canSend={canSend}

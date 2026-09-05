@@ -1,5 +1,7 @@
 'use client';
 
+import { AdminAdminEmailComponentsRecipientFieldsIcon01 } from '@app/components/icons/admin-admin-email-components-recipient-fields-icon-01';
+
 import { EmailRecipient } from '../types/email.types';
 
 interface RecipientFieldsProps {
@@ -77,19 +79,13 @@ export function RecipientFields({
               title="Remove recipient"
               type="button"
             >
-              <svg
+              <AdminAdminEmailComponentsRecipientFieldsIcon01
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
                 viewBox="0 0 24 24"
-              >
-                <path
-                  d="M6 18L18 6M6 6l12 12"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              />
             </button>
           )}
         </div>

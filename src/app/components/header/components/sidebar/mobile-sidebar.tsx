@@ -4,10 +4,8 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useEffect, useId, useState } from 'react';
 
-import {
-  CloseIcon,
-  MenuIcon,
-} from '@app/(general)/registry/[animalId]/components/icons';
+import { CloseIcon } from '@app/components/icons/registry-animal-c-lo-se-ic-on';
+import { MenuIcon } from '@app/components/icons/registry-animal-m-en-ui-co-n';
 
 type SidebarLink = {
   key: string;

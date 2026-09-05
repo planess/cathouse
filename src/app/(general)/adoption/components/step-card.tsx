@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ExternalLinkIcon } from './icons';
+import { ExternalLinkIcon } from '@app/components/icons/adoption-e-xt-er-na-ll-in-ki-co-n';
 
 import type { ReactNode } from 'react';
 

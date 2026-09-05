@@ -110,7 +110,7 @@ export async function createReport(payload: ReportPayload) {
   revalidatePath('/admin/finance');
 
   if (payload.type === 'debt') {
-    revalidateTag('admin-finance-debts');
+    revalidateTag('admin-finance-debts', 'max');
   }
 
   return { success: true, message: 'Report created.' };

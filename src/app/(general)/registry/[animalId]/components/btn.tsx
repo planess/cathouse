@@ -1,4 +1,4 @@
-import { PlusIcon } from './icons';
+import { PlusIcon } from '@app/components/icons/registry-animal-p-lu-si-co-n';
 
 export default function Btn({
   children,

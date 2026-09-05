@@ -11,6 +11,26 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useState } from 'react';
 
+import { AdminAdminEmailComponentsRichTextEditorIcon01 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-01';
+import { AdminAdminEmailComponentsRichTextEditorIcon02 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-02';
+import { AdminAdminEmailComponentsRichTextEditorIcon03 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-03';
+import { AdminAdminEmailComponentsRichTextEditorIcon04 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-04';
+import { AdminAdminEmailComponentsRichTextEditorIcon05 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-05';
+import { AdminAdminEmailComponentsRichTextEditorIcon06 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-06';
+import { AdminAdminEmailComponentsRichTextEditorIcon07 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-07';
+import { AdminAdminEmailComponentsRichTextEditorIcon08 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-08';
+import { AdminAdminEmailComponentsRichTextEditorIcon09 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-09';
+import { AdminAdminEmailComponentsRichTextEditorIcon10 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-10';
+import { AdminAdminEmailComponentsRichTextEditorIcon11 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-11';
+import { AdminAdminEmailComponentsRichTextEditorIcon12 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-12';
+import { AdminAdminEmailComponentsRichTextEditorIcon13 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-13';
+import { AdminAdminEmailComponentsRichTextEditorIcon14 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-14';
+import { AdminAdminEmailComponentsRichTextEditorIcon15 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-15';
+import { AdminAdminEmailComponentsRichTextEditorIcon16 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-16';
+import { AdminAdminEmailComponentsRichTextEditorIcon17 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-17';
+import { AdminAdminEmailComponentsRichTextEditorIcon18 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-18';
+
+
 import { FontSize } from '../helpers/font-size-extension';
 
 interface RichTextEditorProps {
@@ -222,24 +242,13 @@ export function RichTextEditor({
           title="Undo"
           type="button"
         >
-          <svg
+          <AdminAdminEmailComponentsRichTextEditorIcon01
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
             viewBox="0 0 24 24"
-          >
-            <path
-              d="M3 10h10a5 5 0 015 5v0a5 5 0 01-5 5H8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M7 14l-4-4 4-4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          />
         </button>
         <button
           className={btnBase}
@@ -248,24 +257,13 @@ export function RichTextEditor({
           title="Redo"
           type="button"
         >
-          <svg
+          <AdminAdminEmailComponentsRichTextEditorIcon02
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
             viewBox="0 0 24 24"
-          >
-            <path
-              d="M21 10H11a5 5 0 00-5 5v0a5 5 0 005 5h5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M17 14l4-4-4-4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          />
         </button>
 
         <Separator />
@@ -317,9 +315,7 @@ export function RichTextEditor({
           title="Bold"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6V4zm0 8h9a4 4 0 014 4 4 4 0 01-4 4H6v-8z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon03 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
         <button
           className={editor.isActive('italic') ? btnActive : btnBase}
@@ -327,9 +323,7 @@ export function RichTextEditor({
           title="Italic"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M10 4h6l-1 2h-2l-3 12h2l-1 2H5l1-2h2l3-12H9l1-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon04 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
         <button
           className={editor.isActive('underline') ? btnActive : btnBase}
@@ -337,9 +331,7 @@ export function RichTextEditor({
           title="Underline"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 3v7a6 6 0 0012 0V3h-2v7a4 4 0 01-8 0V3H6zM4 20h16v2H4v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon05 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
         <button
           className={editor.isActive('strike') ? btnActive : btnBase}
@@ -347,9 +339,7 @@ export function RichTextEditor({
           title="Strikethrough"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 12h18v1H3v-1zm5-1V7a4 4 0 118 0v1h-2V7a2 2 0 00-4 0v4H8zm4 3v4a4 4 0 01-8 0v-1h2v1a2 2 0 004 0v-4h2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon06 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
 
         <Separator />
@@ -367,19 +357,13 @@ export function RichTextEditor({
           >
             <span className="flex items-center gap-0.5 text-xs font-medium">
               Size
-              <svg
+              <AdminAdminEmailComponentsRichTextEditorIcon07
                 className="h-3 w-3"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
                 viewBox="0 0 24 24"
-              >
-                <path
-                  d="M19 9l-7 7-7-7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              />
             </span>
           </button>
           {showFontSize && (
@@ -476,9 +460,7 @@ export function RichTextEditor({
             title="Highlight / Background color"
             type="button"
           >
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20 14c-.092.064-2 2.083-2 3.5a2 2 0 104 0c0-1.417-1.908-3.436-2-3.5zM9.586 14L2 6.414 3.414 5l2.293 2.293L12.293.707a1 1 0 011.414 0l5.586 5.586a1 1 0 010 1.414L12.707 14H9.586zm3.121-2L16 8.707 12 4.707 5.414 11.293 5.707 12h7z" />
-            </svg>
+            <AdminAdminEmailComponentsRichTextEditorIcon08 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
           </button>
           {showBgColor && (
             <div className="absolute left-0 top-full z-20 mt-1 w-56 rounded-lg border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
@@ -522,9 +504,7 @@ export function RichTextEditor({
           title="Align left"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 3h18v2H3V3zm0 4h12v2H3V7zm0 4h18v2H3v-2zm0 4h12v2H3v-2zm0 4h18v2H3v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon09 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
         <button
           className={
@@ -534,9 +514,7 @@ export function RichTextEditor({
           title="Align center"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 3h18v2H3V3zm3 4h12v2H6V7zm-3 4h18v2H3v-2zm3 4h12v2H6v-2zm-3 4h18v2H3v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon10 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
         <button
           className={
@@ -546,9 +524,7 @@ export function RichTextEditor({
           title="Align right"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 3h18v2H3V3zm6 4h12v2H9V7zm-6 4h18v2H3v-2zm6 4h12v2H9v-2zm-6 4h18v2H3v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon11 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
 
         <Separator />
@@ -560,12 +536,7 @@ export function RichTextEditor({
           title="Bullet list"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <circle cx="4" cy="7" r="1.5" />
-            <circle cx="4" cy="12" r="1.5" />
-            <circle cx="4" cy="17" r="1.5" />
-            <path d="M8 6h13v2H8V6zm0 5h13v2H8v-2zm0 5h13v2H8v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon12 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
         <button
           className={editor.isActive('orderedList') ? btnActive : btnBase}
@@ -573,9 +544,7 @@ export function RichTextEditor({
           title="Numbered list"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 5.5V4h2v3H4V5.5H3zm1 6.5h1.5v.5H4v1h1.5v.5H3v1h3v-4H4v-.5h1.5v-1H3v2zm0 6h1v.5H3v1h1v.5H3v1h3v-1H4.5v-.5H6v-1H4.5V18H6v-1H3v1zM8 6h13v2H8V6zm0 5h13v2H8v-2zm0 5h13v2H8v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon13 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
 
         {/* Blockquote */}
@@ -585,9 +554,7 @@ export function RichTextEditor({
           title="Blockquote"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311C9.591 11.7 11 13.166 11 15c0 1.933-1.567 3.5-3.5 3.5-1.271 0-2.404-.56-2.917-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311C19.591 11.7 21 13.166 21 15c0 1.933-1.567 3.5-3.5 3.5-1.271 0-2.404-.56-2.917-1.179z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon14 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
 
         {/* Horizontal rule */}
@@ -597,9 +564,7 @@ export function RichTextEditor({
           title="Horizontal rule"
           type="button"
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 11h18v2H3v-2z" />
-          </svg>
+          <AdminAdminEmailComponentsRichTextEditorIcon15 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
         </button>
 
         <Separator />
@@ -612,24 +577,13 @@ export function RichTextEditor({
             title="Insert link"
             type="button"
           >
-            <svg
+            <AdminAdminEmailComponentsRichTextEditorIcon16
               className="h-4 w-4"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
               viewBox="0 0 24 24"
-            >
-              <path
-                d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            />
           </button>
           {showLinkInput && (
             <div className="absolute left-0 top-full z-20 mt-1 flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
@@ -678,17 +632,13 @@ export function RichTextEditor({
           className={`${btnBase} relative cursor-pointer overflow-hidden`}
           title="Insert inline image"
         >
-          <svg
+          <AdminAdminEmailComponentsRichTextEditorIcon17
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
             strokeWidth={1.5}
             viewBox="0 0 24 24"
-          >
-            <rect height="18" rx="2" width="18" x="3" y="3" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <path d="M21 15l-5-5L5 21" />
-          </svg>
+          />
           <input
             accept="image/*"
             className="absolute inset-0 cursor-pointer opacity-0"
@@ -708,24 +658,13 @@ export function RichTextEditor({
           title="Clear formatting"
           type="button"
         >
-          <svg
+          <AdminAdminEmailComponentsRichTextEditorIcon18
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
             viewBox="0 0 24 24"
-          >
-            <path
-              d="M4 7h7m-2 9l3-9m6-3l-8 16"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M16 4l4 4m0-4l-4 4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          />
         </button>
       </div>
 

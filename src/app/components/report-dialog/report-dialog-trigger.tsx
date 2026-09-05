@@ -4,11 +4,9 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useCallback, type MouseEvent } from 'react';
 
-import {
-  InstagramIcon,
-  PhoneIcon,
-  TelegramIcon,
-} from '@app/(general)/registry/[animalId]/components/icons';
+import { InstagramIcon } from '@app/components/icons/registry-animal-i-ns-ta-gr-am-ic-on';
+import { PhoneIcon } from '@app/components/icons/registry-animal-p-ho-ne-ic-on';
+import { TelegramIcon } from '@app/components/icons/registry-animal-t-el-eg-ra-mi-co-n';
 import { useModal } from '@app/hooks/use-modal';
 
 import Alert from '../alert/alert';

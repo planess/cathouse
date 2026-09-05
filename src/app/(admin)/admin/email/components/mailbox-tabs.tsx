@@ -10,8 +10,8 @@ import {
   useTransition,
 } from 'react';
 
-import { Tabs } from '@app/components/tabs';
-import type { TabItem } from '@app/models/tab-item.model';
+import { EditIcon } from '@app/components/icons/edit-icon';
+import { PlusIcon } from '@app/components/icons/plus-icon';
 import type {
   EmailMailboxSummary,
   EmailMailboxThreadGroup,
@@ -335,42 +335,38 @@ export function EmailMailboxTabs({
     [canSend, displayName, handleActiveIdChange, prefix],
   );
 
-  const tabItems = useMemo<TabItem[]>(
-    () => [
-      ...groups.map(({ mailbox }) => ({
-        id: getMailboxTabId(mailbox.id),
-        label: mailbox.address,
-        content: (
-          <MailboxTabPanel
-            mailbox={mailbox}
-            canSend={canSend}
-            refreshToken={threadRefreshTokens[mailbox.id] ?? 0}
-            onCompose={openComposeModal}
-            onEditMailbox={openEditMailboxModal}
-            onThreadSelect={handleThreadSelect}
-          />
-        ),
-      })),
-      ...(canSend ? [{
-        id: CREATE_MAILBOX_TAB_ID,
-        label: '+',
-        content: (
-          <CreateMailboxForm
-            displayName={displayName}
-            onDisplayNameChange={updateCreateMailboxDisplayName}
-            onPrefixChange={updateCreateMailboxPrefix}
-            onSubmit={handleSubmit}
-            prefix={prefix}
-            result={result}
-            saving={saving}
-          />
-        ),
-      }] : []),
-    ],
+  const activeMailbox = useMemo(
+    () => groups.find(
+      ({ mailbox }) => getMailboxTabId(mailbox.id) === activeId,
+    )?.mailbox,
+    [activeId, groups],
+  );
+
+  const activeContent = useMemo(
+    () => activeId === CREATE_MAILBOX_TAB_ID ? (
+      <CreateMailboxForm
+        displayName={displayName}
+        onDisplayNameChange={updateCreateMailboxDisplayName}
+        onPrefixChange={updateCreateMailboxPrefix}
+        onSubmit={handleSubmit}
+        prefix={prefix}
+        result={result}
+        saving={saving}
+      />
+    ) : activeMailbox !== undefined ? (
+      <MailboxTabPanel
+        mailbox={activeMailbox}
+        canSend={canSend}
+        refreshToken={threadRefreshTokens[activeMailbox.id] ?? 0}
+        onCompose={openComposeModal}
+        onThreadSelect={handleThreadSelect}
+      />
+    ) : null,
     [
+      activeId,
+      activeMailbox,
       displayName,
       canSend,
-      groups,
       handleSubmit,
       handleThreadSelect,
       openComposeModal,
@@ -378,6 +374,7 @@ export function EmailMailboxTabs({
       prefix,
       result,
       saving,
+      threadRefreshTokens,
       updateCreateMailboxDisplayName,
       updateCreateMailboxPrefix,
     ],
@@ -385,12 +382,135 @@ export function EmailMailboxTabs({
 
   return (
     <>
-      <Tabs
-        activeId={activeId}
-        ariaLabel="Email mailboxes"
-        items={tabItems}
-        onActiveIdChange={handleActiveIdChange}
-      />
+      <div className="md:flex md:min-h-[34rem] md:gap-4">
+        <aside className="hidden w-72 shrink-0 self-start overflow-hidden md:sticky md:top-4 md:flex md:h-[calc(100vh-2rem)] md:flex-col md:rounded-2xl md:border md:border-slate-200/70 md:bg-white md:shadow-sm md:shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-800">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+              Mailboxes
+            </h2>
+            {canSend && (
+              <button
+                aria-label="Add mailbox"
+                className="rounded-lg p-1.5 text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-200 dark:hover:bg-emerald-950/30"
+                onClick={() => handleActiveIdChange(CREATE_MAILBOX_TAB_ID)}
+                title="Add mailbox"
+                type="button"
+              >
+                <PlusIcon
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                />
+              </button>
+            )}
+          </div>
+          <div className="flex-1 space-y-1 overflow-y-auto p-3">
+            {groups.map(({ mailbox }) => {
+              const mailboxTabId = getMailboxTabId(mailbox.id);
+              const isActive = mailboxTabId === activeId;
+
+              return (
+                <div
+                  className={`group flex items-center gap-1 rounded-xl transition ${
+                    isActive
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-200'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-emerald-200'
+                  }`}
+                  key={mailbox.id}
+                >
+                  <button
+                    aria-current={isActive ? 'page' : undefined}
+                    className="min-w-0 flex-1 px-3 py-2.5 text-left text-sm font-medium"
+                    onClick={() => handleActiveIdChange(mailboxTabId)}
+                    type="button"
+                  >
+                    <span className="block truncate">{mailbox.address}</span>
+                    {mailbox.displayName.trim().length > 0 && (
+                      <span className="mt-0.5 block truncate text-xs font-normal text-slate-500 dark:text-slate-400">
+                        {mailbox.displayName}
+                      </span>
+                    )}
+                  </button>
+                  {canSend && (
+                    <button
+                      aria-label={`Edit sender name for ${mailbox.address}`}
+                      className="mr-2 rounded-lg p-1.5 text-slate-500 transition hover:bg-white hover:text-emerald-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-emerald-200"
+                      onClick={() => openEditMailboxModal(mailbox)}
+                      title="Edit sender name"
+                      type="button"
+                    >
+                      <EditIcon
+                        aria-hidden="true"
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.5"
+                        viewBox="0 0 24 24"
+                      />
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1 md:overflow-hidden md:rounded-2xl md:border md:border-slate-200/70 md:bg-white md:shadow-sm md:shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950">
+          <div className="border-b border-slate-200 p-4 dark:border-slate-800 md:hidden">
+            <label
+              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+              htmlFor="email-mailbox-selector"
+            >
+              Mailbox
+            </label>
+            <div className="flex items-center gap-2">
+              <select
+                className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                id="email-mailbox-selector"
+                onChange={(event) => handleActiveIdChange(event.target.value)}
+                value={activeId}
+              >
+                {groups.map(({ mailbox }) => (
+                  <option key={mailbox.id} value={getMailboxTabId(mailbox.id)}>
+                    {mailbox.address}
+                  </option>
+                ))}
+                {canSend && (
+                  <option value={CREATE_MAILBOX_TAB_ID}>Add mailbox</option>
+                )}
+              </select>
+              {canSend && activeMailbox !== undefined && (
+                <button
+                  aria-label={`Edit sender name for ${activeMailbox.address}`}
+                  className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:text-emerald-200"
+                  onClick={() => openEditMailboxModal(activeMailbox)}
+                  title="Edit sender name"
+                  type="button"
+                >
+                  <EditIcon
+                    aria-hidden="true"
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    viewBox="0 0 24 24"
+                  />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {activeContent}
+        </div>
+      </div>
 
       {isThreadNavigationPending && (
         <NavigationLoadingOverlay label="Opening conversation..." />

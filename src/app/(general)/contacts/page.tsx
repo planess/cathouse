@@ -1,13 +1,11 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
+import { GeneralContactsPageIcon01 } from '@app/components/icons/general-contacts-page-icon-01';
+import { InstagramIcon } from '@app/components/icons/registry-animal-i-ns-ta-gr-am-ic-on';
+import { PhoneIcon } from '@app/components/icons/registry-animal-p-ho-ne-ic-on';
+import { TelegramIcon } from '@app/components/icons/registry-animal-t-el-eg-ra-mi-co-n';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
-
-import {
-  InstagramIcon,
-  PhoneIcon,
-  TelegramIcon,
-} from '../registry/[animalId]/components/icons';
 
 import ContactFormWrapper from './components/contact-form-wrapper/contact-form-wrapper';
 import Map from './components/map/map';
@@ -40,7 +38,7 @@ export default function Contacts() {
                 target="_blank"
               >
                 <span className="text-sky-300">
-                  <svg
+                  <GeneralContactsPageIcon01
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -52,10 +50,7 @@ export default function Contacts() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                  >
-                    <rect x="4" y="7" width="24" height="18" rx="3" ry="3" />
-                    <path d="M6 9l10 8 10-8" />
-                  </svg>
+                  />
                 </span>
                 <span>info@perilines.com.ua</span>
               </a>

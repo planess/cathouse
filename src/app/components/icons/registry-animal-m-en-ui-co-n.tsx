@@ -1,4 +1,5 @@
-export function FilterSvg() {
+/** Renders the Menu icon. */
+export function MenuIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -8,10 +9,12 @@ export function FilterSvg() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className="h-5 w-5"
       aria-hidden="true"
     >
-      <path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" />
+      <line x1="4" x2="20" y1="6" y2="6" />
+      <line x1="4" x2="20" y1="12" y2="12" />
+      <line x1="4" x2="20" y1="18" y2="18" />
     </svg>
   );
 }

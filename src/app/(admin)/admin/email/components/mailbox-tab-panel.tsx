@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { AdminAdminEmailComponentsMailboxTabPanelIcon01 } from '@app/components/icons/admin-admin-email-components-mailbox-tab-panel-icon-01';
 import type {
   EmailMailboxSummary,
   EmailThreadSummary,
@@ -18,7 +19,6 @@ type MailboxTabPanelProps = {
   mailbox: EmailMailboxSummary;
   refreshToken: number;
   onCompose: (mailbox: EmailMailboxSummary) => void;
-  onEditMailbox: (mailbox: EmailMailboxSummary) => void;
   onThreadSelect: (mailboxId: string, threadId: string) => void;
 };
 
@@ -56,7 +56,6 @@ export function MailboxTabPanel({
   mailbox,
   refreshToken,
   onCompose,
-  onEditMailbox,
   onThreadSelect,
 }: MailboxTabPanelProps) {
   const pathname = usePathname();
@@ -129,30 +128,15 @@ export function MailboxTabPanel({
             title="Refresh threads"
             type="button"
           >
-            <svg
+            <AdminAdminEmailComponentsMailboxTabPanelIcon01
               aria-hidden="true"
               className="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
-            >
-              <path
-                d="M20 11a8 8 0 1 0 2 5.25M20 4v7h-7"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.8"
-              />
-            </svg>
+            />
           </button>
           {canSend && (
             <>
-              <button
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
-                onClick={() => onEditMailbox(mailbox)}
-                type="button"
-              >
-                Edit sender name
-              </button>
               <button
                 className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
                 onClick={() => onCompose(mailbox)}

@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
+import { BarChartIcon } from '@app/components/icons/registry-animal-b-ar-ch-ar-ti-co-n';
+import { ReceiptIcon } from '@app/components/icons/registry-animal-r-ec-ei-pt-ic-on';
 import OfferNavigation from '@app/components/offer-navigation/offer-navigation';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
-import {
-  BarChartIcon,
-  ReceiptIcon,
-} from '../registry/[animalId]/components/icons';
 
 import { ReportsContent } from './components/reports-content';
 

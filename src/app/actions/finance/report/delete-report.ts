@@ -40,7 +40,7 @@ export async function deleteReport(reportId: string) {
   revalidatePath('/admin/finance');
 
   if (report.type === 'debt') {
-    revalidateTag('admin-finance-debts');
+    revalidateTag('admin-finance-debts', 'max');
   }
 
   return { success: true, message: 'Report deleted.' };

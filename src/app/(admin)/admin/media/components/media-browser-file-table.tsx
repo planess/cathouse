@@ -1,7 +1,11 @@
 import clsx from 'clsx';
 
+import { AdminAdminMediaComponentsMediaBrowserFileTableIcon01 } from '@app/components/icons/admin-admin-media-components-media-browser-file-table-icon-01';
+import { AdminAdminMediaComponentsMediaBrowserFileTableIcon02 } from '@app/components/icons/admin-admin-media-components-media-browser-file-table-icon-02';
+import { AdminAdminMediaComponentsMediaBrowserFileTableIcon03 } from '@app/components/icons/admin-admin-media-components-media-browser-file-table-icon-03';
+import { FileIcon } from '@app/components/icons/file-icon';
+
 import { EmptyFolderRow } from '../helpers/empty-folder-row';
-import { FileIcon } from '../helpers/file-icon';
 import { formatFileSize } from '../helpers/format-file-size';
 import { formatLastModified } from '../helpers/format-last-modified';
 import { imagePreviewUrl } from '../helpers/image-preview-url';
@@ -104,20 +108,12 @@ export function MediaBrowserFileTable({
                       className="rounded-lg p-2 text-sky-700 transition hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-sky-500/10"
                       href={`/api/admin/media?path=${encodeURIComponent(file.path)}&download=1`}
                     >
-                      <svg
+                      <AdminAdminMediaComponentsMediaBrowserFileTableIcon01
                         aria-hidden="true"
                         className="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M12 4v10m0 0 3.5-3.5M12 14l-3.5-3.5M5 16.5v2a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-2"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
+                      />
                     </a>
                     {canRename && (
                       <button
@@ -126,20 +122,12 @@ export function MediaBrowserFileTable({
                         onClick={() => onRename(file)}
                         type="button"
                       >
-                        <svg
+                        <AdminAdminMediaComponentsMediaBrowserFileTableIcon02
                           aria-hidden="true"
                           className="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="m14.5 5.5 4 4M5 19l3.25-.75L18.5 8a2.828 2.828 0 0 0-4-4L4.25 14.25 3.5 17.5 5 19Z"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                          />
-                        </svg>
+                        />
                       </button>
                     )}
                     {canDelete && (
@@ -149,20 +137,12 @@ export function MediaBrowserFileTable({
                         onClick={() => onDelete(file)}
                         type="button"
                       >
-                        <svg
+                        <AdminAdminMediaComponentsMediaBrowserFileTableIcon03
                           aria-hidden="true"
                           className="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M5.5 7.5h13M10 3.75h4M8.25 7.5l.5 11.25h6.5l.5-11.25"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                          />
-                        </svg>
+                        />
                       </button>
                     )}
                   </div>

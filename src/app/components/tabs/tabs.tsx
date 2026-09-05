@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 
+import { ComponentsTabsTabsIcon01 } from '@app/components/icons/components-tabs-tabs-icon-01';
 import type { TabItem } from '@app/models/tab-item.model';
 
 type TabsProps = {
@@ -70,27 +71,12 @@ export function Tabs({
               type="button"
             >
               {item.id !== 'create-mailbox' && (
-                <svg
+                <ComponentsTabsTabsIcon01
                   aria-hidden="true"
                   className="h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M3.75 7.5l8.25 5.25L20.25 7.5"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.7"
-                  />
-                  <path
-                    d="M4.75 6.75h14.5a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1H4.75a1 1 0 0 1-1-1v-8.5a1 1 0 0 1 1-1Z"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.7"
-                  />
-                </svg>
+                />
               )}
               <span>{item.label}</span>
               {item.badge !== undefined && (

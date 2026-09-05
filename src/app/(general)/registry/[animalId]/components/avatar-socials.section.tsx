@@ -1,4 +1,6 @@
-import { EmailIcon, PhoneIcon, TelegramIcon } from './icons';
+import { EmailIcon } from '@app/components/icons/registry-animal-e-ma-il-ic-on';
+import { PhoneIcon } from '@app/components/icons/registry-animal-p-ho-ne-ic-on';
+import { TelegramIcon } from '@app/components/icons/registry-animal-t-el-eg-ra-mi-co-n';
 
 interface AvatarSocialsProps {
   shareTelegramUrl: string;

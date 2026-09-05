@@ -171,12 +171,13 @@ export async function POST(request: Request) {
 }
 
 /**
- * DELETE handler for removing files.
- * Deletes a file from cloud storage by its path.
+ * DELETE handler for removing files or folders.
+ * Deletes a file or recursively deletes a folder from cloud storage by its path.
  * Requires MEDIA_DELETE permission.
  *
  * @param request - The incoming request with query parameter:
  *   - `path`: The file path to delete
+ *   - `folderPath`: The folder path to delete recursively
  * @returns 204 No Content on success, or error JSON response on failure
  */
 export async function DELETE(request: Request) {
@@ -187,18 +188,33 @@ export async function DELETE(request: Request) {
     );
   }
 
-  const path = getSafeMediaPath(new URL(request.url).searchParams.get('path'));
+  const { searchParams } = new URL(request.url);
+  const folderPath = getSafeMediaPath(searchParams.get('folderPath'));
+  const path = getSafeMediaPath(searchParams.get('path'));
 
-  if (path === null || path === '') {
+  if (folderPath === null || path === null) {
+    return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
+  }
+
+  if (folderPath !== '' && path !== '') {
     return NextResponse.json(
-      { error: 'A file path is required.' },
+      { error: 'Specify either a file path or folder path.' },
+      { status: 400 },
+    );
+  }
+
+  if (folderPath === '' && path === '') {
+    return NextResponse.json(
+      { error: 'A file or folder path is required.' },
       { status: 400 },
     );
   }
 
   try {
+    const isFolder = folderPath !== '';
+    const targetPath = isFolder ? folderPath : path;
     const response = await fetch(
-      `${process.env.R2_MEDIA_BASE_URL}/delete/${path}`,
+      `${process.env.R2_MEDIA_BASE_URL}/${isFolder ? 'delete-folder' : 'delete'}/${targetPath}`,
       {
         cache: 'no-store',
         method: 'DELETE',
@@ -207,7 +223,11 @@ export async function DELETE(request: Request) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: 'Unable to delete the cloud file.' },
+        {
+          error: isFolder
+            ? 'Unable to delete the cloud folder.'
+            : 'Unable to delete the cloud file.',
+        },
         { status: response.status },
       );
     }

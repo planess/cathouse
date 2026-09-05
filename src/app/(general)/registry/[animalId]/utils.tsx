@@ -1,5 +1,8 @@
 import { ReactElement } from 'react';
 
+import { CoronavirusIcon } from '@app/components/icons/registry-animal-c-or-on-av-ir-us-ic-on';
+import { HealingIcon } from '@app/components/icons/registry-animal-h-ea-li-ng-ic-on';
+import { MedicationIcon } from '@app/components/icons/registry-animal-m-ed-ic-at-io-ni-co-n';
 import type {
   AnimalDocument,
   AnimalObservation,
@@ -9,12 +12,6 @@ import type {
 } from '@app/models/animal';
 
 import { formatDate } from '../components/card/card.helpers';
-
-import {
-  CoronavirusIcon,
-  HealingIcon,
-  MedicationIcon,
-} from './components/icons';
 
 type ClientTranslateFn = ReturnType<typeof import('next-intl').useTranslations>;
 type ServerTranslateFn = Awaited<

@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { useId, useState } from 'react';
 
+import { ComponentsCheckboxCheckboxIcon01 } from '@app/components/icons/components-checkbox-checkbox-icon-01';
 import type { CheckboxProps } from '@app/models/checkbox-props.model';
 
 export function Checkbox({
@@ -57,23 +58,14 @@ export function Checkbox({
             'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-blue-400 peer-focus-visible:outline-offset-2',
           )}
         />
-        <svg
+        <ComponentsCheckboxCheckboxIcon01
           viewBox="0 0 20 20"
           className={clsx(
             'pointer-events-none absolute h-3.5 w-3.5 text-white transition-opacity',
             isChecked ? 'opacity-100' : 'opacity-0',
           )}
           aria-hidden
-        >
-          <path
-            d="M5 10.5L8.5 14 15 7"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        />
       </span>
       {label ? (
         <span className="text-sm text-neutral-700 dark:text-slate-200">

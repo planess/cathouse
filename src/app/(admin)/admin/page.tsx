@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
+import { AdminAdminPageIcon01 } from '@app/components/icons/admin-admin-page-icon-01';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import type { Metadata } from 'next';
@@ -65,27 +66,12 @@ export default function AdminPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                <svg
+                <AdminAdminPageIcon01
                   aria-hidden="true"
                   className="h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M11 5.75a5.25 5.25 0 1 1-3.712 8.962l-2.313 2.313"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M15.5 15.5 19 19"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
+                />
               </span>
               <input
                 className="w-full rounded-2xl border border-slate-200 bg-slate-100/70 py-2 pl-9 pr-4 text-sm text-slate-700 outline-none transition focus:border-sky-300 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"

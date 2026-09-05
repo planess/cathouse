@@ -13,9 +13,6 @@ imageHostname = imageHostname.replace('https://', '');
 const nextConfig: NextConfig = {
   /* config options here */
   // devIndicators: false,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {

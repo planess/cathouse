@@ -13,6 +13,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ProvidersModalIcon01 } from '@app/components/icons/providers-modal-icon-01';
+
 const MODAL_EXIT_MS = 500;
 
 type ModalLifecycleState = 'open' | 'closing';
@@ -595,19 +597,11 @@ function createModalHandle<T>(
 
 function CloseIcon() {
   return (
-    <svg
+    <ProvidersModalIcon01
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
       className="h-4 w-4"
-    >
-      <path
-        d="M6 6l12 12M18 6L6 18"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    />
   );
 }

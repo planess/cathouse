@@ -3,6 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { statusTone } from '@app/(general)/registry/components/card/card.helpers';
+import { GeneralRegistryLightComponentsRegistryLightCardIcon01 } from '@app/components/icons/general-registry-light-components-registry-light-card-icon-01';
+import { GeneralRegistryLightComponentsRegistryLightCardIcon02 } from '@app/components/icons/general-registry-light-components-registry-light-card-icon-02';
 
 import type { RegistryLightAnimalRecord } from '../types/registry-light.types';
 
@@ -17,36 +19,13 @@ type RegistryLightCardProps = {
 
 function SpeciesIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className="size-4">
-      <path
-        d="M6.417 6.833a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM13.583 6.833a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM4.667 11a1.417 1.417 0 1 0 0-2.834 1.417 1.417 0 0 0 0 2.834ZM15.333 11a1.417 1.417 0 1 0 0-2.834 1.417 1.417 0 0 0 0 2.834Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10 15.833c2.026 0 3.333-1.078 3.333-2.417 0-1.062-.844-1.916-1.884-1.916-.658 0-1.04.167-1.449.478-.409-.311-.791-.478-1.449-.478-1.04 0-1.884.854-1.884 1.916 0 1.34 1.307 2.417 3.333 2.417Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <GeneralRegistryLightComponentsRegistryLightCardIcon01 viewBox="0 0 20 20" fill="none" aria-hidden="true" className="size-4" />
   );
 }
 
 function CalendarIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className="size-4">
-      <path
-        d="M5.833 3.75v2.083M14.167 3.75v2.083M4.583 6.667h10.834M5.5 16.25h9c.92 0 1.667-.746 1.667-1.667V6.25c0-.92-.746-1.667-1.667-1.667h-9c-.92 0-1.667.746-1.667 1.667v8.333c0 .92.746 1.667 1.667 1.667Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <GeneralRegistryLightComponentsRegistryLightCardIcon02 viewBox="0 0 20 20" fill="none" aria-hidden="true" className="size-4" />
   );
 }
 
