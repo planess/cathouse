@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 import type { EmailAddress } from '@app/models/email-address.model';
+import type { EmailContactSummary } from '@app/models/email-contact-summary';
 import type { EmailMailbox } from '@app/models/email-mailbox.model';
 
 import { EMAIL_MAILBOX_DOMAIN, EMAIL_PREFIX_PATTERN } from './email/constants';
@@ -455,6 +456,177 @@ class EmailService extends Singleton {
       await logEmailServiceError('searchEmailContacts', error, {
         queryLength: normalizedQuery.length,
       });
+
+      throw error;
+    }
+  }
+
+  /** Lists every saved external email contact. */
+  async listEmailContacts(): Promise<EmailContactSummary[]> {
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const contacts = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .find({})
+        .sort({ name: 1, normalizedAddress: 1 })
+        .toArray();
+
+      return contacts.map(mapContact);
+    } catch (error) {
+      await logEmailServiceError('listEmailContacts', error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Creates a saved external email contact.
+   *
+   * @param name Optional display name.
+   * @param address Contact email address.
+   */
+  async createEmailContact(
+    name: string,
+    address: string,
+  ): Promise<EmailContactSummary> {
+    try {
+      const parsedAddress = parseEmailAddress(address);
+      const normalizedName = name.trim();
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const [mailbox, existingContact] = await Promise.all([
+        db
+          .collection<EmailMailbox>(DbTables.emailMailboxes)
+          .findOne({ normalizedAddress: parsedAddress.normalizedAddress }),
+        db
+          .collection<EmailContactDocument>(DbTables.emailContacts)
+          .findOne({ normalizedAddress: parsedAddress.normalizedAddress }),
+      ]);
+
+      if (mailbox !== null) {
+        throw new Error('Organization mailbox cannot be added as a contact.');
+      }
+
+      if (existingContact !== null) {
+        throw new Error('Contact already exists.');
+      }
+
+      const contact: EmailContactDocument = {
+        _id: new ObjectId(),
+        ...(normalizedName.length > 0 ? { name: normalizedName } : {}),
+        address: parsedAddress.address,
+        normalizedAddress: parsedAddress.normalizedAddress,
+      };
+
+      await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .insertOne(contact);
+
+      return mapContact(contact);
+    } catch (error) {
+      await logEmailServiceError('createEmailContact', error, {
+        address,
+        hasName: name.trim().length > 0,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Updates the display name of a saved email contact.
+   *
+   * @param contactId Contact identifier.
+   * @param name New optional display name.
+   */
+  async updateEmailContactName(
+    contactId: string,
+    name: string,
+  ): Promise<EmailContactSummary> {
+    if (!ObjectId.isValid(contactId)) {
+      throw new Error('Invalid contact id.');
+    }
+
+    try {
+      const normalizedName = name.trim();
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const contact = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .findOneAndUpdate(
+          { _id: new ObjectId(contactId) },
+          normalizedName.length > 0
+            ? { $set: { name: normalizedName } }
+            : { $unset: { name: '' } },
+          { returnDocument: 'after' },
+        );
+
+      if (contact === null) {
+        throw new Error('Contact not found.');
+      }
+
+      return mapContact(contact);
+    } catch (error) {
+      await logEmailServiceError('updateEmailContactName', error, {
+        contactId,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Permanently deletes a saved email contact.
+   *
+   * @param contactId Contact identifier.
+   */
+  async deleteEmailContact(contactId: string): Promise<void> {
+    if (!ObjectId.isValid(contactId)) {
+      throw new Error('Invalid contact id.');
+    }
+
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const contactObjectId = new ObjectId(contactId);
+      const [threadReference, messageReference] = await Promise.all([
+        db
+          .collection<EmailThreadDocument>(DbTables.emailThreads)
+          .findOne(
+            { participants: contactObjectId },
+            { projection: { _id: 1 } },
+          ),
+        db
+          .collection<EmailMessageDocument>(DbTables.emailMessages)
+          .findOne(
+            {
+              $or: [
+                { from: contactObjectId },
+                { sender: contactObjectId },
+                { replyTo: contactObjectId },
+                { to: contactObjectId },
+                { cc: contactObjectId },
+                { bcc: contactObjectId },
+              ],
+            },
+            { projection: { _id: 1 } },
+          ),
+      ]);
+
+      if (threadReference !== null || messageReference !== null) {
+        throw new Error('Contact is referenced by email history.');
+      }
+
+      const result = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .deleteOne({ _id: contactObjectId });
+
+      if (result.deletedCount === 0) {
+        throw new Error('Contact not found.');
+      }
+    } catch (error) {
+      await logEmailServiceError('deleteEmailContact', error, { contactId });
 
       throw error;
     }
