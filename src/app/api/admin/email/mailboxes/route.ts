@@ -7,6 +7,58 @@ import { emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
 
+export async function PATCH(request: Request) {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser?.id) {
+    return json({ success: false, message: 'User not authenticated.' }, 401);
+  }
+
+  const canSendEmail = await hasPermission(
+    SYSTEM_PERMISSIONS.EMAIL_SEND,
+    undefined,
+    currentUser.id,
+  );
+
+  if (!canSendEmail) {
+    return json({ success: false, message: 'Insufficient permissions.' }, 403);
+  }
+
+  try {
+    const payload = (await request.json()) as { mailboxIds?: unknown };
+
+    if (
+      !Array.isArray(payload.mailboxIds) ||
+      !payload.mailboxIds.every((mailboxId) => typeof mailboxId === 'string')
+    ) {
+      return json({ success: false, message: 'Invalid mailbox order.' }, 400);
+    }
+
+    await emailService.updateMailboxOrder(payload.mailboxIds);
+
+    return json({ success: true, message: 'Mailbox order updated.' });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Failed to update mailbox order.';
+    const status =
+      message === 'Invalid mailbox order.'
+        ? 400
+        : message === 'Mailbox list changed. Refresh and try again.'
+          ? 409
+          : 500;
+
+    await logDevelopmentError('email.api.mailboxes.order', error, {
+      route: '/api/admin/email/mailboxes',
+      status,
+      userId: currentUser.id.toString(),
+    });
+
+    return json({ success: false, message }, status);
+  }
+}
+
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 

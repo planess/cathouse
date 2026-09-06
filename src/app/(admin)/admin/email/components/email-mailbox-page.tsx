@@ -3,6 +3,7 @@ import { hasPermission } from '@app/services/access-verification.service';
 
 import { loadMailboxThreadGroups } from '../helpers/load-mailbox-thread-groups';
 
+import { EmailContactsLink } from './email-contacts-link';
 import { EmailMailboxTabs } from './mailbox-tabs';
 
 type EmailMailboxPageProps = {
@@ -41,11 +42,14 @@ export async function EmailMailboxPage({
             View and reply to organization emails.
           </p>
         </div>
-        <input
-          className="w-full rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 md:max-w-xs"
-          placeholder="Search emails..."
-          type="search"
-        />
+        <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto">
+          <input
+            className="w-full rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 md:w-72"
+            placeholder="Search emails..."
+            type="search"
+          />
+          <EmailContactsLink />
+        </div>
       </header>
 
       <section className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-950 md:overflow-visible md:border-0 md:bg-transparent md:shadow-none">
