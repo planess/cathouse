@@ -4,6 +4,37 @@ import type { NextConfig } from 'next';
 
 let imageHostname = process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL;
 
+const developmentCorsHeaders =
+  process.env.NODE_ENV === 'development'
+    ? [
+        {
+          source: '/api/:path*',
+          headers: [
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: 'http://localhost:8081',
+            },
+            {
+              key: 'Access-Control-Allow-Credentials',
+              value: 'true',
+            },
+            {
+              key: 'Access-Control-Allow-Methods',
+              value: 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            },
+            {
+              key: 'Access-Control-Allow-Headers',
+              value: 'Content-Type, Authorization, X-Client-Type',
+            },
+            {
+              key: 'Vary',
+              value: 'Origin',
+            },
+          ],
+        },
+      ]
+    : [];
+
 if (imageHostname === undefined) {
   throw new Error('CLOUDFLARE_R2_ANIMAL_IMAGE_URL is not defined');
 }
@@ -25,6 +56,9 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingIncludes: {
     '/**': ['./email-templates/**'],
+  },
+  async headers() {
+    return developmentCorsHeaders;
   },
 };
 

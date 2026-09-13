@@ -8,6 +8,22 @@ import { hasMediaPermission } from '@app/services/media/has-media-permission';
 import { isSafeMediaFilePath } from '@app/services/media/is-safe-media-file-path';
 
 /**
+ * Handles development CORS preflight requests from the mobile web application.
+ *
+ * @returns An empty successful preflight response in development, or a method-not-allowed response otherwise.
+ */
+export function OPTIONS() {
+  if (process.env.NODE_ENV === 'development') {
+    return new NextResponse(null, { status: 204 });
+  }
+
+  return new NextResponse(null, {
+    headers: { Allow: 'DELETE, GET, PATCH, POST, PUT' },
+    status: 405,
+  });
+}
+
+/**
  * GET handler for media management.
  * Retrieves media files from cloud storage or provides temporary download URLs.
  * Supports listing files in a directory or downloading individual files.
