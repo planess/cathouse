@@ -5,7 +5,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { DbTables } from '@app/enum/db-tables';
 import { toObjectId } from '@app/helpers/to-object-id';
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
 import clientPromise from '@app/ins/mongo-client';
 
 import {

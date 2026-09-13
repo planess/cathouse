@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import { revalidatePath } from 'next/cache';
 
 import { DbTables } from '@app/enum/db-tables';
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { MediaAsset } from '@app/models/media-asset';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';

@@ -54,6 +54,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+   allowedDevOrigins: ['local.lairlines.com'],
   outputFileTracingIncludes: {
     '/**': ['./email-templates/**'],
   },

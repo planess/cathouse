@@ -35,7 +35,7 @@ export function OPTIONS() {
  * @returns JSON response with file list or file download with appropriate headers
  */
 export async function GET(request: Request) {
-  const permissions = await getMediaPermissions();
+  const permissions = await getMediaPermissions(request);
 
   if (!permissions.canAccess) {
     return NextResponse.json(
@@ -128,7 +128,7 @@ type GateRequest = {
  * @returns JSON response with signed upload URLs or error message
  */
 export async function POST(request: Request) {
-  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
+  if (!(await hasMediaPermission(request, SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
@@ -197,7 +197,7 @@ export async function POST(request: Request) {
  * @returns 204 No Content on success, or error JSON response on failure
  */
 export async function DELETE(request: Request) {
-  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_DELETE))) {
+  if (!(await hasMediaPermission(request, SYSTEM_PERMISSIONS.MEDIA_DELETE))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
@@ -286,7 +286,7 @@ type RenamePayload = {
  * @returns JSON response with rename operation result or error message
  */
 export async function PATCH(request: Request) {
-  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
+  if (!(await hasMediaPermission(request, SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
@@ -408,7 +408,7 @@ type MovePayload = {
  * @returns JSON response with move operation result or error message
  */
 export async function PUT(request: Request) {
-  if (!(await hasMediaPermission(SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
+  if (!(await hasMediaPermission(request, SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },

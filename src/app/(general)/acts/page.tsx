@@ -10,7 +10,7 @@ import type {
 } from '@app/(general)/acts/types/acts-page.types';
 import { DbTables } from '@app/enum/db-tables';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
 import clientPromise from '@app/ins/mongo-client';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import {

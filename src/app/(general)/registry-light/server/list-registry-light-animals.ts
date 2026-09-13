@@ -6,7 +6,7 @@ import {
   registryStatusFilters,
 } from '@app/(general)/registry/helpers/registry-status-filter';
 import { DbTables } from '@app/enum/db-tables';
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
 import clientPromise from '@app/ins/mongo-client';
 import type { AnimalDocument, AnimalObservation } from '@app/models/animal';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
