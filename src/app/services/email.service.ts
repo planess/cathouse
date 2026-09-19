@@ -11,6 +11,7 @@ import type { EmailMailbox } from '@app/models/email-mailbox.model';
 import { EMAIL_MAILBOX_DOMAIN, EMAIL_PREFIX_PATTERN } from './email/constants';
 import { createEmailAttachmentFolder } from './email/create-email-attachment-folder';
 import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
+import { extractDataUrlInlineImages } from './email/extract-data-url-inline-images';
 import { formatEmailAddress } from './email/format-email-address';
 import { getContactIds } from './email/get-contact-ids';
 import { getContactsById } from './email/get-contacts-by-id';
@@ -114,6 +115,9 @@ class EmailService extends Singleton {
         messageParameters.inline = inline.map((inlineFile) => ({
           data: inlineFile.data,
           filename: inlineFile.filename,
+          ...(inlineFile.contentType === undefined
+            ? {}
+            : { contentType: inlineFile.contentType }),
         }));
       }
 
@@ -144,12 +148,16 @@ class EmailService extends Singleton {
     attachments: Array<AttachmentFile> = [],
     headers: Record<string, string> = {},
   ): Promise<MessagesSendResult> {
+    let inlineCount = 0;
+
     try {
+      const { bodyHtml, inlineFiles } = extractDataUrlInlineImages(body);
+      inlineCount = inlineFiles.length;
       const messageParameters = {
         from: formatEmailAddress(from),
         to: to.map(formatEmailAddress),
         subject,
-        html: body,
+        html: bodyHtml,
       } as MailgunMessageData;
 
       if (cc.length > 0) {
@@ -164,6 +172,16 @@ class EmailService extends Singleton {
         messageParameters.attachment = attachments.map((attachment) => ({
           data: attachment.data,
           filename: attachment.filename,
+        }));
+      }
+
+      if (inlineFiles.length > 0) {
+        messageParameters.inline = inlineFiles.map((inlineFile) => ({
+          data: inlineFile.data,
+          filename: inlineFile.filename,
+          ...(inlineFile.contentType === undefined
+            ? {}
+            : { contentType: inlineFile.contentType }),
         }));
       }
 
@@ -182,6 +200,7 @@ class EmailService extends Singleton {
         from: from.address,
         subject,
         attachmentsCount: attachments.length,
+        inlineCount,
         toCount: to.length,
       });
 
@@ -1573,6 +1592,47 @@ class EmailService extends Singleton {
         throw new Error('Thread not found.');
       }
 
+      const sourceAttachmentIds = (sourceMessage.attachments ?? []).filter(
+        (attachment): attachment is ObjectId => attachment instanceof ObjectId,
+      );
+      const sourceAttachmentDocuments =
+        sourceAttachmentIds.length === 0
+          ? []
+          : await db
+            .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+            .find({ _id: { $in: sourceAttachmentIds } })
+            .toArray();
+      const sourceAttachmentsById = new Map(
+        sourceAttachmentDocuments.map((attachment) => [
+          attachment._id.toString(),
+          attachment,
+        ]),
+      );
+      const sourceAttachments = sourceAttachmentIds.map((attachmentId) => {
+        const attachment = sourceAttachmentsById.get(attachmentId.toString());
+
+        if (attachment === undefined) {
+          throw new Error('Failed to load message attachments.');
+        }
+
+        return attachment;
+      });
+      const attachmentFiles = await Promise.all(
+        sourceAttachments.map(async (attachment) => {
+          if (attachment.storageKey === undefined) {
+            throw new Error('Failed to load message attachments.');
+          }
+
+          return {
+            data: await (
+              await import('./r2.service')
+            ).r2Service.downloadFile(attachment.storageKey),
+            filename: attachment.filename,
+            contentType: attachment.contentType,
+          };
+        }),
+      );
+
       const sourceContactsById = await getContactsById([
         ...getContactIds([sourceMessage.from, sourceMessage.sender]),
         ...getContactIds(sourceMessage.replyTo ?? []),
@@ -1607,7 +1667,7 @@ class EmailService extends Singleton {
         [],
         subject,
         bodyHtml,
-        [],
+        attachmentFiles,
         sendHeaders,
       );
 
@@ -1640,7 +1700,7 @@ class EmailService extends Singleton {
           text: stripHtml(bodyHtml),
           html: bodyHtml,
         },
-        attachments: [],
+        attachments: sourceAttachments.map((attachment) => attachment._id),
         headers,
         source: {
           protocol: 'API',
@@ -1686,7 +1746,12 @@ class EmailService extends Singleton {
       ]);
 
       return {
-        message: mapMessage(forwardedMessage, referencesById),
+        message: mapMessage(
+          forwardedMessage,
+          referencesById,
+          new Set(),
+          sourceAttachmentsById,
+        ),
       };
     } catch (error) {
       await logEmailServiceError('forwardMailboxMessage', error, {
