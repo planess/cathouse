@@ -17,6 +17,7 @@ import { sendForwardMessageRequest } from '../helpers/send-forward-message-reque
 import { sendThreadReplyRequest } from '../helpers/send-thread-reply-request';
 
 import { ForwardMessageModal } from './forward-message-modal';
+import { MailboxThreadSearch } from './mailbox-thread-search';
 import { NavigationLoadingOverlay } from './navigation-loading-overlay';
 import { ThreadMessageList } from './thread-message-list';
 import { ThreadReplyForm } from './thread-reply-form';
@@ -40,7 +41,8 @@ export function ThreadConversation({
   thread,
 }: ThreadConversationProps) {
   const router = useRouter();
-  const [isBackNavigationPending, startBackNavigation] = useTransition();
+  const [isNavigationPending, startNavigation] = useTransition();
+  const [navigationLabel, setNavigationLabel] = useState('Opening email...');
   const [messages, setMessages] = useState(initialMessages);
   const [form, setForm] = useState<ThreadReplyFormState | null>(null);
   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
@@ -205,8 +207,19 @@ export function ThreadConversation({
   };
 
   const handleBack = () => {
-    startBackNavigation(() => {
+    setNavigationLabel('Returning to mailbox...');
+    startNavigation(() => {
       router.push(`/admin/email/${mailboxId}`);
+    });
+  };
+  const handleSearchThreadSelect = (threadId: string) => {
+    if (threadId === thread.id) {
+      return;
+    }
+
+    setNavigationLabel('Opening email...');
+    startNavigation(() => {
+      router.push(`/admin/email/${mailboxId}/${threadId}`);
     });
   };
 
@@ -272,13 +285,20 @@ export function ThreadConversation({
         <header className="shrink-0 py-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
-              <button
-                className="mb-4 inline-flex h-8 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-emerald-500/40"
-                onClick={handleBack}
-                type="button"
-              >
-                Back
-              </button>
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <button
+                  className="inline-flex h-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-emerald-500/40"
+                  onClick={handleBack}
+                  type="button"
+                >
+                  Back
+                </button>
+                <MailboxThreadSearch
+                  currentThreadId={thread.id}
+                  mailboxId={mailboxId}
+                  onThreadSelect={handleSearchThreadSelect}
+                />
+              </div>
               <h1 className="truncate text-2xl font-bold text-slate-950 dark:text-white">
                 {thread.subject}
               </h1>
@@ -342,8 +362,8 @@ export function ThreadConversation({
           />
         )}
 
-        {isBackNavigationPending && (
-          <NavigationLoadingOverlay label="Returning to mailbox..." />
+        {isNavigationPending && (
+          <NavigationLoadingOverlay label={navigationLabel} />
         )}
       </div>
     </div>

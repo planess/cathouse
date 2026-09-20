@@ -1,6 +1,6 @@
 import FormData from 'form-data';
 import Mailgun from 'mailgun.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, type Filter } from 'mongodb';
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
@@ -1794,10 +1794,19 @@ class EmailService extends Singleton {
     }
   }
 
+  /**
+   * Lists one page of mailbox threads, optionally filtered by email content.
+   *
+   * @param mailboxId Mailbox that owns the returned threads.
+   * @param page One-based result page.
+   * @param pageSize Maximum number of threads in the page.
+   * @param query Optional subject, body, recipient name, or email fragment.
+   */
   async listThreadsPageByMailbox(
     mailboxId: string,
     page: number,
     pageSize: number,
+    query = '',
   ): Promise<{ items: EmailThreadSummary[]; totalItems: number }> {
     if (!ObjectId.isValid(mailboxId)) {
       throw new Error('Invalid mailbox id.');
@@ -1807,7 +1816,87 @@ class EmailService extends Singleton {
     const db = dbClient.db();
     const safePage = Math.max(1, page);
     const safePageSize = Math.max(1, pageSize);
-    const filter = { mailboxId: new ObjectId(mailboxId) };
+    const normalizedQuery = query.trim();
+    const filter: Filter<EmailThreadDocument> = {
+      mailboxId: new ObjectId(mailboxId),
+    };
+
+    if (normalizedQuery.length > 0) {
+      const escapedQuery = normalizedQuery.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+      const queryPattern = new RegExp(escapedQuery, 'i');
+      const matchingContacts = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .find({
+          $or: [{ name: queryPattern }, { normalizedAddress: queryPattern }],
+        })
+        .project<{ _id: ObjectId }>({ _id: 1 })
+        .toArray();
+      const matchingContactIds = matchingContacts.map(({ _id }) => _id);
+      const messageSearchConditions: Filter<EmailMessageDocument>[] = [
+        { subject: queryPattern },
+        { 'content.text': queryPattern },
+        { 'content.html': queryPattern },
+        { 'content.stripped-text': queryPattern },
+        { 'content.stripped-html': queryPattern },
+        { 'from.name': queryPattern },
+        { 'from.address': queryPattern },
+        { 'from.normalizedAddress': queryPattern },
+        { 'sender.name': queryPattern },
+        { 'sender.address': queryPattern },
+        { 'sender.normalizedAddress': queryPattern },
+        { 'replyTo.name': queryPattern },
+        { 'replyTo.address': queryPattern },
+        { 'replyTo.normalizedAddress': queryPattern },
+        { 'to.name': queryPattern },
+        { 'to.address': queryPattern },
+        { 'to.normalizedAddress': queryPattern },
+        { 'cc.name': queryPattern },
+        { 'cc.address': queryPattern },
+        { 'cc.normalizedAddress': queryPattern },
+        { 'bcc.name': queryPattern },
+        { 'bcc.address': queryPattern },
+        { 'bcc.normalizedAddress': queryPattern },
+      ];
+
+      if (matchingContactIds.length > 0) {
+        messageSearchConditions.push(
+          { from: { $in: matchingContactIds } },
+          { sender: { $in: matchingContactIds } },
+          { replyTo: { $in: matchingContactIds } },
+          { to: { $in: matchingContactIds } },
+          { cc: { $in: matchingContactIds } },
+          { bcc: { $in: matchingContactIds } },
+        );
+      }
+
+      const matchingMessageThreadIds = await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .distinct('threadId', { $or: messageSearchConditions });
+      const threadSearchConditions: Filter<EmailThreadDocument>[] = [
+        { subject: queryPattern },
+        { 'participants.name': queryPattern },
+        { 'participants.address': queryPattern },
+        { 'participants.normalizedAddress': queryPattern },
+      ];
+
+      if (matchingContactIds.length > 0) {
+        threadSearchConditions.push({
+          participants: { $in: matchingContactIds },
+        });
+      }
+
+      if (matchingMessageThreadIds.length > 0) {
+        threadSearchConditions.push({
+          _id: { $in: matchingMessageThreadIds },
+        });
+      }
+
+      filter.$or = threadSearchConditions;
+    }
+
     const [totalItems, threads] = await Promise.all([
       db
         .collection<EmailThreadDocument>(DbTables.emailThreads)

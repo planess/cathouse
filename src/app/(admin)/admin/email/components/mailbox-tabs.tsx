@@ -45,6 +45,7 @@ import type { SendEmailResponse } from '../types/send-email-response';
 type EmailMailboxTabsProps = {
   canSend: boolean;
   mailboxGroups: EmailMailboxThreadGroup[];
+  searchQuery: string;
   selectedMailboxId?: string;
   showCreateMailboxForm: boolean;
 };
@@ -52,6 +53,7 @@ type EmailMailboxTabsProps = {
 export function EmailMailboxTabs({
   canSend,
   mailboxGroups,
+  searchQuery,
   selectedMailboxId,
   showCreateMailboxForm,
 }: EmailMailboxTabsProps) {
@@ -516,6 +518,7 @@ export function EmailMailboxTabs({
           mailbox={activeMailbox}
           canSend={canSend}
           refreshToken={threadRefreshTokens[activeMailbox.id] ?? 0}
+          searchQuery={searchQuery}
           onCompose={openComposeModal}
           onThreadSelect={handleThreadSelect}
         />
@@ -532,6 +535,7 @@ export function EmailMailboxTabs({
       prefix,
       result,
       saving,
+      searchQuery,
       threadRefreshTokens,
       updateCreateMailboxDisplayName,
       updateCreateMailboxPrefix,

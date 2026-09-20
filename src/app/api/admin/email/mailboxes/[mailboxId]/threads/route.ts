@@ -38,6 +38,7 @@ export async function GET(
   const requestedPageSize = Number(
     search.get('pageSize') ?? `${PAGE_THREAD_SIZE}`,
   );
+  const query = search.get('query')?.slice(0, 100) ?? '';
   const page =
     Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
   const pageSize =
@@ -48,6 +49,7 @@ export async function GET(
     mailboxId,
     page,
     pageSize,
+    query,
   );
 
   return NextResponse.json(result);

@@ -17,6 +17,7 @@ type MailboxTabPanelProps = {
   canSend: boolean;
   mailbox: EmailMailboxSummary;
   refreshToken: number;
+  searchQuery: string;
   onCompose: (mailbox: EmailMailboxSummary) => void;
   onThreadSelect: (mailboxId: string, threadId: string) => void;
 };
@@ -29,16 +30,30 @@ type ThreadPageResponse = {
 const threadPageRequests = new Map<string, Promise<ThreadPageResponse>>();
 const THREAD_LIST_REFRESH_INTERVAL_MS = 60_000;
 
-function loadThreadPage(mailboxId: string, page: number, forceRefresh = false) {
-  const key = `${mailboxId}:${page}`;
+function loadThreadPage(
+  mailboxId: string,
+  page: number,
+  searchQuery: string,
+  forceRefresh = false,
+) {
+  const key = `${mailboxId}:${searchQuery}:${page}`;
   const existingRequest = threadPageRequests.get(key);
 
   if (!forceRefresh && existingRequest !== undefined) {
     return existingRequest;
   }
 
+  const search = new URLSearchParams({
+    page: page.toString(),
+    pageSize: PAGE_THREAD_SIZE.toString(),
+  });
+
+  if (searchQuery.length > 0) {
+    search.set('query', searchQuery);
+  }
+
   const request = fetch(
-    `/api/admin/email/mailboxes/${mailboxId}/threads?page=${page}&pageSize=${PAGE_THREAD_SIZE}`,
+    `/api/admin/email/mailboxes/${mailboxId}/threads?${search.toString()}`,
   )
     .then((response) => response.json() as Promise<ThreadPageResponse>)
     .catch((error: unknown) => {
@@ -55,6 +70,7 @@ export function MailboxTabPanel({
   canSend,
   mailbox,
   refreshToken,
+  searchQuery,
   onCompose,
   onThreadSelect,
 }: MailboxTabPanelProps) {
@@ -69,6 +85,7 @@ export function MailboxTabPanel({
   const loadMoreRequestedRef = useRef(false);
   const loadedMailboxIdRef = useRef(mailbox.id);
   const loadedPageCountRef = useRef(0);
+  const loadedSearchQueryRef = useRef(searchQuery);
   const refreshRequestedRef = useRef(false);
   const previousRefreshTokenRef = useRef(refreshToken);
 
@@ -84,18 +101,21 @@ export function MailboxTabPanel({
   useEffect(() => {
     let isCurrent = true;
     const mailboxChanged = loadedMailboxIdRef.current !== mailbox.id;
+    const searchQueryChanged = loadedSearchQueryRef.current !== searchQuery;
+    const dataScopeChanged = mailboxChanged || searchQueryChanged;
     const forceRefresh =
       refreshRequestedRef.current ||
       previousRefreshTokenRef.current !== refreshToken;
-    const loadedPageCount = mailboxChanged
+    const loadedPageCount = dataScopeChanged
       ? 1
       : Math.max(1, loadedPageCountRef.current);
 
     loadedMailboxIdRef.current = mailbox.id;
+    loadedSearchQueryRef.current = searchQuery;
     refreshRequestedRef.current = false;
     previousRefreshTokenRef.current = refreshToken;
 
-    if (mailboxChanged) {
+    if (dataScopeChanged) {
       loadMoreRequestedRef.current = false;
       loadedPageCountRef.current = 0;
       setIsLoadingMore(false);
@@ -107,7 +127,7 @@ export function MailboxTabPanel({
 
     void Promise.all(
       Array.from({ length: loadedPageCount }, (_, index) =>
-        loadThreadPage(mailbox.id, index + 1, forceRefresh),
+        loadThreadPage(mailbox.id, index + 1, searchQuery, forceRefresh),
       ),
     )
       .then((payloads) => {
@@ -137,7 +157,7 @@ export function MailboxTabPanel({
     return () => {
       isCurrent = false;
     };
-  }, [mailbox.id, refreshCount, refreshToken]);
+  }, [mailbox.id, refreshCount, refreshToken, searchQuery]);
 
   const loadNextThreadPage = useCallback(async () => {
     if (
@@ -149,15 +169,23 @@ export function MailboxTabPanel({
     }
 
     const requestedMailboxId = mailbox.id;
+    const requestedSearchQuery = searchQuery;
     const nextPage = loadedPageCountRef.current + 1;
 
     loadMoreRequestedRef.current = true;
     setIsLoadingMore(true);
 
     try {
-      const payload = await loadThreadPage(requestedMailboxId, nextPage);
+      const payload = await loadThreadPage(
+        requestedMailboxId,
+        nextPage,
+        requestedSearchQuery,
+      );
 
-      if (loadedMailboxIdRef.current !== requestedMailboxId) {
+      if (
+        loadedMailboxIdRef.current !== requestedMailboxId ||
+        loadedSearchQueryRef.current !== requestedSearchQuery
+      ) {
         return;
       }
 
@@ -179,11 +207,14 @@ export function MailboxTabPanel({
     } finally {
       loadMoreRequestedRef.current = false;
 
-      if (loadedMailboxIdRef.current === requestedMailboxId) {
+      if (
+        loadedMailboxIdRef.current === requestedMailboxId &&
+        loadedSearchQueryRef.current === requestedSearchQuery
+      ) {
         setIsLoadingMore(false);
       }
     }
-  }, [isLoading, mailbox.id, pageThreads.length, totalItems]);
+  }, [isLoading, mailbox.id, pageThreads.length, searchQuery, totalItems]);
 
   useEffect(() => {
     const sentinel = loadMoreSentinelRef.current;
