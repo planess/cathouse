@@ -1,7 +1,6 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AdminAdminEmailComponentsMailboxTabPanelIcon01 } from '@app/components/icons/admin-admin-email-components-mailbox-tab-panel-icon-01';
 import type {
@@ -12,7 +11,6 @@ import type {
 import { PAGE_THREAD_SIZE } from '../constants/page-thread-size';
 import { mergeMailboxThreadsRequest } from '../helpers/merge-mailbox-threads-request';
 
-import { Pagination } from './pagination';
 import { ThreadList } from './thread-list';
 
 type MailboxTabPanelProps = {
@@ -60,19 +58,17 @@ export function MailboxTabPanel({
   onCompose,
   onThreadSelect,
 }: MailboxTabPanelProps) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const requestedPage = Number(searchParams.get('page') ?? '1');
-  const currentPage = Number.isInteger(requestedPage) && requestedPage > 0
-    ? requestedPage
-    : 1;
   const [pageThreads, setPageThreads] = useState<EmailThreadSummary[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isMerging, setIsMerging] = useState(false);
   const [mergeMessage, setMergeMessage] = useState('');
   const [refreshCount, setRefreshCount] = useState(0);
+  const loadMoreSentinelRef = useRef<HTMLDivElement>(null);
+  const loadMoreRequestedRef = useRef(false);
+  const loadedMailboxIdRef = useRef(mailbox.id);
+  const loadedPageCountRef = useRef(0);
   const refreshRequestedRef = useRef(false);
   const previousRefreshTokenRef = useRef(refreshToken);
 
@@ -87,22 +83,49 @@ export function MailboxTabPanel({
 
   useEffect(() => {
     let isCurrent = true;
+    const mailboxChanged = loadedMailboxIdRef.current !== mailbox.id;
     const forceRefresh =
       refreshRequestedRef.current ||
       previousRefreshTokenRef.current !== refreshToken;
+    const loadedPageCount = mailboxChanged
+      ? 1
+      : Math.max(1, loadedPageCountRef.current);
 
+    loadedMailboxIdRef.current = mailbox.id;
     refreshRequestedRef.current = false;
     previousRefreshTokenRef.current = refreshToken;
+
+    if (mailboxChanged) {
+      loadMoreRequestedRef.current = false;
+      loadedPageCountRef.current = 0;
+      setIsLoadingMore(false);
+      setPageThreads([]);
+      setTotalItems(0);
+    }
+
     setIsLoading(true);
 
-    void loadThreadPage(mailbox.id, currentPage, forceRefresh)
-      .then((payload) => {
+    void Promise.all(
+      Array.from({ length: loadedPageCount }, (_, index) =>
+        loadThreadPage(mailbox.id, index + 1, forceRefresh),
+      ),
+    )
+      .then((payloads) => {
         if (!isCurrent) {
           return;
         }
 
-        setPageThreads(payload.items ?? []);
-        setTotalItems(payload.totalItems ?? 0);
+        const uniqueThreads = new Map<string, EmailThreadSummary>();
+
+        payloads.forEach((payload) => {
+          payload.items?.forEach((thread) => {
+            uniqueThreads.set(thread.id, thread);
+          });
+        });
+
+        loadedPageCountRef.current = loadedPageCount;
+        setPageThreads([...uniqueThreads.values()]);
+        setTotalItems(payloads[0]?.totalItems ?? 0);
       })
       .catch(() => { /* return undefined */ })
       .finally(() => {
@@ -114,14 +137,82 @@ export function MailboxTabPanel({
     return () => {
       isCurrent = false;
     };
-  }, [currentPage, mailbox.id, refreshCount, refreshToken]);
+  }, [mailbox.id, refreshCount, refreshToken]);
 
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', page.toString());
-    params.set('pageSize', PAGE_THREAD_SIZE.toString());
-    router.replace(`${pathname}?${params.toString()}`);
-  };
+  const loadNextThreadPage = useCallback(async () => {
+    if (
+      loadMoreRequestedRef.current ||
+      isLoading ||
+      pageThreads.length >= totalItems
+    ) {
+      return;
+    }
+
+    const requestedMailboxId = mailbox.id;
+    const nextPage = loadedPageCountRef.current + 1;
+
+    loadMoreRequestedRef.current = true;
+    setIsLoadingMore(true);
+
+    try {
+      const payload = await loadThreadPage(requestedMailboxId, nextPage);
+
+      if (loadedMailboxIdRef.current !== requestedMailboxId) {
+        return;
+      }
+
+      loadedPageCountRef.current = nextPage;
+      setPageThreads((currentThreads) => {
+        const uniqueThreads = new Map(
+          currentThreads.map((thread) => [thread.id, thread]),
+        );
+
+        payload.items?.forEach((thread) => {
+          uniqueThreads.set(thread.id, thread);
+        });
+
+        return [...uniqueThreads.values()];
+      });
+      setTotalItems(payload.totalItems ?? 0);
+    } catch {
+      // Keep the sentinel available so scrolling can retry the request.
+    } finally {
+      loadMoreRequestedRef.current = false;
+
+      if (loadedMailboxIdRef.current === requestedMailboxId) {
+        setIsLoadingMore(false);
+      }
+    }
+  }, [isLoading, mailbox.id, pageThreads.length, totalItems]);
+
+  useEffect(() => {
+    const sentinel = loadMoreSentinelRef.current;
+
+    if (
+      sentinel === null ||
+      isLoading ||
+      isLoadingMore ||
+      pageThreads.length >= totalItems
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        void loadNextThreadPage();
+      }
+    });
+
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, [
+    isLoading,
+    isLoadingMore,
+    loadNextThreadPage,
+    pageThreads.length,
+    totalItems,
+  ]);
 
   const handleThreadMerge = async (
     sourceThreadId: string,
@@ -223,12 +314,16 @@ export function MailboxTabPanel({
             {mergeMessage}
           </p>
         )}
-        <Pagination
-          currentPage={currentPage}
-          pageSize={PAGE_THREAD_SIZE}
-          onPageChange={handlePageChange}
-          totalItems={totalItems}
-        />
+        <div aria-hidden="true" className="h-px" ref={loadMoreSentinelRef} />
+        {isLoadingMore && (
+          <div className="flex justify-center px-5 py-4">
+            <span
+              aria-label="Loading more threads"
+              className="h-6 w-6 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-600 dark:border-slate-700 dark:border-t-emerald-400"
+              role="status"
+            />
+          </div>
+        )}
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-[1px] dark:bg-slate-950/75">
             <span
