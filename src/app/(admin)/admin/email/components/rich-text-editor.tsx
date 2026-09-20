@@ -34,8 +34,11 @@ import { AdminAdminEmailComponentsRichTextEditorIcon18 } from '@app/components/i
 import { FontSize } from '../helpers/font-size-extension';
 
 interface RichTextEditorProps {
+  /** CSS classes applied to the editable content area. */
   editorClassName?: string;
+  /** HTML initially displayed in the editor. */
   initialContent?: string;
+  /** Called whenever the editor HTML changes. */
   onChange: (html: string) => void;
 }
 
@@ -130,11 +133,14 @@ const btnBase =
   'rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200';
 const btnActive =
   'rounded-md p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300';
+const imageResizeClasses =
+  '[&_[data-resize-container]]:align-middle [&_[data-resize-wrapper]]:leading-none [&_[data-resize-handle]]:z-10 [&_[data-resize-handle]]:h-3 [&_[data-resize-handle]]:w-3 [&_[data-resize-handle]]:border-sky-500 dark:[&_[data-resize-handle]]:border-sky-400 [&_[data-resize-handle=top-right]]:translate-x-[3px] [&_[data-resize-handle=top-right]]:-translate-y-[3px] [&_[data-resize-handle=top-right]]:cursor-nesw-resize [&_[data-resize-handle=top-right]]:border-r-2 [&_[data-resize-handle=top-right]]:border-t-2 [&_[data-resize-handle=bottom-right]]:translate-x-[3px] [&_[data-resize-handle=bottom-right]]:translate-y-[3px] [&_[data-resize-handle=bottom-right]]:cursor-nwse-resize [&_[data-resize-handle=bottom-right]]:border-b-2 [&_[data-resize-handle=bottom-right]]:border-r-2 [&_.ProseMirror-selectednode_[data-resize-wrapper]]:ring-2 [&_.ProseMirror-selectednode_[data-resize-wrapper]]:ring-sky-400';
 
 function Separator() {
   return <div className="mx-0.5 h-6 w-px bg-slate-200 dark:bg-slate-700" />;
 }
 
+/** Rich text email editor with formatting and inline-image controls. */
 export function RichTextEditor({
   editorClassName = 'prose prose-sm dark:prose-invert max-w-none min-h-50 px-4 py-3 focus:outline-none',
   initialContent = '',
@@ -168,7 +174,17 @@ export function RichTextEditor({
       Color,
       Underline,
       Highlight.configure({ multicolor: true }),
-      Image.configure({ inline: true, allowBase64: true }),
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+        resize: {
+          enabled: true,
+          directions: ['top-right', 'bottom-right'],
+          minWidth: 40,
+          minHeight: 40,
+          alwaysPreserveAspectRatio: true,
+        },
+      }),
       FontSize,
       Link.configure({
         openOnClick: false,
@@ -178,7 +194,7 @@ export function RichTextEditor({
     ],
     editorProps: {
       attributes: {
-        class: editorClassName,
+        class: `${editorClassName} ${imageResizeClasses}`,
       },
     },
     onUpdate: ({ editor: ed }) => {
