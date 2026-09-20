@@ -135,6 +135,10 @@ const btnActive =
   'rounded-md p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300';
 const imageResizeClasses =
   '[&_[data-resize-container]]:align-middle [&_[data-resize-wrapper]]:leading-none [&_[data-resize-handle]]:z-10 [&_[data-resize-handle]]:h-3 [&_[data-resize-handle]]:w-3 [&_[data-resize-handle]]:border-sky-500 dark:[&_[data-resize-handle]]:border-sky-400 [&_[data-resize-handle=top-right]]:translate-x-[3px] [&_[data-resize-handle=top-right]]:-translate-y-[3px] [&_[data-resize-handle=top-right]]:cursor-nesw-resize [&_[data-resize-handle=top-right]]:border-r-2 [&_[data-resize-handle=top-right]]:border-t-2 [&_[data-resize-handle=bottom-right]]:translate-x-[3px] [&_[data-resize-handle=bottom-right]]:translate-y-[3px] [&_[data-resize-handle=bottom-right]]:cursor-nwse-resize [&_[data-resize-handle=bottom-right]]:border-b-2 [&_[data-resize-handle=bottom-right]]:border-r-2 [&_.ProseMirror-selectednode_[data-resize-wrapper]]:ring-2 [&_.ProseMirror-selectednode_[data-resize-wrapper]]:ring-sky-400';
+const linkClasses =
+  '[&_a]:cursor-pointer [&_a]:font-medium [&_a]:text-sky-600 [&_a]:underline [&_a]:decoration-sky-400 [&_a]:decoration-2 [&_a]:underline-offset-2 [&_a]:transition-colors [&_a:hover]:text-sky-800 [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-sky-400 dark:[&_a]:text-sky-400 dark:[&_a]:decoration-sky-500 dark:[&_a:hover]:text-sky-300';
+const headingClasses =
+  '[&_h1]:my-4 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:my-2 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:leading-snug';
 
 function Separator() {
   return <div className="mx-0.5 h-6 w-px bg-slate-200 dark:bg-slate-700" />;
@@ -194,7 +198,7 @@ export function RichTextEditor({
     ],
     editorProps: {
       attributes: {
-        class: `${editorClassName} ${imageResizeClasses}`,
+        class: `${editorClassName} ${imageResizeClasses} ${linkClasses} ${headingClasses}`,
       },
     },
     onUpdate: ({ editor: ed }) => {
@@ -286,6 +290,7 @@ export function RichTextEditor({
 
         {/* Heading dropdown-like buttons */}
         <button
+          aria-pressed={editor.isActive('heading', { level: 1 })}
           className={
             editor.isActive('heading', { level: 1 }) ? btnActive : btnBase
           }
@@ -298,6 +303,7 @@ export function RichTextEditor({
           <span className="text-xs font-bold">H1</span>
         </button>
         <button
+          aria-pressed={editor.isActive('heading', { level: 2 })}
           className={
             editor.isActive('heading', { level: 2 }) ? btnActive : btnBase
           }
@@ -310,6 +316,7 @@ export function RichTextEditor({
           <span className="text-xs font-bold">H2</span>
         </button>
         <button
+          aria-pressed={editor.isActive('heading', { level: 3 })}
           className={
             editor.isActive('heading', { level: 3 }) ? btnActive : btnBase
           }
