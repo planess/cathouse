@@ -14,6 +14,7 @@ import {
 import { createPortal } from 'react-dom';
 
 import { ProvidersModalIcon01 } from '@app/components/icons/providers-modal-icon-01';
+import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
 
 const MODAL_EXIT_MS = 500;
 
@@ -97,13 +98,10 @@ export function ModalProvider({ children }: ModalProviderProps) {
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const activeModal = modalStack[modalStack.length - 1] ?? null;
-  const bodyStyleCacheRef = useRef<{
-    overflow: string;
-    paddingRight: string;
-  } | null>(null);
-  const scrollbarWidthRef = useRef(0);
   const pointerOriginRef = useRef<ModalOrigin | null>(null);
   const exitTimersRef = useRef<Map<number, number>>(new Map());
+
+  useBodyScrollLock(isMounted && modalStack.length > 0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -256,63 +254,6 @@ export function ModalProvider({ children }: ModalProviderProps) {
 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeModal, dismissModal]);
-
-  useEffect(() => {
-    if (!isMounted) {
-      return;
-    }
-
-    const body = document.body;
-
-    if (modalStack.length > 0) {
-      bodyStyleCacheRef.current ??= {
-        overflow: body.style.overflow,
-        paddingRight: body.style.paddingRight,
-      };
-
-      if (scrollbarWidthRef.current === 0) {
-        scrollbarWidthRef.current =
-          window.innerWidth - document.documentElement.clientWidth;
-      }
-
-      body.style.overflow = 'hidden';
-
-      if (scrollbarWidthRef.current > 0) {
-        body.style.paddingRight = `${scrollbarWidthRef.current}px`;
-      } else if (bodyStyleCacheRef.current) {
-        body.style.paddingRight = bodyStyleCacheRef.current.paddingRight;
-      }
-
-      return;
-    }
-
-    if (bodyStyleCacheRef.current) {
-      body.style.overflow = bodyStyleCacheRef.current.overflow;
-      body.style.paddingRight = bodyStyleCacheRef.current.paddingRight;
-      bodyStyleCacheRef.current = null;
-    } else {
-      body.style.overflow = '';
-      body.style.paddingRight = '';
-    }
-
-    scrollbarWidthRef.current = 0;
-  }, [isMounted, modalStack.length]);
-
-  useEffect(
-    () => () => {
-      if (bodyStyleCacheRef.current) {
-        document.body.style.overflow = bodyStyleCacheRef.current.overflow;
-        document.body.style.paddingRight =
-          bodyStyleCacheRef.current.paddingRight;
-        bodyStyleCacheRef.current = null;
-      } else {
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-      }
-      scrollbarWidthRef.current = 0;
-    },
-    [],
-  );
 
   useEffect(
     () => () => {

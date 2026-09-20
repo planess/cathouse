@@ -5,7 +5,7 @@ import { resolveAnimalImage } from '@app/(general)/registry/components/card/card
 import { parseRegistryMapBounds } from '@app/(general)/registry/server/parse-registry-map-bounds';
 import { parseRegistryStatusFilter } from '@app/(general)/registry/server/parse-registry-status-filter';
 import { DbTables } from '@app/enum/db-tables';
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
 import clientPromise from '@app/ins/mongo-client';
 import { AnimalStatus, type AnimalDocument } from '@app/models/animal';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';

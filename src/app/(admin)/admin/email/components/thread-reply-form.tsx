@@ -91,7 +91,7 @@ export function ThreadReplyForm({
         <span>Reply to conversation</span>
       </button>
 
-      <form onSubmit={(event) => void onSubmit(event)}>
+      <form autoComplete="off" onSubmit={(event) => void onSubmit(event)}>
         <div className="space-y-3 p-4">
           <div className="divide-y divide-slate-200 dark:divide-slate-800">
             <div className="pb-3">

@@ -8,11 +8,11 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@app/components/button';
 import { encrypt } from '@app/helpers/encrypt-browser';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
+import type { ServerActionResponse } from '@app/models/server-action-response.server';
 
 import InputField from '../../../components/input-field/input-field';
 import { ServerFormData } from '../../../models/server-form-data';
 import { FormData as IAuthForm } from '../../models/form-data';
-import { authenticate } from '../../server/authenticate';
 
 const transformer: Record<string, string> = {
   passHash: 'password',
@@ -47,17 +47,24 @@ export default function AuthForm() {
         passHash,
       };
 
-      const response = await authenticate(formData);
+      const apiResponse = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const response = (await apiResponse.json()) as ServerActionResponse;
 
       if (response.status === 'error') {
-        for (const skey in response.errors) {
+        for (const skey in response.errors ?? {}) {
           const rawKey = skey as keyof ServerFormData;
           const key = (transformer[rawKey] ?? rawKey) as keyof IAuthForm;
 
-          setError(key, {
-            type: 'manual',
-            message: response.errors[rawKey][0],
-          });
+          if (response.errors?.[rawKey]?.[0]) {
+            setError(key, {
+              type: 'manual',
+              message: response.errors[rawKey][0],
+            });
+          }
         }
       } else {
         clearErrors();

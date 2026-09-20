@@ -1,17 +1,21 @@
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
+import type { MediaPermissions } from '@app/models/media-permissions';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 
-export type MediaPermissions = {
-  canAccess: boolean;
-  canDelete: boolean;
-  canReview: boolean;
-  canUpload: boolean;
-};
-
-export async function getMediaPermissions(): Promise<MediaPermissions> {
-  const currentUser = await getCurrentUser();
-
+/**
+ * Resolves the caller's media permissions using app-token or browser-cookie authentication.
+ *
+ * @param request - The optional API request containing an app client token.
+ * @returns The caller's media permissions.
+ */
+export async function getMediaPermissions(
+  request?: Request,
+): Promise<MediaPermissions> {
+  const currentUser = request
+    ? await getUserFromRequest(request)
+    : await getCurrentUser();
   if (currentUser?.id === undefined) {
     return {
       canAccess: false,

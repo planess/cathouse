@@ -4,6 +4,7 @@ import { escapeHtml } from './escape-html';
 import { formatAddress } from './format-address';
 import { formatReplyQuoteDate } from './format-reply-quote-date';
 import { getMessageBody } from './get-message-body';
+import { getMessageBodyHtml } from './get-message-body-html';
 
 export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
   if (messages.length === 0) {
@@ -16,9 +17,8 @@ export function createReplyQuoteHtml(messages: EmailMessageSummary[]): string {
     return '<p></p>';
   }
 
-  const fullMessageContent = message.content.html ?? message.content.text;
   const body =
-    fullMessageContent ??
+    getMessageBodyHtml(message, true) ||
     `<p>${escapeHtml(getMessageBody(message)).replaceAll('\n', '<br>')}</p>`;
 
   return [

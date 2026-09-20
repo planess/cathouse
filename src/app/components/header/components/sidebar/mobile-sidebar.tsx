@@ -6,6 +6,7 @@ import { useEffect, useId, useState } from 'react';
 
 import { CloseIcon } from '@app/components/icons/registry-animal-c-lo-se-ic-on';
 import { MenuIcon } from '@app/components/icons/registry-animal-m-en-ui-co-n';
+import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
 
 type SidebarLink = {
   key: string;
@@ -30,18 +31,7 @@ export default function MobileSidebar({
   const panelId = useId();
   const titleId = useId();
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen) {

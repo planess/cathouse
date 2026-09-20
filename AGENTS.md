@@ -16,5 +16,6 @@ Next.js 15 application with the App Router. Application code is in `src/app`; i1
 
 - Do not create unit, end-to-end, or any other tests unless explicitly requested.
 - Do not create migrations in `migrations` unless explicitly requested.
+- Run Prettier, linters, and other formatters only when explicitly requested.
 - An explicit request means the user clearly asks to perform that action. Create commits or pull requests only on an explicit request; never create them automatically.
 - Keep secrets in `.env.local` or deployment settings; never commit them.

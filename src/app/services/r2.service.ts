@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'crypto';
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 import { MediaAsset } from '@app/models/media-asset';
 
@@ -107,6 +107,27 @@ export class R2Service extends Singleton {
     });
 
     return Promise.all(uploads);
+  }
+
+  /**
+   * Downloads a file from the configured R2 bucket.
+   *
+   * @param key Storage key of the file to download.
+   * @returns File contents as a buffer.
+   */
+  async downloadFile(key: string): Promise<Buffer> {
+    const result = await this.client.send(
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+    );
+
+    if (result.Body === undefined) {
+      throw new Error('File body is empty.');
+    }
+
+    return Buffer.from(await result.Body.transformToByteArray());
   }
 
   private buildPublicUrl(key: string): string {

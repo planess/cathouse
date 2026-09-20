@@ -1,15 +1,17 @@
 import FormData from 'form-data';
 import Mailgun from 'mailgun.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, type Filter } from 'mongodb';
 
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 import type { EmailAddress } from '@app/models/email-address.model';
+import type { EmailContactSummary } from '@app/models/email-contact-summary';
 import type { EmailMailbox } from '@app/models/email-mailbox.model';
 
 import { EMAIL_MAILBOX_DOMAIN, EMAIL_PREFIX_PATTERN } from './email/constants';
 import { createEmailAttachmentFolder } from './email/create-email-attachment-folder';
 import { createForwardedEmailHtml } from './email/create-forwarded-email-html';
+import { extractDataUrlInlineImages } from './email/extract-data-url-inline-images';
 import { formatEmailAddress } from './email/format-email-address';
 import { getContactIds } from './email/get-contact-ids';
 import { getContactsById } from './email/get-contacts-by-id';
@@ -20,6 +22,7 @@ import { getMailgunField } from './email/get-mailgun-field';
 import { getMailgunMessageId } from './email/get-mailgun-message-id';
 import { logEmailServiceError } from './email/log-email-service-error';
 import { mapAddressReference } from './email/map-address-reference';
+import { mapContact } from './email/map-contact';
 import { mapMailbox } from './email/map-mailbox';
 import { mapMessage } from './email/map-message';
 import { mapThread } from './email/map-thread';
@@ -45,6 +48,7 @@ import type {
   EmailThreadDocument,
 } from './email/document-types';
 import type { AttachmentFile } from './email/types/attachment-file';
+import type { EmailAddressSummary } from './email/types/email-address-summary';
 import type { EmailMailboxSummary } from './email/types/email-mailbox-summary';
 import type { EmailMailboxThreadGroup } from './email/types/email-mailbox-thread-group';
 import type { EmailMessageSummary } from './email/types/email-message-summary';
@@ -111,6 +115,9 @@ class EmailService extends Singleton {
         messageParameters.inline = inline.map((inlineFile) => ({
           data: inlineFile.data,
           filename: inlineFile.filename,
+          ...(inlineFile.contentType === undefined
+            ? {}
+            : { contentType: inlineFile.contentType }),
         }));
       }
 
@@ -141,12 +148,16 @@ class EmailService extends Singleton {
     attachments: Array<AttachmentFile> = [],
     headers: Record<string, string> = {},
   ): Promise<MessagesSendResult> {
+    let inlineCount = 0;
+
     try {
+      const { bodyHtml, inlineFiles } = extractDataUrlInlineImages(body);
+      inlineCount = inlineFiles.length;
       const messageParameters = {
         from: formatEmailAddress(from),
         to: to.map(formatEmailAddress),
         subject,
-        html: body,
+        html: bodyHtml,
       } as MailgunMessageData;
 
       if (cc.length > 0) {
@@ -161,6 +172,16 @@ class EmailService extends Singleton {
         messageParameters.attachment = attachments.map((attachment) => ({
           data: attachment.data,
           filename: attachment.filename,
+        }));
+      }
+
+      if (inlineFiles.length > 0) {
+        messageParameters.inline = inlineFiles.map((inlineFile) => ({
+          data: inlineFile.data,
+          filename: inlineFile.filename,
+          ...(inlineFile.contentType === undefined
+            ? {}
+            : { contentType: inlineFile.contentType }),
         }));
       }
 
@@ -179,6 +200,7 @@ class EmailService extends Singleton {
         from: from.address,
         subject,
         attachmentsCount: attachments.length,
+        inlineCount,
         toCount: to.length,
       });
 
@@ -193,7 +215,7 @@ class EmailService extends Singleton {
       const mailboxes = await db
         .collection<EmailMailbox>(DbTables.emailMailboxes)
         .find({})
-        .sort({ normalizedAddress: 1 })
+        .sort({ order: 1, normalizedAddress: 1 })
         .toArray();
 
       return mailboxes.map(mapMailbox);
@@ -226,11 +248,16 @@ class EmailService extends Singleton {
         normalizedDisplayName.length > 0
           ? { displayName: normalizedDisplayName }
           : {}),
+        order: 0,
         createdAt: now,
         updatedAt: now,
       };
       const dbClient = await clientPromise;
       const db = dbClient.db();
+      const lastMailbox = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOne({}, { sort: { order: -1 } });
+      mailbox.order = (lastMailbox?.order ?? -1) + 1;
       const existingMailbox = await db
         .collection<EmailMailbox>(DbTables.emailMailboxes)
         .findOne({ normalizedAddress: mailbox.normalizedAddress });
@@ -287,6 +314,59 @@ class EmailService extends Singleton {
     } catch (error) {
       await logEmailServiceError('updateMailboxDisplayName', error, {
         mailboxId,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Persists the complete user-defined mailbox order.
+   *
+   * @param mailboxIds Mailbox identifiers in their desired display order.
+   */
+  async updateMailboxOrder(mailboxIds: string[]): Promise<void> {
+    try {
+      if (
+        mailboxIds.length === 0 ||
+        new Set(mailboxIds).size !== mailboxIds.length ||
+        mailboxIds.some((mailboxId) => !ObjectId.isValid(mailboxId))
+      ) {
+        throw new Error('Invalid mailbox order.');
+      }
+
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const mailboxCollection = db.collection<EmailMailbox>(
+        DbTables.emailMailboxes,
+      );
+      const mailboxObjectIds = mailboxIds.map(
+        (mailboxId) => new ObjectId(mailboxId),
+      );
+      const mailboxCount = await mailboxCollection.countDocuments({
+        _id: { $in: mailboxObjectIds },
+      });
+      const totalMailboxCount = await mailboxCollection.countDocuments({});
+
+      if (
+        mailboxCount !== mailboxIds.length ||
+        totalMailboxCount !== mailboxIds.length
+      ) {
+        throw new Error('Mailbox list changed. Refresh and try again.');
+      }
+
+      const now = new Date();
+      await mailboxCollection.bulkWrite(
+        mailboxObjectIds.map((mailboxId, order) => ({
+          updateOne: {
+            filter: { _id: mailboxId },
+            update: { $set: { order, updatedAt: now } },
+          },
+        })),
+      );
+    } catch (error) {
+      await logEmailServiceError('updateMailboxOrder', error, {
+        mailboxCount: mailboxIds.length,
       });
 
       throw error;
@@ -356,6 +436,221 @@ class EmailService extends Singleton {
     }
   }
 
+  /**
+   * Finds email contacts whose name or address contains the search text.
+   *
+   * @param query Name or email fragment to find.
+   * @param limit Maximum number of suggestions to return.
+   */
+  async searchEmailContacts(
+    query: string,
+    limit = 8,
+  ): Promise<EmailAddressSummary[]> {
+    const normalizedQuery = query.trim();
+
+    if (normalizedQuery.length === 0) {
+      return [];
+    }
+
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const escapedQuery = normalizedQuery.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+      const queryPattern = new RegExp(escapedQuery, 'i');
+      const safeLimit = Math.min(Math.max(1, limit), 20);
+      const contacts = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .find({
+          $or: [{ name: queryPattern }, { normalizedAddress: queryPattern }],
+        })
+        .sort({ name: 1, normalizedAddress: 1 })
+        .limit(safeLimit)
+        .toArray();
+
+      return contacts.map(mapContact);
+    } catch (error) {
+      await logEmailServiceError('searchEmailContacts', error, {
+        queryLength: normalizedQuery.length,
+      });
+
+      throw error;
+    }
+  }
+
+  /** Lists every saved external email contact. */
+  async listEmailContacts(): Promise<EmailContactSummary[]> {
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const contacts = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .find({})
+        .sort({ name: 1, normalizedAddress: 1 })
+        .toArray();
+
+      return contacts.map(mapContact);
+    } catch (error) {
+      await logEmailServiceError('listEmailContacts', error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Creates a saved external email contact.
+   *
+   * @param name Optional display name.
+   * @param address Contact email address.
+   */
+  async createEmailContact(
+    name: string,
+    address: string,
+  ): Promise<EmailContactSummary> {
+    try {
+      const parsedAddress = parseEmailAddress(address);
+      const normalizedName = name.trim();
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const [mailbox, existingContact] = await Promise.all([
+        db
+          .collection<EmailMailbox>(DbTables.emailMailboxes)
+          .findOne({ normalizedAddress: parsedAddress.normalizedAddress }),
+        db
+          .collection<EmailContactDocument>(DbTables.emailContacts)
+          .findOne({ normalizedAddress: parsedAddress.normalizedAddress }),
+      ]);
+
+      if (mailbox !== null) {
+        throw new Error('Organization mailbox cannot be added as a contact.');
+      }
+
+      if (existingContact !== null) {
+        throw new Error('Contact already exists.');
+      }
+
+      const contact: EmailContactDocument = {
+        _id: new ObjectId(),
+        ...(normalizedName.length > 0 ? { name: normalizedName } : {}),
+        address: parsedAddress.address,
+        normalizedAddress: parsedAddress.normalizedAddress,
+      };
+
+      await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .insertOne(contact);
+
+      return mapContact(contact);
+    } catch (error) {
+      await logEmailServiceError('createEmailContact', error, {
+        address,
+        hasName: name.trim().length > 0,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Updates the display name of a saved email contact.
+   *
+   * @param contactId Contact identifier.
+   * @param name New optional display name.
+   */
+  async updateEmailContactName(
+    contactId: string,
+    name: string,
+  ): Promise<EmailContactSummary> {
+    if (!ObjectId.isValid(contactId)) {
+      throw new Error('Invalid contact id.');
+    }
+
+    try {
+      const normalizedName = name.trim();
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const contact = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .findOneAndUpdate(
+          { _id: new ObjectId(contactId) },
+          normalizedName.length > 0
+            ? { $set: { name: normalizedName } }
+            : { $unset: { name: '' } },
+          { returnDocument: 'after' },
+        );
+
+      if (contact === null) {
+        throw new Error('Contact not found.');
+      }
+
+      return mapContact(contact);
+    } catch (error) {
+      await logEmailServiceError('updateEmailContactName', error, {
+        contactId,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Permanently deletes a saved email contact.
+   *
+   * @param contactId Contact identifier.
+   */
+  async deleteEmailContact(contactId: string): Promise<void> {
+    if (!ObjectId.isValid(contactId)) {
+      throw new Error('Invalid contact id.');
+    }
+
+    try {
+      const dbClient = await clientPromise;
+      const db = dbClient.db();
+      const contactObjectId = new ObjectId(contactId);
+      const [threadReference, messageReference] = await Promise.all([
+        db
+          .collection<EmailThreadDocument>(DbTables.emailThreads)
+          .findOne(
+            { participants: contactObjectId },
+            { projection: { _id: 1 } },
+          ),
+        db
+          .collection<EmailMessageDocument>(DbTables.emailMessages)
+          .findOne(
+            {
+              $or: [
+                { from: contactObjectId },
+                { sender: contactObjectId },
+                { replyTo: contactObjectId },
+                { to: contactObjectId },
+                { cc: contactObjectId },
+                { bcc: contactObjectId },
+              ],
+            },
+            { projection: { _id: 1 } },
+          ),
+      ]);
+
+      if (threadReference !== null || messageReference !== null) {
+        throw new Error('Contact is referenced by email history.');
+      }
+
+      const result = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .deleteOne({ _id: contactObjectId });
+
+      if (result.deletedCount === 0) {
+        throw new Error('Contact not found.');
+      }
+    } catch (error) {
+      await logEmailServiceError('deleteEmailContact', error, { contactId });
+
+      throw error;
+    }
+  }
+
   async getOrCreateMailboxForAddress(
     address: EmailAddress,
   ): Promise<EmailMailbox> {
@@ -371,6 +666,9 @@ class EmailService extends Singleton {
       }
 
       const now = new Date();
+      const lastMailbox = await db
+        .collection<EmailMailbox>(DbTables.emailMailboxes)
+        .findOne({}, { sort: { order: -1 } });
       const mailbox: EmailMailbox = {
         _id: new ObjectId(),
         address: address.address,
@@ -378,6 +676,7 @@ class EmailService extends Singleton {
         ...(address.name !== undefined && address.name.length > 0
           ? { displayName: address.name }
           : {}),
+        order: (lastMailbox?.order ?? -1) + 1,
         createdAt: now,
         updatedAt: now,
       };
@@ -1293,6 +1592,47 @@ class EmailService extends Singleton {
         throw new Error('Thread not found.');
       }
 
+      const sourceAttachmentIds = (sourceMessage.attachments ?? []).filter(
+        (attachment): attachment is ObjectId => attachment instanceof ObjectId,
+      );
+      const sourceAttachmentDocuments =
+        sourceAttachmentIds.length === 0
+          ? []
+          : await db
+            .collection<EmailAttachmentDocument>(DbTables.emailAttachments)
+            .find({ _id: { $in: sourceAttachmentIds } })
+            .toArray();
+      const sourceAttachmentsById = new Map(
+        sourceAttachmentDocuments.map((attachment) => [
+          attachment._id.toString(),
+          attachment,
+        ]),
+      );
+      const sourceAttachments = sourceAttachmentIds.map((attachmentId) => {
+        const attachment = sourceAttachmentsById.get(attachmentId.toString());
+
+        if (attachment === undefined) {
+          throw new Error('Failed to load message attachments.');
+        }
+
+        return attachment;
+      });
+      const attachmentFiles = await Promise.all(
+        sourceAttachments.map(async (attachment) => {
+          if (attachment.storageKey === undefined) {
+            throw new Error('Failed to load message attachments.');
+          }
+
+          return {
+            data: await (
+              await import('./r2.service')
+            ).r2Service.downloadFile(attachment.storageKey),
+            filename: attachment.filename,
+            contentType: attachment.contentType,
+          };
+        }),
+      );
+
       const sourceContactsById = await getContactsById([
         ...getContactIds([sourceMessage.from, sourceMessage.sender]),
         ...getContactIds(sourceMessage.replyTo ?? []),
@@ -1327,7 +1667,7 @@ class EmailService extends Singleton {
         [],
         subject,
         bodyHtml,
-        [],
+        attachmentFiles,
         sendHeaders,
       );
 
@@ -1360,7 +1700,7 @@ class EmailService extends Singleton {
           text: stripHtml(bodyHtml),
           html: bodyHtml,
         },
-        attachments: [],
+        attachments: sourceAttachments.map((attachment) => attachment._id),
         headers,
         source: {
           protocol: 'API',
@@ -1406,7 +1746,12 @@ class EmailService extends Singleton {
       ]);
 
       return {
-        message: mapMessage(forwardedMessage, referencesById),
+        message: mapMessage(
+          forwardedMessage,
+          referencesById,
+          new Set(),
+          sourceAttachmentsById,
+        ),
       };
     } catch (error) {
       await logEmailServiceError('forwardMailboxMessage', error, {
@@ -1449,10 +1794,19 @@ class EmailService extends Singleton {
     }
   }
 
+  /**
+   * Lists one page of mailbox threads, optionally filtered by email content.
+   *
+   * @param mailboxId Mailbox that owns the returned threads.
+   * @param page One-based result page.
+   * @param pageSize Maximum number of threads in the page.
+   * @param query Optional subject, body, recipient name, or email fragment.
+   */
   async listThreadsPageByMailbox(
     mailboxId: string,
     page: number,
     pageSize: number,
+    query = '',
   ): Promise<{ items: EmailThreadSummary[]; totalItems: number }> {
     if (!ObjectId.isValid(mailboxId)) {
       throw new Error('Invalid mailbox id.');
@@ -1462,7 +1816,87 @@ class EmailService extends Singleton {
     const db = dbClient.db();
     const safePage = Math.max(1, page);
     const safePageSize = Math.max(1, pageSize);
-    const filter = { mailboxId: new ObjectId(mailboxId) };
+    const normalizedQuery = query.trim();
+    const filter: Filter<EmailThreadDocument> = {
+      mailboxId: new ObjectId(mailboxId),
+    };
+
+    if (normalizedQuery.length > 0) {
+      const escapedQuery = normalizedQuery.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+      const queryPattern = new RegExp(escapedQuery, 'i');
+      const matchingContacts = await db
+        .collection<EmailContactDocument>(DbTables.emailContacts)
+        .find({
+          $or: [{ name: queryPattern }, { normalizedAddress: queryPattern }],
+        })
+        .project<{ _id: ObjectId }>({ _id: 1 })
+        .toArray();
+      const matchingContactIds = matchingContacts.map(({ _id }) => _id);
+      const messageSearchConditions: Filter<EmailMessageDocument>[] = [
+        { subject: queryPattern },
+        { 'content.text': queryPattern },
+        { 'content.html': queryPattern },
+        { 'content.stripped-text': queryPattern },
+        { 'content.stripped-html': queryPattern },
+        { 'from.name': queryPattern },
+        { 'from.address': queryPattern },
+        { 'from.normalizedAddress': queryPattern },
+        { 'sender.name': queryPattern },
+        { 'sender.address': queryPattern },
+        { 'sender.normalizedAddress': queryPattern },
+        { 'replyTo.name': queryPattern },
+        { 'replyTo.address': queryPattern },
+        { 'replyTo.normalizedAddress': queryPattern },
+        { 'to.name': queryPattern },
+        { 'to.address': queryPattern },
+        { 'to.normalizedAddress': queryPattern },
+        { 'cc.name': queryPattern },
+        { 'cc.address': queryPattern },
+        { 'cc.normalizedAddress': queryPattern },
+        { 'bcc.name': queryPattern },
+        { 'bcc.address': queryPattern },
+        { 'bcc.normalizedAddress': queryPattern },
+      ];
+
+      if (matchingContactIds.length > 0) {
+        messageSearchConditions.push(
+          { from: { $in: matchingContactIds } },
+          { sender: { $in: matchingContactIds } },
+          { replyTo: { $in: matchingContactIds } },
+          { to: { $in: matchingContactIds } },
+          { cc: { $in: matchingContactIds } },
+          { bcc: { $in: matchingContactIds } },
+        );
+      }
+
+      const matchingMessageThreadIds = await db
+        .collection<EmailMessageDocument>(DbTables.emailMessages)
+        .distinct('threadId', { $or: messageSearchConditions });
+      const threadSearchConditions: Filter<EmailThreadDocument>[] = [
+        { subject: queryPattern },
+        { 'participants.name': queryPattern },
+        { 'participants.address': queryPattern },
+        { 'participants.normalizedAddress': queryPattern },
+      ];
+
+      if (matchingContactIds.length > 0) {
+        threadSearchConditions.push({
+          participants: { $in: matchingContactIds },
+        });
+      }
+
+      if (matchingMessageThreadIds.length > 0) {
+        threadSearchConditions.push({
+          _id: { $in: matchingMessageThreadIds },
+        });
+      }
+
+      filter.$or = threadSearchConditions;
+    }
+
     const [totalItems, threads] = await Promise.all([
       db
         .collection<EmailThreadDocument>(DbTables.emailThreads)
@@ -1486,6 +1920,135 @@ class EmailService extends Singleton {
       ),
       totalItems,
     };
+  }
+
+  /**
+   * Moves every message from one thread into another thread in the same mailbox.
+   *
+   * @param mailboxId Mailbox that owns both threads.
+   * @param sourceThreadId Thread that will be removed after its messages move.
+   * @param targetThreadId Thread that will receive the moved messages.
+   */
+  async mergeMailboxThreads(
+    mailboxId: string,
+    sourceThreadId: string,
+    targetThreadId: string,
+  ): Promise<void> {
+    if (
+      !ObjectId.isValid(mailboxId) ||
+      !ObjectId.isValid(sourceThreadId) ||
+      !ObjectId.isValid(targetThreadId) ||
+      sourceThreadId === targetThreadId
+    ) {
+      throw new Error('Invalid thread merge.');
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const session = dbClient.startSession();
+    const mailboxObjectId = new ObjectId(mailboxId);
+    const sourceThreadObjectId = new ObjectId(sourceThreadId);
+    const targetThreadObjectId = new ObjectId(targetThreadId);
+
+    try {
+      await session.withTransaction(async () => {
+        const threadCollection = db.collection<EmailThreadDocument>(
+          DbTables.emailThreads,
+        );
+        const messageCollection = db.collection<EmailMessageDocument>(
+          DbTables.emailMessages,
+        );
+        const sourceThread = await threadCollection.findOne(
+          { _id: sourceThreadObjectId, mailboxId: mailboxObjectId },
+          { session },
+        );
+        const targetThread = await threadCollection.findOne(
+          { _id: targetThreadObjectId, mailboxId: mailboxObjectId },
+          { session },
+        );
+
+        if (!sourceThread || !targetThread) {
+          throw new Error('Thread not found.');
+        }
+
+        await messageCollection.updateMany(
+          { threadId: sourceThreadObjectId },
+          { $set: { threadId: targetThreadObjectId } },
+          { session },
+        );
+
+        const messageCount = await messageCollection.countDocuments(
+          { threadId: targetThreadObjectId },
+          { session },
+        );
+        const lastMessages = await messageCollection
+          .aggregate<EmailMessageDocument>(
+            [
+              { $match: { threadId: targetThreadObjectId } },
+              {
+                $set: {
+                  effectiveDate: {
+                    $ifNull: ['$dates.headerDate', '$dates.createdAt'],
+                  },
+                },
+              },
+              { $sort: { effectiveDate: -1, _id: -1 } },
+              { $limit: 1 },
+              { $unset: 'effectiveDate' },
+            ],
+            { session },
+          )
+          .toArray();
+        const [lastMessage] = lastMessages;
+
+        if (lastMessage === undefined) {
+          throw new Error('Merged thread has no messages.');
+        }
+
+        const participants = [
+          ...targetThread.participants,
+          ...sourceThread.participants,
+        ].filter(
+          (participant, index, values) =>
+            values.findIndex(
+              (value) =>
+                (value instanceof ObjectId
+                  ? value.toString()
+                  : value.normalizedAddress) ===
+                (participant instanceof ObjectId
+                  ? participant.toString()
+                  : participant.normalizedAddress),
+            ) === index,
+        );
+
+        await threadCollection.updateOne(
+          { _id: targetThreadObjectId },
+          {
+            $set: {
+              participants,
+              messageCount,
+              lastMessageId: lastMessage._id,
+              updatedAt: new Date(Math.max(targetThread.updatedAt.getTime(), sourceThread.updatedAt.getTime())),
+            },
+          },
+          { session },
+        );
+        await threadCollection.deleteOne(
+          { _id: sourceThreadObjectId },
+          { session },
+        );
+      });
+    } catch (error) {
+      await logEmailServiceError('mergeMailboxThreads', error, {
+        mailboxId,
+        sourceThreadId,
+        targetThreadId,
+      });
+
+      throw error;
+    } finally {
+      await session.endSession();
+    }
   }
 
   async getThread(threadId: string): Promise<EmailThreadSummary | null> {
@@ -1588,7 +2151,7 @@ class EmailService extends Singleton {
       const mailboxes = await db
         .collection<EmailMailbox>(DbTables.emailMailboxes)
         .find({})
-        .sort({ normalizedAddress: 1 })
+        .sort({ order: 1, normalizedAddress: 1 })
         .toArray();
       return mailboxes.map((mailbox) => ({
         mailbox: mapMailbox(mailbox),

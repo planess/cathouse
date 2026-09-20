@@ -1,7 +1,6 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AdminAdminEmailComponentsMailboxTabPanelIcon01 } from '@app/components/icons/admin-admin-email-components-mailbox-tab-panel-icon-01';
 import type {
@@ -10,14 +9,15 @@ import type {
 } from '@app/services/email.service';
 
 import { PAGE_THREAD_SIZE } from '../constants/page-thread-size';
+import { mergeMailboxThreadsRequest } from '../helpers/merge-mailbox-threads-request';
 
-import { Pagination } from './pagination';
 import { ThreadList } from './thread-list';
 
 type MailboxTabPanelProps = {
   canSend: boolean;
   mailbox: EmailMailboxSummary;
   refreshToken: number;
+  searchQuery: string;
   onCompose: (mailbox: EmailMailboxSummary) => void;
   onThreadSelect: (mailboxId: string, threadId: string) => void;
 };
@@ -28,17 +28,32 @@ type ThreadPageResponse = {
 };
 
 const threadPageRequests = new Map<string, Promise<ThreadPageResponse>>();
+const THREAD_LIST_REFRESH_INTERVAL_MS = 60_000;
 
-function loadThreadPage(mailboxId: string, page: number, forceRefresh = false) {
-  const key = `${mailboxId}:${page}`;
+function loadThreadPage(
+  mailboxId: string,
+  page: number,
+  searchQuery: string,
+  forceRefresh = false,
+) {
+  const key = `${mailboxId}:${searchQuery}:${page}`;
   const existingRequest = threadPageRequests.get(key);
 
   if (!forceRefresh && existingRequest !== undefined) {
     return existingRequest;
   }
 
+  const search = new URLSearchParams({
+    page: page.toString(),
+    pageSize: PAGE_THREAD_SIZE.toString(),
+  });
+
+  if (searchQuery.length > 0) {
+    search.set('query', searchQuery);
+  }
+
   const request = fetch(
-    `/api/admin/email/mailboxes/${mailboxId}/threads?page=${page}&pageSize=${PAGE_THREAD_SIZE}`,
+    `/api/admin/email/mailboxes/${mailboxId}/threads?${search.toString()}`,
   )
     .then((response) => response.json() as Promise<ThreadPageResponse>)
     .catch((error: unknown) => {
@@ -55,41 +70,82 @@ export function MailboxTabPanel({
   canSend,
   mailbox,
   refreshToken,
+  searchQuery,
   onCompose,
   onThreadSelect,
 }: MailboxTabPanelProps) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const requestedPage = Number(searchParams.get('page') ?? '1');
-  const currentPage = Number.isInteger(requestedPage) && requestedPage > 0
-    ? requestedPage
-    : 1;
   const [pageThreads, setPageThreads] = useState<EmailThreadSummary[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isMerging, setIsMerging] = useState(false);
+  const [mergeMessage, setMergeMessage] = useState('');
   const [refreshCount, setRefreshCount] = useState(0);
+  const loadMoreSentinelRef = useRef<HTMLDivElement>(null);
+  const loadMoreRequestedRef = useRef(false);
+  const loadedMailboxIdRef = useRef(mailbox.id);
+  const loadedPageCountRef = useRef(0);
+  const loadedSearchQueryRef = useRef(searchQuery);
   const refreshRequestedRef = useRef(false);
   const previousRefreshTokenRef = useRef(refreshToken);
 
   useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      refreshRequestedRef.current = true;
+      setRefreshCount((currentCount) => currentCount + 1);
+    }, THREAD_LIST_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [mailbox.id]);
+
+  useEffect(() => {
     let isCurrent = true;
+    const mailboxChanged = loadedMailboxIdRef.current !== mailbox.id;
+    const searchQueryChanged = loadedSearchQueryRef.current !== searchQuery;
+    const dataScopeChanged = mailboxChanged || searchQueryChanged;
     const forceRefresh =
       refreshRequestedRef.current ||
       previousRefreshTokenRef.current !== refreshToken;
+    const loadedPageCount = dataScopeChanged
+      ? 1
+      : Math.max(1, loadedPageCountRef.current);
 
+    loadedMailboxIdRef.current = mailbox.id;
+    loadedSearchQueryRef.current = searchQuery;
     refreshRequestedRef.current = false;
     previousRefreshTokenRef.current = refreshToken;
+
+    if (dataScopeChanged) {
+      loadMoreRequestedRef.current = false;
+      loadedPageCountRef.current = 0;
+      setIsLoadingMore(false);
+      setPageThreads([]);
+      setTotalItems(0);
+    }
+
     setIsLoading(true);
 
-    void loadThreadPage(mailbox.id, currentPage, forceRefresh)
-      .then((payload) => {
+    void Promise.all(
+      Array.from({ length: loadedPageCount }, (_, index) =>
+        loadThreadPage(mailbox.id, index + 1, searchQuery, forceRefresh),
+      ),
+    )
+      .then((payloads) => {
         if (!isCurrent) {
           return;
         }
 
-        setPageThreads(payload.items ?? []);
-        setTotalItems(payload.totalItems ?? 0);
+        const uniqueThreads = new Map<string, EmailThreadSummary>();
+
+        payloads.forEach((payload) => {
+          payload.items?.forEach((thread) => {
+            uniqueThreads.set(thread.id, thread);
+          });
+        });
+
+        loadedPageCountRef.current = loadedPageCount;
+        setPageThreads([...uniqueThreads.values()]);
+        setTotalItems(payloads[0]?.totalItems ?? 0);
       })
       .catch(() => { /* return undefined */ })
       .finally(() => {
@@ -101,13 +157,130 @@ export function MailboxTabPanel({
     return () => {
       isCurrent = false;
     };
-  }, [currentPage, mailbox.id, refreshCount, refreshToken]);
+  }, [mailbox.id, refreshCount, refreshToken, searchQuery]);
 
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', page.toString());
-    params.set('pageSize', PAGE_THREAD_SIZE.toString());
-    router.replace(`${pathname}?${params.toString()}`);
+  const loadNextThreadPage = useCallback(async () => {
+    if (
+      loadMoreRequestedRef.current ||
+      isLoading ||
+      pageThreads.length >= totalItems
+    ) {
+      return;
+    }
+
+    const requestedMailboxId = mailbox.id;
+    const requestedSearchQuery = searchQuery;
+    const nextPage = loadedPageCountRef.current + 1;
+
+    loadMoreRequestedRef.current = true;
+    setIsLoadingMore(true);
+
+    try {
+      const payload = await loadThreadPage(
+        requestedMailboxId,
+        nextPage,
+        requestedSearchQuery,
+      );
+
+      if (
+        loadedMailboxIdRef.current !== requestedMailboxId ||
+        loadedSearchQueryRef.current !== requestedSearchQuery
+      ) {
+        return;
+      }
+
+      loadedPageCountRef.current = nextPage;
+      setPageThreads((currentThreads) => {
+        const uniqueThreads = new Map(
+          currentThreads.map((thread) => [thread.id, thread]),
+        );
+
+        payload.items?.forEach((thread) => {
+          uniqueThreads.set(thread.id, thread);
+        });
+
+        return [...uniqueThreads.values()];
+      });
+      setTotalItems(payload.totalItems ?? 0);
+    } catch {
+      // Keep the sentinel available so scrolling can retry the request.
+    } finally {
+      loadMoreRequestedRef.current = false;
+
+      if (
+        loadedMailboxIdRef.current === requestedMailboxId &&
+        loadedSearchQueryRef.current === requestedSearchQuery
+      ) {
+        setIsLoadingMore(false);
+      }
+    }
+  }, [isLoading, mailbox.id, pageThreads.length, searchQuery, totalItems]);
+
+  useEffect(() => {
+    const sentinel = loadMoreSentinelRef.current;
+
+    if (
+      sentinel === null ||
+      isLoading ||
+      isLoadingMore ||
+      pageThreads.length >= totalItems
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        void loadNextThreadPage();
+      }
+    });
+
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, [
+    isLoading,
+    isLoadingMore,
+    loadNextThreadPage,
+    pageThreads.length,
+    totalItems,
+  ]);
+
+  const handleThreadMerge = async (
+    sourceThreadId: string,
+    targetThreadId: string,
+  ) => {
+    if (!canSend || isMerging) {
+      return;
+    }
+
+    setIsMerging(true);
+    setMergeMessage('');
+
+    try {
+      const { ok, payload } = await mergeMailboxThreadsRequest(
+        mailbox.id,
+        sourceThreadId,
+        targetThreadId,
+      );
+
+      if (!ok || !payload.success) {
+        throw new Error(payload.message);
+      }
+
+      setPageThreads((currentThreads) =>
+        currentThreads.filter((thread) => thread.id !== sourceThreadId),
+      );
+      setTotalItems((currentTotal) => Math.max(0, currentTotal - 1));
+      setMergeMessage('Threads merged.');
+      refreshRequestedRef.current = true;
+      setRefreshCount((currentCount) => currentCount + 1);
+    } catch (error) {
+      setMergeMessage(
+        error instanceof Error ? error.message : 'Failed to merge threads.',
+      );
+    } finally {
+      setIsMerging(false);
+    }
   };
 
   return (
@@ -151,16 +324,37 @@ export function MailboxTabPanel({
 
       <div className="relative min-h-36">
         <ThreadList
+          canMerge={canSend && !isMerging}
           mailboxId={mailbox.id}
+          onThreadMerge={(sourceThreadId, targetThreadId) =>
+            void handleThreadMerge(sourceThreadId, targetThreadId)
+          }
           onThreadSelect={onThreadSelect}
           threads={pageThreads}
         />
-        <Pagination
-          currentPage={currentPage}
-          pageSize={PAGE_THREAD_SIZE}
-          onPageChange={handlePageChange}
-          totalItems={totalItems}
-        />
+        {mergeMessage.length > 0 && (
+          <p
+            aria-live="polite"
+            className={`px-5 py-2 text-sm ${
+              mergeMessage === 'Threads merged.'
+                ? 'text-emerald-700 dark:text-emerald-300'
+                : 'text-red-700 dark:text-red-300'
+            }`}
+            role="status"
+          >
+            {mergeMessage}
+          </p>
+        )}
+        <div aria-hidden="true" className="h-px" ref={loadMoreSentinelRef} />
+        {isLoadingMore && (
+          <div className="flex justify-center px-5 py-4">
+            <span
+              aria-label="Loading more threads"
+              className="h-6 w-6 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-600 dark:border-slate-700 dark:border-t-emerald-400"
+              role="status"
+            />
+          </div>
+        )}
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-[1px] dark:bg-slate-950/75">
             <span

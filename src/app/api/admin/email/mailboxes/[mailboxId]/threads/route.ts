@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { PAGE_THREAD_SIZE } from '@app/(admin)/admin/email/constants/page-thread-size';
-import { getCurrentUser } from '@app/hooks/get-user';
+import { getCurrentUser } from '@app/hooks/get-current-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasAnyPermission } from '@app/services/access-verification.service';
 import { emailService } from '@app/services/email.service';
@@ -38,6 +38,7 @@ export async function GET(
   const requestedPageSize = Number(
     search.get('pageSize') ?? `${PAGE_THREAD_SIZE}`,
   );
+  const query = search.get('query')?.slice(0, 100) ?? '';
   const page =
     Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
   const pageSize =
@@ -48,6 +49,7 @@ export async function GET(
     mailboxId,
     page,
     pageSize,
+    query,
   );
 
   return NextResponse.json(result);
