@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 import { AdminAdminEmailComponentsComposeEmailModalIcon01 } from '@app/components/icons/admin-admin-email-components-compose-email-modal-icon-01';
+import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
 import type { EmailMailboxSummary } from '@app/services/email.service';
 
 import { inputClassName } from '../constants/input-class-name';
@@ -41,6 +42,8 @@ export function ComposeEmailModal({
   onClose,
   onSubmit,
 }: ComposeEmailModalProps) {
+  useBodyScrollLock();
+
   const mailboxFrom = formatMailboxFrom(mailbox);
   const [showCopyFields, setShowCopyFields] = useState(
     () =>

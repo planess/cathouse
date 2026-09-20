@@ -2,6 +2,8 @@
 
 import { FormEvent } from 'react';
 
+import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
+
 import { inputClassName } from '../constants/input-class-name';
 
 import { StatusMessage } from './status-message';
@@ -25,6 +27,8 @@ export function ForwardMessageModal({
   onRecipientChange,
   onSubmit,
 }: ForwardMessageModalProps) {
+  useBodyScrollLock();
+
   return (
     <div
       aria-modal="true"

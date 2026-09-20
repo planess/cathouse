@@ -2,6 +2,7 @@
 
 import { FormEvent } from 'react';
 
+import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
 import type { EmailMailboxSummary } from '@app/services/email.service';
 
 import { inputClassName } from '../constants/input-class-name';
@@ -27,6 +28,8 @@ export function EditMailboxDisplayNameModal({
   onDisplayNameChange,
   onSubmit,
 }: EditMailboxDisplayNameModalProps) {
+  useBodyScrollLock();
+
   return (
     <div
       aria-modal="true"

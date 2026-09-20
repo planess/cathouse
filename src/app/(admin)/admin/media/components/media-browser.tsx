@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
 import { useCurrentUser } from '@app/hooks/use-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 
@@ -90,6 +91,14 @@ export function MediaBrowser() {
     new Map(),
   );
   const [draggedFile, setDraggedFile] = useState<CloudFile | null>(null);
+
+  useBodyScrollLock(
+    isFolderDialogOpen ||
+      (isDeleteDialogOpen && folderToDelete !== null) ||
+      fileToDelete !== null ||
+      fileToRename !== null ||
+      folderToRename !== null,
+  );
 
   const loadFolder = useCallback(async (path: string) => {
     const normalizedPath = normalizeFolderPath(path);
