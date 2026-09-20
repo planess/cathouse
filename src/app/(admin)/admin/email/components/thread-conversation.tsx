@@ -11,6 +11,7 @@ import type {
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 import { getInitialReplyForm } from '../helpers/get-initial-reply-form';
+import { loadThreadMessagesRequest } from '../helpers/load-thread-messages-request';
 import { markThreadMessagesReadRequest } from '../helpers/mark-thread-messages-read-request';
 import { sendForwardMessageRequest } from '../helpers/send-forward-message-request';
 import { sendThreadReplyRequest } from '../helpers/send-thread-reply-request';
@@ -29,6 +30,8 @@ type ThreadConversationProps = {
   initialMessages: EmailMessageSummary[];
   thread: EmailThreadSummary;
 };
+
+const THREAD_MESSAGES_REFRESH_INTERVAL_MS = 60_000;
 
 export function ThreadConversation({
   canSend,
@@ -67,6 +70,72 @@ export function ThreadConversation({
       );
     });
   }, [initialMessages, thread.id]);
+
+  useEffect(() => {
+    let isCurrent = true;
+    let isRefreshing = false;
+    let refreshController: AbortController | null = null;
+
+    const refreshMessages = async () => {
+      if (isRefreshing) {
+        return;
+      }
+
+      isRefreshing = true;
+      refreshController = new AbortController();
+
+      try {
+        const refreshedMessages = await loadThreadMessagesRequest(
+          thread.id,
+          refreshController.signal,
+        );
+
+        if (!isCurrent) {
+          return;
+        }
+
+        setMessages((currentMessages) => {
+          const refreshedMessageIds = new Set(
+            refreshedMessages.map((message) => message.id),
+          );
+
+          return [
+            ...refreshedMessages,
+            ...currentMessages.filter(
+              (message) => !refreshedMessageIds.has(message.id),
+            ),
+          ];
+        });
+
+        if (refreshedMessages.some((message) => !message.isRead)) {
+          const markedAsRead = await markThreadMessagesReadRequest(thread.id);
+
+          if (isCurrent && markedAsRead) {
+            setMessages((currentMessages) =>
+              currentMessages.map((message) => ({
+                ...message,
+                isRead: true,
+              })),
+            );
+          }
+        }
+      } catch {
+        // Keep the current conversation visible and retry at the next interval.
+      } finally {
+        isRefreshing = false;
+        refreshController = null;
+      }
+    };
+    const intervalId = window.setInterval(() => {
+      void refreshMessages();
+    }, THREAD_MESSAGES_REFRESH_INTERVAL_MS);
+
+    return () => {
+      isCurrent = false;
+      refreshController?.abort();
+      window.clearInterval(intervalId);
+    };
+  }, [thread.id]);
 
   const handleChange = (
     field: keyof ThreadReplyFormState,

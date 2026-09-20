@@ -83,8 +83,29 @@ export function ComposeEmailModal({
       <form
         autoComplete="off"
         className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950"
+        data-1p-ignore="true"
+        data-form-type="other"
+        data-lpignore="true"
         onSubmit={(event) => void onSubmit(event)}
       >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0"
+        >
+          <input
+            autoComplete="username"
+            name="username"
+            tabIndex={-1}
+            type="text"
+          />
+          <input
+            autoComplete="new-password"
+            name="password"
+            tabIndex={-1}
+            type="password"
+          />
+        </div>
+
         <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
