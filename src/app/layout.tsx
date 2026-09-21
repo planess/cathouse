@@ -28,6 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title: t('title'),
     description: t('description'),
     robots: 'noindex, nofollow',
+    icons: {
+      icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
+    },
   };
 }
 

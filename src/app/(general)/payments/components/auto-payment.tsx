@@ -13,7 +13,7 @@ interface AutoPaymentProps {
 }
 
 const presets = [100, 200, 500, 1000];
-const paymentUrl = 'https://bank.gov.ua/qr/';
+const paymentUrl = 'https://qr.bank.gov.ua/';
 
 export function AutoPayment({ bank }: AutoPaymentProps) {
   const t = useTranslations('paymentspage');
