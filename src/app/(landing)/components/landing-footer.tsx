@@ -3,6 +3,8 @@ import { useTranslations } from 'next-intl';
 
 import styles from '../landing.module.css';
 
+import { LandingAnchorLink } from './landing-anchor-link';
+
 
 /** Dark footer with the foundation tagline, contact link, and back-to-top anchor. */
 export function LandingFooter() {
@@ -16,7 +18,7 @@ export function LandingFooter() {
         </p>
         <div className={styles.footerLinks}>
           <Link href="/contacts">{t('closing.contactAction')}</Link>
-          <a href="#top">{t('footer.top')}</a>
+          <LandingAnchorLink href="#top">{t('footer.top')}</LandingAnchorLink>
         </div>
       </div>
     </footer>

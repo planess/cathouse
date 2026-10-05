@@ -4,6 +4,7 @@ import { ArrowRightIcon } from '@app/components/icons/arrow-right-icon';
 
 import styles from '../landing.module.css';
 
+import { LandingAnchorLink } from './landing-anchor-link';
 import { LandingBrand } from './landing-brand';
 
 /** Top banner and navigation bar with anchor links and a donation call to action. */
@@ -17,14 +18,14 @@ export function LandingHeader() {
         <LandingBrand />
 
         <nav aria-label={t('nav.label')} className={styles.navLinks}>
-          <a href="#help">{t('nav.ways')}</a>
-          <a href="#give">{t('nav.donate')}</a>
+          <LandingAnchorLink href="#help">{t('nav.ways')}</LandingAnchorLink>
+          <LandingAnchorLink href="#give">{t('nav.donate')}</LandingAnchorLink>
         </nav>
 
-        <a className={styles.navCta} href="#give">
+        <LandingAnchorLink className={styles.navCta} href="#give">
           {t('header.donate')}
           <ArrowRightIcon height={15} width={15} />
-        </a>
+        </LandingAnchorLink>
       </header>
     </>
   );
