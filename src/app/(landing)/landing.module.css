@@ -47,13 +47,15 @@
 }
 
 .topline {
+  position: relative;
+  z-index: 3;
   min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 6px 14px;
-  background: var(--deep);
-  color: #fcebd7;
+  background: #f3e3d4;
+  color: #7d3a53;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
