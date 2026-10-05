@@ -7,6 +7,8 @@ import './globals.css';
 import { CookieConsent } from './components/cookie-consent';
 import { ModalProvider } from './providers/modal';
 import { UserProvider } from './providers/user';
+import { isSearchIndexingAllowed } from './services/search-indexing.service';
+import { getSiteUrl } from './services/site-url.service';
 
 import type { Metadata, Viewport } from 'next';
 
@@ -27,7 +29,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('title'),
     description: t('description'),
-    robots: 'noindex, nofollow',
+    metadataBase: new URL(getSiteUrl()),
+    robots: isSearchIndexingAllowed()
+      ? { index: true, follow: true }
+      : { index: false, follow: false },
     icons: {
       icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
     },
