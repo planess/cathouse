@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import logodark from '@public/assets/logo3-dark.svg';
+import logodark from '@public/assets/logo-text_dark.svg';
 
 import LanguageSwitcher from '@app/components/language-switcher/language-switcher';
 import { getUser } from '@app/hooks/get-user';
@@ -58,7 +58,7 @@ export default async function Footer() {
                 className="mx-auto"
                 src={logodark as string}
                 alt="logo"
-                height={40}
+                width="120"
               />
             </div>
 

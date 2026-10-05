@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, MouseEvent, useRef } from 'react';
 
-import logodark from '@public/assets/logo3-dark.svg';
-import logo from '@public/assets/logo3.svg';
+import logodark from '@public/assets/logo-text_dark.svg';
+import logo from '@public/assets/logo-text.svg';
 
 import { CLICK_TARGET_COUNT, CLICK_WINDOW_MS } from './logo.const';
 
