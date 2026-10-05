@@ -118,6 +118,94 @@
       "help": "We need every kind of help and support around them: time, transport, supplies, temporary care, donations, professional advice, calm communication, and simple human encouragement."
     }
   },
+  "gotchapage": {
+    "title": "Nice to meet you",
+    "description": "A friendly introduction to the Periphery charity foundation for people who met one of our volunteers.",
+    "hero": {
+      "eyebrow": "You found us through a Periphery volunteer",
+      "title": "Helping animals starts with caring.",
+      "description": "We are a charity foundation based in Lviv. We bring volunteers, veterinarians, and caring neighbors together so stray animals receive treatment, support, and a safer future.",
+      "primaryAction": "Report an animal",
+      "secondaryAction": "How we can help",
+      "note": "We are not a shelter, but we can help you understand the situation, find the right people, and coordinate the next steps.",
+      "imageAlt": "A cat resting in a safe and warm place",
+      "cardTitle": "Kindness works",
+      "cardText": "When each of us takes one possible step",
+      "trust": "Local care, powered by people like you."
+    },
+    "actions": {
+      "eyebrow": "Where to begin",
+      "title": "Choose what you need right now",
+      "description": "You do not need to know every rule or solve the problem alone. Start with one simple step.",
+      "items": {
+        "report": {
+          "title": "An animal needs help",
+          "description": "Tell us what happened and where you saw the animal. We will help you understand what to do safely.",
+          "link": "Contact us"
+        },
+        "help": {
+          "title": "I want to get involved",
+          "description": "Time, transport, temporary care, professional skills, or a donation — many kinds of support matter.",
+          "link": "Choose how to help"
+        },
+        "meet": {
+          "title": "I want to know who you are",
+          "description": "Meet the people behind the foundation, learn about volunteer roles, and see how to verify an official representative.",
+          "link": "Get to know us"
+        }
+      }
+    },
+    "care": {
+      "eyebrow": "What we do",
+      "title": "Practical help, close to home",
+      "description": "We work case by case while building a system where caring for animals becomes a shared and consistent effort.",
+      "link": "More about our work",
+      "items": {
+        "response": {
+          "title": "Coordinate",
+          "description": "We receive reports, assess the situation, and connect the people who can help on the ground."
+        },
+        "treatment": {
+          "title": "Treat",
+          "description": "We help with veterinary care, sterilization, medicine, and safe transportation."
+        },
+        "home": {
+          "title": "Find homes",
+          "description": "We support temporary care, recovery, and the search for responsible people who can offer a new home."
+        }
+      }
+    },
+    "closing": {
+      "eyebrow": "One kind step matters",
+      "title": "For animals. Together with people.",
+      "description": "A shared message, a short ride, or a small contribution can change the future of one real animal.",
+      "supportAction": "Support the foundation",
+      "contactAction": "Contact us"
+    },
+    "nav": {
+      "label": "Main navigation",
+      "ways": "Ways to help",
+      "donate": "Donate"
+    },
+    "header": {
+      "donate": "Donate today"
+    },
+    "donation": {
+      "check": "Every act of kindness matters.",
+      "cardTitle": "Help an animal today",
+      "cardText": "Choose a one-time gift to support local care.",
+      "action": "Donate {amount}",
+      "note": "Your gift supports animals in our community.",
+      "currency": "₴"
+    },
+    "footer": {
+      "top": "Back to top"
+    },
+    "brand": {
+      "name": "Periphery",
+      "tagline": "Charity foundation"
+    }
+  },
   "yes": "Yes",
   "no": "No",
   "cookieConsent": {

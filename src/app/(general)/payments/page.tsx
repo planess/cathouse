@@ -8,9 +8,10 @@ import { DogBowlIcon } from '@app/components/icons/registry-animal-d-og-bo-wl-ic
 import { HealthInterventionIcon } from '@app/components/icons/registry-animal-h-ea-lt-hi-nt-er-ve-nt-io-ni-co-n';
 import { MedicalKitIcon } from '@app/components/icons/registry-animal-m-ed-ic-al-ki-ti-co-n';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+import { ibanAccounts as ibanKeys } from '@app/services/iban-accounts';
 
 import { AutoPayment } from './components/auto-payment';
-import IbanCards, { IbanCardItem } from './components/iban-cards';
+import IbanCards from './components/iban-cards';
 
 import type { Metadata } from 'next';
 
@@ -28,24 +29,6 @@ const useTiles = [
     icon: <DogBowlIcon />,
   },
 ] as const;
-const ibanKeys = [
-  {
-    currency: 'UAH',
-    edrpou: '45962629',
-    mfo: '322001',
-    iban: 'UA88 322001 00000 2600 2700 0084 46',
-    bank: 'АТ "УНІВЕРСАЛ БАНК"',
-    recipient: 'БО "БФ "Периферія"',
-  },
-  {
-    currency: 'UAH',
-    edrpou: '45962629',
-    mfo: '307770',
-    iban: 'UA63 307770 00000 2600 4111 2409 53',
-    bank: 'АТ "А - Банк"',
-    recipient: 'БО "БФ "Периферія"',
-  },
-] as IbanCardItem[];
 const ibanQuestions = [
   { answer: 'answer1' },
   { question: 'question2', answer: 'answer2' },
