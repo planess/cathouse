@@ -11,6 +11,7 @@ Next.js 15 application with the App Router. Application code is in `src/app`; i1
 - Document every exported component, service, independent function, interface, and type with JSDoc. document public properties of class, parameters of functions, properties of interfaces/types.
 - Store reusable React SVG icons in `src/app/components/icons`, one icon component per kebab-case file. Do not keep SVG markup in unrelated components or combine icons in `icons.tsx`; feature-only icons may instead live in that feature's `components/icons` folder.
 - Follow the existing ESLint and import-order rules.
+- Keep `src/app/sitemap.ts` in sync with public routes: add a path to `PUBLIC_PATHS` when you create an indexable public page, and remove it when you delete or rename one. Do not list admin, guest (auth), `(ghost)` group, or API routes; they are excluded from search engines (also update the `disallow` list in `src/app/robots.ts` for new private routes).
 
 ## Safety and delivery
 

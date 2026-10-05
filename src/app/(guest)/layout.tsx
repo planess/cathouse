@@ -1,6 +1,12 @@
 import Footer from '../components/footer/footer';
 import Header from '../components/header/header';
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default function GuestLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
