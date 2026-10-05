@@ -29,7 +29,7 @@ function CheckIcon() {
   return (
     <GeneralVolunteersPageIcon01
       aria-hidden="true"
-      className="h-5 w-5 shrink-0 text-emerald-500"
+      className="h-5 w-5 shrink-0 text-emerald-500 dark:text-emerald-400"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
@@ -90,23 +90,23 @@ export default function VolunteerInfoPage() {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.16),_transparent_45%),radial-gradient(circle_at_15%_20%,_rgba(14,165,233,0.12),_transparent_38%),linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(241,245,249,0.92))]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.16),_transparent_45%),radial-gradient(circle_at_15%_20%,_rgba(14,165,233,0.12),_transparent_38%),linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(241,245,249,0.92))] dark:bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.18),_transparent_45%),radial-gradient(circle_at_15%_20%,_rgba(14,165,233,0.14),_transparent_38%),linear-gradient(180deg,_#0f172a,_#020617)]" />
 
       <div className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-5xl flex-col gap-14 pb-16">
           <section className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
                 <UsersIcon />
               </div>
               <div>
-                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
                   {t('who.title')}
                 </h2>
               </div>
             </div>
 
-            <div className="space-y-4 text-lg leading-relaxed text-slate-600">
+            <div className="space-y-4 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               <p>{t('who.description')}</p>
               <p>{t('who.expenses')}</p>
             </div>
@@ -115,14 +115,14 @@ export default function VolunteerInfoPage() {
               {volunteerPointKeys.map((key) => (
                 <li
                   key={key}
-                  className="flex gap-3 rounded-2xl bg-white p-4 shadow-sm"
+                  className="flex gap-3 rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-800 dark:ring-1 dark:ring-slate-700"
                 >
                   <CheckIcon />
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
                       {t(`who.points.${key}.title`)}
                     </p>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-500">
+                    <p className="mt-1 text-base leading-relaxed text-slate-600 dark:text-slate-300">
                       {t(`who.points.${key}.description`)}
                     </p>
                   </div>
@@ -131,28 +131,28 @@ export default function VolunteerInfoPage() {
             </ul>
           </section>
 
-          <section className="relative overflow-hidden rounded-[32px] border border-slate-200 bg-white px-6 py-8 shadow-[0_24px_80px_-50px_rgba(15,23,42,0.5)] md:px-8 md:py-10">
-            <div className="pointer-events-none absolute right-4 top-0 text-slate-100">
+          <section className="relative overflow-hidden rounded-[32px] border border-slate-200 bg-white px-6 py-8 shadow-[0_24px_80px_-50px_rgba(15,23,42,0.5)] dark:border-slate-700 dark:bg-slate-900 dark:shadow-none md:px-8 md:py-10">
+            <div className="pointer-events-none absolute right-4 top-0 text-slate-100 dark:text-slate-800">
               <IdCardIcon />
             </div>
 
             <div className="relative space-y-12">
               <div className="mx-auto max-w-2xl space-y-4 text-center">
-                <span className="inline-flex rounded-full bg-emerald-100 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.26em] text-emerald-700">
+                <span className="inline-flex rounded-full bg-emerald-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200">
                   {t('badge.sectionLabel')}
                 </span>
-                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
                   {t('badge.title')}
                 </h2>
-                <p className="text-base leading-relaxed text-slate-600">
+                <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">
                   {t('badge.description')}
                 </p>
               </div>
 
               <div className="grid items-start gap-12 lg:grid-cols-2">
                 <div className="space-y-6">
-                  <h3 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+                  <h3 className="flex items-center gap-3 text-xl font-semibold text-slate-900 dark:text-slate-50">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200">
                       1
                     </span>
                     {t('badge.front.title')}
@@ -163,16 +163,16 @@ export default function VolunteerInfoPage() {
                     src={badgeCardFrontImage}
                   />
 
-                  <div className="rounded-[26px] border border-slate-200 bg-slate-50 p-6">
+                  <div className="rounded-[26px] border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800/60">
                     <ul className="space-y-4">
                       {frontBadgeKeys.map((key) => (
                         <li key={key} className="flex gap-3">
-                          <Dot className="bg-emerald-600" />
+                          <Dot className="bg-emerald-600 dark:bg-emerald-400" />
                           <div>
-                            <p className="text-sm font-semibold text-slate-900">
+                            <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
                               {t(`badge.front.items.${key}.title`)}
                             </p>
-                            <p className="mt-1 text-sm leading-relaxed text-slate-500">
+                            <p className="mt-1 text-base leading-relaxed text-slate-600 dark:text-slate-300">
                               {t(`badge.front.items.${key}.description`)}
                             </p>
                           </div>
@@ -183,8 +183,8 @@ export default function VolunteerInfoPage() {
                 </div>
 
                 <div className="space-y-6">
-                  <h3 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-slate-700">
+                  <h3 className="flex items-center gap-3 text-xl font-semibold text-slate-900 dark:text-slate-50">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-700 dark:text-slate-100">
                       2
                     </span>
                     {t('badge.back.title')}
@@ -195,16 +195,16 @@ export default function VolunteerInfoPage() {
                     src={badgeCardBackImage}
                   />
 
-                  <div className="rounded-[26px] border border-slate-200 bg-slate-50 p-6">
+                  <div className="rounded-[26px] border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800/60">
                     <ul className="space-y-4">
                       {backBadgeKeys.map((key) => (
                         <li key={key} className="flex gap-3">
-                          <Dot className="bg-slate-500" />
+                          <Dot className="bg-slate-500 dark:bg-slate-400" />
                           <div>
-                            <p className="text-sm font-semibold text-slate-900">
+                            <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
                               {t(`badge.back.items.${key}.title`)}
                             </p>
-                            <p className="mt-1 text-sm leading-relaxed text-slate-500">
+                            <p className="mt-1 text-base leading-relaxed text-slate-600 dark:text-slate-300">
                               {t(`badge.back.items.${key}.description`)}
                             </p>
                           </div>
@@ -217,22 +217,22 @@ export default function VolunteerInfoPage() {
             </div>
           </section>
 
-          <section className="space-y-6 rounded-[32px] border border-emerald-100 bg-emerald-50/60 px-6 py-8 md:px-8">
+          <section className="space-y-6 rounded-[32px] border border-emerald-100 bg-emerald-50/60 dark:border-emerald-500/30 dark:bg-emerald-500/10 px-6 py-8 md:px-8">
             <div className="flex items-center gap-3">
-              <span className="text-emerald-700">
+              <span className="text-emerald-700 dark:text-emerald-300">
                 <HeartIcon />
               </span>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-300">
                   {t('support.sectionLabel')}
                 </p>
-                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
                   {t('support.title')}
                 </h2>
               </div>
             </div>
 
-            <div className="max-w-3xl space-y-4 text-lg leading-relaxed text-slate-600">
+            <div className="max-w-3xl space-y-4 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               <p>{t('support.description')}</p>
               <p>{t('support.help')}</p>
             </div>
