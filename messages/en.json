@@ -1045,7 +1045,7 @@
     "wrongCredentials": "User not found",
     "title": {
       "register": "Registration",
-      "auth": "Authorization",
+      "auth": "Sign in",
       "reset-password": "Password Recovery"
     },
     "notice": {
@@ -1060,7 +1060,12 @@
         "password": "Password",
         "register-button": "Let's go",
         "auth-button": "Sign in",
-        "reset-password-button": "Send email"
+        "reset-password-button": "Send email",
+        "forgot-password": "Forgot password?",
+        "show-password": "Show password",
+        "hide-password": "Hide password",
+        "remember-me": "Remember me",
+        "remember-me-device": "Remember me on this device"
       },
       "placeholder": {
         "auth-password": "Profile password",
@@ -1076,6 +1081,11 @@
       "error": {
         "required": "Field is required"
       }
+    },
+    "signin": {
+      "tagline": "Every sign-in is another day of care.",
+      "description": "The animal registry, finances, storage and the foundation's correspondence in one place.",
+      "back-to-site": "Back to the website"
     }
   },
   "adminpage": {

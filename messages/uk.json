@@ -1045,7 +1045,7 @@
     "wrongCredentials": "Користувача не знайдено",
     "title": {
       "register": "Реєстрація",
-      "auth": "Авторизація",
+      "auth": "Вхід",
       "reset-password": "Відновлення пароля"
     },
     "notice": {
@@ -1060,7 +1060,12 @@
         "password": "Пароль",
         "register-button": "Поїхали",
         "auth-button": "Увійти",
-        "reset-password-button": "Надіслати листа"
+        "reset-password-button": "Надіслати листа",
+        "forgot-password": "Забули пароль?",
+        "show-password": "Показати пароль",
+        "hide-password": "Сховати пароль",
+        "remember-me": "Запам'ятати мене",
+        "remember-me-device": "Запам'ятати мене на цьому пристрої"
       },
       "placeholder": {
         "auth-password": "Пароль до профілю",
@@ -1076,6 +1081,11 @@
       "error": {
         "required": "Поле обов'язкове"
       }
+    },
+    "signin": {
+      "tagline": "Кожен вхід — ще один день турботи.",
+      "description": "Реєстр тварин, фінанси, склад і листування фонду в одному місці.",
+      "back-to-site": "Повернутися на сайт"
     }
   },
   "adminpage": {
