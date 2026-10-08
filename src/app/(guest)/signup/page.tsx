@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+
+import AuthShell from '../components/auth-shell/auth-shell';
 
 import RegisterForm from './components/register-form/register-form';
 
@@ -12,25 +13,13 @@ export default function Signup() {
   const t = useTranslations('authorization');
 
   return (
-    <div className="px-6 py-7">
-      <h1 className="text-3xl text-center mb-5">{t('title.register')}</h1>
-
-      <div className="mb-3">
-        <div className="text-center mb-3 -mx-6 p-3 bg-amber-50 border border-amber-100 text-lime-900">
-          {t('notice.chooseDirection')}
-        </div>
-
-        <div className="lg:w-120 mx-auto">
-          <RegisterForm />
-        </div>
-      </div>
-
-      <div className="lg:w-120 mx-auto flex justify-end mt-9">
-        <Link className="text-sky-600 hover:underline" href="/signin">
-          {t('already-have-account-link')}
-        </Link>
-      </div>
-    </div>
+    <AuthShell
+      tagline={t('hero.signup.tagline')}
+      description={t('hero.signup.description')}
+      link={{ href: '/signin', label: t('already-have-account-link') }}
+    >
+      <RegisterForm />
+    </AuthShell>
   );
 }
 

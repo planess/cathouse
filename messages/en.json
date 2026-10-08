@@ -1082,10 +1082,20 @@
         "required": "Field is required"
       }
     },
-    "signin": {
-      "tagline": "Every sign-in is another day of care.",
-      "description": "The animal registry, finances, storage and the foundation's correspondence in one place.",
-      "back-to-site": "Back to the website"
+    "back-to-site": "Back to the website",
+    "hero": {
+      "signin": {
+        "tagline": "Every sign-in is another day of care.",
+        "description": "The animal registry, finances, storage and the foundation's correspondence in one place."
+      },
+      "signup": {
+        "tagline": "Every pair of hands is a chance for someone with a tail.",
+        "description": "Create an account to join the foundation's work."
+      },
+      "reset": {
+        "tagline": "Passwords get forgotten. Care doesn't.",
+        "description": "We'll email you a link to set a new password."
+      }
     }
   },
   "adminpage": {

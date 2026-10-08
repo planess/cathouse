@@ -4,6 +4,10 @@ import { getTranslations } from 'next-intl/server';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import clientPromise from '@app/ins/mongo-client';
 
+import AuthAlert from '../components/auth-alert/auth-alert';
+import AuthCard from '../components/auth-card/auth-card';
+import AuthShell from '../components/auth-shell/auth-shell';
+
 import AuthFormWrapper from './components/auth-form-wrapper';
 import RestoreForm from './components/restore-form';
 import { sendRestoreEmail } from './server/send-restore-email';
@@ -28,7 +32,7 @@ export default async function ResetPasswordPage({
     const codeExists = await collection.findOne({ code });
 
     if (codeExists === null) {
-      form = <div>Невірний код відновлення</div>;
+      form = <AuthAlert tone="error">Невірний код відновлення</AuthAlert>;
     } else {
       const indexes = await collection.indexes();
       const indexTemp = indexes.find(
@@ -52,11 +56,12 @@ export default async function ResetPasswordPage({
   }
 
   return (
-    <div className="px-6 py-7">
-      <h1 className="text-3xl text-center mb-5">{t('title.reset-password')}</h1>
-
-      <div className="lg:w-120 mx-auto">{form}</div>
-    </div>
+    <AuthShell
+      tagline={t('hero.reset.tagline')}
+      description={t('hero.reset.description')}
+    >
+      <AuthCard title={t('title.reset-password')}>{form}</AuthCard>
+    </AuthShell>
   );
 }
 
