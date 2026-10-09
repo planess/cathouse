@@ -5,12 +5,12 @@ import { useTranslations } from 'next-intl';
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { Button } from '@app/components/button';
 import { encrypt } from '@app/helpers/encrypt-browser';
 import { formatDuration } from '@app/helpers/format-duration';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
-import InputField from '../../components/input-field/input-field';
+import AuthInputField from '../../components/auth-input-field/auth-input-field';
+import AuthSubmitButton from '../../components/auth-submit-button/auth-submit-button';
 import { ServerFormData } from '../../models/server-form-data';
 import { changePassword } from '../server/change-password';
 
@@ -57,6 +57,8 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
       return;
     }
     setPending(true);
+    // keep the spinner on until the redirect after a successful submit
+    let redirecting = false;
 
     try {
       const passHash = await encrypt(cryptoKey, password);
@@ -76,6 +78,7 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
         clearErrors();
         reset();
 
+        redirecting = true;
         router.push('/signin');
       }
     } catch (error) {
@@ -83,47 +86,49 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
         message: error instanceof Error ? error.message : 'Unknown error',
       });
     } finally {
-      setPending(false);
+      if (!redirecting) {
+        setPending(false);
+      }
     }
   });
 
   const silentSubmit = (event: FormEvent) => void onSubmit(event);
 
   return (
-    <div>
-      <form onSubmit={silentSubmit} className="flex flex-col gap-4">
-        <div>
-          <InputField
-            label="New Password"
-            element="input"
-            config={{
-              ...register('password', { required: true, minLength: 6 }),
-              placeholder: 'Enter new password',
-            }}
-            hint={t('form.hint.password', { n: 6 })}
-            errors={
-              formState.errors.password?.message !== undefined
-                ? [formState.errors.password.message]
-                : []
-            }
-          />
-        </div>
+    <form
+      onSubmit={silentSubmit}
+      className="flex grow flex-col gap-[18px] lg:gap-5"
+    >
+      <AuthInputField
+        label="New Password"
+        config={{
+          ...register('password', { required: true, minLength: 6 }),
+          placeholder: 'Enter new password',
+        }}
+        hint={t('form.hint.password', { n: 6 })}
+        errors={
+          formState.errors.password?.message !== undefined
+            ? [formState.errors.password.message]
+            : []
+        }
+      />
 
-        <div>
-          You have only <strong>{formatDuration(left)}</strong> to change your
-          password.
-        </div>
+      <p className="m-0 text-sm text-slate-600 dark:text-stone-300">
+        You have only{' '}
+        <strong className="font-semibold text-slate-900 dark:text-stone-50">
+          {formatDuration(left)}
+        </strong>{' '}
+        to change your password.
+      </p>
 
-        {/* <div>{formState.errors ? JSON.stringify(formState.errors?.password) : null}</div> */}
+      <div className="grow lg:hidden" />
 
-        <Button
-          className="mt-4 ml-auto"
-          pending={pending}
-          disabled={!formState.isValid || !cryptoKey || pending}
-        >
-          Change password
-        </Button>
-      </form>
-    </div>
+      <AuthSubmitButton
+        pending={pending}
+        disabled={!formState.isValid || !cryptoKey || pending}
+      >
+        Change password
+      </AuthSubmitButton>
+    </form>
   );
 }

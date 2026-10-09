@@ -4,10 +4,10 @@ import { useTranslations } from 'next-intl';
 import { FormEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { Button } from '@app/components/button';
 import { HandlerParams } from '@app/models/handler-params.server';
 
-import InputField from '../../components/input-field/input-field';
+import AuthInputField from '../../components/auth-input-field/auth-input-field';
+import AuthSubmitButton from '../../components/auth-submit-button/auth-submit-button';
 
 interface FormData {
   identifier: string;
@@ -61,26 +61,24 @@ export default function AuthForm({ handler }: HandlerParams<string>) {
   })();
 
   return (
-    <form onSubmit={silentSubmit} className="flex flex-col gap-2">
-      <div>
-        <InputField
-          label={t('form.label.email')}
-          element="input"
-          config={{
-            ...register('identifier', { required: true }),
-            placeholder: t('form.placeholder.email-reset'),
-          }}
-          errors={identifierErrors}
-        />
-      </div>
+    <form
+      onSubmit={silentSubmit}
+      className="flex grow flex-col gap-[18px] lg:gap-5"
+    >
+      <AuthInputField
+        label={t('form.label.email')}
+        config={{
+          ...register('identifier', { required: true }),
+          placeholder: t('form.placeholder.email-reset'),
+        }}
+        errors={identifierErrors}
+      />
 
-      <Button
-        className="mt-4 ml-auto"
-        disabled={!formState.isValid}
-        pending={pending}
-      >
+      <div className="grow lg:hidden" />
+
+      <AuthSubmitButton disabled={!formState.isValid} pending={pending}>
         {t('form.label.reset-password-button')}
-      </Button>
+      </AuthSubmitButton>
     </form>
   );
 }

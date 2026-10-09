@@ -5,11 +5,13 @@ import { useTranslations } from 'next-intl';
 import { FormEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { Button } from '@app/components/button';
 import { encrypt } from '@app/helpers/encrypt-browser';
 import { useCryptoKeys } from '@app/hooks/use-crypto-keys';
 
-import InputField from '../../../components/input-field/input-field';
+import AuthAlert from '../../../components/auth-alert/auth-alert';
+import AuthCard from '../../../components/auth-card/auth-card';
+import AuthInputField from '../../../components/auth-input-field/auth-input-field';
+import AuthSubmitButton from '../../../components/auth-submit-button/auth-submit-button';
 import { FormData } from '../../models/form-data';
 import { ServerFormData } from '../../models/server-form-data';
 import { register as handler } from '../../server/register';
@@ -29,7 +31,11 @@ export default function RegisterForm() {
   const [pending, setPending] = useState(false);
 
   if (cryptoError !== null) {
-    return <div className="text-3xl text-center">{t('internalError')}</div>;
+    return (
+      <AuthCard title={t('title.register')}>
+        <AuthAlert tone="error">{t('internalError')}</AuthAlert>
+      </AuthCard>
+    );
   }
 
   const onSubmit = handleSubmit(async ({ password, identifier }) => {
@@ -39,6 +45,8 @@ export default function RegisterForm() {
     }
 
     setPending(true);
+    // keep the spinner on until the redirect after a successful submit
+    let redirecting = false;
 
     try {
       const passHash = await encrypt(cryptoKey, password);
@@ -63,26 +71,32 @@ export default function RegisterForm() {
         clearErrors();
         reset();
 
+        redirecting = true;
         router.push('/signin');
       }
     } catch (error) {
-      setError('root', {
-        message:
-          error instanceof Error ? error.message : t('form.validation.unknown'),
-      });
+      console.error('Registration request failed', error);
+
+      setError('root', { message: t('saveUserErrorCommon') });
     } finally {
-      setPending(false);
+      if (!redirecting) {
+        setPending(false);
+      }
     }
   });
 
   const silentSubmit = (event: FormEvent) => void onSubmit(event);
 
   return (
-    <form className="flex flex-col gap-2" onSubmit={silentSubmit}>
-      <div>
-        <InputField
+    <AuthCard title={t('title.register')}>
+      <AuthAlert tone="info">{t('notice.chooseDirection')}</AuthAlert>
+
+      <form
+        className="flex grow flex-col gap-[18px] lg:gap-5"
+        onSubmit={silentSubmit}
+      >
+        <AuthInputField
           label={t('form.label.email')}
-          element="input"
           config={{
             ...register('identifier', { required: true }),
             placeholder: t('form.placeholder.email'),
@@ -93,12 +107,9 @@ export default function RegisterForm() {
               : []
           }
         />
-      </div>
 
-      <div>
-        <InputField
+        <AuthInputField
           label={t('form.label.password')}
-          element="input"
           config={{
             ...register('password', {
               required: true,
@@ -114,22 +125,23 @@ export default function RegisterForm() {
               : []
           }
         />
-      </div>
 
-      {/* Root error display */}
-      {formState.errors.root && (
-        <div className="text-red-500 text-sm bg-red-50 p-3 rounded border border-red-200">
-          {formState.errors.root.message as string}
-        </div>
-      )}
+        {/* Root error display */}
+        {formState.errors.root && (
+          <AuthAlert tone="error">
+            {formState.errors.root.message as string}
+          </AuthAlert>
+        )}
 
-      <Button
-        disabled={isLoading || !formState.isValid || !cryptoKey}
-        pending={pending}
-        className="mt-4 ml-auto"
-      >
-        {t('form.label.register-button')}
-      </Button>
-    </form>
+        <div className="grow lg:hidden" />
+
+        <AuthSubmitButton
+          disabled={isLoading || !formState.isValid || !cryptoKey}
+          pending={pending}
+        >
+          {t('form.label.register-button')}
+        </AuthSubmitButton>
+      </form>
+    </AuthCard>
   );
 }

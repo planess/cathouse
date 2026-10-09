@@ -1041,11 +1041,12 @@
     "already-have-account-link": "Already registered",
     "want-account-link": "Ready to register",
     "saveUserErrorCommon": "Failed to save registration",
+    "saveProfileErrorCommon": "Your account was created, but we couldn't finish setting up the profile. Please contact us.",
     "internalError": "We are conducting technical work. Registration will be available very soon.",
     "wrongCredentials": "User not found",
     "title": {
       "register": "Registration",
-      "auth": "Authorization",
+      "auth": "Sign in",
       "reset-password": "Password Recovery"
     },
     "notice": {
@@ -1060,7 +1061,12 @@
         "password": "Password",
         "register-button": "Let's go",
         "auth-button": "Sign in",
-        "reset-password-button": "Send email"
+        "reset-password-button": "Send email",
+        "forgot-password": "Forgot password?",
+        "show-password": "Show password",
+        "hide-password": "Hide password",
+        "remember-me": "Remember me",
+        "remember-me-device": "Remember me on this device"
       },
       "placeholder": {
         "auth-password": "Profile password",
@@ -1074,7 +1080,24 @@
         "unknown": "Unknown strange error"
       },
       "error": {
-        "required": "Field is required"
+        "required": "Field is required",
+        "emailTaken": "An account with this email already exists. Try signing in or restore your password.",
+        "passwordProcessing": "We couldn't process the password securely. Reload the page and try again."
+      }
+    },
+    "back-to-site": "Back to the website",
+    "hero": {
+      "signin": {
+        "tagline": "Every sign-in is another day of care.",
+        "description": "The animal registry, finances, storage and the foundation's correspondence in one place."
+      },
+      "signup": {
+        "tagline": "Every pair of hands is a chance for someone with a tail.",
+        "description": "Create an account to join the foundation's work."
+      },
+      "reset": {
+        "tagline": "Passwords get forgotten. Care doesn't.",
+        "description": "We'll email you a link to set a new password."
       }
     }
   },
@@ -2170,6 +2193,11 @@
       "payments": "Support the fund",
       "offer": "Public offer",
       "reports": "Reports"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "admin": "Admin panel",
+      "logout": "Log out"
     }
   },
   "contactForm": {

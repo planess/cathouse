@@ -7,6 +7,8 @@ import { requestKeyGeneration } from '@app/helpers/request-key-generation';
 import { useCryptoKeysError } from '@app/hooks/use-crypto-keys';
 import { HandlerParams } from '@app/models/handler-params.server';
 
+import AuthAlert from '../../components/auth-alert/auth-alert';
+
 import AuthForm from './auth-form';
 
 export default function AuthFormWrapper({ handler }: HandlerParams<string>) {
@@ -31,32 +33,30 @@ export default function AuthFormWrapper({ handler }: HandlerParams<string>) {
   return (
     <>
       {sent && (
-        <>
-          <div className="lg:w-120 mx-auto my-4 bg-slate-100 rounded-md text-amber-800 p-4">
-            <p>
-              Лист надіслано на <b>{email}</b>, перевірте свою пошту!
-            </p>
+        <AuthAlert tone="success">
+          <p className="m-0">
+            Лист надіслано на <b>{email}</b>, перевірте свою пошту!
+          </p>
 
-            <Link
-              className="text-sky-600"
-              href="#"
-              onClick={() => setSent(false)}
-            >
-              Edit email
-            </Link>
-          </div>
-        </>
+          <Link
+            className="self-start font-semibold text-sky-700 dark:text-sky-400 hover:text-slate-900 dark:hover:text-stone-50"
+            href="#"
+            onClick={() => setSent(false)}
+          >
+            Edit email
+          </Link>
+        </AuthAlert>
       )}
 
       {!sent && <AuthForm handler={middleHandler} />}
 
       {process.env.NODE_ENV === 'development' && cryptoError && (
-        <div>
+        <div className="flex justify-center">
           <button
             onClick={() => {
               void requestKeyGeneration();
             }}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg border border-sky-700 text-sm font-semibold text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-stone-800 cursor-pointer disabled:opacity-50"
           >
             Generate Crypto Key
           </button>

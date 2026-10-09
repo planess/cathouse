@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
+
+import AuthShell from '../components/auth-shell/auth-shell';
 
 import AuthForm from './components/auth-form/auth-form';
 
@@ -12,25 +13,13 @@ export default function Signin() {
   const t = useTranslations('authorization');
 
   return (
-    <div className="px-6 py-7">
-      <h1 className="text-3xl text-center mb-5">{t('title.auth')}</h1>
-
-      <div className="mb-3">
-        <div className="lg:w-120 mx-auto">
-          <AuthForm />
-        </div>
-      </div>
-
-      <div className="lg:w-120 mx-auto flex flex-col items-end mt-9 gap-3">
-        <Link className="text-sky-600 hover:underline" href="/signup">
-          {t('want-account-link')}
-        </Link>
-
-        <Link className="text-sky-600 hover:underline" href="/reset-password">
-          Restore password
-        </Link>
-      </div>
-    </div>
+    <AuthShell
+      tagline={t('hero.signin.tagline')}
+      description={t('hero.signin.description')}
+      link={{ href: '/signup', label: t('want-account-link') }}
+    >
+      <AuthForm />
+    </AuthShell>
   );
 }
 

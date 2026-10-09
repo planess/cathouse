@@ -1,4 +1,4 @@
-import { requireGuest } from '@app/services/require-guest';
+import { requireUser } from '@app/services/require-user';
 
 import Footer from '../components/footer/footer';
 import Header from '../components/header/header';
@@ -9,15 +9,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function GuestLayout({
+export default async function PersonalLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // Sign-in, sign-up and password reset are only for visitors without a session
-  await requireGuest();
+  // Personal pages are only for visitors with a session
+  await requireUser();
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex-none">
+      <div className="flex-none sticky top-0 z-2">
         <Header />
       </div>
 
