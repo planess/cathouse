@@ -2193,6 +2193,11 @@
       "payments": "Підтримати фонд",
       "offer": "Публічна оферта",
       "reports": "Звіти"
+    },
+    "userMenu": {
+      "profile": "Профіль",
+      "admin": "Адмін-панель",
+      "logout": "Вийти"
     }
   },
   "contactForm": {

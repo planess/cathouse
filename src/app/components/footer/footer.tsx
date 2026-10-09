@@ -5,9 +5,12 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import logodark from '@public/assets/logo-text_dark.svg';
 
 import LanguageSwitcher from '@app/components/language-switcher/language-switcher';
+import { hasAdminAccess } from '@app/helpers/has-admin-access';
 import { getUser } from '@app/hooks/get-user';
+import { getUserPermissions } from '@app/services/access-verification.service';
 
 import { Tooltip } from '../tooltip';
+import { UserMenu } from '../user-menu';
 
 const linkBlock = [
   [
@@ -28,6 +31,11 @@ export default async function Footer() {
   const t = await getTranslations('footer');
   const locale = await getLocale();
   const user = await getUser();
+  const canAccessAdmin = user
+    ? hasAdminAccess(
+        await getUserPermissions(undefined, user.id).catch(() => []),
+      )
+    : false;
   const foundationYear = 2024;
   const org = 'Planess Group';
 
@@ -72,7 +80,11 @@ export default async function Footer() {
       <hr className="border-zinc-500" />
 
       <div className="flex justify-between gap-x-2 py-3">
-        <span>{user?.email}</span>
+        <div>
+          {user && (
+            <UserMenu email={user.email} canAccessAdmin={canAccessAdmin} />
+          )}
+        </div>
 
         <div className="flex flex-wrap justify-end gap-x-2 text-end">
           <span className="sm:whitespace-nowrap">

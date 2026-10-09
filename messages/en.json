@@ -2193,6 +2193,11 @@
       "payments": "Support the fund",
       "offer": "Public offer",
       "reports": "Reports"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "admin": "Admin panel",
+      "logout": "Log out"
     }
   },
   "contactForm": {
