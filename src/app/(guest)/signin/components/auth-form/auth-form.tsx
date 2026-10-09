@@ -53,6 +53,8 @@ export default function AuthForm() {
     }
 
     setPending(true);
+    // keep the spinner on until the redirect after a successful submit
+    let redirecting = false;
 
     try {
       const passHash = await encrypt(cryptoKey, password);
@@ -84,6 +86,7 @@ export default function AuthForm() {
         clearErrors();
         reset();
 
+        redirecting = true;
         router.push('/');
       }
     } catch (error) {
@@ -92,7 +95,9 @@ export default function AuthForm() {
           error instanceof Error ? error.message : t('form.validation.unknown'),
       });
     } finally {
-      setPending(false);
+      if (!redirecting) {
+        setPending(false);
+      }
     }
   });
 

@@ -57,6 +57,8 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
       return;
     }
     setPending(true);
+    // keep the spinner on until the redirect after a successful submit
+    let redirecting = false;
 
     try {
       const passHash = await encrypt(cryptoKey, password);
@@ -76,6 +78,7 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
         clearErrors();
         reset();
 
+        redirecting = true;
         router.push('/signin');
       }
     } catch (error) {
@@ -83,7 +86,9 @@ export default function RestoreForm({ expiresIn, code }: RestoreFormProps) {
         message: error instanceof Error ? error.message : 'Unknown error',
       });
     } finally {
-      setPending(false);
+      if (!redirecting) {
+        setPending(false);
+      }
     }
   });
 

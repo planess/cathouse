@@ -45,6 +45,8 @@ export default function RegisterForm() {
     }
 
     setPending(true);
+    // keep the spinner on until the redirect after a successful submit
+    let redirecting = false;
 
     try {
       const passHash = await encrypt(cryptoKey, password);
@@ -69,6 +71,7 @@ export default function RegisterForm() {
         clearErrors();
         reset();
 
+        redirecting = true;
         router.push('/signin');
       }
     } catch (error) {
@@ -76,7 +79,9 @@ export default function RegisterForm() {
 
       setError('root', { message: t('saveUserErrorCommon') });
     } finally {
-      setPending(false);
+      if (!redirecting) {
+        setPending(false);
+      }
     }
   });
 
