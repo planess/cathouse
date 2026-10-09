@@ -72,10 +72,9 @@ export default function RegisterForm() {
         router.push('/signin');
       }
     } catch (error) {
-      setError('root', {
-        message:
-          error instanceof Error ? error.message : t('form.validation.unknown'),
-      });
+      console.error('Registration request failed', error);
+
+      setError('root', { message: t('saveUserErrorCommon') });
     } finally {
       setPending(false);
     }

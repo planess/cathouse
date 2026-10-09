@@ -1,6 +1,6 @@
 'use server';
 
-import { InsertOneResult } from 'mongodb';
+import { InsertOneResult, MongoServerError } from 'mongodb';
 import { getTranslations } from 'next-intl/server';
 import { string, object, email, ZodError } from 'zod';
 
@@ -17,6 +17,7 @@ interface FormData {
 }
 
 const minPasswordLength = 6;
+const DUPLICATE_KEY_ERROR_CODE = 11000;
 
 export async function register(
   formData: FormData,
@@ -62,9 +63,11 @@ export async function register(
   const privateKey = dbRecords?.privateKey as string;
 
   if (!privateKey) {
+    console.error('Registration failed: no private key found for decryption');
+
     return {
       status: 'error',
-      errors: { root: ['No private key found for decryption'] },
+      errors: { root: [t('internalError')] },
     };
   }
 
@@ -77,14 +80,11 @@ export async function register(
     // Now you have the plain text password
     // console.log('Decrypted password:', originPassword);
   } catch (error) {
-    // console.error('Password decryption failed:', error);
+    console.error('Registration failed: password decryption error', error);
+
     return {
       status: 'error',
-      errors: {
-        root: [
-          error instanceof Error ? error.message : t('form.validation.unknown'),
-        ],
-      },
+      errors: { root: [t('form.error.passwordProcessing')] },
     };
   }
 
@@ -122,13 +122,22 @@ export async function register(
       createdAt: new Date(),
     });
   } catch (error) {
+    // unique index on 'email': show a field message instead of the raw driver error
+    if (
+      error instanceof MongoServerError &&
+      error.code === DUPLICATE_KEY_ERROR_CODE
+    ) {
+      return {
+        status: 'error',
+        errors: { identifier: [t('form.error.emailTaken')] },
+      };
+    }
+
+    console.error('Registration failed: unable to save user', error);
+
     return {
       status: 'error',
-      errors: {
-        root: [
-          error instanceof Error ? error.message : t('saveUserErrorCommon'),
-        ],
-      },
+      errors: { root: [t('saveUserErrorCommon')] },
     };
   }
 
@@ -138,13 +147,11 @@ export async function register(
       _id: insertResult.insertedId,
     });
   } catch (error) {
+    console.error('Registration failed: unable to save profile', error);
+
     return {
       status: 'error',
-      errors: {
-        root: [
-          error instanceof Error ? error.message : t('saveProfileErrorCommon'),
-        ],
-      },
+      errors: { root: [t('saveProfileErrorCommon')] },
     };
   }
 

@@ -1041,6 +1041,7 @@
     "already-have-account-link": "Already registered",
     "want-account-link": "Ready to register",
     "saveUserErrorCommon": "Failed to save registration",
+    "saveProfileErrorCommon": "Your account was created, but we couldn't finish setting up the profile. Please contact us.",
     "internalError": "We are conducting technical work. Registration will be available very soon.",
     "wrongCredentials": "User not found",
     "title": {
@@ -1079,7 +1080,9 @@
         "unknown": "Unknown strange error"
       },
       "error": {
-        "required": "Field is required"
+        "required": "Field is required",
+        "emailTaken": "An account with this email already exists. Try signing in or restore your password.",
+        "passwordProcessing": "We couldn't process the password securely. Reload the page and try again."
       }
     },
     "back-to-site": "Back to the website",
