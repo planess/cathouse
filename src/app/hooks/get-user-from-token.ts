@@ -47,6 +47,13 @@ export async function getUserFromToken(
       profile: {
         firstName: profile?.firstName ?? null,
         lastName: profile?.lastName ?? null,
+        alias: profile?.alias ?? null,
+        sex: profile?.sex ?? null,
+        about: profile?.about ?? null,
+        profilePhoto: profile?.profilePhoto ?? null,
+        badgeValidUntil: profile?.badgeValidUntil ?? null,
+        hiredOn: profile?.hiredOn ?? null,
+        phone: profile?.phone ?? null,
       },
     };
   } catch {
