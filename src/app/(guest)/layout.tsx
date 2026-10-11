@@ -13,7 +13,7 @@ export default async function GuestLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // Sign-in, sign-up and password reset are only for visitors without a session
-  await requireGuest();
+  await requireGuest('/profile');
 
   return (
     <div className="flex flex-col min-h-full">

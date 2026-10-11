@@ -11,4 +11,5 @@ export interface Profile extends DB {
   alias?: string;
   badgeValidUntil?: Date;
   hiredOn?: Date;
+  phone?: string;
 }

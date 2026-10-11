@@ -2250,10 +2250,121 @@
       "ignore": "Didn't request a password reset? You can ignore this message, although, we highly recommend you make sure your email service is under the control or change current password to enhance security.",
       "address": "Lviv, Ukraine",
       "donotReply": "This email was sent automatically, please do not reply to it."
+    },
+    "verify-email": {
+      "subject": "Confirm your email address",
+      "title": "Email confirmation",
+      "heading": "Confirm your email",
+      "txt1": "Hey, you asked to confirm the email address of your account.",
+      "txt2": "Click the button below to confirm it.",
+      "buttonLabel": "Confirm email",
+      "expiration": "The link stays valid until you request a new letter.",
+      "trouble": "Having trouble?",
+      "ignore": "Didn't request the confirmation? You can ignore this message.",
+      "address": "Lviv, Ukraine",
+      "donotReply": "This email was sent automatically, please do not reply to it."
     }
   },
   "duration": {
     "minutes": "{count, plural, one {# minute} other {# minutes}}",
     "hours": "{count, plural, one {# hour} other {# hours}}"
+  },
+  "profilepage": {
+    "title": "Profile",
+    "sidebar": {
+      "label": "Profile sections",
+      "info": "Personal",
+      "sessions": "Sessions"
+    },
+    "personal": {
+      "title": "Personal information",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "verified": "Verified",
+      "verify": "Verify",
+      "registered": "Registered",
+      "empty": "Not specified",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "sex": "Sex",
+      "sexOptions": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "hints": {
+        "phone": "If an urgent situation occurs, we will be able to contact you."
+      },
+      "verifySending": "Sending…",
+      "verifySent": "We sent a confirmation letter to your email.",
+      "verifyError": "Could not send the confirmation letter. Try again later.",
+      "verifyAgainIn": "Send again in {time}"
+    },
+    "volunteer": {
+      "title": "Volunteer",
+      "alias": "Alias",
+      "hiredOn": "Volunteer since",
+      "badgeValidUntil": "Badge valid until",
+      "about": "About",
+      "hints": {
+        "alias": "Used on your badge. To change it, contact your director.",
+        "badgeValidUntil": "Not extended automatically: a new badge should be made a little before this date.",
+        "about": "Visible on your public volunteer page. Write it in your own name."
+      }
+    },
+    "edit": {
+      "edit": "Edit",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "error": {
+        "firstName": "First name must be at least {n} characters",
+        "sex": "Choose male or female",
+        "about": "Maximum {n} characters",
+        "common": "Could not save the changes. Try again later."
+      }
+    },
+    "sessions": {
+      "title": "Active sessions",
+      "empty": "No active sessions",
+      "createdAt": "Signed in {date}",
+      "current": "Current session",
+      "revoke": "Revoke",
+      "revoking": "Revoking…",
+      "error": "Could not revoke the session"
+    },
+    "security": {
+      "title": "Security",
+      "password": {
+        "title": "Password",
+        "requirements": "If you are not sure your password is secure, change password to a new one of at least {n} characters that differs from the current one.",
+        "change": "Change password",
+        "newPassword": "New password",
+        "repeatPassword": "Repeat new password",
+        "apply": "Apply",
+        "applying": "Applying…",
+        "cancel": "Cancel",
+        "success": "Password changed",
+        "error": {
+          "minLength": "Minimum {n} characters",
+          "mismatch": "Passwords do not match",
+          "sameAsCurrent": "New password must differ from the current one",
+          "processing": "We couldn't process the password securely. Reload the page and try again.",
+          "common": "Could not change the password. Try again later."
+        }
+      }
+    }
+  },
+  "verifyemailpage": {
+    "title": "Email confirmation",
+    "profileLink": "Go to profile",
+    "signinLink": "Sign in",
+    "result": {
+      "verified": "Your email is confirmed. Thank you!",
+      "already-verified": "This email has already been confirmed.",
+      "invalid": "The confirmation link is invalid or outdated. Request a new letter from your profile.",
+      "wrong-user": "This link belongs to another account. Sign out or open it in another browser."
+    },
+    "backToSite": "Back to the website"
   }
 }

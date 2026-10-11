@@ -387,42 +387,31 @@ class EmailService extends Singleton {
         return mailbox;
       }
 
-      const existingContact = await db
+      const hasName = address.name !== undefined && address.name.length > 0;
+      // Atomic upsert: the same address may be resolved concurrently
+      // (e.g. identical From and Sender), so find-then-insert would race
+      // on the unique normalizedAddress index.
+      const contact = await db
         .collection<EmailContactDocument>(DbTables.emailContacts)
-        .findOne({ normalizedAddress: address.normalizedAddress });
-
-      if (existingContact) {
-        if (address.name !== undefined && address.name.length > 0) {
-          await db
-            .collection<EmailContactDocument>(DbTables.emailContacts)
-            .updateOne(
-              { _id: existingContact._id },
-              {
-                $set: {
-                  name: address.name,
+        .findOneAndUpdate(
+          { normalizedAddress: address.normalizedAddress },
+          hasName
+            ? {
+                $set: { name: address.name, address: address.address },
+                $setOnInsert: { _id: new ObjectId() },
+              }
+            : {
+                $setOnInsert: {
+                  _id: new ObjectId(),
                   address: address.address,
                 },
               },
-            );
+          { upsert: true, returnDocument: 'after' },
+        );
 
-          return {
-            ...existingContact,
-            name: address.name,
-            address: address.address,
-          };
-        }
-
-        return existingContact;
+      if (contact === null) {
+        throw new Error('Contact upsert failed.');
       }
-
-      const contact: EmailContactDocument = {
-        _id: new ObjectId(),
-        ...address,
-      };
-
-      await db
-        .collection<EmailContactDocument>(DbTables.emailContacts)
-        .insertOne(contact);
 
       return contact;
     } catch (error) {
