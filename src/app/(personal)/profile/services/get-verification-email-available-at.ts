@@ -3,8 +3,7 @@ import type { ObjectId } from 'mongodb';
 import { DbTables } from '@app/enum/db-tables';
 import clientPromise from '@app/ins/mongo-client';
 import type { User } from '@app/models/db/user';
-
-import { VERIFICATION_EMAIL_COOLDOWN_MS } from '../models/verification-email-cooldown';
+import { VERIFICATION_EMAIL_COOLDOWN_MS } from '@app/models/verification-email-cooldown';
 
 /**
  * Finds when the user may request the next email verification letter.
