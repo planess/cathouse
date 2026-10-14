@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import { getProfilePhotoUrl } from '@app/helpers/get-profile-photo-url';
 import { getCurrentUser } from '@app/hooks/get-current-user';
 
 import PersonalSection from '../components/personal-section/personal-section';
@@ -29,6 +30,7 @@ export default async function ProfileInfoPage() {
         <VolunteerSection
           profile={{ ...user.profile, hiredOn: user.profile.hiredOn }}
           userId={user.id.toString()}
+          photoUrl={getProfilePhotoUrl(user.profile.profilePhoto)}
         />
       )}
       <SecuritySection />

@@ -7,7 +7,7 @@ import { DbTables } from '@app/enum/db-tables';
 import { hashBlake2 } from '@app/helpers/hash-blake2';
 import clientPromise from '@app/ins/mongo-client';
 
-import { r2Service } from './r2.service';
+import { uploadProfilePhoto } from './upload-profile-photo';
 
 export type UserPayload = {
   id?: string;
@@ -80,39 +80,6 @@ function parseUserPayload(payload: UserPayloadInput): UserPayload {
         ? profilePhoto
         : null,
   };
-}
-
-function getSafeFileExtension(fileName: string): string {
-  const parts = fileName.trim().toLowerCase().split('.');
-
-  if (parts.length < 2) {
-    return '';
-  }
-
-  const extension = parts.at(-1) ?? '';
-
-  return extension.replaceAll(/[^\da-z]+/g, '');
-}
-
-async function uploadProfilePhoto(userId: ObjectId, file?: File | null) {
-  if (!(file instanceof File) || file.size === 0) {
-    return null;
-  }
-
-  const extension = getSafeFileExtension(file.name);
-  const generatedHashName = randomBytes(24).toString('hex');
-  const fileName = extension
-    ? `${generatedHashName}.${extension}`
-    : generatedHashName;
-  const [uploadedPhoto] = await r2Service.uploadFiles([file], {
-    folder: `profiles/${userId.toString()}`,
-    fileName,
-    metadata: {
-      profileId: userId.toString(),
-    },
-  });
-
-  return uploadedPhoto?.key ?? null;
 }
 
 function buildProfileUpdate(payload: UserPayload) {

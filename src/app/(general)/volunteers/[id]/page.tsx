@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
+import { getProfilePhotoUrl } from '@app/helpers/get-profile-photo-url';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 import { ArrowLeftIcon } from './components/icons/arrow-left-icon';
@@ -58,24 +59,6 @@ function getLocaleDate(locale: string, value: Date): string {
     month: 'long',
     year: 'numeric',
   }).format(value);
-}
-
-function getProfilePhotoUrl(profilePhoto: string | null | undefined) {
-  const imageBaseUrl = process.env.CLOUDFLARE_R2_ANIMAL_IMAGE_URL;
-  const normalizedProfilePhoto = getTrimmedValue(profilePhoto);
-
-  if (imageBaseUrl === undefined || normalizedProfilePhoto === null) {
-    return null;
-  }
-
-  if (/^https?:\/\//i.test(normalizedProfilePhoto)) {
-    return normalizedProfilePhoto;
-  }
-
-  return `${imageBaseUrl.replace(/\/$/, '')}/${normalizedProfilePhoto.replace(
-    /^\//,
-    '',
-  )}`;
 }
 
 export default async function VolunteerPage({ params }: PageProps) {

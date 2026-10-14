@@ -6,4 +6,6 @@ export interface VolunteerSectionProps {
   profile: NonNullable<ServerAuthState>['profile'] & { hiredOn: Date };
   /** Identifier of the user in the `users` collection; used for the public page link. */
   userId: string;
+  /** Public URL of the profile photo, or `null` when there is none. */
+  photoUrl: string | null;
 }
