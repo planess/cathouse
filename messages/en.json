@@ -2293,7 +2293,7 @@
         "female": "Female"
       },
       "hints": {
-        "phone": "If an urgent situation occurs, we will be able to contact you."
+        "phone": "If an urgent situation occurs, we will be able to contact you. Your number is personal information and will not be shown to unauthorized people."
       },
       "verifySending": "Sending…",
       "verifySent": "We sent a confirmation letter to your email.",
@@ -2301,15 +2301,24 @@
       "verifyAgainIn": "Send again in {time}"
     },
     "volunteer": {
+      "personalPage": "Personal page",
       "title": "Volunteer",
       "alias": "Alias",
       "hiredOn": "Volunteer since",
       "badgeValidUntil": "Badge valid until",
       "about": "About",
+      "photo": "Photo",
+      "photoReplace": "Replace",
+      "photoUploading": "Uploading…",
+      "photoError": {
+        "type": "Choose a .png or .jpg image.",
+        "size": "The image must not exceed {n} MB."
+      },
       "hints": {
         "alias": "Used on your badge. To change it, contact your director.",
         "badgeValidUntil": "Not extended automatically: a new badge should be made a little before this date.",
-        "about": "Visible on your public volunteer page. Write it in your own name."
+        "about": "Visible on your public volunteer page. Write it in your own name.",
+        "photo": "Shown on your public volunteer page."
       }
     },
     "edit": {

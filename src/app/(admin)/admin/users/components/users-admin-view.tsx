@@ -4,7 +4,10 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import { softDeleteUser } from '@app/actions/users.server';
+import {
+  sendUserVerificationEmail,
+  softDeleteUser,
+} from '@app/actions/users.server';
 import { useModal } from '@app/hooks/use-modal';
 
 import {
@@ -75,6 +78,10 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
   const router = useRouter();
   const { showModal } = useModal();
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [verificationResults, setVerificationResults] = useState<
+    Record<string, { success: boolean; message: string }>
+  >({});
 
   const openUserModal = (options: UserModalOptions) => {
     const formStateRef = { current: options.initialState };
@@ -177,6 +184,23 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
     });
   };
 
+  const handleSendVerification = async (user: UserRow) => {
+    setSendingId(user.id);
+
+    try {
+      const result = await sendUserVerificationEmail(user.id);
+
+      setVerificationResults((current) => ({ ...current, [user.id]: result }));
+    } catch {
+      setVerificationResults((current) => ({
+        ...current,
+        [user.id]: { success: false, message: 'Unable to send the letter.' },
+      }));
+    } finally {
+      setSendingId(null);
+    }
+  };
+
   const memoizedRows = useMemo(() => users, [users]);
 
   return (
@@ -262,10 +286,27 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
                       {!user.emailVerified && (
                         <button
                           type="button"
-                          className="text-xs font-semibold text-sky-600 hover:text-sky-700"
+                          className="text-xs font-semibold text-sky-600 hover:text-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={sendingId === user.id}
+                          onClick={() => void handleSendVerification(user)}
                         >
-                          Send
+                          {sendingId === user.id ? 'Sending…' : 'Send'}
                         </button>
+                      )}
+                      {verificationResults[user.id] && (
+                        <span
+                          className={clsx('text-[11px]', {
+                            'text-slate-500': verificationResults[user.id].success,
+                            'text-red-600': !verificationResults[user.id].success,
+                          })}
+                          role={
+                            verificationResults[user.id].success
+                              ? 'status'
+                              : 'alert'
+                          }
+                        >
+                          {verificationResults[user.id].message}
+                        </span>
                       )}
                       <span
                         className={clsx({
