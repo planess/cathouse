@@ -28,6 +28,7 @@ export default async function ProfileInfoPage() {
       {user.profile.hiredOn && (
         <VolunteerSection
           profile={{ ...user.profile, hiredOn: user.profile.hiredOn }}
+          userId={user.id.toString()}
         />
       )}
       <SecuritySection />

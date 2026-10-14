@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import { GeneralVolunteersIdPageIcon01 } from '@app/components/icons/general-volunteers-id-page-icon-01';
-import { GeneralVolunteersIdPageIcon02 } from '@app/components/icons/general-volunteers-id-page-icon-02';
-import { GeneralVolunteersIdPageIcon03 } from '@app/components/icons/general-volunteers-id-page-icon-03';
-import { GeneralVolunteersIdPageIcon04 } from '@app/components/icons/general-volunteers-id-page-icon-04';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
+import { ArrowLeftIcon } from './components/icons/arrow-left-icon';
+import { CalendarIcon } from './components/icons/calendar-icon';
+import { CheckCircleIcon } from './components/icons/check-circle-icon';
+import { ShieldIcon } from './components/icons/shield-icon';
 import { loadVolunteer } from './server/load-volunteer';
 
 import type { Metadata } from 'next';
@@ -78,54 +78,6 @@ function getProfilePhotoUrl(profilePhoto: string | null | undefined) {
   )}`;
 }
 
-function ArrowLeftIcon() {
-  return (
-    <GeneralVolunteersIdPageIcon01
-      aria-hidden="true"
-      className="h-4 w-4 transition-transform group-hover:-translate-x-1"
-      fill="none"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    />
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <GeneralVolunteersIdPageIcon02
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    />
-  );
-}
-
-function CheckCircleIcon() {
-  return (
-    <GeneralVolunteersIdPageIcon03
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    />
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <GeneralVolunteersIdPageIcon04
-      aria-hidden="true"
-      className="h-5 w-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    />
-  );
-}
-
 export default async function VolunteerPage({ params }: PageProps) {
   const { id } = await params;
   const [locale, t, volunteer] = await Promise.all([
@@ -139,7 +91,9 @@ export default async function VolunteerPage({ params }: PageProps) {
   }
 
   const displayName = getVolunteerName(volunteer, t('fallbackName'));
-  const joinedDate = getLocaleDate(locale, new Date(volunteer.user.createdAt));
+  const joinedDate = volunteer.profile?.hiredOn
+    ? getLocaleDate(locale, new Date(volunteer.profile.hiredOn))
+    : null;
   const expirationDate = volunteer.profile?.badgeValidUntil
     ? getLocaleDate(locale, new Date(volunteer.profile.badgeValidUntil))
     : null;
@@ -157,7 +111,7 @@ export default async function VolunteerPage({ params }: PageProps) {
           className="group inline-flex items-center gap-1 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900"
           href="/volunteers"
         >
-          <ArrowLeftIcon />
+          <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           {t('labels.backToInfo')}
         </Link>
       </div>
@@ -170,7 +124,7 @@ export default async function VolunteerPage({ params }: PageProps) {
           )}
         >
           <div className="mb-8 flex w-fit items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 shadow-sm">
-            {volunteer.user.isActive && <CheckCircleIcon />}
+            {volunteer.user.isActive && <CheckCircleIcon className="h-4 w-4" />}
             {statusLabel}
           </div>
 
@@ -193,21 +147,23 @@ export default async function VolunteerPage({ params }: PageProps) {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center gap-3 text-slate-500">
-                <span className="text-emerald-600">
-                  <CalendarIcon />
-                </span>
-                <span className="text-lg">
-                  {t('labels.joined')}{' '}
-                  <strong className="font-semibold text-slate-900">
-                    {joinedDate}
-                  </strong>
-                </span>
-              </div>
+              {joinedDate && (
+                <div className="flex items-center gap-3 text-slate-500">
+                  <span className="text-emerald-600">
+                    <CalendarIcon className="h-4 w-4" />
+                  </span>
+                  <span className="text-lg">
+                    {t('labels.joined')}{' '}
+                    <strong className="font-semibold text-slate-900">
+                      {joinedDate}
+                    </strong>
+                  </span>
+                </div>
+              )}
 
               <div className="flex items-center gap-3 text-slate-500">
                 <span className="text-emerald-600">
-                  <CalendarIcon />
+                  <CalendarIcon className="h-4 w-4" />
                 </span>
                 <span className="text-lg">
                   {t('labels.until')}{' '}
@@ -221,7 +177,7 @@ export default async function VolunteerPage({ params }: PageProps) {
             <div className="max-w-md rounded-2xl bg-amber-50/90 p-6 shadow-sm">
               <p className="flex items-start gap-3 text-sm italic leading-relaxed text-amber-900/90">
                 <span className="mt-0.5 shrink-0 text-amber-600">
-                  <ShieldIcon />
+                  <ShieldIcon className="h-5 w-5" />
                 </span>
                 {t('officialStatement')}
               </p>

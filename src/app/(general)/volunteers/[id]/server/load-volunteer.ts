@@ -30,6 +30,11 @@ export async function loadVolunteer(
 
   const profile = await profilesCollection.findOne({ _id: user._id });
 
+  // Only users with `hiredOn` set are volunteers
+  if (!profile?.hiredOn) {
+    return null;
+  }
+
   return {
     profile,
     user,

@@ -1,5 +1,8 @@
 import { useFormatter, useTranslations } from 'next-intl';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
+
+import { ExternalLinkIcon } from '@app/components/icons/adoption-e-xt-er-na-ll-in-ki-co-n';
 
 import type { VolunteerSectionProps } from '../../models/volunteer-section-props';
 import AboutField from '../about-field/about-field';
@@ -10,13 +13,32 @@ import ProfileRow from '../profile-row/profile-row';
  *
  * @param props - Section props.
  * @param props.profile - Profile of a user who is a volunteer.
+ * @param props.userId - Identifier of the user in the `users` collection.
  */
-export default function VolunteerSection({ profile }: VolunteerSectionProps) {
+export default function VolunteerSection({
+  profile,
+  userId,
+}: VolunteerSectionProps) {
   const t = useTranslations('profilepage');
   const format = useFormatter();
   const formatDate = (date: Date | null) =>
     date ? format.dateTime(date, { dateStyle: 'long' }) : t('personal.empty');
+  const personalPageHref = `/volunteers/${userId}`;
   const rows: { label: string; hint?: string; value: ReactNode }[] = [
+    {
+      label: t('volunteer.personalPage'),
+      value: (
+        <Link
+          className="inline-flex items-center gap-1 font-semibold text-emerald-700 hover:underline dark:text-emerald-300"
+          href={personalPageHref}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {userId}
+          <ExternalLinkIcon />
+        </Link>
+      ),
+    },
     {
       label: t('volunteer.alias'),
       hint: t('volunteer.hints.alias'),
