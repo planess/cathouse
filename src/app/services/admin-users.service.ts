@@ -7,15 +7,12 @@ import { DbTables } from '@app/enum/db-tables';
 import { hashBlake2 } from '@app/helpers/hash-blake2';
 import clientPromise from '@app/ins/mongo-client';
 
-import { uploadProfilePhoto } from './upload-profile-photo';
-
 export type UserPayload = {
   id?: string;
   email: string;
   emailVerified: boolean;
   roles: string[];
   isActive: boolean;
-  profilePhoto?: File | null;
   alias: string;
   about: string;
   badgeValidUntil: Date | null;
@@ -25,6 +22,8 @@ export type UserPayload = {
 export type UserOperationResult = {
   success: boolean;
   message: string;
+  /** Id of the created or updated user. */
+  id?: string;
 };
 
 type UserPayloadInput = UserPayload | FormData;
@@ -63,8 +62,6 @@ function parseUserPayload(payload: UserPayloadInput): UserPayload {
     return payload;
   }
 
-  const profilePhoto = payload.get('profilePhoto');
-
   return {
     id: payload.get('id')?.toString(),
     email: payload.get('email')?.toString() ?? '',
@@ -75,10 +72,6 @@ function parseUserPayload(payload: UserPayloadInput): UserPayload {
     about: payload.get('about')?.toString() ?? '',
     badgeValidUntil: parseDate(payload.get('badgeValidUntil')),
     hiredOn: parseDate(payload.get('hiredOn')),
-    profilePhoto:
-      profilePhoto instanceof File && profilePhoto.size > 0
-        ? profilePhoto
-        : null,
   };
 }
 
@@ -104,11 +97,7 @@ function buildProfileUpdate(payload: UserPayload) {
   return Object.keys($unset).length > 0 ? { $set, $unset } : { $set };
 }
 
-function buildProfileInsert(
-  userId: ObjectId,
-  payload: UserPayload,
-  profilePhoto: string | null,
-) {
+function buildProfileInsert(userId: ObjectId, payload: UserPayload) {
   return {
     _id: userId,
     ...(payload.alias.trim() ? { alias: payload.alias.trim() } : {}),
@@ -117,11 +106,12 @@ function buildProfileInsert(
       ? { badgeValidUntil: payload.badgeValidUntil }
       : {}),
     ...(payload.hiredOn ? { hiredOn: payload.hiredOn } : {}),
-    ...(profilePhoto ? { profilePhoto } : {}),
   };
 }
 
-export async function createUser(input: UserPayloadInput) {
+export async function createUser(
+  input: UserPayloadInput,
+): Promise<UserOperationResult> {
   const payload = parseUserPayload(input);
   const email = normalizeEmail(payload.email);
 
@@ -150,23 +140,22 @@ export async function createUser(input: UserPayloadInput) {
     createdAt: new Date(),
   });
 
-  const profilePhoto = await uploadProfilePhoto(
-    insertResult.insertedId,
-    payload.profilePhoto,
-  );
-
   await db
     .collection(DbTables.profiles)
-    .insertOne(
-      buildProfileInsert(insertResult.insertedId, payload, profilePhoto),
-    );
+    .insertOne(buildProfileInsert(insertResult.insertedId, payload));
 
   revalidatePath('/admin/users');
 
-  return { success: true, message: 'User created.' };
+  return {
+    success: true,
+    message: 'User created.',
+    id: insertResult.insertedId.toString(),
+  };
 }
 
-export async function updateUser(input: UserPayloadInput) {
+export async function updateUser(
+  input: UserPayloadInput,
+): Promise<UserOperationResult> {
   const payload = parseUserPayload(input);
 
   if (!payload.id || !ObjectId.isValid(payload.id)) {
@@ -183,7 +172,6 @@ export async function updateUser(input: UserPayloadInput) {
   const db = dbClient.db();
 
   const userId = new ObjectId(payload.id);
-  const profilePhoto = await uploadProfilePhoto(userId, payload.profilePhoto);
 
   await db.collection(DbTables.users).updateOne(
     { _id: userId },
@@ -197,18 +185,6 @@ export async function updateUser(input: UserPayloadInput) {
     },
   );
 
-  if (profilePhoto) {
-    await db.collection(DbTables.profiles).updateOne(
-      { _id: userId },
-      {
-        $set: {
-          profilePhoto,
-        },
-      },
-      { upsert: true },
-    );
-  }
-
   await db.collection(DbTables.profiles).updateOne(
     { _id: userId },
     buildProfileUpdate(payload),
@@ -217,5 +193,5 @@ export async function updateUser(input: UserPayloadInput) {
 
   revalidatePath('/admin/users');
 
-  return { success: true, message: 'User updated.' };
+  return { success: true, message: 'User updated.', id: payload.id };
 }
