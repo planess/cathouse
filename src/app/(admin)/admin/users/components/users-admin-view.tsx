@@ -8,7 +8,12 @@ import {
   sendUserVerificationEmail,
   softDeleteUser,
 } from '@app/actions/users.server';
+import { uploadProfilePhoto } from '@app/helpers/upload-profile-photo';
 import { useModal } from '@app/hooks/use-modal';
+import {
+  PROFILE_PHOTO_MAX_BYTES,
+  PROFILE_PHOTO_TYPES,
+} from '@app/models/profile-photo-limits';
 
 import {
   UserFormProps,
@@ -48,10 +53,6 @@ function buildUserFormData(state: UserFormState, id?: string) {
     formData.append('roles', role);
   });
 
-  if (state.profilePhoto) {
-    formData.set('profilePhoto', state.profilePhoto);
-  }
-
   return formData;
 }
 
@@ -67,10 +68,44 @@ async function submitUserRequest(
   const result = (await response.json()) as {
     success?: boolean;
     message?: string;
+    id?: string;
   };
 
-  if (!response.ok || !result.success) {
+  if (!response.ok || !result.success || !result.id) {
     throw new Error(result.message ?? 'Failed to save user.');
+  }
+
+  return result.id;
+}
+
+function validateProfilePhoto(photo: File | null) {
+  if (!photo) {
+    return;
+  }
+
+  if (!PROFILE_PHOTO_TYPES.includes(photo.type)) {
+    throw new Error('Profile photo must be a .png or .jpg file.');
+  }
+
+  if (photo.size > PROFILE_PHOTO_MAX_BYTES) {
+    throw new Error(
+      `Profile photo must be up to ${PROFILE_PHOTO_MAX_BYTES / 1024 / 1024} MB.`,
+    );
+  }
+}
+
+async function submitProfilePhoto(userId: string, photo: File | null) {
+  if (!photo) {
+    return;
+  }
+
+  const result = await uploadProfilePhoto(
+    `/api/admin/users/${userId}/photo`,
+    photo,
+  );
+
+  if (!result.success) {
+    throw new Error('User saved, but the profile photo could not be uploaded.');
   }
 }
 
@@ -121,11 +156,16 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
       initialState: defaultFormState,
       submitLabel: 'Create User',
       onSubmit: async (state) => {
-        await submitUserRequest(
+        validateProfilePhoto(state.profilePhoto);
+
+        const userId = await submitUserRequest(
           '/api/admin/users',
           'POST',
           buildUserFormData(state),
         );
+
+        // The photo is stored under the user's id, so it goes after creation
+        await submitProfilePhoto(userId, state.profilePhoto);
       },
     });
   };
@@ -146,11 +186,13 @@ export function UsersAdminView({ users, roleOptions }: UsersAdminViewProps) {
       },
       submitLabel: 'Save Changes',
       onSubmit: async (state) => {
+        validateProfilePhoto(state.profilePhoto);
         await submitUserRequest(
           `/api/admin/users/${user.id}`,
           'PUT',
           buildUserFormData(state),
         );
+        await submitProfilePhoto(user.id, state.profilePhoto);
       },
     });
   };
@@ -427,7 +469,7 @@ function UserForm({ initialState, roleOptions, onChange }: UserFormProps) {
         </label>
         <input
           className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-sky-700 focus:border-sky-400"
-          accept="image/*"
+          accept=".png,.jpg,.jpeg,image/png,image/jpeg"
           onChange={(event) =>
             updateState({
               ...formState,

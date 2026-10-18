@@ -1,6 +1,12 @@
 import { createHash, randomUUID } from 'crypto';
 
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 
 import { MediaAsset } from '@app/models/media-asset';
 
@@ -128,6 +134,53 @@ export class R2Service extends Singleton {
     }
 
     return Buffer.from(await result.Body.transformToByteArray());
+  }
+
+  /**
+   * Reads the size and content type of a file in the configured R2 bucket.
+   *
+   * @param key Storage key of the file.
+   * @returns File info, or `null` when the file does not exist.
+   */
+  async getFileInfo(
+    key: string,
+  ): Promise<{ size: number; contentType: string } | null> {
+    try {
+      const result = await this.client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucket,
+          Key: key,
+        }),
+      );
+
+      return {
+        size: result.ContentLength ?? 0,
+        contentType: result.ContentType ?? '',
+      };
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        (error.name === 'NotFound' || error.name === 'NoSuchKey')
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Deletes a file from the configured R2 bucket.
+   *
+   * @param key Storage key of the file to delete.
+   */
+  async deleteFile(key: string): Promise<void> {
+    await this.client.send(
+      new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+    );
   }
 
   private buildPublicUrl(key: string): string {

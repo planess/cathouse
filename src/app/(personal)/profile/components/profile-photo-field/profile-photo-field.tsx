@@ -4,17 +4,18 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useRef, useState, useTransition } from 'react';
 
+import { uploadProfilePhoto } from '@app/helpers/upload-profile-photo';
 import {
   PROFILE_PHOTO_MAX_BYTES,
   PROFILE_PHOTO_TYPES,
 } from '@app/models/profile-photo-limits';
-import type { ProfilePhotoUploadResponse } from '@app/models/profile-photo-upload-response';
 
 import type { ProfilePhotoFieldProps } from '../../models/profile-photo-field-props';
 
 /**
  * Volunteer profile photo preview (up to 100px) with a "Replace" link that
- * opens the file picker and uploads the selected .png or .jpg file to R2.
+ * opens the file picker and uploads the selected .png or .jpg file straight
+ * to R2 through a presigned URL.
  *
  * @param props - Field props.
  * @param props.photoUrl - Public URL of the current photo, or `null`.
@@ -52,30 +53,18 @@ export default function ProfilePhotoField({ photoUrl }: ProfilePhotoFieldProps) 
 
     setError(null);
     startTransition(async () => {
-      const body = new FormData();
+      const result = await uploadProfilePhoto('/api/profile/photo', file);
 
-      body.set('photo', file);
-
-      try {
-        const response = await fetch('/api/profile/photo', {
-          method: 'POST',
-          body,
-        });
-        const result = (await response.json()) as ProfilePhotoUploadResponse;
-
-        if (result.success) {
-          router.refresh();
-        } else {
-          setError(
-            result.error === 'type' || result.error === 'size'
-              ? t(`volunteer.photoError.${result.error}`, {
-                  n: PROFILE_PHOTO_MAX_BYTES / 1024 / 1024,
-                })
-              : t('edit.error.common'),
-          );
-        }
-      } catch {
-        setError(t('edit.error.common'));
+      if (result.success) {
+        router.refresh();
+      } else {
+        setError(
+          result.error === 'type' || result.error === 'size'
+            ? t(`volunteer.photoError.${result.error}`, {
+                n: PROFILE_PHOTO_MAX_BYTES / 1024 / 1024,
+              })
+            : t('edit.error.common'),
+        );
       }
     });
   };
