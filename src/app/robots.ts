@@ -25,6 +25,7 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         '/admin',
         '/profile',
+        '/wards',
         '/api/',
         '/signin',
         '/signup',

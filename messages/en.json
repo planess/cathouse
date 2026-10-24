@@ -2269,13 +2269,17 @@
     "minutes": "{count, plural, one {# minute} other {# minutes}}",
     "hours": "{count, plural, one {# hour} other {# hours}}"
   },
+  "personalsidebar": {
+    "label": "Personal area",
+    "info": "Personal",
+    "sessions": "Sessions",
+    "wards": "Wards"
+  },
+  "wardspage": {
+    "title": "Wards"
+  },
   "profilepage": {
     "title": "Profile",
-    "sidebar": {
-      "label": "Profile sections",
-      "info": "Personal",
-      "sessions": "Sessions"
-    },
     "personal": {
       "title": "Personal information",
       "name": "Name",
