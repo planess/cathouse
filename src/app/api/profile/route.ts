@@ -7,7 +7,8 @@ import { getUserPermissions } from '@app/services/access-verification.service';
 
 export async function GET(request: NextRequest) {
   const cookies = request.cookies;
-  const token = cookies.get('token')?.value;
+  const authorization = request.headers.get('authorization');
+  const token = authorization?.match(/^Bearer\s+(\S+)$/i)?.[1] ?? cookies.get('token')?.value;
 
   if (
     token === null ||
