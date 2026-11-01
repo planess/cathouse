@@ -24,7 +24,7 @@ const developmentCorsHeaders =
             },
             {
               key: 'Access-Control-Allow-Headers',
-              value: 'Content-Type, Authorization, X-Client-Type',
+              value: 'Content-Type, Authorization, X-Client-Type, Range',
             },
             {
               key: 'Vary',

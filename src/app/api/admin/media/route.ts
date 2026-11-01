@@ -6,6 +6,7 @@ import { getMediaPermissions } from '@app/services/media/get-media-permissions';
 import { getSafeMediaPath } from '@app/services/media/get-safe-media-path';
 import { hasMediaPermission } from '@app/services/media/has-media-permission';
 import { isSafeMediaFilePath } from '@app/services/media/is-safe-media-file-path';
+import { MediaPlaybackService } from '@app/services/media/media-playback.service';
 
 /**
  * Handles development CORS preflight requests from the mobile web application.
@@ -32,10 +33,33 @@ export function OPTIONS() {
  * @param request - The incoming request with query parameters:
  *   - `path`: File or directory path
  *   - `download`: Set to '1' to download a file, omit to list directory contents
+ *   - `playback`: Set to '1' with app authentication to issue a streaming ticket
+ *   - `ticket`: A file-scoped ticket authorizing a download without custom headers
  * @returns JSON response with file list or file download with appropriate headers
  */
 export async function GET(request: Request) {
-  const permissions = await getMediaPermissions(request);
+  const { searchParams } = new URL(request.url);
+  const path = getSafeMediaPath(searchParams.get('path'));
+  if (path === null) {
+    return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
+  }
+
+  const isDownload = searchParams.get('download') === '1';
+  const isPlayback = searchParams.get('playback') === '1';
+  const ticket = searchParams.get('ticket');
+  let authRequest = request;
+  if (ticket !== null) {
+    const token = isDownload && !isPlayback && path !== ''
+      ? await MediaPlaybackService.resolve(ticket, path)
+      : null;
+    if (!token) {
+      return NextResponse.json({ error: 'Playback link expired or invalid. Reopen the video.' }, { status: 403 });
+    }
+    authRequest = new Request(request.url, {
+      headers: { Authorization: `Bearer ${token}`, 'X-Client-Type': 'app' },
+    });
+  }
+  const permissions = await getMediaPermissions(authRequest);
 
   if (!permissions.canAccess) {
     return NextResponse.json(
@@ -46,23 +70,14 @@ export async function GET(request: Request) {
     );
   }
 
-  const { searchParams } = new URL(request.url);
-  const path = getSafeMediaPath(searchParams.get('path'));
-
-  if (path === null) {
-    return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
-  }
-
-  const isDownload = searchParams.get('download') === '1';
-
-  if (isDownload && !permissions.canReview) {
+  if ((isDownload || isPlayback) && !permissions.canReview) {
     return NextResponse.json(
       { error: 'Insufficient permissions.' },
       { status: 403 },
     );
   }
 
-  if (isDownload && path === '') {
+  if ((isDownload || isPlayback) && path === '') {
     return NextResponse.json(
       { error: 'A file path is required.' },
       {
@@ -71,13 +86,30 @@ export async function GET(request: Request) {
     );
   }
 
+  if (isPlayback) {
+    const token = request.headers.get('x-client-type') === 'app'
+      ? request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
+      : undefined;
+    const playbackTicket = token ? await MediaPlaybackService.create(token, path) : null;
+    if (!playbackTicket) {
+      return NextResponse.json({ error: 'An app session is required.' }, { status: 403 });
+    }
+    return NextResponse.json({ ticket: playbackTicket }, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
+  }
+
   const endpoint = isDownload ? `file/${path}` : `files/${path}`;
+  // Video players read files in byte ranges so they can start before the
+  // whole file arrives, and iOS refuses remote playback without them.
+  const range = isDownload ? request.headers.get('range') : null;
 
   try {
     const response = await fetch(
       `${process.env.R2_MEDIA_BASE_URL}/${endpoint}`,
       {
         cache: 'no-store',
+        headers: range ? { Range: range } : undefined,
       },
     );
 
@@ -99,11 +131,27 @@ export async function GET(request: Request) {
     const contentType =
       response.headers.get('content-type') ?? 'application/octet-stream';
 
+    const headers = new Headers({
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': 'private, no-store',
+      'Content-Disposition': `${ticket ? 'inline' : 'attachment'}; filename="${getMediaFileName(path)}"`,
+      'Content-Type': contentType,
+    });
+
+    for (const name of [
+      'content-length',
+      'content-range',
+      'etag',
+      'last-modified',
+    ]) {
+      const value = response.headers.get(name);
+      if (value) headers.set(name, value);
+    }
+
+    // 206 for a range request, 200 for the whole file.
     return new NextResponse(response.body, {
-      headers: {
-        'Content-Disposition': `attachment; filename="${getMediaFileName(path)}"`,
-        'Content-Type': contentType,
-      },
+      headers,
+      status: response.status,
     });
   } catch {
     return NextResponse.json(
