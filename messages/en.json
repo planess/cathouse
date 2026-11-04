@@ -1004,6 +1004,12 @@
         "underTreatment": "Under treatment",
         "cured": "Cured"
       }
+    },
+    "comingSoon": {
+      "eyebrow": "Coming soon",
+      "title": "We are working on this page",
+      "description": "The animal registry is being improved and will be available soon. Thank you for your patience!",
+      "backHome": "Back to home"
     }
   },
   "registryLightPage": {
