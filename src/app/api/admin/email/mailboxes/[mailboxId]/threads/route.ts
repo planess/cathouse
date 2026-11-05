@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { PAGE_THREAD_SIZE } from '@app/(admin)/admin/email/constants/page-thread-size';
-import { getCurrentUser } from '@app/hooks/get-current-user';
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasAnyPermission } from '@app/services/access-verification.service';
 import { emailService } from '@app/services/email.service';
@@ -10,7 +10,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ mailboxId: string }> },
 ) {
-  const user = await getCurrentUser();
+  const user = await getUserFromRequest(request);
 
   if (!user?.id) {
     return NextResponse.json(
