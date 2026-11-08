@@ -5,23 +5,22 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { PROFILE_SECTIONS } from '../../models/profile-sections';
+import { PERSONAL_NAV_ITEMS } from '../../models/personal-nav-items';
 
-/** Left navigation of the profile page that links to its nested section routes. */
-export default function ProfileSidebar() {
-  const t = useTranslations('profilepage.sidebar');
+/** Left navigation of the personal area that links to profile sections and wards. */
+export default function PersonalSidebar() {
+  const t = useTranslations('personalsidebar');
   const pathname = usePathname();
 
   return (
     <nav aria-label={t('label')}>
       <ul className="flex gap-1 overflow-x-auto md:flex-col">
-        {PROFILE_SECTIONS.map((section) => {
-          const href = `/profile/${section}`;
+        {PERSONAL_NAV_ITEMS.map(({ href, labelKey }) => {
           const isActive =
             pathname === href || pathname.startsWith(`${href}/`);
 
           return (
-            <li key={section}>
+            <li key={href}>
               <Link
                 aria-current={isActive ? 'page' : undefined}
                 className={clsx(
@@ -32,7 +31,7 @@ export default function ProfileSidebar() {
                 )}
                 href={href}
               >
-                {t(section)}
+                {t(labelKey)}
               </Link>
             </li>
           );

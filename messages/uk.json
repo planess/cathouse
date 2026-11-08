@@ -2269,13 +2269,17 @@
     "minutes": "{count, plural, one {# хвилина} few {# хвилини} many {# хвилин} other {# хвилин}}",
     "hours": "{count, plural, one {# година} few {# години} many {# годин} other {# годин}}"
   },
+  "personalsidebar": {
+    "label": "Особистий кабінет",
+    "info": "Особисте",
+    "sessions": "Сесії",
+    "wards": "Підопічні"
+  },
+  "wardspage": {
+    "title": "Підопічні"
+  },
   "profilepage": {
     "title": "Профіль",
-    "sidebar": {
-      "label": "Розділи профілю",
-      "info": "Особисте",
-      "sessions": "Сесії"
-    },
     "personal": {
       "title": "Особиста інформація",
       "name": "Ім'я",
