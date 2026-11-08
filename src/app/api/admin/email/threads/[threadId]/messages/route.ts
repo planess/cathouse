@@ -1,5 +1,5 @@
 import { createJsonResponse as json } from '@app/helpers/create-json-response';
-import { getCurrentUser } from '@app/hooks/get-current-user';
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import {
   hasAnyPermission,
@@ -18,10 +18,10 @@ const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;
 const MAX_ATTACHMENTS = 10;
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ threadId: string }> },
 ) {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getUserFromRequest(request);
 
   if (!currentUser?.id) {
     return json(
@@ -82,7 +82,7 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ threadId: string }> },
 ) {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getUserFromRequest(request);
 
   if (!currentUser?.id) {
     return json(

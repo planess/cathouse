@@ -1,5 +1,5 @@
 import { createJsonResponse as json } from '@app/helpers/create-json-response';
-import { getCurrentUser } from '@app/hooks/get-current-user';
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { hasPermission } from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
@@ -9,7 +9,7 @@ import { emailService } from '@app/services/email.service';
 export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getUserFromRequest(request);
 
   if (!currentUser?.id) {
     return json({ success: false, message: 'User not authenticated.' }, 401);
