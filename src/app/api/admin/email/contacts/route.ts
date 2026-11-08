@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@app/hooks/get-current-user';
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import {
   hasAnyPermission,
@@ -11,7 +12,7 @@ import { emailService } from '@app/services/email.service';
 
 /** Returns contact suggestions matching a name or email fragment. */
 export async function GET(request: Request) {
-  const user = await getCurrentUser();
+  const user = await getUserFromRequest(request);
 
   if (!user?.id) {
     return NextResponse.json(

@@ -1,11 +1,51 @@
 import { createJsonResponse as json } from '@app/helpers/create-json-response';
 import { getCurrentUser } from '@app/hooks/get-current-user';
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
-import { hasPermission } from '@app/services/access-verification.service';
+import {
+  hasAnyPermission,
+  hasPermission,
+} from '@app/services/access-verification.service';
 import { logDevelopmentError } from '@app/services/development-error-logger.service';
 import { emailService } from '@app/services/email.service';
 
 export const runtime = 'nodejs';
+
+/** Lists mailboxes with their threads and whether the caller may send email. */
+export async function GET(request: Request) {
+  const currentUser = await getUserFromRequest(request);
+
+  if (!currentUser?.id) {
+    return json({ success: false, message: 'User not authenticated.' }, 401);
+  }
+
+  const [canReadEmail, canSend] = await Promise.all([
+    hasAnyPermission(
+      [SYSTEM_PERMISSIONS.EMAIL_READ, SYSTEM_PERMISSIONS.EMAIL_SEND],
+      undefined,
+      currentUser.id,
+    ),
+    hasPermission(SYSTEM_PERMISSIONS.EMAIL_SEND, undefined, currentUser.id),
+  ]);
+
+  if (!canReadEmail) {
+    return json({ success: false, message: 'Insufficient permissions.' }, 403);
+  }
+
+  try {
+    const groups = await emailService.listMailboxThreadGroups();
+
+    return json({ success: true, message: 'Mailboxes loaded.', groups, canSend });
+  } catch (error) {
+    await logDevelopmentError('email.api.mailboxes.list', error, {
+      route: '/api/admin/email/mailboxes',
+      status: 500,
+      userId: currentUser.id.toString(),
+    });
+
+    return json({ success: false, message: 'Failed to load mailboxes.' }, 500);
+  }
+}
 
 export async function PATCH(request: Request) {
   const currentUser = await getCurrentUser();
