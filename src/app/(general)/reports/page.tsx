@@ -7,9 +7,16 @@ import OfferNavigation from '@app/components/offer-navigation/offer-navigation';
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 
 
+import ReportsFundsOnHold from './components/funds-on-hold/funds-on-hold';
 import { ReportsContent } from './components/reports-content';
 
 import type { Metadata } from 'next';
+
+// The reports content is shown only when REPORTS_PAGE=ON; otherwise a
+// temporary "funds on hold" notice is rendered instead.
+function isReportsPageEnabled() {
+  return process.env.REPORTS_PAGE?.trim().toUpperCase() === 'ON';
+}
 
 export default async function ReportsPage() {
   const currentYear = new Date().getFullYear();
@@ -49,31 +56,35 @@ export default async function ReportsPage() {
         </div>
       </div>
 
-      <div className="flex gap-12">
-        <aside className="flex-none basis-1/3 hidden lg:block">
-          <div className="sticky top-24">
-            <OfferNavigation
-              title={t('nav.title')}
-              subtitle={t('nav.subtitle')}
-              items={navigationItems}
-            >
-              <p className="mb-4 text-center text-[10px] text-[#49659c] dark:text-[#a1b2d3]">
-                {t('nav.question')}
-              </p>
-              <Link
-                href="/contacts"
-                className="inline-block w-full rounded-full border border-[#256af4] px-4 py-2.5 text-center text-[10px] font-bold text-[#256af4] transition-all hover:bg-[#256af4] hover:text-white"
+      {!isReportsPageEnabled() ? (
+        <ReportsFundsOnHold />
+      ) : (
+        <div className="flex gap-12">
+          <aside className="flex-none basis-1/3 hidden lg:block">
+            <div className="sticky top-24">
+              <OfferNavigation
+                title={t('nav.title')}
+                subtitle={t('nav.subtitle')}
+                items={navigationItems}
               >
-                {t('nav.contactCta')}
-              </Link>
-            </OfferNavigation>
-          </div>
-        </aside>
+                <p className="mb-4 text-center text-[10px] text-[#49659c] dark:text-[#a1b2d3]">
+                  {t('nav.question')}
+                </p>
+                <Link
+                  href="/contacts"
+                  className="inline-block w-full rounded-full border border-[#256af4] px-4 py-2.5 text-center text-[10px] font-bold text-[#256af4] transition-all hover:bg-[#256af4] hover:text-white"
+                >
+                  {t('nav.contactCta')}
+                </Link>
+              </OfferNavigation>
+            </div>
+          </aside>
 
-        <main className="flex-1">
-          <ReportsContent initialYear={currentYear} />
-        </main>
-      </div>
+          <main className="flex-1">
+            <ReportsContent initialYear={currentYear} />
+          </main>
+        </div>
+      )}
     </div>
   );
 }
