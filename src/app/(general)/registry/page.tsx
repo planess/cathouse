@@ -9,16 +9,27 @@ import { SYSTEM_PERMISSIONS } from '../../models/system-permissions';
 import { hasPermission } from '../../services/access-verification.service';
 import RegistryLightContent from '../registry-light/components/registry-light-content';
 
+import RegistryComingSoon from './components/coming-soon/coming-soon';
 import List from './components/list/list';
 import { parseRegistryStatusFilter } from './helpers/registry-status-filter';
 
 import type { Metadata } from 'next';
+
+// The registry page is shown only when REGISTRY_PAGE=ON; otherwise a
+// "coming soon" placeholder is rendered instead.
+function isRegistryPageEnabled() {
+  return process.env.REGISTRY_PAGE?.trim().toUpperCase() === 'ON';
+}
 
 export default async function History({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  if (!isRegistryPageEnabled()) {
+    return <RegistryComingSoon />;
+  }
+
   const t = await getTranslations('historypage');
   const canReadRegistryMap = await hasPermission(
     SYSTEM_PERMISSIONS.REGISTRY_MAP_READ,

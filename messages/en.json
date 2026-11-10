@@ -1004,6 +1004,12 @@
         "underTreatment": "Under treatment",
         "cured": "Cured"
       }
+    },
+    "comingSoon": {
+      "eyebrow": "Coming soon",
+      "title": "We are working on this page",
+      "description": "The animal registry is being improved and will be available soon. Thank you for your patience!",
+      "backHome": "Back to home"
     }
   },
   "registryLightPage": {
@@ -1798,6 +1804,27 @@
         "impact": "Impact & statistics",
         "financials": "Financial reports"
       }
+    },
+    "fundsOnHold": {
+      "eyebrow": "Temporary notice",
+      "title": "The foundation's spending is limited for now",
+      "description": "Due to organizational restrictions, the foundation can use its money only to buy goods or pay for legal services. All other donations stay in the account, and our volunteers cover the rest of the work from their own resources.",
+      "points": {
+        "accumulate": {
+          "title": "Donations accumulate",
+          "description": "Incoming funds are saved on the foundation's account."
+        },
+        "limitedSpending": {
+          "title": "Goods and legal services only",
+          "description": "The foundation's money is spent only on purchases of goods or lawyer services."
+        },
+        "volunteers": {
+          "title": "Volunteers cover the rest",
+          "description": "Sterilization and veterinary care are paid by our volunteers."
+        }
+      },
+      "footnote": "Reports will return as soon as the restrictions are lifted.",
+      "contactCta": "Contact us"
     },
     "newSeason": {
       "title": "We are preparing for a new season",
