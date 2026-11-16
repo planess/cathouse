@@ -9,6 +9,8 @@ import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 import { getMessageBodyHtml } from '../helpers/get-message-body-html';
 
+import { EmailHtmlBody } from './email-html-body';
+
 type ThreadMessageCardProps = {
   message: EmailMessageSummary;
   onForward: (message: EmailMessageSummary) => void;
@@ -94,11 +96,9 @@ export function ThreadMessageCard({
             </button>
           </div>
         )}
-        <div
-          className="break-words text-base leading-7 text-slate-700 [&_blockquote]:my-4 [&_blockquote]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-slate-300 [&_blockquote]:bg-slate-100/80 [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:text-sm [&_blockquote]:leading-6 [&_blockquote]:text-slate-600 [&_p]:my-3 dark:text-slate-200 dark:[&_blockquote]:border-slate-600 dark:[&_blockquote]:bg-slate-900/70 dark:[&_blockquote]:text-slate-300"
-          dangerouslySetInnerHTML={{
-            __html: getMessageBodyHtml(message, showFullMessage),
-          }}
+        <EmailHtmlBody
+          className="break-words text-base leading-7 text-slate-700 dark:text-slate-200"
+          html={getMessageBodyHtml(message, showFullMessage)}
         />
 
         {message.attachments.length > 0 && (

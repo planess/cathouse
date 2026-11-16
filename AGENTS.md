@@ -15,6 +15,7 @@ Next.js 15 application with the App Router. Application code is in `src/app`; i1
 
 ## Safety and delivery
 
+- Do not run the project itself (dev server, build, or start scripts); diagnose from the code or the browser the user already has open.
 - Do not create unit, end-to-end, or any other tests unless explicitly requested.
 - Do not create migrations in `migrations` unless explicitly requested.
 - Run Prettier, linters, and other formatters only when explicitly requested.
