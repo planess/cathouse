@@ -2402,5 +2402,164 @@
       "wrong-user": "This link belongs to another account. Sign out or open it in another browser."
     },
     "backToSite": "Back to the website"
+  },
+  "adminEmail": {
+    "meta": {
+      "title": "Email",
+      "contactsTitle": "Email contacts"
+    },
+    "common": {
+      "back": "Back",
+      "cancel": "Cancel",
+      "close": "Close",
+      "save": "Save",
+      "saving": "Saving...",
+      "send": "Send",
+      "sending": "Sending...",
+      "to": "To",
+      "cc": "Cc",
+      "bcc": "Bcc",
+      "sendFailed": "Failed to send email."
+    },
+    "header": {
+      "title": "Mailboxes",
+      "description": "View and reply to organization emails.",
+      "searchPlaceholder": "Search emails...",
+      "searchAria": "Search emails in the selected mailbox",
+      "contacts": "Contacts"
+    },
+    "mailboxes": {
+      "title": "Mailboxes",
+      "add": "Add mailbox",
+      "move": "Move {address}",
+      "dragToReorder": "Drag to reorder",
+      "editSenderName": "Edit sender name",
+      "editSenderNameFor": "Edit sender name for {address}",
+      "openingConversation": "Opening conversation...",
+      "orderSaved": "Mailbox order saved.",
+      "orderSaveFailed": "Failed to save mailbox order.",
+      "prefixRequired": "Email prefix is required.",
+      "createFailed": "Failed to create mailbox.",
+      "updateSenderNameFailed": "Failed to update sender name."
+    },
+    "createMailbox": {
+      "senderName": "Sender name",
+      "senderNamePlaceholder": "Periphery Foundation",
+      "emailPrefix": "Email prefix"
+    },
+    "editSenderName": {
+      "title": "Edit sender name",
+      "senderMailbox": "Sender mailbox:",
+      "senderName": "Sender name"
+    },
+    "threads": {
+      "conversations": "{count, plural, one {# Conversation} other {# Conversations}}",
+      "refresh": "Refresh threads",
+      "createEmail": "Create new email",
+      "merged": "Threads merged.",
+      "mergeFailed": "Failed to merge threads.",
+      "loading": "Loading threads",
+      "loadingMore": "Loading more threads",
+      "empty": "No threads.",
+      "messages": "{count, plural, one {# Message} other {# Messages}}",
+      "attachments": "{count, plural, one {# Attachment} other {# Attachments}}",
+      "mergeAria": "Merge {subject} into another thread",
+      "mergeHint": "Drag onto another thread to merge",
+      "incoming": "{count, plural, one {# incoming message} other {# incoming messages}}",
+      "outgoing": "{count, plural, one {# outgoing message} other {# outgoing messages}}"
+    },
+    "thread": {
+      "returning": "Returning to mailbox...",
+      "opening": "Opening email...",
+      "reply": "Reply to conversation",
+      "forwardFailed": "Failed to forward email.",
+      "noMessages": "No messages.",
+      "noParticipants": "No participants",
+      "noRecipients": "No recipients",
+      "from": "From:",
+      "to": "To:",
+      "cc": "Cc:",
+      "forward": "Forward",
+      "collapseHistory": "Collapse history",
+      "expandFull": "Expand full email",
+      "openAttachment": "Open",
+      "searchAria": "Search emails in this mailbox",
+      "searchPlaceholder": "Search this mailbox...",
+      "searching": "Searching...",
+      "noMatches": "No matching emails.",
+      "current": "Current"
+    },
+    "compose": {
+      "title": "New email",
+      "fromLine": "From: {from}",
+      "from": "From",
+      "showCopyFields": "Cc and Bcc",
+      "hideCopyFields": "Hide Cc and Bcc",
+      "subject": "Subject",
+      "subjectPlaceholder": "Email subject",
+      "content": "Content",
+      "body": "Body",
+      "attachFiles": "Attach files"
+    },
+    "forward": {
+      "title": "Forward message",
+      "recipient": "Recipient",
+      "recipientPlaceholder": "Name or email address",
+      "recipientHint": "Enter an email address or select a contact"
+    },
+    "recipients": {
+      "namePlaceholder": "Name (optional)",
+      "emailPlaceholder": "Email address",
+      "emailHint": "Enter a valid email address",
+      "nameAria": "{label} recipient name {index}",
+      "emailAria": "{label} recipient email {index}",
+      "addAria": "Add another {label} recipient",
+      "removeAria": "Remove {label} recipient {index}"
+    },
+    "editor": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "heading": "Heading {level}",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strikethrough": "Strikethrough",
+      "fontSize": "Font size",
+      "size": "Size",
+      "reset": "Reset",
+      "fontColor": "Font color",
+      "resetColor": "Reset color",
+      "highlight": "Highlight / Background color",
+      "resetHighlight": "Reset highlight",
+      "alignLeft": "Align left",
+      "alignCenter": "Align center",
+      "alignRight": "Align right",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "blockquote": "Blockquote",
+      "horizontalRule": "Horizontal rule",
+      "insertLink": "Insert link",
+      "setLink": "Set",
+      "removeLink": "Remove",
+      "insertImage": "Insert inline image",
+      "clearFormatting": "Clear formatting"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Manage saved email recipients.",
+      "loading": "Loading contacts...",
+      "namePlaceholder": "Name (optional)",
+      "emailPlaceholder": "Email address",
+      "add": "Add contact",
+      "adding": "Adding...",
+      "empty": "No contacts.",
+      "nameFor": "Name for {address}",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Delete contact {address}?",
+      "createFailed": "Failed to create contact.",
+      "updateFailed": "Failed to update contact.",
+      "deleteFailed": "Failed to delete contact."
+    }
   }
 }

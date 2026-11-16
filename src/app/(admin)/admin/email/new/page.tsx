@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server';
+
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { requirePermission } from '@app/services/access-verification.service';
@@ -13,9 +15,12 @@ export default async function NewEmailMailboxPage() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteTitle = await getSiteTitle();
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('adminEmail'),
+    getSiteTitle(),
+  ]);
 
   return {
-    title: composeMetadataTitle('Email', siteTitle),
+    title: composeMetadataTitle(t('meta.title'), siteTitle),
   };
 }

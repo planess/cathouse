@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { FormEvent, useEffect, useState, useTransition } from 'react';
 
 import type {
@@ -41,8 +42,12 @@ export function ThreadConversation({
   thread,
 }: ThreadConversationProps) {
   const router = useRouter();
+  const t = useTranslations('adminEmail');
+  const locale = useLocale();
   const [isNavigationPending, startNavigation] = useTransition();
-  const [navigationLabel, setNavigationLabel] = useState('Opening email...');
+  const [navigationLabel, setNavigationLabel] = useState<
+    'opening' | 'returning'
+  >('opening');
   const [messages, setMessages] = useState(initialMessages);
   const [form, setForm] = useState<ThreadReplyFormState | null>(null);
   const [isReplyExpanded, setIsReplyExpanded] = useState(false);
@@ -183,7 +188,7 @@ export function ThreadConversation({
     } catch {
       setResult({
         success: false,
-        message: 'Failed to send email.',
+        message: t('common.sendFailed'),
       });
     } finally {
       setSending(false);
@@ -207,7 +212,7 @@ export function ThreadConversation({
   };
 
   const handleBack = () => {
-    setNavigationLabel('Returning to mailbox...');
+    setNavigationLabel('returning');
     startNavigation(() => {
       router.push(`/admin/email/${mailboxId}`);
     });
@@ -217,7 +222,7 @@ export function ThreadConversation({
       return;
     }
 
-    setNavigationLabel('Opening email...');
+    setNavigationLabel('opening');
     startNavigation(() => {
       router.push(`/admin/email/${mailboxId}/${threadId}`);
     });
@@ -269,7 +274,7 @@ export function ThreadConversation({
     } catch {
       setForwardResult({
         success: false,
-        message: 'Failed to forward email.',
+        message: t('thread.forwardFailed'),
       });
     } finally {
       setForwardSending(false);
@@ -291,7 +296,7 @@ export function ThreadConversation({
                   onClick={handleBack}
                   type="button"
                 >
-                  Back
+                  {t('common.back')}
                 </button>
                 <MailboxThreadSearch
                   currentThreadId={thread.id}
@@ -303,16 +308,19 @@ export function ThreadConversation({
                 {thread.subject}
               </h1>
               <p className="mt-2 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
-                {formatAddressList(thread.participants)}
+                {formatAddressList(
+                  thread.participants,
+                  t('thread.noParticipants'),
+                )}
               </p>
             </div>
 
             <div className="flex shrink-0 flex-wrap gap-2">
               <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                {messages.length} Messages
+                {t('threads.messages', { count: messages.length })}
               </span>
               <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                {formatEmailDate(thread.lastMessageDate)}
+                {formatEmailDate(thread.lastMessageDate, locale)}
               </span>
             </div>
           </div>
@@ -344,7 +352,7 @@ export function ThreadConversation({
               type="button"
             >
               <span aria-hidden="true">↩</span>
-              Reply to conversation
+              {t('thread.reply')}
             </button>
           ))}
 
@@ -363,7 +371,7 @@ export function ThreadConversation({
         )}
 
         {isNavigationPending && (
-          <NavigationLoadingOverlay label={navigationLabel} />
+          <NavigationLoadingOverlay label={t(`thread.${navigationLabel}`)} />
         )}
       </div>
     </div>

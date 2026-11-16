@@ -9,6 +9,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { AdminAdminEmailComponentsRichTextEditorIcon01 } from '@app/components/icons/admin-admin-email-components-rich-text-editor-icon-01';
@@ -150,6 +151,7 @@ export function RichTextEditor({
   initialContent = '',
   onChange,
 }: RichTextEditorProps) {
+  const t = useTranslations('adminEmail.editor');
   const [showFontSize, setShowFontSize] = useState(false);
   const [showFontColor, setShowFontColor] = useState(false);
   const [showBgColor, setShowBgColor] = useState(false);
@@ -259,7 +261,7 @@ export function RichTextEditor({
           className={btnBase}
           disabled={!editor.can().undo()}
           onClick={() => editor.chain().focus().undo().run()}
-          title="Undo"
+          title={t('undo')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon01
@@ -274,7 +276,7 @@ export function RichTextEditor({
           className={btnBase}
           disabled={!editor.can().redo()}
           onClick={() => editor.chain().focus().redo().run()}
-          title="Redo"
+          title={t('redo')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon02
@@ -297,7 +299,7 @@ export function RichTextEditor({
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
-          title="Heading 1"
+          title={t('heading', { level: 1 })}
           type="button"
         >
           <span className="text-xs font-bold">H1</span>
@@ -310,7 +312,7 @@ export function RichTextEditor({
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
-          title="Heading 2"
+          title={t('heading', { level: 2 })}
           type="button"
         >
           <span className="text-xs font-bold">H2</span>
@@ -323,7 +325,7 @@ export function RichTextEditor({
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
-          title="Heading 3"
+          title={t('heading', { level: 3 })}
           type="button"
         >
           <span className="text-xs font-bold">H3</span>
@@ -335,7 +337,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('bold') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          title="Bold"
+          title={t('bold')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon03 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -343,7 +345,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('italic') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          title="Italic"
+          title={t('italic')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon04 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -351,7 +353,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('underline') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          title="Underline"
+          title={t('underline')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon05 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -359,7 +361,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('strike') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          title="Strikethrough"
+          title={t('strikethrough')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon06 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -375,11 +377,11 @@ export function RichTextEditor({
               closeAllDropdowns();
               setShowFontSize(!showFontSize);
             }}
-            title="Font size"
+            title={t('fontSize')}
             type="button"
           >
             <span className="flex items-center gap-0.5 text-xs font-medium">
-              Size
+              {t('size')}
               <AdminAdminEmailComponentsRichTextEditorIcon07
                 className="h-3 w-3"
                 fill="none"
@@ -412,7 +414,7 @@ export function RichTextEditor({
                 }}
                 type="button"
               >
-                Reset
+                {t('reset')}
               </button>
             </div>
           )}
@@ -426,7 +428,7 @@ export function RichTextEditor({
               closeAllDropdowns();
               setShowFontColor(!showFontColor);
             }}
-            title="Font color"
+            title={t('fontColor')}
             type="button"
           >
             <span className="flex flex-col items-center">
@@ -466,7 +468,7 @@ export function RichTextEditor({
                 }}
                 type="button"
               >
-                Reset color
+                {t('resetColor')}
               </button>
             </div>
           )}
@@ -480,7 +482,7 @@ export function RichTextEditor({
               closeAllDropdowns();
               setShowBgColor(!showBgColor);
             }}
-            title="Highlight / Background color"
+            title={t('highlight')}
             type="button"
           >
             <AdminAdminEmailComponentsRichTextEditorIcon08 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -510,7 +512,7 @@ export function RichTextEditor({
                 }}
                 type="button"
               >
-                Reset highlight
+                {t('resetHighlight')}
               </button>
             </div>
           )}
@@ -524,7 +526,7 @@ export function RichTextEditor({
             editor.isActive({ textAlign: 'left' }) ? btnActive : btnBase
           }
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          title="Align left"
+          title={t('alignLeft')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon09 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -534,7 +536,7 @@ export function RichTextEditor({
             editor.isActive({ textAlign: 'center' }) ? btnActive : btnBase
           }
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          title="Align center"
+          title={t('alignCenter')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon10 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -544,7 +546,7 @@ export function RichTextEditor({
             editor.isActive({ textAlign: 'right' }) ? btnActive : btnBase
           }
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          title="Align right"
+          title={t('alignRight')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon11 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -556,7 +558,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('bulletList') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet list"
+          title={t('bulletList')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon12 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -564,7 +566,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('orderedList') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Numbered list"
+          title={t('numberedList')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon13 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -574,7 +576,7 @@ export function RichTextEditor({
         <button
           className={editor.isActive('blockquote') ? btnActive : btnBase}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          title="Blockquote"
+          title={t('blockquote')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon14 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -584,7 +586,7 @@ export function RichTextEditor({
         <button
           className={btnBase}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          title="Horizontal rule"
+          title={t('horizontalRule')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon15 className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" />
@@ -597,7 +599,7 @@ export function RichTextEditor({
           <button
             className={editor.isActive('link') ? btnActive : btnBase}
             onClick={openLinkInput}
-            title="Insert link"
+            title={t('insertLink')}
             type="button"
           >
             <AdminAdminEmailComponentsRichTextEditorIcon16
@@ -627,7 +629,7 @@ export function RichTextEditor({
                 onClick={handleSetLink}
                 type="button"
               >
-                Set
+                {t('setLink')}
               </button>
               {editor.isActive('link') && (
                 <button
@@ -643,7 +645,7 @@ export function RichTextEditor({
                   }}
                   type="button"
                 >
-                  Remove
+                  {t('removeLink')}
                 </button>
               )}
             </div>
@@ -653,7 +655,7 @@ export function RichTextEditor({
         {/* Inline image — input inside label so file picker works on all devices */}
         <label
           className={`${btnBase} relative cursor-pointer overflow-hidden`}
-          title="Insert inline image"
+          title={t('insertImage')}
         >
           <AdminAdminEmailComponentsRichTextEditorIcon17
             className="h-4 w-4"
@@ -678,7 +680,7 @@ export function RichTextEditor({
           onClick={() =>
             editor.chain().focus().clearNodes().unsetAllMarks().run()
           }
-          title="Clear formatting"
+          title={t('clearFormatting')}
           type="button"
         >
           <AdminAdminEmailComponentsRichTextEditorIcon18

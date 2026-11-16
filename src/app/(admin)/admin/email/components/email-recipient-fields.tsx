@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { KeyboardEvent, useEffect, useState } from 'react';
 
 import type { EmailAddressSummary } from '@app/services/email.service';
@@ -29,6 +30,7 @@ export function RecipientFields({
   required = false,
   onChange,
 }: RecipientFieldsProps) {
+  const t = useTranslations('adminEmail.recipients');
   const [activeSearch, setActiveSearch] = useState<ActiveContactSearch | null>(
     null,
   );
@@ -153,7 +155,7 @@ export function RecipientFields({
             key={`${id}-${index}`}
           >
             <input
-              aria-label={`${label} recipient name ${index + 1}`}
+              aria-label={t('nameAria', { label, index: index + 1 })}
               aria-autocomplete="list"
               autoComplete="new-password"
               className={inputClassName}
@@ -169,12 +171,12 @@ export function RecipientFields({
                 setActiveSearch({ field: 'name', index, query: recipient.name })
               }
               onKeyDown={(event) => handleSearchKeyDown(event, index)}
-              placeholder="Name (optional)"
+              placeholder={t('namePlaceholder')}
               type="text"
               value={recipient.name}
             />
             <input
-              aria-label={`${label} recipient email ${index + 1}`}
+              aria-label={t('emailAria', { label, index: index + 1 })}
               aria-autocomplete="list"
               autoComplete="new-password"
               className={inputClassName}
@@ -196,15 +198,15 @@ export function RecipientFields({
               }
               onKeyDown={(event) => handleSearchKeyDown(event, index)}
               pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
-              placeholder="Email address"
+              placeholder={t('emailPlaceholder')}
               required={emailRequired}
-              title="Enter a valid email address"
+              title={t('emailHint')}
               type="text"
               value={recipient.email}
             />
             {index === 0 ? (
               <button
-                aria-label={`Add another ${label} recipient`}
+                aria-label={t('addAria', { label })}
                 className="rounded-xl border border-slate-200 bg-white text-lg font-semibold text-slate-500 transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                 onClick={addRecipient}
                 type="button"
@@ -213,7 +215,7 @@ export function RecipientFields({
               </button>
             ) : (
               <button
-                aria-label={`Remove ${label} recipient ${index + 1}`}
+                aria-label={t('removeAria', { label, index: index + 1 })}
                 className="rounded-xl border border-slate-200 bg-white text-lg font-semibold text-slate-500 transition hover:border-rose-300 hover:text-rose-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                 onClick={() => removeRecipient(index)}
                 type="button"

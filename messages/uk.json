@@ -2402,5 +2402,164 @@
       "wrong-user": "Це посилання належить іншому обліковому запису. Вийдіть або відкрийте його в іншому браузері."
     },
     "backToSite": "Повернутися на сайт"
+  },
+  "adminEmail": {
+    "meta": {
+      "title": "Пошта",
+      "contactsTitle": "Поштові контакти"
+    },
+    "common": {
+      "back": "Назад",
+      "cancel": "Скасувати",
+      "close": "Закрити",
+      "save": "Зберегти",
+      "saving": "Збереження...",
+      "send": "Надіслати",
+      "sending": "Надсилання...",
+      "to": "Кому",
+      "cc": "Копія",
+      "bcc": "Прихована копія",
+      "sendFailed": "Не вдалося надіслати лист."
+    },
+    "header": {
+      "title": "Поштові скриньки",
+      "description": "Перегляд листів організації та відповіді на них.",
+      "searchPlaceholder": "Пошук листів...",
+      "searchAria": "Пошук листів у вибраній скриньці",
+      "contacts": "Контакти"
+    },
+    "mailboxes": {
+      "title": "Поштові скриньки",
+      "add": "Додати скриньку",
+      "move": "Перемістити {address}",
+      "dragToReorder": "Перетягніть, щоб змінити порядок",
+      "editSenderName": "Змінити ім'я відправника",
+      "editSenderNameFor": "Змінити ім'я відправника для {address}",
+      "openingConversation": "Відкриття розмови...",
+      "orderSaved": "Порядок скриньок збережено.",
+      "orderSaveFailed": "Не вдалося зберегти порядок скриньок.",
+      "prefixRequired": "Вкажіть префікс адреси.",
+      "createFailed": "Не вдалося створити скриньку.",
+      "updateSenderNameFailed": "Не вдалося змінити ім'я відправника."
+    },
+    "createMailbox": {
+      "senderName": "Ім'я відправника",
+      "senderNamePlaceholder": "Фонд Периферія",
+      "emailPrefix": "Префікс адреси"
+    },
+    "editSenderName": {
+      "title": "Змінити ім'я відправника",
+      "senderMailbox": "Скринька відправника:",
+      "senderName": "Ім'я відправника"
+    },
+    "threads": {
+      "conversations": "{count, plural, one {# розмова} few {# розмови} many {# розмов} other {# розмови}}",
+      "refresh": "Оновити розмови",
+      "createEmail": "Створити лист",
+      "merged": "Розмови об'єднано.",
+      "mergeFailed": "Не вдалося об'єднати розмови.",
+      "loading": "Завантаження розмов",
+      "loadingMore": "Завантаження інших розмов",
+      "empty": "Розмов немає.",
+      "messages": "{count, plural, one {# повідомлення} few {# повідомлення} many {# повідомлень} other {# повідомлення}}",
+      "attachments": "{count, plural, one {# вкладення} few {# вкладення} many {# вкладень} other {# вкладення}}",
+      "mergeAria": "Об'єднати «{subject}» з іншою розмовою",
+      "mergeHint": "Перетягніть на іншу розмову, щоб об'єднати",
+      "incoming": "{count, plural, one {# вхідне повідомлення} few {# вхідні повідомлення} many {# вхідних повідомлень} other {# вхідного повідомлення}}",
+      "outgoing": "{count, plural, one {# вихідне повідомлення} few {# вихідні повідомлення} many {# вихідних повідомлень} other {# вихідного повідомлення}}"
+    },
+    "thread": {
+      "returning": "Повернення до скриньки...",
+      "opening": "Відкриття листа...",
+      "reply": "Відповісти в розмові",
+      "forwardFailed": "Не вдалося переслати лист.",
+      "noMessages": "Повідомлень немає.",
+      "noParticipants": "Учасників немає",
+      "noRecipients": "Одержувачів немає",
+      "from": "Від:",
+      "to": "Кому:",
+      "cc": "Копія:",
+      "forward": "Переслати",
+      "collapseHistory": "Згорнути історію",
+      "expandFull": "Показати весь лист",
+      "openAttachment": "Відкрити",
+      "searchAria": "Пошук листів у цій скриньці",
+      "searchPlaceholder": "Пошук у цій скриньці...",
+      "searching": "Пошук...",
+      "noMatches": "Листів не знайдено.",
+      "current": "Поточна"
+    },
+    "compose": {
+      "title": "Новий лист",
+      "fromLine": "Від: {from}",
+      "from": "Від",
+      "showCopyFields": "Копія та прихована копія",
+      "hideCopyFields": "Сховати копію та приховану копію",
+      "subject": "Тема",
+      "subjectPlaceholder": "Тема листа",
+      "content": "Зміст",
+      "body": "Текст",
+      "attachFiles": "Прикріпити файли"
+    },
+    "forward": {
+      "title": "Переслати повідомлення",
+      "recipient": "Одержувач",
+      "recipientPlaceholder": "Ім'я або адреса",
+      "recipientHint": "Введіть адресу або виберіть контакт"
+    },
+    "recipients": {
+      "namePlaceholder": "Ім'я (необов'язково)",
+      "emailPlaceholder": "Адреса електронної пошти",
+      "emailHint": "Введіть дійсну адресу електронної пошти",
+      "nameAria": "{label}: ім'я одержувача {index}",
+      "emailAria": "{label}: адреса одержувача {index}",
+      "addAria": "{label}: додати одержувача",
+      "removeAria": "{label}: видалити одержувача {index}"
+    },
+    "editor": {
+      "undo": "Скасувати",
+      "redo": "Повторити",
+      "heading": "Заголовок {level}",
+      "bold": "Жирний",
+      "italic": "Курсив",
+      "underline": "Підкреслений",
+      "strikethrough": "Закреслений",
+      "fontSize": "Розмір шрифту",
+      "size": "Розмір",
+      "reset": "Скинути",
+      "fontColor": "Колір тексту",
+      "resetColor": "Скинути колір",
+      "highlight": "Виділення / колір фону",
+      "resetHighlight": "Скинути виділення",
+      "alignLeft": "Вирівняти ліворуч",
+      "alignCenter": "Вирівняти по центру",
+      "alignRight": "Вирівняти праворуч",
+      "bulletList": "Маркований список",
+      "numberedList": "Нумерований список",
+      "blockquote": "Цитата",
+      "horizontalRule": "Горизонтальна лінія",
+      "insertLink": "Вставити посилання",
+      "setLink": "Застосувати",
+      "removeLink": "Видалити",
+      "insertImage": "Вставити зображення",
+      "clearFormatting": "Очистити форматування"
+    },
+    "contacts": {
+      "title": "Контакти",
+      "description": "Керування збереженими одержувачами.",
+      "loading": "Завантаження контактів...",
+      "namePlaceholder": "Ім'я (необов'язково)",
+      "emailPlaceholder": "Адреса електронної пошти",
+      "add": "Додати контакт",
+      "adding": "Додавання...",
+      "empty": "Контактів немає.",
+      "nameFor": "Ім'я для {address}",
+      "edit": "Змінити",
+      "delete": "Видалити",
+      "deleteConfirm": "Видалити контакт {address}?",
+      "createFailed": "Не вдалося створити контакт.",
+      "updateFailed": "Не вдалося оновити контакт.",
+      "deleteFailed": "Не вдалося видалити контакт."
+    }
   }
 }

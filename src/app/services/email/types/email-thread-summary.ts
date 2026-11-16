@@ -7,6 +7,10 @@ export type EmailThreadSummary = {
   participants: EmailAddressSummary[];
   participantIds: string[];
   messageCount: number;
+  /** Number of messages received by the mailbox in this thread. */
+  incomingCount: number;
+  /** Number of messages sent from the mailbox in this thread. */
+  outgoingCount: number;
   hasUnreadMessages: boolean;
   preview: string;
   attachmentsCount: number;

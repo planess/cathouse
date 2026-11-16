@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FormEvent } from 'react';
 
 import { EMAIL_MAILBOX_DOMAIN } from '../constants/email-mailbox-domain';
@@ -28,6 +29,8 @@ export function CreateMailboxForm({
   onPrefixChange,
   onSubmit,
 }: CreateMailboxFormProps) {
+  const t = useTranslations('adminEmail');
+
   return (
     <form
       className="space-y-4 px-5 pb-6 pt-5"
@@ -39,13 +42,13 @@ export function CreateMailboxForm({
             className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
             htmlFor="email-mailbox-display-name"
           >
-            Sender name
+            {t('createMailbox.senderName')}
           </label>
           <input
             className={inputClassName}
             id="email-mailbox-display-name"
             onChange={(event) => onDisplayNameChange(event.target.value)}
-            placeholder="Periphery Foundation"
+            placeholder={t('createMailbox.senderNamePlaceholder')}
             type="text"
             value={displayName}
           />
@@ -56,7 +59,7 @@ export function CreateMailboxForm({
             className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
             htmlFor="email-mailbox-prefix"
           >
-            Email prefix
+            {t('createMailbox.emailPrefix')}
           </label>
           <div className="flex items-center">
             <input
@@ -83,7 +86,7 @@ export function CreateMailboxForm({
         disabled={saving}
         type="submit"
       >
-        Save
+        {t('common.save')}
       </button>
     </form>
   );

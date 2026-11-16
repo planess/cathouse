@@ -1,4 +1,10 @@
-export function formatEmailDate(value: string): string {
+/**
+ * Formats an email date as a short date and time in the given locale.
+ *
+ * @param value - ISO date string; empty or invalid values return an empty string.
+ * @param locale - BCP 47 locale used for formatting (the current UI language).
+ */
+export function formatEmailDate(value: string, locale: string): string {
   if (value.length === 0) {
     return '';
   }
@@ -9,7 +15,7 @@ export function formatEmailDate(value: string): string {
     return '';
   }
 
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(locale, {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',

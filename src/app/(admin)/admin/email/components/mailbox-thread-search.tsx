@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { KeyboardEvent, useEffect, useState } from 'react';
 
 import type { EmailThreadSummary } from '@app/services/email.service';
@@ -19,6 +20,7 @@ export function MailboxThreadSearch({
   mailboxId,
   onThreadSelect,
 }: MailboxThreadSearchProps) {
+  const t = useTranslations('adminEmail.thread');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<EmailThreadSummary[]>([]);
   const [activeResultIndex, setActiveResultIndex] = useState(0);
@@ -105,7 +107,7 @@ export function MailboxThreadSearch({
   return (
     <div className="relative w-full sm:max-w-sm">
       <input
-        aria-label="Search emails in this mailbox"
+        aria-label={t('searchAria')}
         aria-autocomplete="list"
         aria-controls="mailbox-thread-search-results"
         aria-expanded={isOpen && query.trim().length > 0}
@@ -118,7 +120,7 @@ export function MailboxThreadSearch({
         }}
         onFocus={() => setIsOpen(true)}
         onKeyDown={handleKeyDown}
-        placeholder="Search this mailbox..."
+        placeholder={t('searchPlaceholder')}
         type="search"
         value={query}
       />
@@ -131,11 +133,11 @@ export function MailboxThreadSearch({
         >
           {isLoading ? (
             <p className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
-              Searching...
+              {t('searching')}
             </p>
           ) : hasSearched && results.length === 0 ? (
             <p className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
-              No matching emails.
+              {t('noMatches')}
             </p>
           ) : (
             results.map((thread, resultIndex) => (
@@ -155,10 +157,10 @@ export function MailboxThreadSearch({
               >
                 <span className="block truncate text-sm font-semibold text-slate-900 dark:text-white">
                   {thread.subject}
-                  {thread.id === currentThreadId ? ' · Current' : ''}
+                  {thread.id === currentThreadId ? ` · ${t('current')}` : ''}
                 </span>
                 <span className="mt-1 block truncate text-xs text-slate-500 dark:text-slate-400">
-                  {formatAddressList(thread.participants)}
+                  {formatAddressList(thread.participants, t('noParticipants'))}
                 </span>
                 {thread.preview.length > 0 && (
                   <span className="mt-1 block truncate text-xs text-slate-500 dark:text-slate-400">
