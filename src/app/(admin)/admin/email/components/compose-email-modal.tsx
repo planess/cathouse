@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 import { AdminAdminEmailComponentsComposeEmailModalIcon01 } from '@app/components/icons/admin-admin-email-components-compose-email-modal-icon-01';
@@ -42,6 +43,8 @@ export function ComposeEmailModal({
   onClose,
   onSubmit,
 }: ComposeEmailModalProps) {
+  const t = useTranslations('adminEmail');
+
   useBodyScrollLock();
 
   const mailboxFrom = formatMailboxFrom(mailbox);
@@ -109,10 +112,10 @@ export function ComposeEmailModal({
         <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              New email
+              {t('compose.title')}
             </h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              From: {mailboxFrom}
+              {t('compose.fromLine', { from: mailboxFrom })}
             </p>
           </div>
           <button
@@ -120,7 +123,7 @@ export function ComposeEmailModal({
             onClick={onClose}
             type="button"
           >
-            Close
+            {t('common.close')}
           </button>
         </header>
 
@@ -130,7 +133,7 @@ export function ComposeEmailModal({
               className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
               htmlFor="compose-from"
             >
-              From
+              {t('compose.from')}
             </label>
             <input
               className={inputClassName}
@@ -145,7 +148,7 @@ export function ComposeEmailModal({
             <div className="pb-4">
               <RecipientFields
                 id="compose-to"
-                label="To"
+                label={t('common.to')}
                 onChange={(recipients) => onChange('to', recipients)}
                 recipients={form.to}
                 required
@@ -157,7 +160,9 @@ export function ComposeEmailModal({
                 onClick={() => setShowCopyFields((visible) => !visible)}
                 type="button"
               >
-                {showCopyFields ? 'Hide Cc and Bcc' : 'Cc and Bcc'}
+                {showCopyFields
+                  ? t('compose.hideCopyFields')
+                  : t('compose.showCopyFields')}
                 <AdminAdminEmailComponentsComposeEmailModalIcon01
                   aria-hidden="true"
                   className={`h-4 w-4 transition-transform ${
@@ -176,13 +181,13 @@ export function ComposeEmailModal({
               <div className="space-y-4 py-4" id="compose-copy-fields">
                 <RecipientFields
                   id="compose-cc"
-                  label="Cc"
+                  label={t('common.cc')}
                   onChange={(recipients) => onChange('cc', recipients)}
                   recipients={form.cc}
                 />
                 <RecipientFields
                   id="compose-bcc"
-                  label="Bcc"
+                  label={t('common.bcc')}
                   onChange={(recipients) => onChange('bcc', recipients)}
                   recipients={form.bcc}
                 />
@@ -195,13 +200,13 @@ export function ComposeEmailModal({
               className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
               htmlFor="compose-subject"
             >
-              Subject
+              {t('compose.subject')}
             </label>
             <input
               className={inputClassName}
               id="compose-subject"
               onChange={(event) => onChange('subject', event.target.value)}
-              placeholder="Email subject"
+              placeholder={t('compose.subjectPlaceholder')}
               type="text"
               value={form.subject}
             />
@@ -209,14 +214,14 @@ export function ComposeEmailModal({
 
           <div>
             <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Content
+              {t('compose.content')}
             </label>
             <RichTextEditor onChange={(html) => onChange('bodyHtml', html)} />
           </div>
 
           <div>
             <label className="relative inline-flex cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-              Attach files
+              {t('compose.attachFiles')}
               <input
                 className="absolute inset-0 cursor-pointer opacity-0"
                 multiple
@@ -252,7 +257,7 @@ export function ComposeEmailModal({
             disabled={sending}
             type="submit"
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? t('common.sending') : t('common.send')}
           </button>
         </footer>
       </form>

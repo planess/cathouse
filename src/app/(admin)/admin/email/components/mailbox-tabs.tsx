@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   FormEvent,
   MouseEvent,
@@ -61,6 +62,7 @@ export function EmailMailboxTabs({
 }: EmailMailboxTabsProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('adminEmail');
   const [isThreadNavigationPending, startThreadNavigation] = useTransition();
   const [groups, setGroups] = useState(mailboxGroups);
   const [threadRefreshTokens, setThreadRefreshTokens] = useState<
@@ -283,7 +285,7 @@ export function EmailMailboxTabs({
           mailbox: { ...group.mailbox, order },
         })),
       );
-      setOrderMessage('Mailbox order saved.');
+      setOrderMessage(t('mailboxes.orderSaved'));
     } catch (error) {
       const originalOrder = new Map(
         dragStartOrderRef.current.map((mailboxId, order) => [mailboxId, order]),
@@ -299,12 +301,12 @@ export function EmailMailboxTabs({
       setOrderMessage(
         error instanceof Error
           ? error.message
-          : 'Failed to save mailbox order.',
+          : t('mailboxes.orderSaveFailed'),
       );
     } finally {
       setOrderSaving(false);
     }
-  }, [draggedMailboxId]);
+  }, [draggedMailboxId, t]);
 
   const updateCreateMailboxPrefix = useCallback((value: string) => {
     setPrefix(value);
@@ -402,13 +404,13 @@ export function EmailMailboxTabs({
       } catch {
         setEditingResult({
           success: false,
-          message: 'Failed to update sender name.',
+          message: t('mailboxes.updateSenderNameFailed'),
         });
       } finally {
         setEditingSaving(false);
       }
     },
-    [canSend, closeEditMailboxModal, editingDisplayName, editingMailbox],
+    [canSend, closeEditMailboxModal, editingDisplayName, editingMailbox, t],
   );
 
   const handleSendEmail = useCallback(
@@ -453,7 +455,7 @@ export function EmailMailboxTabs({
       } catch {
         setComposeResult({
           success: false,
-          message: 'Failed to send email.',
+          message: t('common.sendFailed'),
         });
       } finally {
         setComposeSending(false);
@@ -465,6 +467,7 @@ export function EmailMailboxTabs({
       composeAttachments,
       composeForm,
       composeMailbox,
+      t,
     ],
   );
 
@@ -481,7 +484,7 @@ export function EmailMailboxTabs({
       if (normalizedPrefix.length === 0) {
         setResult({
           success: false,
-          message: 'Email prefix is required.',
+          message: t('mailboxes.prefixRequired'),
         });
 
         return;
@@ -511,13 +514,13 @@ export function EmailMailboxTabs({
       } catch {
         setResult({
           success: false,
-          message: 'Failed to create mailbox.',
+          message: t('mailboxes.createFailed'),
         });
       } finally {
         setSaving(false);
       }
     },
-    [canSend, displayName, handleActiveIdChange, prefix],
+    [canSend, displayName, handleActiveIdChange, prefix, t],
   );
 
   const activeMailbox = useMemo(
@@ -574,14 +577,14 @@ export function EmailMailboxTabs({
         <aside className="mb-4 flex max-h-80 w-full shrink-0 flex-col self-start overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm shadow-slate-200/40 md:sticky md:top-4 md:mb-0 md:h-[calc(100vh-2rem)] md:max-h-none md:w-72 dark:border-slate-800 dark:bg-slate-950">
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-800">
             <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
-              Mailboxes
+              {t('mailboxes.title')}
             </h2>
             {canSend && (
               <button
-                aria-label="Add mailbox"
+                aria-label={t('mailboxes.add')}
                 className="rounded-lg p-1.5 text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-200 dark:hover:bg-emerald-950/30"
                 onClick={() => handleActiveIdChange(CREATE_MAILBOX_TAB_ID)}
-                title="Add mailbox"
+                title={t('mailboxes.add')}
                 type="button"
               >
                 <PlusIcon
@@ -618,7 +621,7 @@ export function EmailMailboxTabs({
                 >
                   {canSend && (
                     <button
-                      aria-label={`Move ${mailbox.address}`}
+                      aria-label={t('mailboxes.move', { address: mailbox.address })}
                       className="ml-1 cursor-grab touch-none select-none rounded-lg px-1.5 py-2 text-lg leading-none text-slate-400 active:cursor-grabbing dark:text-slate-500"
                       disabled={orderSaving}
                       onPointerCancel={() => void finishMailboxDrag()}
@@ -627,7 +630,7 @@ export function EmailMailboxTabs({
                       }
                       onPointerMove={handleMailboxPointerMove}
                       onPointerUp={() => void finishMailboxDrag()}
-                      title="Drag to reorder"
+                      title={t('mailboxes.dragToReorder')}
                       type="button"
                     >
                       ⠿
@@ -651,10 +654,12 @@ export function EmailMailboxTabs({
                   </Link>
                   {canSend && (
                     <button
-                      aria-label={`Edit sender name for ${mailbox.address}`}
+                      aria-label={t('mailboxes.editSenderNameFor', {
+                        address: mailbox.address,
+                      })}
                       className="mr-2 rounded-lg p-1.5 text-slate-500 transition hover:bg-white hover:text-emerald-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-emerald-200"
                       onClick={() => openEditMailboxModal(mailbox)}
-                      title="Edit sender name"
+                      title={t('mailboxes.editSenderName')}
                       type="button"
                     >
                       <EditIcon
@@ -684,7 +689,7 @@ export function EmailMailboxTabs({
       </div>
 
       {isThreadNavigationPending && (
-        <NavigationLoadingOverlay label="Opening conversation..." />
+        <NavigationLoadingOverlay label={t('mailboxes.openingConversation')} />
       )}
 
       {composeMailbox !== null && (

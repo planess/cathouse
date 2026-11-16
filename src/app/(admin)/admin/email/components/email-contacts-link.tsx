@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 /** Links to email contacts while preserving the currently selected mailbox. */
 export function EmailContactsLink() {
+  const t = useTranslations('adminEmail.header');
   const pathname = usePathname();
   const returnTo = /^\/admin\/email\/[a-f\d]{24}$/i.test(pathname)
     ? pathname
@@ -18,7 +20,7 @@ export function EmailContactsLink() {
         query: { returnTo },
       }}
     >
-      Contacts
+      {t('contacts')}
     </Link>
   );
 }

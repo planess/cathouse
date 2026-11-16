@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AdminAdminEmailComponentsMailboxTabPanelIcon01 } from '@app/components/icons/admin-admin-email-components-mailbox-tab-panel-icon-01';
@@ -74,12 +75,14 @@ export function MailboxTabPanel({
   onCompose,
   onThreadSelect,
 }: MailboxTabPanelProps) {
+  const t = useTranslations('adminEmail.threads');
   const [pageThreads, setPageThreads] = useState<EmailThreadSummary[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isMerging, setIsMerging] = useState(false);
   const [mergeMessage, setMergeMessage] = useState('');
+  const [mergeSucceeded, setMergeSucceeded] = useState(false);
   const [refreshCount, setRefreshCount] = useState(0);
   const loadMoreSentinelRef = useRef<HTMLDivElement>(null);
   const loadMoreRequestedRef = useRef(false);
@@ -271,12 +274,14 @@ export function MailboxTabPanel({
         currentThreads.filter((thread) => thread.id !== sourceThreadId),
       );
       setTotalItems((currentTotal) => Math.max(0, currentTotal - 1));
-      setMergeMessage('Threads merged.');
+      setMergeSucceeded(true);
+      setMergeMessage(t('merged'));
       refreshRequestedRef.current = true;
       setRefreshCount((currentCount) => currentCount + 1);
     } catch (error) {
+      setMergeSucceeded(false);
       setMergeMessage(
-        error instanceof Error ? error.message : 'Failed to merge threads.',
+        error instanceof Error ? error.message : t('mergeFailed'),
       );
     } finally {
       setIsMerging(false);
@@ -287,18 +292,18 @@ export function MailboxTabPanel({
     <div>
       <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-slate-800">
         <p className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
-          {totalItems} Conversations
+          {t('conversations', { count: totalItems })}
         </p>
         <div className="flex items-center gap-2">
           <button
-            aria-label="Refresh threads"
+            aria-label={t('refresh')}
             className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-wait disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
             disabled={isLoading}
             onClick={() => {
               refreshRequestedRef.current = true;
               setRefreshCount((currentCount) => currentCount + 1);
             }}
-            title="Refresh threads"
+            title={t('refresh')}
             type="button"
           >
             <AdminAdminEmailComponentsMailboxTabPanelIcon01
@@ -315,7 +320,7 @@ export function MailboxTabPanel({
                 onClick={() => onCompose(mailbox)}
                 type="button"
               >
-                Create new email
+                {t('createEmail')}
               </button>
             </>
           )}
@@ -336,7 +341,7 @@ export function MailboxTabPanel({
           <p
             aria-live="polite"
             className={`px-5 py-2 text-sm ${
-              mergeMessage === 'Threads merged.'
+              mergeSucceeded
                 ? 'text-emerald-700 dark:text-emerald-300'
                 : 'text-red-700 dark:text-red-300'
             }`}
@@ -349,7 +354,7 @@ export function MailboxTabPanel({
         {isLoadingMore && (
           <div className="flex justify-center px-5 py-4">
             <span
-              aria-label="Loading more threads"
+              aria-label={t('loadingMore')}
               className="h-6 w-6 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-600 dark:border-slate-700 dark:border-t-emerald-400"
               role="status"
             />
@@ -358,7 +363,7 @@ export function MailboxTabPanel({
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-[1px] dark:bg-slate-950/75">
             <span
-              aria-label="Loading threads"
+              aria-label={t('loading')}
               className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-600 dark:border-slate-700 dark:border-t-emerald-400"
               role="status"
             />

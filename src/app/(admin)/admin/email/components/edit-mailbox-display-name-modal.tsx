@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FormEvent } from 'react';
 
 import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
@@ -28,6 +29,8 @@ export function EditMailboxDisplayNameModal({
   onDisplayNameChange,
   onSubmit,
 }: EditMailboxDisplayNameModalProps) {
+  const t = useTranslations('adminEmail');
+
   useBodyScrollLock();
 
   return (
@@ -42,20 +45,20 @@ export function EditMailboxDisplayNameModal({
       >
         <header className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-            Edit sender name
+            {t('editSenderName.title')}
           </h2>
           <button
             className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white"
             onClick={onClose}
             type="button"
           >
-            Close
+            {t('common.close')}
           </button>
         </header>
 
         <div className="space-y-4 px-6 py-5">
           <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600 dark:bg-slate-900 dark:text-slate-300">
-            Sender mailbox:{' '}
+            {t('editSenderName.senderMailbox')}{' '}
             <span className="font-semibold">{mailbox.address}</span>
           </p>
           <div>
@@ -63,7 +66,7 @@ export function EditMailboxDisplayNameModal({
               className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
               htmlFor="mailbox-display-name"
             >
-              Sender name
+              {t('editSenderName.senderName')}
             </label>
             <input
               className={inputClassName}
@@ -84,14 +87,14 @@ export function EditMailboxDisplayNameModal({
             onClick={onClose}
             type="button"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={saving}
             type="submit"
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('common.saving') : t('common.save')}
           </button>
         </footer>
       </form>

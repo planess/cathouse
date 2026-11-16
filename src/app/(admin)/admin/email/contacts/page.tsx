@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
 import { composeMetadataTitle, getSiteTitle } from '@app/helpers/metadata';
@@ -30,9 +31,12 @@ export default async function EmailContactsPage() {
 
 /** Creates metadata for the email contacts page. */
 export async function generateMetadata(): Promise<Metadata> {
-  const siteTitle = await getSiteTitle();
+  const [t, siteTitle] = await Promise.all([
+    getTranslations('adminEmail'),
+    getSiteTitle(),
+  ]);
 
   return {
-    title: composeMetadataTitle('Email contacts', siteTitle),
+    title: composeMetadataTitle(t('meta.contactsTitle'), siteTitle),
   };
 }

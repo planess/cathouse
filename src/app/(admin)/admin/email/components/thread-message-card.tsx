@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import type { EmailMessageSummary } from '@app/services/email.service';
@@ -20,6 +21,8 @@ export function ThreadMessageCard({
   message,
   onForward,
 }: ThreadMessageCardProps) {
+  const t = useTranslations('adminEmail.thread');
+  const locale = useLocale();
   const [showFullMessage, setShowFullMessage] = useState(false);
   const strippedContent =
     message.content['stripped-html'] ?? message.content['stripped-text'];
@@ -46,38 +49,38 @@ export function ThreadMessageCard({
 
         <div className="flex shrink-0 items-center gap-2">
           <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300">
-            {formatEmailDate(message.headerDate)}
+            {formatEmailDate(message.headerDate, locale)}
           </span>
           <button
             className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
             onClick={() => onForward(message)}
             type="button"
           >
-            Forward
+            {t('forward')}
           </button>
         </div>
       </div>
 
       <div className="grid gap-x-4 gap-y-1.5 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-[auto_minmax(0,1fr)]">
         <span className="font-medium text-slate-500 dark:text-slate-400 sm:text-right">
-          From:
+          {t('from')}
         </span>
         <span className="min-w-0 break-words font-medium">
           {formatAddress(message.from)}
         </span>
         <span className="font-medium text-slate-500 dark:text-slate-400 sm:text-right">
-          To:
+          {t('to')}
         </span>
         <span className="min-w-0 break-words font-medium">
-          {formatAddressList(message.to, 'No recipients')}
+          {formatAddressList(message.to, t('noRecipients'))}
         </span>
         {message.cc.length > 0 && (
           <>
             <span className="font-medium text-slate-500 dark:text-slate-400 sm:text-right">
-              Cc:
+              {t('cc')}
             </span>
             <span className="min-w-0 break-words font-medium">
-              {formatAddressList(message.cc, 'No recipients')}
+              {formatAddressList(message.cc, t('noRecipients'))}
             </span>
           </>
         )}
@@ -92,7 +95,7 @@ export function ThreadMessageCard({
               onClick={() => setShowFullMessage((expanded) => !expanded)}
               type="button"
             >
-              {showFullMessage ? 'Collapse history' : 'Expand full email'}
+              {showFullMessage ? t('collapseHistory') : t('expandFull')}
             </button>
           </div>
         )}
@@ -121,7 +124,7 @@ export function ThreadMessageCard({
                 >
                   <span>{attachment.filename}</span>
                   <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-                    Open
+                    {t('openAttachment')}
                   </span>
                 </a>
               )

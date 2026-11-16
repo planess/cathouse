@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import type { EmailThreadSummary } from '@app/services/email.service';
@@ -22,6 +23,7 @@ export function ThreadList({
   threads,
   onThreadSelect,
 }: ThreadListProps) {
+  const t = useTranslations('adminEmail.threads');
   const [draggedThreadId, setDraggedThreadId] = useState<string | null>(null);
   const [targetThreadId, setTargetThreadId] = useState<string | null>(null);
   const draggedThreadIdRef = useRef<string | null>(null);
@@ -115,7 +117,7 @@ export function ThreadList({
   if (threads.length === 0) {
     return (
       <p className="px-5 py-8 text-sm text-slate-500 dark:text-slate-400">
-        No threads.
+        {t('empty')}
       </p>
     );
   }

@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl';
+
 /** Placeholder contact rows shown under the spinner while contacts load. */
 const PLACEHOLDER_ROWS = 6;
 
@@ -6,6 +8,8 @@ const PLACEHOLDER_ROWS = 6;
  * spinner overlay, shown until the contacts data is streamed in.
  */
 export function EmailContactsLoading() {
+  const t = useTranslations('adminEmail.contacts');
+
   return (
     <div
       aria-busy="true"
@@ -35,7 +39,7 @@ export function EmailContactsLoading() {
             aria-hidden="true"
             className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-emerald-600 dark:border-slate-700 dark:border-t-emerald-400"
           />
-          Loading contacts...
+          {t('loading')}
         </div>
       </div>
     </div>

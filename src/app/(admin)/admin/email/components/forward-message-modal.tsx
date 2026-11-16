@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FormEvent, KeyboardEvent, useEffect, useState } from 'react';
 
 import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
@@ -30,6 +31,7 @@ export function ForwardMessageModal({
   onRecipientChange,
   onSubmit,
 }: ForwardMessageModalProps) {
+  const t = useTranslations('adminEmail');
   const [recipientInput, setRecipientInput] = useState(recipient);
   const [suggestions, setSuggestions] = useState<EmailAddressSummary[]>([]);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
@@ -137,14 +139,14 @@ export function ForwardMessageModal({
 
         <header className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-            Forward message
+            {t('forward.title')}
           </h2>
           <button
             className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-500 transition hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:text-white"
             onClick={onClose}
             type="button"
           >
-            Close
+            {t('common.close')}
           </button>
         </header>
 
@@ -154,7 +156,7 @@ export function ForwardMessageModal({
               className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
               htmlFor="forward-recipient"
             >
-              Recipient
+              {t('forward.recipient')}
             </label>
             <input
               aria-autocomplete="list"
@@ -180,9 +182,9 @@ export function ForwardMessageModal({
               onFocus={() => setIsSearchActive(true)}
               onKeyDown={handleRecipientKeyDown}
               pattern=".*[^\s@]+@[^\s@]+\.[^\s@]+.*"
-              placeholder="Name or email address"
+              placeholder={t('forward.recipientPlaceholder')}
               required
-              title="Enter an email address or select a contact"
+              title={t('forward.recipientHint')}
               type="text"
               value={recipientInput}
             />
@@ -232,7 +234,7 @@ export function ForwardMessageModal({
             disabled={sending}
             type="submit"
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? t('common.sending') : t('common.send')}
           </button>
         </footer>
       </form>

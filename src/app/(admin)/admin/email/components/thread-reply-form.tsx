@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 import { AdminAdminEmailComponentsThreadReplyFormIcon01 } from '@app/components/icons/admin-admin-email-components-thread-reply-form-icon-01';
@@ -36,6 +37,7 @@ export function ThreadReplyForm({
   onChange,
   onSubmit,
 }: ThreadReplyFormProps) {
+  const t = useTranslations('adminEmail');
   const [showCopyFields, setShowCopyFields] = useState(
     () =>
       form.cc.some(
@@ -88,7 +90,7 @@ export function ThreadReplyForm({
           strokeWidth={2}
           viewBox="0 0 24 24"
         />
-        <span>Reply to conversation</span>
+        <span>{t('thread.reply')}</span>
       </button>
 
       <form autoComplete="off" onSubmit={(event) => void onSubmit(event)}>
@@ -97,7 +99,7 @@ export function ThreadReplyForm({
             <div className="pb-3">
               <RecipientFields
                 id="thread-reply-to"
-                label="To"
+                label={t('common.to')}
                 onChange={(recipients) => onChange('to', recipients)}
                 recipients={form.to}
                 required
@@ -109,7 +111,9 @@ export function ThreadReplyForm({
                 onClick={() => setShowCopyFields((visible) => !visible)}
                 type="button"
               >
-                {showCopyFields ? 'Hide Cc and Bcc' : 'Cc and Bcc'}
+                {showCopyFields
+                  ? t('compose.hideCopyFields')
+                  : t('compose.showCopyFields')}
                 <AdminAdminEmailComponentsThreadReplyFormIcon02
                   aria-hidden="true"
                   className={`h-4 w-4 transition-transform ${
@@ -128,13 +132,13 @@ export function ThreadReplyForm({
               <div className="space-y-3 py-3" id="thread-reply-copy-fields">
                 <RecipientFields
                   id="thread-reply-cc"
-                  label="Cc"
+                  label={t('common.cc')}
                   onChange={(recipients) => onChange('cc', recipients)}
                   recipients={form.cc}
                 />
                 <RecipientFields
                   id="thread-reply-bcc"
-                  label="Bcc"
+                  label={t('common.bcc')}
                   onChange={(recipients) => onChange('bcc', recipients)}
                   recipients={form.bcc}
                 />
@@ -147,7 +151,7 @@ export function ThreadReplyForm({
               className="mb-1.5 block text-[0.68rem] font-semibold uppercase text-slate-500 dark:text-slate-400"
               htmlFor="thread-reply-body"
             >
-              Body
+              {t('compose.body')}
             </label>
             <div id="thread-reply-body">
               <RichTextEditor
@@ -180,7 +184,7 @@ export function ThreadReplyForm({
 
         <div className="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/40 p-3 dark:border-slate-800 dark:bg-slate-900/30">
           <label className="relative cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-emerald-500/40">
-            Attach Files
+            {t('compose.attachFiles')}
             <input
               className="absolute inset-0 cursor-pointer opacity-0"
               multiple
@@ -193,7 +197,7 @@ export function ThreadReplyForm({
             disabled={!canSend || sending}
             type="submit"
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? t('common.sending') : t('common.send')}
           </button>
         </div>
       </form>

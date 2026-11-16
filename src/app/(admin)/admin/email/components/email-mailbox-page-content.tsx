@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 import type { EmailMailboxThreadGroup } from '@app/services/email.service';
@@ -21,6 +22,7 @@ export function EmailMailboxPageContent({
   selectedMailboxId,
   showCreateMailboxForm,
 }: EmailMailboxPageContentProps) {
+  const t = useTranslations('adminEmail.header');
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,19 +42,19 @@ export function EmailMailboxPageContent({
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-            Mailboxes
+            {t('title')}
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            View and reply to organization emails.
+            {t('description')}
           </p>
         </div>
         <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto">
           <input
-            aria-label="Search emails in the selected mailbox"
+            aria-label={t('searchAria')}
             autoComplete="off"
             className="w-full rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 md:w-72"
             onInput={(event) => setSearchText(event.currentTarget.value)}
-            placeholder="Search emails..."
+            placeholder={t('searchPlaceholder')}
             type="search"
             value={searchText}
           />

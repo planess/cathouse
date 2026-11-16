@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 
@@ -21,6 +22,7 @@ export function EmailContactsManager({
   canManage,
   initialContacts,
 }: EmailContactsManagerProps) {
+  const t = useTranslations('adminEmail');
   const [contacts, setContacts] = useState(initialContacts);
   const [newName, setNewName] = useState('');
   const [newAddress, setNewAddress] = useState('');
@@ -67,7 +69,7 @@ export function EmailContactsManager({
         setNewAddress('');
       }
     } catch {
-      setStatus({ success: false, message: 'Failed to create contact.' });
+      setStatus({ success: false, message: t('contacts.createFailed') });
     } finally {
       setIsCreating(false);
     }
@@ -105,7 +107,7 @@ export function EmailContactsManager({
         setEditingName('');
       }
     } catch {
-      setStatus({ success: false, message: 'Failed to update contact.' });
+      setStatus({ success: false, message: t('contacts.updateFailed') });
     } finally {
       setPendingContactId(null);
     }
@@ -115,7 +117,7 @@ export function EmailContactsManager({
     if (
       !canManage ||
       pendingContactId !== null ||
-      !window.confirm(`Delete contact ${contact.address}?`)
+      !window.confirm(t('contacts.deleteConfirm', { address: contact.address }))
     ) {
       return;
     }
@@ -137,7 +139,7 @@ export function EmailContactsManager({
         );
       }
     } catch {
-      setStatus({ success: false, message: 'Failed to delete contact.' });
+      setStatus({ success: false, message: t('contacts.deleteFailed') });
     } finally {
       setPendingContactId(null);
     }
@@ -153,14 +155,14 @@ export function EmailContactsManager({
           <input
             className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             onChange={(event) => setNewName(event.target.value)}
-            placeholder="Name (optional)"
+            placeholder={t('contacts.namePlaceholder')}
             type="text"
             value={newName}
           />
           <input
             className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/30 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             onChange={(event) => setNewAddress(event.target.value)}
-            placeholder="Email address"
+            placeholder={t('contacts.emailPlaceholder')}
             required
             type="email"
             value={newAddress}
@@ -170,7 +172,7 @@ export function EmailContactsManager({
             disabled={isCreating}
             type="submit"
           >
-            {isCreating ? 'Adding...' : 'Add contact'}
+            {isCreating ? t('contacts.adding') : t('contacts.add')}
           </button>
         </form>
       )}
@@ -191,7 +193,7 @@ export function EmailContactsManager({
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
         {contacts.length === 0 ? (
           <p className="px-5 py-8 text-sm text-slate-500 dark:text-slate-400">
-            No contacts.
+            {t('contacts.empty')}
           </p>
         ) : (
           <div className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -206,7 +208,9 @@ export function EmailContactsManager({
                 >
                   {isEditing ? (
                     <input
-                      aria-label={`Name for ${contact.address}`}
+                      aria-label={t('contacts.nameFor', {
+                        address: contact.address,
+                      })}
                       className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                       onChange={(event) => setEditingName(event.target.value)}
                       type="text"
@@ -230,14 +234,14 @@ export function EmailContactsManager({
                             onClick={() => void handleUpdate(contact.id)}
                             type="button"
                           >
-                            Save
+                            {t('common.save')}
                           </button>
                           <button
                             className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900"
                             onClick={() => setEditingContactId(null)}
                             type="button"
                           >
-                            Cancel
+                            {t('common.cancel')}
                           </button>
                         </>
                       ) : (
@@ -250,7 +254,7 @@ export function EmailContactsManager({
                             }}
                             type="button"
                           >
-                            Edit
+                            {t('contacts.edit')}
                           </button>
                           <button
                             className="rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50 dark:text-red-300 dark:hover:bg-red-950/30"
@@ -258,7 +262,7 @@ export function EmailContactsManager({
                             onClick={() => void handleDelete(contact)}
                             type="button"
                           >
-                            Delete
+                            {t('contacts.delete')}
                           </button>
                         </>
                       )}
