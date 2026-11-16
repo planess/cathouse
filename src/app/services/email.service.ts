@@ -20,6 +20,7 @@ import { getHeaderValue } from './email/get-header-value';
 import { getLastMessagesById } from './email/get-last-messages-by-id';
 import { getMailgunField } from './email/get-mailgun-field';
 import { getMailgunMessageId } from './email/get-mailgun-message-id';
+import { getThreadMessageStats } from './email/get-thread-message-stats';
 import { logEmailServiceError } from './email/log-email-service-error';
 import { mapAddressReference } from './email/map-address-reference';
 import { mapContact } from './email/map-contact';
@@ -1769,10 +1770,19 @@ class EmailService extends Singleton {
       const contactsById = await getContactsById(
         threads.flatMap((thread) => getContactIds(thread.participants)),
       );
-      const lastMessagesById = await getLastMessagesById(threads);
+      const [lastMessagesById, messageStatsById] = await Promise.all([
+        getLastMessagesById(threads),
+        getThreadMessageStats(threads),
+      ]);
 
       return threads.map((thread) =>
-        mapThread(thread, contactsById, lastMessagesById),
+        mapThread(
+          thread,
+          contactsById,
+          lastMessagesById,
+          undefined,
+          messageStatsById,
+        ),
       );
     } catch (error) {
       await logEmailServiceError('listThreadsByMailbox', error, {
@@ -1901,11 +1911,20 @@ class EmailService extends Singleton {
     const contactsById = await getContactsById(
       threads.flatMap((thread) => getContactIds(thread.participants)),
     );
-    const lastMessagesById = await getLastMessagesById(threads);
+    const [lastMessagesById, messageStatsById] = await Promise.all([
+      getLastMessagesById(threads),
+      getThreadMessageStats(threads),
+    ]);
 
     return {
       items: threads.map((thread) =>
-        mapThread(thread, contactsById, lastMessagesById),
+        mapThread(
+          thread,
+          contactsById,
+          lastMessagesById,
+          undefined,
+          messageStatsById,
+        ),
       ),
       totalItems,
     };

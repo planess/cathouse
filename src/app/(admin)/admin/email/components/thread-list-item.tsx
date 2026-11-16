@@ -73,8 +73,25 @@ export function ThreadListItem({
               </p>
             )}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex rounded-full bg-slate-50 px-3 py-1 text-xs font-medium text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-                {t('threads.messages', { count: thread.messageCount })}
+              <span className="inline-flex items-center gap-[10px] rounded-full bg-slate-50 px-3 py-1 text-xs font-medium text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+                <span
+                  className="inline-flex items-center gap-1"
+                  title={t('threads.incoming', { count: thread.incomingCount })}
+                >
+                  <span aria-hidden="true">↓ {thread.incomingCount}</span>
+                  <span className="sr-only">
+                    {t('threads.incoming', { count: thread.incomingCount })}
+                  </span>
+                </span>
+                <span
+                  className="inline-flex items-center gap-1"
+                  title={t('threads.outgoing', { count: thread.outgoingCount })}
+                >
+                  <span aria-hidden="true">↑ {thread.outgoingCount}</span>
+                  <span className="sr-only">
+                    {t('threads.outgoing', { count: thread.outgoingCount })}
+                  </span>
+                </span>
               </span>
               {thread.attachmentsCount > 0 && (
                 <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">

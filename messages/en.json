@@ -2464,7 +2464,9 @@
       "messages": "{count, plural, one {# Message} other {# Messages}}",
       "attachments": "{count, plural, one {# Attachment} other {# Attachments}}",
       "mergeAria": "Merge {subject} into another thread",
-      "mergeHint": "Drag onto another thread to merge"
+      "mergeHint": "Drag onto another thread to merge",
+      "incoming": "{count, plural, one {# incoming message} other {# incoming messages}}",
+      "outgoing": "{count, plural, one {# outgoing message} other {# outgoing messages}}"
     },
     "thread": {
       "returning": "Returning to mailbox...",
