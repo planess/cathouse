@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   FormEvent,
+  MouseEvent,
   PointerEvent,
   useCallback,
   useEffect,
@@ -137,6 +139,30 @@ export function EmailMailboxTabs({
       setActiveId(nextActiveId);
     },
     [canSend],
+  );
+
+  /**
+   * Switches mailboxes on the client for plain left clicks so the URL and
+   * panel update immediately; modified clicks (new tab/window) keep the
+   * native link behavior.
+   */
+  const handleMailboxLinkClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>, mailboxTabId: string) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      handleActiveIdChange(mailboxTabId);
+    },
+    [handleActiveIdChange],
   );
 
   const handleThreadSelect = useCallback(
@@ -607,11 +633,14 @@ export function EmailMailboxTabs({
                       ⠿
                     </button>
                   )}
-                  <button
+                  <Link
                     aria-current={isActive ? 'page' : undefined}
                     className="min-w-0 flex-1 px-3 py-2.5 text-left text-sm font-medium"
-                    onClick={() => handleActiveIdChange(mailboxTabId)}
-                    type="button"
+                    href={`/admin/email/${mailbox.id}`}
+                    onClick={(event) =>
+                      handleMailboxLinkClick(event, mailboxTabId)
+                    }
+                    prefetch={false}
                   >
                     <span className="block truncate">{mailbox.address}</span>
                     {mailbox.displayName.trim().length > 0 && (
@@ -619,7 +648,7 @@ export function EmailMailboxTabs({
                         {mailbox.displayName}
                       </span>
                     )}
-                  </button>
+                  </Link>
                   {canSend && (
                     <button
                       aria-label={`Edit sender name for ${mailbox.address}`}
