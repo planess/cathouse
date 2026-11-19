@@ -8,6 +8,7 @@ import type { EmailMessageSummary } from '@app/services/email.service';
 import { formatAddress } from '../helpers/format-address';
 import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
+import { getListedAttachments } from '../helpers/get-listed-attachments';
 import { getMessageBodyHtml } from '../helpers/get-message-body-html';
 
 import { EmailHtmlBody } from './email-html-body';
@@ -31,6 +32,8 @@ export function ThreadMessageCard({
     strippedContent !== undefined &&
     fullContent !== undefined &&
     strippedContent !== fullContent;
+  const bodyHtml = getMessageBodyHtml(message, showFullMessage);
+  const listedAttachments = getListedAttachments(message.attachments, bodyHtml);
 
   return (
     <article
@@ -101,12 +104,12 @@ export function ThreadMessageCard({
         )}
         <EmailHtmlBody
           className="break-words text-base leading-7 text-slate-700 dark:text-slate-200"
-          html={getMessageBodyHtml(message, showFullMessage)}
+          html={bodyHtml}
         />
 
-        {message.attachments.length > 0 && (
+        {listedAttachments.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {message.attachments.map((attachment) => (
+            {listedAttachments.map((attachment) => (
               attachment.downloadUrl === undefined ? (
                 <div
                   className="inline-flex items-center gap-4 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-700"

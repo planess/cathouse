@@ -603,7 +603,7 @@ export function EmailMailboxTabs({
             className="flex-1 space-y-1 overflow-y-auto p-3"
             data-mailbox-list
           >
-            {groups.map(({ mailbox }) => {
+            {groups.map(({ mailbox, unreadThreadsCount }) => {
               const mailboxTabId = getMailboxTabId(mailbox.id);
               const isActive = mailboxTabId === activeId;
 
@@ -652,6 +652,25 @@ export function EmailMailboxTabs({
                       </span>
                     )}
                   </Link>
+                  {unreadThreadsCount > 0 && (
+                    <span
+                      className={`min-w-6 shrink-0 rounded-full bg-emerald-600 px-2 py-0.5 text-center text-xs font-semibold text-white dark:bg-emerald-500 dark:text-slate-950 ${
+                        canSend ? '' : 'mr-3'
+                      }`}
+                      title={t('mailboxes.unreadThreads', {
+                        count: unreadThreadsCount,
+                      })}
+                    >
+                      <span aria-hidden="true">
+                        {unreadThreadsCount > 99 ? '99+' : unreadThreadsCount}
+                      </span>
+                      <span className="sr-only">
+                        {t('mailboxes.unreadThreads', {
+                          count: unreadThreadsCount,
+                        })}
+                      </span>
+                    </span>
+                  )}
                   {canSend && (
                     <button
                       aria-label={t('mailboxes.editSenderNameFor', {

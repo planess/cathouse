@@ -12,6 +12,17 @@ const SHADOW_STYLES = `
 :host {
   display: block;
 }
+.email-body {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.email-body table {
+  max-width: 100% !important;
+}
+.email-body td,
+.email-body th {
+  width: auto !important;
+}
 .email-body img {
   max-width: 100%;
   height: auto;

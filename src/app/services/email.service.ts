@@ -21,6 +21,8 @@ import { getLastMessagesById } from './email/get-last-messages-by-id';
 import { getMailgunField } from './email/get-mailgun-field';
 import { getMailgunMessageId } from './email/get-mailgun-message-id';
 import { getThreadMessageStats } from './email/get-thread-message-stats';
+import { getUnreadThreadCountsByMailbox } from './email/get-unread-thread-counts-by-mailbox';
+import { getUnreadThreadIds } from './email/get-unread-thread-ids';
 import { logEmailServiceError } from './email/log-email-service-error';
 import { mapAddressReference } from './email/map-address-reference';
 import { mapContact } from './email/map-contact';
@@ -797,16 +799,18 @@ class EmailService extends Singleton {
     );
   }
 
+  /**
+   * Marks every incoming message of a thread as read by the user.
+   *
+   * @param threadId Thread whose incoming messages are marked.
+   * @param userId User who read the messages.
+   */
   async markThreadMessagesAsRead(
     threadId: string,
     userId: string,
   ): Promise<void> {
     if (!ObjectId.isValid(threadId)) {
       throw new Error('Invalid thread id.');
-    }
-
-    if (!ObjectId.isValid(userId)) {
-      throw new Error('Invalid user id.');
     }
 
     const dbClient = await clientPromise;
@@ -820,8 +824,55 @@ class EmailService extends Singleton {
       .project<Pick<EmailMessageDocument, '_id'>>({ _id: 1 })
       .toArray();
 
+    await this.markMessagesAsRead(
+      messages.map((message) => message._id.toString()),
+      userId,
+    );
+  }
+
+  /**
+   * Records that the user has read the given messages. A new read state is
+   * created with full data for a message read for the first time; an existing
+   * one only gets `lastReadAt` and `updatedAt` refreshed. Ids of missing or
+   * outgoing messages are ignored, because outgoing messages are always read.
+   *
+   * @param messageIds Ids of the messages the user has seen.
+   * @param userId User who read the messages.
+   * @returns Ids of the messages whose read state was saved.
+   */
+  async markMessagesAsRead(
+    messageIds: string[],
+    userId: string,
+  ): Promise<string[]> {
+    if (!ObjectId.isValid(userId)) {
+      throw new Error('Invalid user id.');
+    }
+
+    if (!messageIds.every((messageId) => ObjectId.isValid(messageId))) {
+      throw new Error('Invalid message id.');
+    }
+
+    const uniqueMessageIds = [...new Set(messageIds)].map(
+      (messageId) => new ObjectId(messageId),
+    );
+
+    if (uniqueMessageIds.length === 0) {
+      return [];
+    }
+
+    const dbClient = await clientPromise;
+    const db = dbClient.db();
+    const messages = await db
+      .collection<EmailMessageDocument>(DbTables.emailMessages)
+      .find({
+        _id: { $in: uniqueMessageIds },
+        direction: 'incoming',
+      })
+      .project<Pick<EmailMessageDocument, '_id'>>({ _id: 1 })
+      .toArray();
+
     if (messages.length === 0) {
-      return;
+      return [];
     }
 
     const now = new Date();
@@ -841,8 +892,6 @@ class EmailService extends Singleton {
             },
             $setOnInsert: {
               _id: new ObjectId(),
-              messageId: message._id,
-              userId: readUserId,
               firstReadAt: now,
               createdAt: now,
             },
@@ -850,7 +899,10 @@ class EmailService extends Singleton {
           upsert: true,
         },
       })),
+      { ordered: false },
     );
+
+    return messages.map((message) => message._id.toString());
   }
 
   async processIncomingMailgunEmail(
@@ -1797,12 +1849,14 @@ class EmailService extends Singleton {
    * Lists one page of mailbox threads, optionally filtered by email content.
    *
    * @param mailboxId Mailbox that owns the returned threads.
+   * @param userId User whose read states mark threads with unread messages.
    * @param page One-based result page.
    * @param pageSize Maximum number of threads in the page.
    * @param query Optional subject, body, recipient name, or email fragment.
    */
   async listThreadsPageByMailbox(
     mailboxId: string,
+    userId: string,
     page: number,
     pageSize: number,
     query = '',
@@ -1911,10 +1965,15 @@ class EmailService extends Singleton {
     const contactsById = await getContactsById(
       threads.flatMap((thread) => getContactIds(thread.participants)),
     );
-    const [lastMessagesById, messageStatsById] = await Promise.all([
-      getLastMessagesById(threads),
-      getThreadMessageStats(threads),
-    ]);
+    const [lastMessagesById, messageStatsById, unreadThreadIds] =
+      await Promise.all([
+        getLastMessagesById(threads),
+        getThreadMessageStats(threads),
+        getUnreadThreadIds(
+          threads.map((thread) => thread._id),
+          userId,
+        ),
+      ]);
 
     return {
       items: threads.map((thread) =>
@@ -1922,7 +1981,7 @@ class EmailService extends Singleton {
           thread,
           contactsById,
           lastMessagesById,
-          undefined,
+          unreadThreadIds,
           messageStatsById,
         ),
       ),
@@ -2152,21 +2211,34 @@ class EmailService extends Singleton {
     }
   }
 
-  async listMailboxThreadGroups(): Promise<EmailMailboxThreadGroup[]> {
+  /**
+   * Lists mailboxes in display order with the number of threads that contain
+   * messages unread by the given user.
+   *
+   * @param userId Id of the user whose read states define unread threads.
+   */
+  async listMailboxThreadGroups(
+    userId: string,
+  ): Promise<EmailMailboxThreadGroup[]> {
     try {
       const dbClient = await clientPromise;
       const db = dbClient.db();
-      const mailboxes = await db
-        .collection<EmailMailbox>(DbTables.emailMailboxes)
-        .find({})
-        .sort({ order: 1, normalizedAddress: 1 })
-        .toArray();
+      const [mailboxes, unreadThreadCounts] = await Promise.all([
+        db
+          .collection<EmailMailbox>(DbTables.emailMailboxes)
+          .find({})
+          .sort({ order: 1, normalizedAddress: 1 })
+          .toArray(),
+        getUnreadThreadCountsByMailbox(userId),
+      ]);
+
       return mailboxes.map((mailbox) => ({
         mailbox: mapMailbox(mailbox),
         threads: [],
+        unreadThreadsCount: unreadThreadCounts.get(mailbox._id.toString()) ?? 0,
       }));
     } catch (error) {
-      await logEmailServiceError('listMailboxThreadGroups', error);
+      await logEmailServiceError('listMailboxThreadGroups', error, { userId });
 
       throw error;
     }

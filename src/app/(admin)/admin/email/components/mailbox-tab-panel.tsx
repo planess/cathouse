@@ -31,6 +31,18 @@ type ThreadPageResponse = {
 const threadPageRequests = new Map<string, Promise<ThreadPageResponse>>();
 const THREAD_LIST_REFRESH_INTERVAL_MS = 60_000;
 
+/**
+ * Drops cached thread pages of a mailbox so the next load reflects changes made
+ * elsewhere, such as messages marked as read when a thread is opened.
+ */
+function clearCachedThreadPages(mailboxId: string) {
+  for (const key of threadPageRequests.keys()) {
+    if (key.startsWith(`${mailboxId}:`)) {
+      threadPageRequests.delete(key);
+    }
+  }
+}
+
 function loadThreadPage(
   mailboxId: string,
   page: number,
@@ -334,7 +346,10 @@ export function MailboxTabPanel({
           onThreadMerge={(sourceThreadId, targetThreadId) =>
             void handleThreadMerge(sourceThreadId, targetThreadId)
           }
-          onThreadSelect={onThreadSelect}
+          onThreadSelect={(threadMailboxId, threadId) => {
+            clearCachedThreadPages(threadMailboxId);
+            onThreadSelect(threadMailboxId, threadId);
+          }}
           threads={pageThreads}
         />
         {mergeMessage.length > 0 && (
