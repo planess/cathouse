@@ -73,9 +73,11 @@ export function ThreadConversation({
   const reportedReadMessageIdsRef = useRef(new Set<string>());
 
   /**
-   * Saves read states for the given messages in one request and marks the
-   * saved ones as read locally. Ids already reported are skipped, so repeated
-   * effects (for example React Strict Mode) do not send duplicates.
+   * Saves read states for the given messages in one request. The local
+   * `isRead` flags are intentionally left unchanged, so messages that were
+   * unread when the thread was opened stay highlighted until the next visit.
+   * Ids already reported are skipped, so repeated effects (for example React
+   * Strict Mode) do not send duplicates.
    */
   const reportMessagesRead = useCallback(async (messageIds: string[]) => {
     const reportedIds = reportedReadMessageIdsRef.current;
@@ -93,17 +95,7 @@ export function ThreadConversation({
 
     if (markedIds === null) {
       pendingIds.forEach((id) => reportedIds.delete(id));
-
-      return;
     }
-
-    const markedIdSet = new Set(markedIds);
-
-    setMessages((currentMessages) =>
-      currentMessages.map((message) =>
-        markedIdSet.has(message.id) ? { ...message, isRead: true } : message,
-      ),
-    );
   }, []);
 
   useEffect(() => {
@@ -143,9 +135,17 @@ export function ThreadConversation({
           const refreshedMessageIds = new Set(
             refreshedMessages.map((message) => message.id),
           );
+          const displayedReadStates = new Map(
+            currentMessages.map((message) => [message.id, message.isRead]),
+          );
 
           return [
-            ...refreshedMessages,
+            // Keep the read state shown since the thread was opened; the
+            // server already reports these messages as read after this visit.
+            ...refreshedMessages.map((message) => ({
+              ...message,
+              isRead: displayedReadStates.get(message.id) ?? message.isRead,
+            })),
             ...currentMessages.filter(
               (message) => !refreshedMessageIds.has(message.id),
             ),
