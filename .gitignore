@@ -23,6 +23,7 @@ playwright-report/
 
 # production
 /build
+/error.txt
 
 # development
 /_temp

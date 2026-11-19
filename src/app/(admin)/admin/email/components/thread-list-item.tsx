@@ -41,7 +41,7 @@ export function ThreadListItem({
   const rowStateClassName = isMergeTarget
     ? 'bg-emerald-100 ring-2 ring-inset ring-emerald-500 dark:bg-emerald-950/50'
     : isUnread
-      ? 'bg-linear-to-r from-amber-100/90 via-amber-50/70 to-white hover:from-amber-200/80 hover:via-amber-100/70 dark:from-amber-900/40 dark:via-amber-950/25 dark:to-slate-950 dark:hover:from-amber-900/55'
+      ? 'bg-linear-to-r from-amber-50 via-amber-50/40 to-white hover:from-amber-100/70 hover:via-amber-50/60 dark:from-amber-950/30 dark:via-amber-950/10 dark:to-slate-950 dark:hover:from-amber-950/45'
       : 'hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20';
 
   return (
@@ -55,7 +55,7 @@ export function ThreadListItem({
       {isUnread && !isMergeTarget && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-amber-300 via-amber-500 to-yellow-600 shadow-[2px_0_10px_rgba(245,158,11,0.45)]"
+          className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-amber-200 via-amber-400 to-amber-500 dark:from-amber-500/60 dark:via-amber-500/80 dark:to-amber-600/70"
         />
       )}
       <button
@@ -69,7 +69,7 @@ export function ThreadListItem({
               {isUnread && (
                 <span
                   aria-hidden="true"
-                  className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-500 ring-4 ring-amber-200/70 dark:bg-amber-400 dark:ring-amber-500/25"
+                  className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400 ring-4 ring-amber-100 dark:bg-amber-500/80 dark:ring-amber-500/15"
                 />
               )}
               <span className="truncate">
@@ -85,7 +85,7 @@ export function ThreadListItem({
             <h3
               className={`truncate text-sm ${
                 isUnread
-                  ? 'font-bold text-amber-950 dark:text-amber-100'
+                  ? 'font-bold text-slate-950 dark:text-white'
                   : 'font-medium text-slate-700 dark:text-slate-300'
               }`}
             >
