@@ -47,6 +47,7 @@ export async function GET(
       : PAGE_THREAD_SIZE;
   const result = await emailService.listThreadsPageByMailbox(
     mailboxId,
+    user.id.toString(),
     page,
     pageSize,
     query,

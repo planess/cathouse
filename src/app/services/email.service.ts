@@ -21,6 +21,8 @@ import { getLastMessagesById } from './email/get-last-messages-by-id';
 import { getMailgunField } from './email/get-mailgun-field';
 import { getMailgunMessageId } from './email/get-mailgun-message-id';
 import { getThreadMessageStats } from './email/get-thread-message-stats';
+import { getUnreadThreadCountsByMailbox } from './email/get-unread-thread-counts-by-mailbox';
+import { getUnreadThreadIds } from './email/get-unread-thread-ids';
 import { logEmailServiceError } from './email/log-email-service-error';
 import { mapAddressReference } from './email/map-address-reference';
 import { mapContact } from './email/map-contact';
@@ -1797,12 +1799,14 @@ class EmailService extends Singleton {
    * Lists one page of mailbox threads, optionally filtered by email content.
    *
    * @param mailboxId Mailbox that owns the returned threads.
+   * @param userId User whose read states mark threads with unread messages.
    * @param page One-based result page.
    * @param pageSize Maximum number of threads in the page.
    * @param query Optional subject, body, recipient name, or email fragment.
    */
   async listThreadsPageByMailbox(
     mailboxId: string,
+    userId: string,
     page: number,
     pageSize: number,
     query = '',
@@ -1911,10 +1915,15 @@ class EmailService extends Singleton {
     const contactsById = await getContactsById(
       threads.flatMap((thread) => getContactIds(thread.participants)),
     );
-    const [lastMessagesById, messageStatsById] = await Promise.all([
-      getLastMessagesById(threads),
-      getThreadMessageStats(threads),
-    ]);
+    const [lastMessagesById, messageStatsById, unreadThreadIds] =
+      await Promise.all([
+        getLastMessagesById(threads),
+        getThreadMessageStats(threads),
+        getUnreadThreadIds(
+          threads.map((thread) => thread._id),
+          userId,
+        ),
+      ]);
 
     return {
       items: threads.map((thread) =>
@@ -1922,7 +1931,7 @@ class EmailService extends Singleton {
           thread,
           contactsById,
           lastMessagesById,
-          undefined,
+          unreadThreadIds,
           messageStatsById,
         ),
       ),
@@ -2152,21 +2161,34 @@ class EmailService extends Singleton {
     }
   }
 
-  async listMailboxThreadGroups(): Promise<EmailMailboxThreadGroup[]> {
+  /**
+   * Lists mailboxes in display order with the number of threads that contain
+   * messages unread by the given user.
+   *
+   * @param userId Id of the user whose read states define unread threads.
+   */
+  async listMailboxThreadGroups(
+    userId: string,
+  ): Promise<EmailMailboxThreadGroup[]> {
     try {
       const dbClient = await clientPromise;
       const db = dbClient.db();
-      const mailboxes = await db
-        .collection<EmailMailbox>(DbTables.emailMailboxes)
-        .find({})
-        .sort({ order: 1, normalizedAddress: 1 })
-        .toArray();
+      const [mailboxes, unreadThreadCounts] = await Promise.all([
+        db
+          .collection<EmailMailbox>(DbTables.emailMailboxes)
+          .find({})
+          .sort({ order: 1, normalizedAddress: 1 })
+          .toArray(),
+        getUnreadThreadCountsByMailbox(userId),
+      ]);
+
       return mailboxes.map((mailbox) => ({
         mailbox: mapMailbox(mailbox),
         threads: [],
+        unreadThreadsCount: unreadThreadCounts.get(mailbox._id.toString()) ?? 0,
       }));
     } catch (error) {
-      await logEmailServiceError('listMailboxThreadGroups', error);
+      await logEmailServiceError('listMailboxThreadGroups', error, { userId });
 
       throw error;
     }

@@ -37,20 +37,27 @@ export function ThreadListItem({
 }: ThreadListItemProps) {
   const t = useTranslations('adminEmail');
   const locale = useLocale();
+  const isUnread = thread.hasUnreadMessages;
+  const rowStateClassName = isMergeTarget
+    ? 'bg-emerald-100 ring-2 ring-inset ring-emerald-500 dark:bg-emerald-950/50'
+    : isUnread
+      ? 'bg-linear-to-r from-amber-100/90 via-amber-50/70 to-white hover:from-amber-200/80 hover:via-amber-100/70 dark:from-amber-900/40 dark:via-amber-950/25 dark:to-slate-950 dark:hover:from-amber-900/55'
+      : 'hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20';
 
   return (
     <div
-      className={`flex w-full items-start border-b border-slate-100 text-left transition last:border-b-0 dark:border-slate-800 ${
+      className={`relative flex w-full items-start border-b border-slate-100 text-left transition last:border-b-0 dark:border-slate-800 ${
         isDragged ? 'opacity-50' : ''
-      } ${
-        isMergeTarget
-          ? 'bg-emerald-100 ring-2 ring-inset ring-emerald-500 dark:bg-emerald-950/50'
-          : 'hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20'
-      } ${
-        thread.hasUnreadMessages ? 'bg-amber-50/70 dark:bg-amber-950/20' : ''
-      }`}
+      } ${rowStateClassName}`}
       data-thread-row={thread.id}
+      data-unread={isUnread || undefined}
     >
+      {isUnread && !isMergeTarget && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-amber-300 via-amber-500 to-yellow-600 shadow-[2px_0_10px_rgba(245,158,11,0.45)]"
+        />
+      )}
       <button
         className="min-w-0 flex-1 px-5 py-5 text-left focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
         onClick={() => onSelect(mailboxId, thread.id)}
@@ -58,13 +65,30 @@ export function ThreadListItem({
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 space-y-2.5">
-            <p className="truncate text-base font-bold text-slate-950 dark:text-white">
-              {formatAddressList(
-                thread.participants,
-                t('thread.noParticipants'),
+            <p className="flex min-w-0 items-center gap-2 text-base font-bold text-slate-950 dark:text-white">
+              {isUnread && (
+                <span
+                  aria-hidden="true"
+                  className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-500 ring-4 ring-amber-200/70 dark:bg-amber-400 dark:ring-amber-500/25"
+                />
+              )}
+              <span className="truncate">
+                {formatAddressList(
+                  thread.participants,
+                  t('thread.noParticipants'),
+                )}
+              </span>
+              {isUnread && (
+                <span className="sr-only">{t('threads.unread')}</span>
               )}
             </p>
-            <h3 className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <h3
+              className={`truncate text-sm ${
+                isUnread
+                  ? 'font-bold text-amber-950 dark:text-amber-100'
+                  : 'font-medium text-slate-700 dark:text-slate-300'
+              }`}
+            >
               {thread.subject}
             </h3>
             {thread.preview.length > 0 && (
