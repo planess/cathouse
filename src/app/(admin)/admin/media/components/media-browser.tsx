@@ -2,10 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { Toaster } from '@app/components/toaster/toaster';
 import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
+import { useToasts } from '@app/hooks/use-toasts';
 import { useCurrentUser } from '@app/hooks/use-user';
+import type { MediaUploadResult } from '@app/models/media-upload-result';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { getMediaFileName } from '@app/services/media/get-media-file-name';
 
+import { addUploadDatePrefix } from '../helpers/add-upload-date-prefix';
+import { mergeFolderContents } from '../helpers/merge-folder-contents';
 import { normalizeFolderPath } from '../helpers/normalize-folder-path';
 import { uploadFile } from '../helpers/upload-file';
 
@@ -33,7 +39,12 @@ export type FolderContents = {
 
 export type FetchState = 'idle' | 'loading' | 'loaded' | 'error';
 
-export type UploadStatus = 'requesting' | 'uploading' | 'completed' | 'error';
+export type UploadStatus =
+  | 'requesting'
+  | 'uploading'
+  | 'completed'
+  | 'skipped'
+  | 'error';
 
 export type UploadItem = {
   file: File;
@@ -44,12 +55,14 @@ export type UploadItem = {
 };
 
 type SignedUpload = {
+  headers?: Record<string, string>;
   path: string;
   url: string;
 };
 
 type SignedUploadResponse = {
   files: SignedUpload[];
+  results: MediaUploadResult[];
 };
 
 type RenameFolderResponse = {
@@ -60,6 +73,7 @@ type RenameFolderResponse = {
 
 export function MediaBrowser() {
   const user = useCurrentUser();
+  const { showToast, toasts } = useToasts();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [contents, setContents] = useState<
     Partial<Record<string, FolderContents>>
@@ -124,7 +138,14 @@ export function MediaBrowser() {
         );
       }
 
-      setContents((current) => ({ ...current, [normalizedPath]: payload }));
+      // Merge rather than replace, so unchanged rows stay as they are on screen.
+      setContents((current) => {
+        const merged = mergeFolderContents(current[normalizedPath], payload);
+
+        return merged === current[normalizedPath]
+          ? current
+          : { ...current, [normalizedPath]: merged };
+      });
       setStates((current) => ({ ...current, [normalizedPath]: 'loaded' }));
     } catch (loadError) {
       setStates((current) => ({ ...current, [normalizedPath]: 'error' }));
@@ -165,7 +186,7 @@ export function MediaBrowser() {
 
   const updateUpload = (
     id: string,
-    update: Partial<Pick<UploadItem, 'progress' | 'status'>>,
+    update: Partial<Pick<UploadItem, 'path' | 'progress' | 'status'>>,
   ) => {
     setUploads((current) =>
       current.map((upload) =>
@@ -185,10 +206,13 @@ export function MediaBrowser() {
       return;
     }
 
+    const uploadedAt = new Date();
     const uploadItems = files.map((file, index) => ({
       file,
       id: `${file.name}-${file.lastModified}-${index}`,
-      path: [selectedPath, file.name].filter(Boolean).join('/'),
+      path: [selectedPath, addUploadDatePrefix(file.name, uploadedAt)]
+        .filter(Boolean)
+        .join('/'),
       progress: 0,
       status: 'requesting' as const,
     }));
@@ -196,10 +220,16 @@ export function MediaBrowser() {
     setUploads(uploadItems);
     setError('');
 
+    let results: MediaUploadResult[];
+
     try {
       const response = await fetch('/api/admin/media', {
         body: JSON.stringify({
-          files: uploadItems.map(({ path }) => ({ path })),
+          files: uploadItems.map(({ file, path }) => ({
+            originalName: file.name,
+            path,
+            size: file.size,
+          })),
         }),
         headers: { 'Content-Type': 'application/json' },
         method: 'POST',
@@ -208,57 +238,103 @@ export function MediaBrowser() {
         | SignedUploadResponse
         | { error: string };
 
-      if (!response.ok || !('files' in payload)) {
+      if (
+        !response.ok ||
+        !('results' in payload) ||
+        payload.results.length !== uploadItems.length
+      ) {
         throw new Error(
           'error' in payload ? payload.error : 'Unable to obtain upload URLs.',
         );
       }
 
-      const signedUrlByPath = new Map(
-        payload.files.map((signedFile) => [signedFile.path, signedFile.url]),
-      );
-
-      const results = await Promise.allSettled(
-        uploadItems.map(async (upload) => {
-          const url = signedUrlByPath.get(upload.path);
-
-          if (url === undefined) {
-            updateUpload(upload.id, { status: 'error' });
-            throw new Error(`No upload URL was returned for ${upload.path}.`);
-          }
-
-          updateUpload(upload.id, { status: 'uploading' });
-
-          try {
-            await uploadFile(upload.file, url, (progress) =>
-              updateUpload(upload.id, { progress }),
-            );
-            updateUpload(upload.id, { progress: 100, status: 'completed' });
-          } catch (uploadError) {
-            updateUpload(upload.id, { status: 'error' });
-            throw uploadError;
-          }
-        }),
-      );
-
-      if (results.some((result) => result.status === 'rejected')) {
-        throw new Error('Some files could not be uploaded.');
-      }
-
-      await loadFolder(selectedPath);
-    } catch (uploadError) {
-      setUploads((current) =>
-        current.map((upload) =>
-          upload.status === 'completed'
-            ? upload
-            : { ...upload, status: 'error' },
-        ),
-      );
-      setError(
-        uploadError instanceof Error
-          ? uploadError.message
+      results = payload.results;
+    } catch (signError) {
+      setUploads([]);
+      showToast(
+        'error',
+        signError instanceof Error
+          ? signError.message
           : 'Unable to upload files.',
       );
+
+      return;
+    }
+
+    const duplicateNames: string[] = [];
+    const renamedNames: string[] = [];
+    const uploadResults = await Promise.allSettled(
+      uploadItems.map(async (upload, index) => {
+        const result = results[index];
+
+        if (result.status === 'duplicate') {
+          duplicateNames.push(upload.file.name);
+          updateUpload(upload.id, { status: 'skipped' });
+
+          return false;
+        }
+
+        if (result.path !== upload.path) {
+          renamedNames.push(getMediaFileName(result.path));
+        }
+
+        updateUpload(upload.id, { path: result.path, status: 'uploading' });
+
+        try {
+          await uploadFile(
+            upload.file,
+            result.url,
+            (progress) => updateUpload(upload.id, { progress }),
+            result.headers,
+          );
+          updateUpload(upload.id, { progress: 100, status: 'completed' });
+        } catch (uploadError) {
+          updateUpload(upload.id, { status: 'error' });
+          throw uploadError;
+        }
+
+        return true;
+      }),
+    );
+    const uploadedCount = uploadResults.filter(
+      (result) => result.status === 'fulfilled' && result.value,
+    ).length;
+    const failedCount = uploadResults.filter(
+      (result) => result.status === 'rejected',
+    ).length;
+
+    // The toasts below report the outcome, so the progress bars go away now.
+    setUploads([]);
+
+    if (duplicateNames.length > 0) {
+      showToast(
+        'error',
+        `Already in this folder, not uploaded: ${duplicateNames.join(', ')}`,
+      );
+    }
+
+    if (renamedNames.length > 0) {
+      showToast(
+        'info',
+        `A file with the same name exists, saved as: ${renamedNames.join(', ')}`,
+      );
+    }
+
+    if (failedCount > 0) {
+      showToast(
+        'error',
+        `Unable to upload ${failedCount} of ${uploadItems.length} files.`,
+      );
+    }
+
+    if (uploadedCount > 0) {
+      showToast(
+        'success',
+        uploadedCount === 1
+          ? 'File uploaded.'
+          : `${uploadedCount} files uploaded.`,
+      );
+      await loadFolder(selectedPath);
     }
   };
 
@@ -305,15 +381,20 @@ export function MediaBrowser() {
         );
       }
 
-      const markerUrl = payload.files.find(
+      const markerUpload = payload.files.find(
         (file) => file.path === markerPath,
-      )?.url;
+      );
 
-      if (markerUrl === undefined) {
+      if (markerUpload === undefined) {
         throw new Error('No upload URL was returned for the new folder.');
       }
 
-      await uploadFile(new File([], '.bzEmpty'), markerUrl, () => null);
+      await uploadFile(
+        new File([], '.bzEmpty'),
+        markerUpload.url,
+        () => null,
+        markerUpload.headers,
+      );
       setIsFolderDialogOpen(false);
       setNewFolderName('');
       await loadFolder(selectedPath);
@@ -706,7 +787,7 @@ export function MediaBrowser() {
 
             <MediaUploadProgress uploads={uploads} />
 
-            {isLoading ? (
+            {isLoading && selectedContents === undefined ? (
               <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
                 Loading files…
               </p>
@@ -914,6 +995,7 @@ export function MediaBrowser() {
           </form>
         </div>
       )}
+      <Toaster toasts={toasts} />
     </div>
   );
 }
