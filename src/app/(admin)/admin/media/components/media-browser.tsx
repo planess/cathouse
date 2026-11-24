@@ -6,6 +6,7 @@ import { useBodyScrollLock } from '@app/hooks/use-body-scroll-lock';
 import { useCurrentUser } from '@app/hooks/use-user';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 
+import { addUploadDatePrefix } from '../helpers/add-upload-date-prefix';
 import { normalizeFolderPath } from '../helpers/normalize-folder-path';
 import { uploadFile } from '../helpers/upload-file';
 
@@ -186,10 +187,13 @@ export function MediaBrowser() {
       return;
     }
 
+    const uploadedAt = new Date();
     const uploadItems = files.map((file, index) => ({
       file,
       id: `${file.name}-${file.lastModified}-${index}`,
-      path: [selectedPath, file.name].filter(Boolean).join('/'),
+      path: [selectedPath, addUploadDatePrefix(file.name, uploadedAt)]
+        .filter(Boolean)
+        .join('/'),
       progress: 0,
       status: 'requesting' as const,
     }));
