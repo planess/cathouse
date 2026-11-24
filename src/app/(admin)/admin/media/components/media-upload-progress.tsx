@@ -18,7 +18,9 @@ export function MediaUploadProgress({ uploads }: { uploads: UploadItem[] }) {
                 ? 'Uploaded'
                 : upload.status === 'error'
                   ? 'Failed'
-                  : `${upload.progress}%`}
+                  : upload.status === 'skipped'
+                    ? 'Already exists'
+                    : `${upload.progress}%`}
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
@@ -28,9 +30,13 @@ export function MediaUploadProgress({ uploads }: { uploads: UploadItem[] }) {
                   ? 'bg-rose-500'
                   : upload.status === 'completed'
                     ? 'bg-emerald-500'
-                    : 'bg-sky-500'
+                    : upload.status === 'skipped'
+                      ? 'bg-amber-500'
+                      : 'bg-sky-500'
               }`}
-              style={{ width: `${upload.progress}%` }}
+              style={{
+                width: `${upload.status === 'skipped' ? 100 : upload.progress}%`,
+              }}
             />
           </div>
         </div>

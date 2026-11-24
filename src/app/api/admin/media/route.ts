@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
 import { getUserFromRequest } from '@app/hooks/get-user-from-request';
+import type { MediaUploadPlan } from '@app/models/media-upload-plan';
+import type { MediaUploadRequest } from '@app/models/media-upload-request';
+import type { MediaUploadResult } from '@app/models/media-upload-result';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
 import { buildMediaUploadMetadata } from '@app/services/media/build-media-upload-metadata';
 import { getMediaFileName } from '@app/services/media/get-media-file-name';
@@ -9,6 +12,7 @@ import { getSafeMediaPath } from '@app/services/media/get-safe-media-path';
 import { hasMediaPermission } from '@app/services/media/has-media-permission';
 import { isSafeMediaFilePath } from '@app/services/media/is-safe-media-file-path';
 import { MediaPlaybackService } from '@app/services/media/media-playback.service';
+import { planMediaUploads } from '@app/services/media/plan-media-uploads';
 
 /**
  * Handles development CORS preflight requests from the mobile web application.
@@ -164,21 +168,33 @@ export async function GET(request: Request) {
 }
 
 type GateRequest = {
-  files?: Array<{ originalName?: unknown; path?: unknown }>;
+  files?: Array<{ originalName?: unknown; path?: unknown; size?: unknown }>;
+};
+
+type SignedFile = {
+  headers?: Record<string, string>;
+  path: string;
+  url: string;
 };
 
 /**
  * POST handler for generating upload URLs.
  * Generates temporary URLs for uploading files to cloud storage.
  * Validates file paths and returns signed URLs with 5-minute expiration.
+ * Files with an `originalName` are first checked against their target folder:
+ * a file with the same name (ignoring any `YYMMDD-` prefix) and size is reported as a
+ * duplicate and not signed, and a clashing name gets a random 4-character suffix.
  * Each URL is signed together with upload metadata (upload time, uploader, original name),
  * which the client must send back as the returned `headers`.
  * Requires MEDIA_UPLOAD permission.
  *
  * @param request - The incoming request with JSON body containing:
- *   - `files`: Array of objects with `path` property specifying file upload destinations
- *     and an optional `originalName` with the file name from the uploader's device
- * @returns JSON response with signed upload URLs and headers, or error message
+ *   - `files`: Array of objects with `path` property specifying file upload destinations,
+ *     an optional `originalName` with the file name from the uploader's device,
+ *     and an optional `size` in bytes
+ * @returns JSON response with `results` (one per requested file, in order: a signed
+ *   upload or a duplicate) and `files` (the signed uploads only, kept for older clients),
+ *   or an error message
  */
 export async function POST(request: Request) {
   if (!(await hasMediaPermission(request, SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
@@ -221,37 +237,101 @@ export async function POST(request: Request) {
     );
   }
 
-  const uploadedAt = new Date();
-  const uploadedBy = user.id.toHexString();
-  const signRequests = body.files.map((file, index) => ({
-    metadata: buildMediaUploadMetadata(
-      files[index],
-      uploadedBy,
-      uploadedAt,
-      file.originalName,
-    ),
-    path: files[index],
-  }));
+  const uploadRequests: MediaUploadRequest[] = body.files.map(
+    (file, index) => ({
+      originalName:
+        typeof file.originalName === 'string' && file.originalName.trim() !== ''
+          ? file.originalName.trim()
+          : undefined,
+      path: files[index],
+      size:
+        typeof file.size === 'number' &&
+        Number.isFinite(file.size) &&
+        file.size >= 0
+          ? file.size
+          : undefined,
+    }),
+  );
+  let plans: MediaUploadPlan[];
 
   try {
-    const response = await fetch(
-      `${process.env.R2_MEDIA_BASE_URL}/sign?expiresInSeconds=300`,
-      {
-        body: JSON.stringify({ files: signRequests }),
-        cache: 'no-store',
-        headers: { 'Content-Type': 'application/json' },
-        method: 'PUT',
-      },
+    plans = await planMediaUploads(uploadRequests);
+  } catch {
+    return NextResponse.json(
+      { error: 'Unable to check the target folder for existing files.' },
+      { status: 502 },
     );
+  }
 
-    if (!response.ok) {
+  const uploadedAt = new Date();
+  const uploadedBy = user.id.toHexString();
+  const signRequests = plans.flatMap((plan, index) =>
+    plan.status === 'upload'
+      ? [
+          {
+            metadata: buildMediaUploadMetadata(
+              plan.path,
+              uploadedBy,
+              uploadedAt,
+              uploadRequests[index].originalName,
+            ),
+            path: plan.path,
+          },
+        ]
+      : [],
+  );
+
+  try {
+    let signedFiles: SignedFile[] = [];
+
+    if (signRequests.length > 0) {
+      const response = await fetch(
+        `${process.env.R2_MEDIA_BASE_URL}/sign?expiresInSeconds=300`,
+        {
+          body: JSON.stringify({ files: signRequests }),
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'PUT',
+        },
+      );
+
+      if (!response.ok) {
+        return NextResponse.json(
+          { error: 'Unable to obtain upload URLs from cloud storage.' },
+          { status: response.status },
+        );
+      }
+
+      signedFiles =
+        ((await response.json()) as { files?: SignedFile[] }).files ?? [];
+    }
+
+    const signedByPath = new Map(signedFiles.map((file) => [file.path, file]));
+    const results = plans.map((plan): MediaUploadResult | null => {
+      if (plan.status === 'duplicate') {
+        return plan;
+      }
+
+      const signedFile = signedByPath.get(plan.path);
+
+      return signedFile
+        ? {
+            headers: signedFile.headers ?? {},
+            path: signedFile.path,
+            status: 'upload',
+            url: signedFile.url,
+          }
+        : null;
+    });
+
+    if (results.includes(null)) {
       return NextResponse.json(
-        { error: 'Unable to obtain upload URLs from cloud storage.' },
-        { status: response.status },
+        { error: 'Cloud storage did not sign every upload.' },
+        { status: 502 },
       );
     }
 
-    return NextResponse.json(await response.json());
+    return NextResponse.json({ files: signedFiles, results });
   } catch {
     return NextResponse.json(
       { error: 'Unable to connect to cloud storage.' },
