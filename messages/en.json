@@ -2440,7 +2440,8 @@
       "orderSaveFailed": "Failed to save mailbox order.",
       "prefixRequired": "Email prefix is required.",
       "createFailed": "Failed to create mailbox.",
-      "updateSenderNameFailed": "Failed to update sender name."
+      "updateSenderNameFailed": "Failed to update sender name.",
+      "unreadThreads": "{count, plural, one {# conversation with unread messages} other {# conversations with unread messages}}"
     },
     "createMailbox": {
       "senderName": "Sender name",
@@ -2465,6 +2466,7 @@
       "attachments": "{count, plural, one {# Attachment} other {# Attachments}}",
       "mergeAria": "Merge {subject} into another thread",
       "mergeHint": "Drag onto another thread to merge",
+      "unread": "Unread",
       "incoming": "{count, plural, one {# incoming message} other {# incoming messages}}",
       "outgoing": "{count, plural, one {# outgoing message} other {# outgoing messages}}"
     },

@@ -33,7 +33,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const groups = await emailService.listMailboxThreadGroups();
+    const groups = await emailService.listMailboxThreadGroups(
+      currentUser.id.toString(),
+    );
 
     return json({ success: true, message: 'Mailboxes loaded.', groups, canSend });
   } catch (error) {
@@ -132,6 +134,7 @@ export async function POST(request: Request) {
       group: {
         mailbox,
         threads: [],
+        unreadThreadsCount: 0,
       },
     });
   } catch (error) {

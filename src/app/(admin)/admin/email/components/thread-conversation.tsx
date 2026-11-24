@@ -2,7 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { FormEvent, useEffect, useState, useTransition } from 'react';
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 
 import type {
   EmailMessageSummary,
@@ -13,7 +20,7 @@ import { formatAddressList } from '../helpers/format-address-list';
 import { formatEmailDate } from '../helpers/format-email-date';
 import { getInitialReplyForm } from '../helpers/get-initial-reply-form';
 import { loadThreadMessagesRequest } from '../helpers/load-thread-messages-request';
-import { markThreadMessagesReadRequest } from '../helpers/mark-thread-messages-read-request';
+import { markMessagesReadRequest } from '../helpers/mark-messages-read-request';
 import { sendForwardMessageRequest } from '../helpers/send-forward-message-request';
 import { sendThreadReplyRequest } from '../helpers/send-thread-reply-request';
 
@@ -62,21 +69,44 @@ export function ThreadConversation({
     null,
   );
 
-  useEffect(() => {
-    if (!initialMessages.some((message) => !message.isRead)) {
+  /** Message ids already sent to the read endpoint while this thread is open. */
+  const reportedReadMessageIdsRef = useRef(new Set<string>());
+
+  /**
+   * Saves read states for the given messages in one request. The local
+   * `isRead` flags are intentionally left unchanged, so messages that were
+   * unread when the thread was opened stay highlighted until the next visit.
+   * Ids already reported are skipped, so repeated effects (for example React
+   * Strict Mode) do not send duplicates.
+   */
+  const reportMessagesRead = useCallback(async (messageIds: string[]) => {
+    const reportedIds = reportedReadMessageIdsRef.current;
+    const pendingIds = messageIds.filter((id) => !reportedIds.has(id));
+
+    if (pendingIds.length === 0) {
       return;
     }
 
-    void markThreadMessagesReadRequest(thread.id).then((markedAsRead) => {
-      if (!markedAsRead) {
-        return;
-      }
+    pendingIds.forEach((id) => reportedIds.add(id));
 
-      setMessages((currentMessages) =>
-        currentMessages.map((message) => ({ ...message, isRead: true })),
-      );
-    });
-  }, [initialMessages, thread.id]);
+    const markedIds = await markMessagesReadRequest(pendingIds).catch(
+      () => null,
+    );
+
+    if (markedIds === null) {
+      pendingIds.forEach((id) => reportedIds.delete(id));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Opening the thread records every displayed incoming message: new read
+    // states are created and existing ones get a fresh `lastReadAt`.
+    void reportMessagesRead(
+      initialMessages
+        .filter((message) => message.direction === 'incoming')
+        .map((message) => message.id),
+    );
+  }, [initialMessages, reportMessagesRead]);
 
   useEffect(() => {
     let isCurrent = true;
@@ -105,27 +135,28 @@ export function ThreadConversation({
           const refreshedMessageIds = new Set(
             refreshedMessages.map((message) => message.id),
           );
+          const displayedReadStates = new Map(
+            currentMessages.map((message) => [message.id, message.isRead]),
+          );
 
           return [
-            ...refreshedMessages,
+            // Keep the read state shown since the thread was opened; the
+            // server already reports these messages as read after this visit.
+            ...refreshedMessages.map((message) => ({
+              ...message,
+              isRead: displayedReadStates.get(message.id) ?? message.isRead,
+            })),
             ...currentMessages.filter(
               (message) => !refreshedMessageIds.has(message.id),
             ),
           ];
         });
 
-        if (refreshedMessages.some((message) => !message.isRead)) {
-          const markedAsRead = await markThreadMessagesReadRequest(thread.id);
-
-          if (isCurrent && markedAsRead) {
-            setMessages((currentMessages) =>
-              currentMessages.map((message) => ({
-                ...message,
-                isRead: true,
-              })),
-            );
-          }
-        }
+        await reportMessagesRead(
+          refreshedMessages
+            .filter((message) => !message.isRead)
+            .map((message) => message.id),
+        );
       } catch {
         // Keep the current conversation visible and retry at the next interval.
       } finally {
@@ -142,7 +173,7 @@ export function ThreadConversation({
       refreshController?.abort();
       window.clearInterval(intervalId);
     };
-  }, [thread.id]);
+  }, [reportMessagesRead, thread.id]);
 
   const handleChange = (
     field: keyof ThreadReplyFormState,

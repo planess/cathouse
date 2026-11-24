@@ -24,7 +24,9 @@ export async function loadMailboxThreadGroups({
   ]);
 
   try {
-    return await emailService.listMailboxThreadGroups();
+    return await emailService.listMailboxThreadGroups(
+      currentUser.id.toString(),
+    );
   } catch (error) {
     await logDevelopmentError(scope, error, {
       mailboxId,
