@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
+import { getUserFromRequest } from '@app/hooks/get-user-from-request';
 import { SYSTEM_PERMISSIONS } from '@app/models/system-permissions';
+import { buildMediaUploadMetadata } from '@app/services/media/build-media-upload-metadata';
 import { getMediaFileName } from '@app/services/media/get-media-file-name';
 import { getMediaPermissions } from '@app/services/media/get-media-permissions';
 import { getSafeMediaPath } from '@app/services/media/get-safe-media-path';
@@ -162,18 +164,21 @@ export async function GET(request: Request) {
 }
 
 type GateRequest = {
-  files?: Array<{ path?: unknown }>;
+  files?: Array<{ originalName?: unknown; path?: unknown }>;
 };
 
 /**
  * POST handler for generating upload URLs.
  * Generates temporary URLs for uploading files to cloud storage.
  * Validates file paths and returns signed URLs with 5-minute expiration.
+ * Each URL is signed together with upload metadata (upload time, uploader, original name),
+ * which the client must send back as the returned `headers`.
  * Requires MEDIA_UPLOAD permission.
  *
  * @param request - The incoming request with JSON body containing:
  *   - `files`: Array of objects with `path` property specifying file upload destinations
- * @returns JSON response with signed upload URLs or error message
+ *     and an optional `originalName` with the file name from the uploader's device
+ * @returns JSON response with signed upload URLs and headers, or error message
  */
 export async function POST(request: Request) {
   if (!(await hasMediaPermission(request, SYSTEM_PERMISSIONS.MEDIA_UPLOAD))) {
@@ -207,11 +212,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid file path.' }, { status: 400 });
   }
 
+  const user = await getUserFromRequest(request);
+
+  if (user === null) {
+    return NextResponse.json(
+      { error: 'Insufficient permissions.' },
+      { status: 403 },
+    );
+  }
+
+  const uploadedAt = new Date();
+  const uploadedBy = user.id.toHexString();
+  const signRequests = body.files.map((file, index) => ({
+    metadata: buildMediaUploadMetadata(
+      files[index],
+      uploadedBy,
+      uploadedAt,
+      file.originalName,
+    ),
+    path: files[index],
+  }));
+
   try {
     const response = await fetch(
       `${process.env.R2_MEDIA_BASE_URL}/sign?expiresInSeconds=300`,
       {
-        body: JSON.stringify({ files: files.map((path) => ({ path })) }),
+        body: JSON.stringify({ files: signRequests }),
         cache: 'no-store',
         headers: { 'Content-Type': 'application/json' },
         method: 'PUT',

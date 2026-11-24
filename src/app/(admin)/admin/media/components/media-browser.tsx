@@ -44,6 +44,7 @@ export type UploadItem = {
 };
 
 type SignedUpload = {
+  headers?: Record<string, string>;
   path: string;
   url: string;
 };
@@ -199,7 +200,10 @@ export function MediaBrowser() {
     try {
       const response = await fetch('/api/admin/media', {
         body: JSON.stringify({
-          files: uploadItems.map(({ path }) => ({ path })),
+          files: uploadItems.map(({ file, path }) => ({
+            originalName: file.name,
+            path,
+          })),
         }),
         headers: { 'Content-Type': 'application/json' },
         method: 'POST',
@@ -214,15 +218,15 @@ export function MediaBrowser() {
         );
       }
 
-      const signedUrlByPath = new Map(
-        payload.files.map((signedFile) => [signedFile.path, signedFile.url]),
+      const signedUploadByPath = new Map(
+        payload.files.map((signedFile) => [signedFile.path, signedFile]),
       );
 
       const results = await Promise.allSettled(
         uploadItems.map(async (upload) => {
-          const url = signedUrlByPath.get(upload.path);
+          const signedUpload = signedUploadByPath.get(upload.path);
 
-          if (url === undefined) {
+          if (signedUpload === undefined) {
             updateUpload(upload.id, { status: 'error' });
             throw new Error(`No upload URL was returned for ${upload.path}.`);
           }
@@ -230,8 +234,11 @@ export function MediaBrowser() {
           updateUpload(upload.id, { status: 'uploading' });
 
           try {
-            await uploadFile(upload.file, url, (progress) =>
-              updateUpload(upload.id, { progress }),
+            await uploadFile(
+              upload.file,
+              signedUpload.url,
+              (progress) => updateUpload(upload.id, { progress }),
+              signedUpload.headers,
             );
             updateUpload(upload.id, { progress: 100, status: 'completed' });
           } catch (uploadError) {
@@ -305,15 +312,20 @@ export function MediaBrowser() {
         );
       }
 
-      const markerUrl = payload.files.find(
+      const markerUpload = payload.files.find(
         (file) => file.path === markerPath,
-      )?.url;
+      );
 
-      if (markerUrl === undefined) {
+      if (markerUpload === undefined) {
         throw new Error('No upload URL was returned for the new folder.');
       }
 
-      await uploadFile(new File([], '.bzEmpty'), markerUrl, () => null);
+      await uploadFile(
+        new File([], '.bzEmpty'),
+        markerUpload.url,
+        () => null,
+        markerUpload.headers,
+      );
       setIsFolderDialogOpen(false);
       setNewFolderName('');
       await loadFolder(selectedPath);
